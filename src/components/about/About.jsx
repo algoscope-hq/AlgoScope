@@ -14,16 +14,6 @@ export default function AboutAlgoScope() {
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M13 10V3L4 14h7v7l9-11h-7z"
-          />
-        </svg>
-      ),
-      title: 'Real-time Visualization',
       description:
         'Watch algorithms come alive with smooth, step-by-step animations',
       gradient: 'bg-gradient-to-br from-yellow-500 to-orange-600',
