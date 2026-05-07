@@ -1,12 +1,3 @@
-import React from 'react'
-import AlgoCard from './AlgoCard'
-import SortingImg from '../assets/new-home-images/array.png'
-import SearchingImg from '../assets/new-home-images/traversal.png'
-import LinearSearchImg from '../assets/new-home-images/search.png'
-import GraphAlgoImg from '../assets/new-home-images/shortestPath.png'
-import adt from '../assets/new-home-images/adt.png'
-import { motion } from 'framer-motion'
-
 // Animation Variants
 const containerVariants = {
   hidden: { opacity: 0 },
