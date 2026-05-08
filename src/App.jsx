@@ -1,16 +1,3 @@
-import React from 'react'
-import { createBrowserRouter, RouterProvider } from 'react-router-dom'
-import { Navbar } from './components/Navbar'
-import { motion } from 'framer-motion'
-import { Home } from './components/Home'
-import SortingVisualizerPage from './components/sortingAlgo/VisualizerPage'
-import { VisualizerPage } from './components/searchAlgo/VisualizerPage'
-import { ShortestPathPage } from './components/shortestPathAlgo/ShortestPathPage'
-import { DSLayout } from './components/dataStructures/DSLayout'
-import Footer from './components/Footer'
-import ArrayVisualizerPage from './components/arraySearch/VisualizerPage'
-import AboutAlgoScope from './components/about/About'
-
 // Shared Background Component
 const Background = () => (
   <div className="absolute inset-0 z-0 pointer-events-none fixed">
@@ -19,18 +6,6 @@ const Background = () => (
 )
 
 function App() {
-  const darkTheme = 'bg-[#020617] text-slate-200'
-
-  const route = createBrowserRouter([
-    {
-      path: '/',
-      element: (
-        <>
-          <motion.div
-            className={`min-h-screen flex flex-col ${darkTheme} relative`}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.5 }}
           >
             {/* Home has its own background, so we might not need the shared one here if it conflicts, but let's keep it consistent or let Home override */}
             <div className="flex-1 flex flex-col gap-4 p-4 z-10">
