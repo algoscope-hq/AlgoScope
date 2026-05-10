@@ -141,14 +141,22 @@ AlgoScope uses a component-based architecture where each algorithm category has 
 
 ```text
 src/
+├── algorithms/
+│   ├── searching/         # Search and shortest-path step generators/source data
+│   └── sorting/           # Sorting algorithm step generators
+├── assets/                # Static images and icons
 ├── components/
-│   ├── sortingAlgo/       # Sorting visualizer logic & animation controllers
-│   ├── searchAlgo/        # Graph searching (BFS/DFS) and canvas management
-│   ├── arraySearch/       # Linear/Binary search logic
-│   ├── shortestPathAlgo/  # Dijkstra/Floyd-Warshall pathfinding
-│   └── dataStructures/    # Stacks, Queues, and Tree visualizers
-├── lib/                   # Shared utility functions and algorithm implementations
-└── App.jsx                # Main routing and global state management
+│   ├── about/             # About page cards and sections
+│   ├── arraySearch/       # Linear and binary search visualizers
+│   ├── dataStructures/    # Stack, queue, and tree visualizers
+│   ├── searchAlgo/        # Graph traversal visualizers and controls
+│   ├── shortestPathAlgo/  # Shortest-path visualizers and controls
+│   ├── sortingAlgo/       # Sorting visualizers
+│   └── visualizer/        # Shared code panel and playback helpers
+├── App.jsx                # Main routing and global state management
+├── App.css                # App-level styles
+├── input.css              # Tailwind entry styles
+└── main.jsx               # React entry point
 ```
 
 ### How It Works
