@@ -27,10 +27,14 @@ const DSLayout = lazy(() =>
 const ArrayVisualizerPage = lazy(
   () => import('./components/arraySearch/VisualizerPage')
 )
+
 const PracticePage = lazy(() => import('./components/PracticePage'))
 const AboutAlgoScope = lazy(() => import('./components/about/About'))
 const NotFound = lazy(() => import('./components/PageNotFound'))
 
+const IterativeVsRecursive = lazy(() =>
+  import('./components/IterativeVsRecursive')
+)
 // Simple fallback for Suspense
 const PageLoader = () => (
   <div className="flex h-screen w-full items-center justify-center bg-[#020617]">
@@ -120,6 +124,16 @@ function App() {
         </Suspense>
       ),
     },
+    {
+  path: '/iterative-recursive',
+  element: (
+    <Suspense fallback={<PageLoader />}>
+      <AppLayout>
+        <IterativeVsRecursive />
+      </AppLayout>
+    </Suspense>
+  ),
+},
     {
       path: '*',
       element: (
