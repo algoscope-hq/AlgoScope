@@ -2,35 +2,35 @@ const IterativeVsRecursive = () => {
   return (
     <section
       style={{
-        background: "#111827",
-        color: "white",
-        padding: "40px",
-        margin: "40px auto",
-        width: "90%",
-        borderRadius: "16px",
+        background: '#111827',
+        color: 'white',
+        padding: '40px',
+        margin: '40px auto',
+        width: '90%',
+        borderRadius: '16px',
       }}
     >
       <h2
         style={{
-          fontSize: "32px",
-          fontWeight: "bold",
-          marginBottom: "20px",
+          fontSize: '32px',
+          fontWeight: 'bold',
+          marginBottom: '20px',
         }}
       >
         Iterative vs Recursive Algorithms
       </h2>
 
-      <p style={{ marginBottom: "20px", lineHeight: "1.8" }}>
-        Iterative algorithms use loops to repeat operations,
-        while recursive algorithms solve problems by calling
-        themselves repeatedly until a base condition is met.
+      <p style={{ marginBottom: '20px', lineHeight: '1.8' }}>
+        Iterative algorithms use loops to repeat operations, while recursive
+        algorithms solve problems by calling themselves repeatedly until a base
+        condition is met.
       </p>
 
       <table
         style={{
-          width: "100%",
-          borderCollapse: "collapse",
-          marginBottom: "30px",
+          width: '100%',
+          borderCollapse: 'collapse',
+          marginBottom: '30px',
         }}
       >
         <thead>
@@ -53,9 +53,7 @@ const IterativeVsRecursive = () => {
 
           <tr>
             <td style={tableCell}>Usually faster</td>
-            <td style={tableCell}>
-              Elegant for divide-and-conquer problems
-            </td>
+            <td style={tableCell}>Elegant for divide-and-conquer problems</td>
           </tr>
 
           <tr>
@@ -65,19 +63,19 @@ const IterativeVsRecursive = () => {
         </tbody>
       </table>
 
-      <h3 style={{ fontSize: "24px", marginBottom: "15px" }}>
+      <h3 style={{ fontSize: '24px', marginBottom: '15px' }}>
         Example: Factorial
       </h3>
 
       <pre
         style={{
-          background: "#1F2937",
-          padding: "20px",
-          borderRadius: "10px",
-          overflowX: "auto",
+          background: '#1F2937',
+          padding: '20px',
+          borderRadius: '10px',
+          overflowX: 'auto',
         }}
       >
-{`// Iterative
+        {`// Iterative
 function factorial(n) {
   let ans = 1;
 
@@ -96,12 +94,12 @@ function factorialRecursive(n) {
 }`}
       </pre>
     </section>
-  );
-};
+  )
+}
 
 const tableCell = {
-  border: "1px solid white",
-  padding: "12px",
-};
+  border: '1px solid white',
+  padding: '12px',
+}
 
-export default IterativeVsRecursive;
+export default IterativeVsRecursive

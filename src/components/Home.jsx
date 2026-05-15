@@ -6,7 +6,7 @@ import LinearSearchImg from '../assets/new-home-images/search.png'
 import GraphAlgoImg from '../assets/new-home-images/shortestPath.png'
 import adt from '../assets/new-home-images/adt.png'
 import { motion } from 'framer-motion'
-import IterativeVsRecursive from "./about/IterativeVsRecursive";
+import IterativeVsRecursive from './about/IterativeVsRecursive'
 import iterativeRecursiveImg from '../assets/new-home-images/iterativeRecursive.png'
 // Animation Variants
 const containerVariants = {
@@ -60,20 +60,19 @@ const ALGORITHMS = [
     image: adt,
     imageAlt: 'Stack, queue, and linked list data structure visualization',
   },
- {
-  title: 'Iterative vs Recursive Algorithms',
-  description:
-    'Visualize loops, recursion stacks, array traversal, and binary tree recursion with interactive animations.',
-  color: 'bg-slate-900/50 border-pink-500/30 hover:border-pink-400',
-  link: '/iterative-recursive',
-  image: iterativeRecursiveImg,
-  imageAlt: 'Iterative loop and recursive tree visualization',
-},
+  {
+    title: 'Iterative vs Recursive Algorithms',
+    description:
+      'Visualize loops, recursion stacks, array traversal, and binary tree recursion with interactive animations.',
+    color: 'bg-slate-900/50 border-pink-500/30 hover:border-pink-400',
+    link: '/iterative-recursive',
+    image: iterativeRecursiveImg,
+    imageAlt: 'Iterative loop and recursive tree visualization',
+  },
 ]
 
 export const Home = () => {
   return (
-    
     <div className="relative min-h-screen w-full bg-[#020617] text-white overflow-hidden selection:bg-cyan-500/30">
       {/* Background Grid & Glow */}
       <div className="absolute inset-0 z-0 pointer-events-none">
@@ -163,6 +162,5 @@ export const Home = () => {
         </div>
       </div>
     </div>
-    
   )
 }

@@ -2,12 +2,7 @@ import { motion } from 'framer-motion'
 
 const iterativeArray = [1, 2, 3, 4, 5, 6]
 
-const recursiveCalls = [
-  'search(8)',
-  'search(4)',
-  'search(2)',
-  'return true',
-]
+const recursiveCalls = ['search(8)', 'search(4)', 'search(2)', 'return true']
 
 export default function IterativeVsRecursive() {
   return (
@@ -39,8 +34,8 @@ export default function IterativeVsRecursive() {
 
           <p className="mt-8 text-slate-400 text-xl max-w-4xl mx-auto leading-9">
             Understand how loops traverse data step-by-step while recursive
-            algorithms repeatedly divide problems into smaller subproblems
-            using elegant self-calling functions.
+            algorithms repeatedly divide problems into smaller subproblems using
+            elegant self-calling functions.
           </p>
         </motion.div>
 
@@ -145,7 +140,7 @@ export default function IterativeVsRecursive() {
 
             {/* Code */}
             <pre className="bg-black/40 border border-cyan-500/20 rounded-2xl p-6 overflow-x-auto text-cyan-300 text-sm">
-{`function linearSearch(arr, target) {
+              {`function linearSearch(arr, target) {
   for(let i = 0; i < arr.length; i++) {
     if(arr[i] === target) {
       return true;
@@ -271,7 +266,7 @@ export default function IterativeVsRecursive() {
 
             {/* Code */}
             <pre className="bg-black/40 border border-purple-500/20 rounded-2xl p-6 overflow-x-auto text-purple-300 text-sm">
-{`function binarySearch(node, target) {
+              {`function binarySearch(node, target) {
   if(node === null) return false;
 
   if(node.value === target) return true;
@@ -294,9 +289,7 @@ export default function IterativeVsRecursive() {
           className="mt-24 rounded-3xl overflow-hidden border border-slate-700 bg-slate-900/50 backdrop-blur-xl"
         >
           <div className="p-8 border-b border-slate-700">
-            <h2 className="text-4xl font-bold">
-              Quick Comparison
-            </h2>
+            <h2 className="text-4xl font-bold">Quick Comparison</h2>
           </div>
 
           <div className="overflow-x-auto">
@@ -304,12 +297,8 @@ export default function IterativeVsRecursive() {
               <thead className="bg-slate-800/70">
                 <tr>
                   <th className="p-5 text-left">Feature</th>
-                  <th className="p-5 text-left text-cyan-300">
-                    Iterative
-                  </th>
-                  <th className="p-5 text-left text-purple-300">
-                    Recursive
-                  </th>
+                  <th className="p-5 text-left text-cyan-300">Iterative</th>
+                  <th className="p-5 text-left text-purple-300">Recursive</th>
                 </tr>
               </thead>
 
@@ -343,145 +332,145 @@ export default function IterativeVsRecursive() {
         </motion.div>
       </div>
       {/* Time Complexity Section */}
-<motion.div
-  initial={{ opacity: 0, y: 80 }}
-  animate={{ opacity: 1, y: 0 }}
-  transition={{ delay: 0.4 }}
-  className="mt-24"
->
-  <div className="text-center mb-14">
-    <h2 className="text-5xl font-black bg-gradient-to-r from-cyan-400 to-purple-500 bg-clip-text text-transparent">
-      Time Complexity Analysis
-    </h2>
+      <motion.div
+        initial={{ opacity: 0, y: 80 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.4 }}
+        className="mt-24"
+      >
+        <div className="text-center mb-14">
+          <h2 className="text-5xl font-black bg-gradient-to-r from-cyan-400 to-purple-500 bg-clip-text text-transparent">
+            Time Complexity Analysis
+          </h2>
 
-    <p className="mt-6 text-slate-400 text-lg max-w-3xl mx-auto leading-8">
-      Compare the computational efficiency of iterative and recursive
-      approaches using Big-O complexity analysis.
-    </p>
-  </div>
-
-  <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
-    {/* Iterative Complexity */}
-    <motion.div
-      whileHover={{
-        scale: 1.02,
-        boxShadow: '0px 0px 35px rgba(34,211,238,0.2)',
-      }}
-      className="rounded-3xl border border-cyan-500/20 bg-slate-900/60 backdrop-blur-xl p-8"
-    >
-      <div className="flex items-center gap-4 mb-8">
-        <div className="h-4 w-4 rounded-full bg-cyan-400 animate-pulse"></div>
-
-        <h3 className="text-3xl font-bold text-cyan-300">
-          Iterative Complexity
-        </h3>
-      </div>
-
-      <div className="space-y-8">
-        {/* Time */}
-        <div>
-          <div className="flex justify-between mb-3">
-            <span className="text-slate-300">Time Complexity</span>
-
-            <span className="text-cyan-300 font-bold">O(n)</span>
-          </div>
-
-          <div className="h-5 rounded-full bg-slate-800 overflow-hidden">
-            <motion.div
-              initial={{ width: 0 }}
-              animate={{ width: '75%' }}
-              transition={{ duration: 1.5 }}
-              className="h-full rounded-full bg-gradient-to-r from-cyan-400 to-cyan-600"
-            />
-          </div>
+          <p className="mt-6 text-slate-400 text-lg max-w-3xl mx-auto leading-8">
+            Compare the computational efficiency of iterative and recursive
+            approaches using Big-O complexity analysis.
+          </p>
         </div>
 
-        {/* Space */}
-        <div>
-          <div className="flex justify-between mb-3">
-            <span className="text-slate-300">Space Complexity</span>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
+          {/* Iterative Complexity */}
+          <motion.div
+            whileHover={{
+              scale: 1.02,
+              boxShadow: '0px 0px 35px rgba(34,211,238,0.2)',
+            }}
+            className="rounded-3xl border border-cyan-500/20 bg-slate-900/60 backdrop-blur-xl p-8"
+          >
+            <div className="flex items-center gap-4 mb-8">
+              <div className="h-4 w-4 rounded-full bg-cyan-400 animate-pulse"></div>
 
-            <span className="text-cyan-300 font-bold">O(1)</span>
-          </div>
+              <h3 className="text-3xl font-bold text-cyan-300">
+                Iterative Complexity
+              </h3>
+            </div>
 
-          <div className="h-5 rounded-full bg-slate-800 overflow-hidden">
-            <motion.div
-              initial={{ width: 0 }}
-              animate={{ width: '25%' }}
-              transition={{ duration: 1.5, delay: 0.2 }}
-              className="h-full rounded-full bg-gradient-to-r from-cyan-400 to-cyan-600"
-            />
-          </div>
+            <div className="space-y-8">
+              {/* Time */}
+              <div>
+                <div className="flex justify-between mb-3">
+                  <span className="text-slate-300">Time Complexity</span>
+
+                  <span className="text-cyan-300 font-bold">O(n)</span>
+                </div>
+
+                <div className="h-5 rounded-full bg-slate-800 overflow-hidden">
+                  <motion.div
+                    initial={{ width: 0 }}
+                    animate={{ width: '75%' }}
+                    transition={{ duration: 1.5 }}
+                    className="h-full rounded-full bg-gradient-to-r from-cyan-400 to-cyan-600"
+                  />
+                </div>
+              </div>
+
+              {/* Space */}
+              <div>
+                <div className="flex justify-between mb-3">
+                  <span className="text-slate-300">Space Complexity</span>
+
+                  <span className="text-cyan-300 font-bold">O(1)</span>
+                </div>
+
+                <div className="h-5 rounded-full bg-slate-800 overflow-hidden">
+                  <motion.div
+                    initial={{ width: 0 }}
+                    animate={{ width: '25%' }}
+                    transition={{ duration: 1.5, delay: 0.2 }}
+                    className="h-full rounded-full bg-gradient-to-r from-cyan-400 to-cyan-600"
+                  />
+                </div>
+              </div>
+            </div>
+
+            <p className="mt-10 text-slate-400 leading-8">
+              Iterative algorithms usually consume less memory because they
+              avoid maintaining recursive call stacks.
+            </p>
+          </motion.div>
+
+          {/* Recursive Complexity */}
+          <motion.div
+            whileHover={{
+              scale: 1.02,
+              boxShadow: '0px 0px 35px rgba(168,85,247,0.2)',
+            }}
+            className="rounded-3xl border border-purple-500/20 bg-slate-900/60 backdrop-blur-xl p-8"
+          >
+            <div className="flex items-center gap-4 mb-8">
+              <div className="h-4 w-4 rounded-full bg-purple-400 animate-pulse"></div>
+
+              <h3 className="text-3xl font-bold text-purple-300">
+                Recursive Complexity
+              </h3>
+            </div>
+
+            <div className="space-y-8">
+              {/* Time */}
+              <div>
+                <div className="flex justify-between mb-3">
+                  <span className="text-slate-300">Time Complexity</span>
+
+                  <span className="text-purple-300 font-bold">O(log n)</span>
+                </div>
+
+                <div className="h-5 rounded-full bg-slate-800 overflow-hidden">
+                  <motion.div
+                    initial={{ width: 0 }}
+                    animate={{ width: '45%' }}
+                    transition={{ duration: 1.5 }}
+                    className="h-full rounded-full bg-gradient-to-r from-purple-400 to-purple-600"
+                  />
+                </div>
+              </div>
+
+              {/* Space */}
+              <div>
+                <div className="flex justify-between mb-3">
+                  <span className="text-slate-300">Space Complexity</span>
+
+                  <span className="text-purple-300 font-bold">O(log n)</span>
+                </div>
+
+                <div className="h-5 rounded-full bg-slate-800 overflow-hidden">
+                  <motion.div
+                    initial={{ width: 0 }}
+                    animate={{ width: '55%' }}
+                    transition={{ duration: 1.5, delay: 0.2 }}
+                    className="h-full rounded-full bg-gradient-to-r from-purple-400 to-purple-600"
+                  />
+                </div>
+              </div>
+            </div>
+
+            <p className="mt-10 text-slate-400 leading-8">
+              Recursive algorithms can be elegant and efficient for
+              divide-and-conquer problems, but require additional stack memory.
+            </p>
+          </motion.div>
         </div>
-      </div>
-
-      <p className="mt-10 text-slate-400 leading-8">
-        Iterative algorithms usually consume less memory because they avoid
-        maintaining recursive call stacks.
-      </p>
-    </motion.div>
-
-    {/* Recursive Complexity */}
-    <motion.div
-      whileHover={{
-        scale: 1.02,
-        boxShadow: '0px 0px 35px rgba(168,85,247,0.2)',
-      }}
-      className="rounded-3xl border border-purple-500/20 bg-slate-900/60 backdrop-blur-xl p-8"
-    >
-      <div className="flex items-center gap-4 mb-8">
-        <div className="h-4 w-4 rounded-full bg-purple-400 animate-pulse"></div>
-
-        <h3 className="text-3xl font-bold text-purple-300">
-          Recursive Complexity
-        </h3>
-      </div>
-
-      <div className="space-y-8">
-        {/* Time */}
-        <div>
-          <div className="flex justify-between mb-3">
-            <span className="text-slate-300">Time Complexity</span>
-
-            <span className="text-purple-300 font-bold">O(log n)</span>
-          </div>
-
-          <div className="h-5 rounded-full bg-slate-800 overflow-hidden">
-            <motion.div
-              initial={{ width: 0 }}
-              animate={{ width: '45%' }}
-              transition={{ duration: 1.5 }}
-              className="h-full rounded-full bg-gradient-to-r from-purple-400 to-purple-600"
-            />
-          </div>
-        </div>
-
-        {/* Space */}
-        <div>
-          <div className="flex justify-between mb-3">
-            <span className="text-slate-300">Space Complexity</span>
-
-            <span className="text-purple-300 font-bold">O(log n)</span>
-          </div>
-
-          <div className="h-5 rounded-full bg-slate-800 overflow-hidden">
-            <motion.div
-              initial={{ width: 0 }}
-              animate={{ width: '55%' }}
-              transition={{ duration: 1.5, delay: 0.2 }}
-              className="h-full rounded-full bg-gradient-to-r from-purple-400 to-purple-600"
-            />
-          </div>
-        </div>
-      </div>
-
-      <p className="mt-10 text-slate-400 leading-8">
-        Recursive algorithms can be elegant and efficient for divide-and-conquer
-        problems, but require additional stack memory.
-      </p>
-    </motion.div>
-  </div>
-</motion.div>
+      </motion.div>
     </div>
   )
 }
