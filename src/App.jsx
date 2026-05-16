@@ -33,13 +33,8 @@ const KadaneVisualizerPage = lazy(
   () => import('./components/kadaneAlgo/VisualizerPage')
 )
 
-const SlidingWindowPage = lazy(
-  () => import('./components/slidingWindow/SlidingWindowPage')
-)
-
 const PracticePage = lazy(() => import('./components/PracticePage'))
 const AboutAlgoScope = lazy(() => import('./components/about/About'))
-const IPTracker = lazy(() => import('./components/IPTracker'))
 const NotFound = lazy(() => import('./components/PageNotFound'))
 
 // Simple fallback for Suspense
@@ -142,26 +137,6 @@ function App() {
         <Suspense fallback={<PageLoader />}>
           <AppLayout>
             <KadaneVisualizerPage />
-          </AppLayout>
-        </Suspense>
-      ),
-    },
-    {
-      path: '/sliding-window',
-      element: (
-        <Suspense fallback={<PageLoader />}>
-          <AppLayout>
-            <SlidingWindowPage />
-          </AppLayout>
-        </Suspense>
-      ),
-    },
-    {
-      path: '/iptrack',
-      element: (
-        <Suspense fallback={<PageLoader />}>
-          <AppLayout>
-            <IPTracker />
           </AppLayout>
         </Suspense>
       ),
