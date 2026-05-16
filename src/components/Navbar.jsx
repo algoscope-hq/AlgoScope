@@ -80,7 +80,9 @@ export const Navbar = () => {
     { name: 'Sort', href: '/sort' },
     { name: 'Abstract Data Types', href: '/adt' },
     { name: 'Array Search', href: '/ldssearch' },
+    { name: 'Sliding Window', href: '/sliding-window' },
     { name: "Kadane's Algorithm", href: '/kadane' },
+    { name: 'IP Tracker', href: '/iptrack' },
   ]
 
   return (

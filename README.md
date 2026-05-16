@@ -309,12 +309,15 @@ flowchart TD
 
 We welcome contributions! Whether it's a bug fix, a new algorithm visualization, or a UI improvement, your help is appreciated.
 
+> [!TIP]
+> **New to AlgoScope?** Check out our **[Contribution Roadmap](CONTRIBUTION_ROADMAP.md)** for a step-by-step guide on how to get started!
+
 1. **Fork the repo** and create your branch from `main`.
 2. **Setup locally** following the [Quick Start](#-quick-start) guide.
 3. **Commit your changes** with descriptive messages.
 4. **Open a Pull Request** and describe your changes in detail.
 
-## _For more detailed guidelines, please refer to our [Contribution Guidelines](CONTRIBUTING.md) and [Code of Conduct](CODE_OF_CONDUCT.md)._
+## _For more detailed guidelines, please refer to our [Contribution Guidelines](CONTRIBUTING.md), [Roadmap](CONTRIBUTION_ROADMAP.md), and [Code of Conduct](CODE_OF_CONDUCT.md)._
 
 ---
 

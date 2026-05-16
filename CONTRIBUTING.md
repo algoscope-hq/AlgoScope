@@ -2,6 +2,9 @@
 
 First off, thank you for considering contributing to AlgoScope! It's people like you that make AlgoScope such a great tool for the DSA community.
 
+> [!IMPORTANT]
+> If you are looking for a guided path to start your contributions, please refer to our **[Contribution Roadmap](CONTRIBUTION_ROADMAP.md)** which outlines specific phases and recommended projects.
+
 Join our [Discord Community](https://discord.gg/xxFRGj82xS) to connect with other contributors and the maintainers!
 
 ## 🚀 How Can I Contribute?
