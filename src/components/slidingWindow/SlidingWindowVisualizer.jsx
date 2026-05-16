@@ -1,5 +1,4 @@
-import React, { useState, useMemo, useEffect } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { generateFixedWindowSteps } from '../../algorithms/slidingWindow/fixedWindowSteps';
 import { useStepPlayback } from '../visualizer/useStepPlayback';
@@ -12,7 +11,6 @@ const createRandomArray = (size = 10) =>
   Array.from({ length: size }, () => Math.floor(Math.random() * 20) + 1);
 
 export default function SlidingWindowVisualizer() {
-  const [searchParams] = useSearchParams();
   const [array, setArray] = useState([2, 1, 5, 1, 3, 2, 8, 4, 9, 1]);
   const [windowSize, setWindowSize] = useState(3);
   const [speed, setSpeed] = useState(1);

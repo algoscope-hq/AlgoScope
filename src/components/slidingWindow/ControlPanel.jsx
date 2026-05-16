@@ -1,6 +1,5 @@
 import React from 'react';
 import SpeedSlider from '../SpeedSlider';
-import { motion } from 'framer-motion';
 
 export default function ControlPanel({
   isRunning,
@@ -12,7 +11,6 @@ export default function ControlPanel({
   setSpeed,
   onStart,
   onGenerate,
-  onReset,
   onPlayPause,
   onStep,
   onReplay,

@@ -13,7 +13,7 @@ const IPTracker = () => {
         setIpData(data)
         setLoading(false)
       })
-      .catch((err) => {
+      .catch(() => {
         setError('Failed to fetch IP data')
         setLoading(false)
       })

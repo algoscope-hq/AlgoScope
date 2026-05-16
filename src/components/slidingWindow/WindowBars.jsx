@@ -1,7 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 
-export default function WindowBars({ array, windowStart, windowEnd, maxStartIndex, windowSize, type }) {
+export default function WindowBars({ array, windowStart, windowEnd, maxStartIndex, windowSize }) {
   const maxVal = Math.max(...array);
 
   return (
