@@ -57,6 +57,7 @@ const Footer = () => {
                 { name: 'Array Search', path: '/ldssearch' },
                 { name: 'ADTs', path: '/adt' },
                 { name: "Kadane's Algorithm", path: '/kadane' },
+                { name: "Moore's Voting Algorithm", path: '/moore-voting' },
               ].map((link, i) => (
                 <li key={i}>
                   <Link

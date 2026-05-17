@@ -81,6 +81,7 @@ export const Navbar = () => {
     { name: 'Abstract Data Types', href: '/adt' },
     { name: 'Array Search', href: '/ldssearch' },
     { name: "Kadane's Algorithm", href: '/kadane' },
+    { name: "Moore's Voting Algorithm", href: '/moore-voting' },
   ]
 
   return (

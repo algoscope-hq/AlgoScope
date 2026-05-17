@@ -48,6 +48,11 @@ const pageMetadata = {
     description:
       'Visualize Kadane’s algorithm step by step to understand maximum subarray sums with interactive animations and synchronized code.',
   },
+  '/moore-voting': {
+    title: "Moore's Voting Algorithm | AlgoScope",
+    description:
+      "Visualize Moore's voting algorithm step by step to understand how it finds the majority element in an array with interactive animations and synchronized code.",
+  },
   '/about': {
     title: 'About AlgoScope',
     description:

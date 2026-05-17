@@ -1,29 +1,26 @@
-import React, { useState, useRef } from 'react'
+import React, { useState, useRef, useEffect } from 'react'
 import { animate } from 'animejs'
 
 const MODES = {
-  STANDARD: 'standard',
-  BROWSER: 'browser',
-  REVERSAL: 'reversal',
-  PARENTHESES: 'parentheses',
-  POSTFIX: 'postfix',
+  STANDARD: 'standard stack',
+  BROWSER: 'browser history',
+  REVERSAL: 'string reversal',
+  PARENTHESES: 'parentheses checker',
+  POSTFIX: 'postfix evaluator',
 }
 
 const SLEEP_MS = 800
 
-export default function StackIV() {
+export default function StackIV({ onStepChange }) {
   const [stack, setStack] = useState([])
   const [mode, setMode] = useState(MODES.STANDARD)
   const [inputValue, setInputValue] = useState('')
-  const [consoleOutput, setConsoleOutput] = useState('') // For algorithm results
-  const [isRunning, setIsRunning] = useState(false) // To lock UI during auto-play
+  const [consoleOutput, setConsoleOutput] = useState('')
+  const [isRunning, setIsRunning] = useState(false)
   const containerRef = useRef(null)
 
-  // We need a ref to track the "logical" stack state immediately during async algorithms
-  // because React state updates are asynchronous and batched.
   const stackRef = useRef([])
 
-  // Reset everything when mode changes
   const handleModeChange = (newMode) => {
     setMode(newMode)
     setStack([])
@@ -31,9 +28,12 @@ export default function StackIV() {
     setInputValue('')
     setConsoleOutput('')
     setIsRunning(false)
+    if (onStepChange) onStepChange(null)
   }
 
-  // --- Core Operations (Promisified for Sequencing) ---
+  useEffect(() => {
+    if (onStepChange) onStepChange(null)
+  }, [mode, onStepChange])
 
   const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms))
 
@@ -41,7 +41,7 @@ export default function StackIV() {
     return new Promise((resolve) => {
       animate(el, {
         ...params,
-        onComplete: resolve, // Reliable callback for completion
+        onComplete: resolve,
       })
     })
   }
@@ -53,14 +53,9 @@ export default function StackIV() {
     }
 
     const newItem = { id: Date.now() + Math.random(), value: val }
-
-    // Update Logical Ref
     stackRef.current.push(newItem)
-
-    // Update Visual State
     setStack((prev) => [...prev, newItem])
 
-    // Wait for DOM update then animate
     await sleep(50)
     const el = document.getElementById(`stack-item-${newItem.id}`)
     if (el) {
@@ -89,32 +84,38 @@ export default function StackIV() {
       })
     }
 
-    // Update Logical Ref
     const popped = stackRef.current.pop()
-
-    // Update Visual State
     setStack((prev) => prev.slice(0, -1))
-
     return popped ? popped.value : null
   }
 
-  // --- Handlers for Modes ---
-
-  const handleStandardPush = () => {
+  const handleStandardPush = async () => {
     if (!inputValue) return
-    pushItem(inputValue)
+    if (onStepChange) onStepChange(6)
+    await pushItem(inputValue)
     setInputValue('')
+    if (onStepChange) onStepChange(null)
   }
 
-  const handleBrowserVisit = () => {
+  const handleStandardPop = async () => {
+    if (onStepChange) onStepChange(10)
+    await popItem()
+    if (onStepChange) onStepChange(null)
+  }
+
+  const handleBrowserVisit = async () => {
     if (!inputValue) return
-    pushItem(inputValue)
+    if (onStepChange) onStepChange(6)
+    await pushItem(inputValue)
     setInputValue('')
+    if (onStepChange) onStepChange(null)
   }
 
   const handleBrowserBack = async () => {
+    if (onStepChange) onStepChange(10)
     const page = await popItem()
     if (page) setConsoleOutput(`Went back from: ${page}`)
+    if (onStepChange) onStepChange(null)
   }
 
   const runReversal = async () => {
@@ -122,8 +123,9 @@ export default function StackIV() {
     setIsRunning(true)
     setConsoleOutput('Starting Reversal...')
 
-    // Phase 1: Push
+    if (onStepChange) onStepChange(1)
     for (const char of inputValue.split('')) {
+      if (onStepChange) onStepChange(6)
       await pushItem(char)
       await sleep(SLEEP_MS / 2)
     }
@@ -131,9 +133,10 @@ export default function StackIV() {
     setConsoleOutput('Stack filled. Popping to reverse...')
     await sleep(SLEEP_MS)
 
-    // Phase 2: Pop
     let reversed = ''
+    if (onStepChange) onStepChange(10)
     while (stackRef.current.length > 0) {
+      if (onStepChange) onStepChange(11)
       const char = await popItem()
       reversed += char
       setConsoleOutput(`Reversed: ${reversed}`)
@@ -141,6 +144,7 @@ export default function StackIV() {
     }
 
     setIsRunning(false)
+    if (onStepChange) onStepChange(null)
   }
 
   const runParentheses = async () => {
@@ -154,11 +158,11 @@ export default function StackIV() {
 
     for (const char of inputValue.split('')) {
       if (openMap[char]) {
-        // It's an opener
+        if (onStepChange) onStepChange(6)
         await pushItem(char)
         setConsoleOutput(`Found opener '${char}'. Pushed.`)
       } else if (closeMap[char]) {
-        // It's a closer
+        if (onStepChange) onStepChange(10)
         setConsoleOutput(`Found closer '${char}'. Checking stack...`)
         const popped = await popItem()
 
@@ -183,6 +187,7 @@ export default function StackIV() {
     }
 
     setIsRunning(false)
+    if (onStepChange) onStepChange(null)
   }
 
   const runPostfix = async () => {
@@ -194,18 +199,19 @@ export default function StackIV() {
 
     for (const token of tokens) {
       if (!isNaN(token)) {
-        // Operand
         setConsoleOutput(`Pushing number: ${token}`)
+        if (onStepChange) onStepChange(6)
         await pushItem(Number(token))
       } else {
-        // Operator
         setConsoleOutput(`Operator '${token}' found. Popping 2 operands...`)
+        if (onStepChange) onStepChange(10)
         const val2 = await popItem()
-        const val1 = await popItem() // Pop order matters!
+        const val1 = await popItem()
 
         if (val1 === null || val2 === null) {
           setConsoleOutput('Error: Insufficient operands!')
           setIsRunning(false)
+          if (onStepChange) onStepChange(null)
           return
         }
 
@@ -222,31 +228,32 @@ export default function StackIV() {
             break
           case '/':
             res = Math.floor(val1 / val2)
-            break // Integer division
+            break
           default:
             res = 0
         }
 
         setConsoleOutput(`${val1} ${token} ${val2} = ${res}. Pushing result.`)
         await sleep(SLEEP_MS)
+        if (onStepChange) onStepChange(6)
         await pushItem(res)
       }
       await sleep(SLEEP_MS)
     }
 
+    if (onStepChange) onStepChange(10)
     const finalResult = await popItem()
     if (stackRef.current.length === 0) {
       setConsoleOutput(`Final Result: ${finalResult} 🎉`)
-      // Optional: Push it back to show it
+      if (onStepChange) onStepChange(6)
       await pushItem(finalResult)
     } else {
       setConsoleOutput('Error: Stack not empty after evaluation.')
     }
 
     setIsRunning(false)
+    if (onStepChange) onStepChange(null)
   }
-
-  // --- Render Helpers ---
 
   const renderControls = () => {
     switch (mode) {
@@ -337,7 +344,7 @@ export default function StackIV() {
             </button>
           </>
         )
-      default: // STANDARD
+      default:
         return (
           <>
             <input
@@ -357,7 +364,7 @@ export default function StackIV() {
               Push
             </button>
             <button
-              onClick={() => popItem()}
+              onClick={handleStandardPop}
               className="px-6 py-2 bg-red-600 hover:bg-red-500 text-white font-bold rounded-lg shadow-lg"
               disabled={isRunning}
             >
@@ -370,7 +377,6 @@ export default function StackIV() {
 
   return (
     <div className="flex flex-col h-full items-center">
-      {/* Mode Selector */}
       <div className="mb-6 w-full max-w-2xl flex lg:flex-row flex-col items-center justify-between bg-slate-800/50 p-4 rounded-xl border border-slate-700">
         <label className="text-slate-300 font-bold mr-4">
           Application Mode:
@@ -389,12 +395,10 @@ export default function StackIV() {
         </select>
       </div>
 
-      {/* Dynamic Controls */}
       <div className="flex flex-wrap gap-4 mb-4 justify-center z-10 min-h-[50px]">
         {renderControls()}
       </div>
 
-      {/* Output / Status Console */}
       <div className="h-16 w-full max-w-md text-center mb-4">
         {consoleOutput && (
           <div className="bg-black/40 text-green-400 font-mono text-sm p-2 rounded border border-green-900/50 whitespace-pre-wrap animate-pulse">
@@ -403,13 +407,11 @@ export default function StackIV() {
         )}
       </div>
 
-      {/* Visual Container */}
       <div
         className="flex-1 flex items-end justify-center pb-10 w-full"
         ref={containerRef}
       >
         <div className="relative w-48 min-h-[400px] border-b-4 border-l-4 border-r-4 border-slate-600 rounded-b-xl bg-slate-900/30 backdrop-blur-sm flex flex-col-reverse items-center p-2 gap-2 transition-all duration-500">
-          {/* Label */}
           <div className="absolute -bottom-10 text-slate-500 font-mono text-sm uppercase tracking-widest text-center w-full">
             {mode === MODES.BROWSER ? 'History (LIFO)' : 'Stack Memory'}
           </div>
@@ -431,7 +433,6 @@ export default function StackIV() {
                 {index}
               </span>
 
-              {/* Top Indicator */}
               {index === stack.length - 1 && (
                 <div className="absolute -right-20 lg:-right-30 top-11 lg:top-1/2 -translate-y-1/2 flex lg:flex-row flex-col items-center gap-3">
                   <svg

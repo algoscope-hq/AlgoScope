@@ -5,6 +5,7 @@ import SearchingImg from '../assets/new-home-images/traversal.png'
 import LinearSearchImg from '../assets/new-home-images/search.png'
 import GraphAlgoImg from '../assets/new-home-images/shortestPath.png'
 import KadaneImg from '../assets/new-home-images/KadaneImg.png'
+import MooreVotingImg from '../assets/new-home-images/MooreVoting.png'
 import adt from '../assets/new-home-images/adt.png'
 import { motion } from 'framer-motion'
 
@@ -67,6 +68,16 @@ const ALGORITHMS = [
     link: '/kadane',
     image: KadaneImg,
     imageAlt: 'Kadane algorithm visualization for maximum subarray sum',
+  },
+  {
+    title: "Moore's Voting Algorithm",
+    description:
+      "Visualize the Moore's Voting Algorithm for finding the majority element.",
+    color: 'bg-slate-900/50 border-green-500/30 hover:border-green-400',
+    link: '/moore-voting',
+    image: MooreVotingImg,
+    imageAlt:
+      "Moore's Voting algorithm visualization for finding the majority element",
   },
 ]
 
