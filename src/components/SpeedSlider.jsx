@@ -2,6 +2,7 @@ import React, { memo } from 'react'
 import Box from '@mui/material/Box'
 import Slider from '@mui/material/Slider'
 import clickSound from '../assets/click.wav'
+import Tooltip from './Tooltip'
 const audio = new Audio(clickSound)
 audio.volume = 0.2
 
@@ -21,70 +22,72 @@ const SpeedSlider = memo(function SpeedSlider({
     onChange(event, newValue)
   }
   return (
-    <Box
-      sx={{
-        // 1. "Glassmorphism" container
-        background: 'rgba(15, 23, 42, 0.6)', // slate-900/60
-        backdropFilter: 'blur(10px)',
-        borderRadius: '16px', // rounded-2xl
-        padding: '24px',
-        boxShadow: '0 8px 32px 0 rgba(0, 0, 0, 0.2)',
-        border: '1px solid rgba(255, 255, 255, 0.05)',
-        width: '100%',
-      }}
-    >
-      <Slider
-        value={value}
-        onChange={handleChange}
-        valueLabelDisplay="auto"
-        step={step}
-        marks
-        min={min}
-        max={max}
-        // 2. Custom styling for the slider itself
+    <Tooltip content="Adjust animation speed" position="top" className="w-full">
+      <Box
         sx={{
-          height: 8,
-          '& .MuiSlider-track': {
-            border: 'none',
-            // 3. The sexy gradient track
-            background: sliderGradient,
-          },
-          '& .MuiSlider-thumb': {
-            height: 24,
-            width: 24,
-            backgroundColor: '#0f172a', // slate-900
-            border: '2px solid #22d3ee', // cyan-400
-            // 4. The "glow" effect on hover/focus
-            '&:focus, &:hover, &.Mui-active, &.Mui-focusVisible': {
-              boxShadow: '0 0 0 8px rgba(34, 211, 238, 0.15)', // cyan-400 with 15% opacity
-            },
-            '&:before': {
-              display: 'none', // Removes default Mui ripple
-            },
-          },
-          '& .MuiSlider-valueLabel': {
-            // 5. Styled tooltip
-            background: '#0f172a', // slate-900
-            border: '1px solid #334155', // slate-700
-            borderRadius: '8px',
-            padding: '4px 8px',
-            color: '#22d3ee', // cyan-400
-          },
-          '& .MuiSlider-rail': {
-            opacity: 0.3,
-            backgroundColor: '#94a3b8', // slate-400
-          },
-          '& .MuiSlider-mark': {
-            backgroundColor: '#94a3b8',
-            opacity: 0.5,
-          },
+          // 1. "Glassmorphism" container
+          background: 'rgba(15, 23, 42, 0.6)', // slate-900/60
+          backdropFilter: 'blur(10px)',
+          borderRadius: '16px', // rounded-2xl
+          padding: '24px',
+          boxShadow: '0 8px 32px 0 rgba(0, 0, 0, 0.2)',
+          border: '1px solid rgba(255, 255, 255, 0.05)',
+          width: '100%',
         }}
-      />
-      {/* 6. Styled text below */}
-      <p className="text-center text-cyan-400 font-mono text-sm mt-2 font-bold tracking-wide">
-        SPEED: {value.toFixed(1)}x
-      </p>
-    </Box>
+      >
+        <Slider
+          value={value}
+          onChange={handleChange}
+          valueLabelDisplay="auto"
+          step={step}
+          marks
+          min={min}
+          max={max}
+          // 2. Custom styling for the slider itself
+          sx={{
+            height: 8,
+            '& .MuiSlider-track': {
+              border: 'none',
+              // 3. The sexy gradient track
+              background: sliderGradient,
+            },
+            '& .MuiSlider-thumb': {
+              height: 24,
+              width: 24,
+              backgroundColor: '#0f172a', // slate-900
+              border: '2px solid #22d3ee', // cyan-400
+              // 4. The "glow" effect on hover/focus
+              '&:focus, &:hover, &.Mui-active, &.Mui-focusVisible': {
+                boxShadow: '0 0 0 8px rgba(34, 211, 238, 0.15)', // cyan-400 with 15% opacity
+              },
+              '&:before': {
+                display: 'none', // Removes default Mui ripple
+              },
+            },
+            '& .MuiSlider-valueLabel': {
+              // 5. Styled tooltip
+              background: '#0f172a', // slate-900
+              border: '1px solid #334155', // slate-700
+              borderRadius: '8px',
+              padding: '4px 8px',
+              color: '#22d3ee', // cyan-400
+            },
+            '& .MuiSlider-rail': {
+              opacity: 0.3,
+              backgroundColor: '#94a3b8', // slate-400
+            },
+            '& .MuiSlider-mark': {
+              backgroundColor: '#94a3b8',
+              opacity: 0.5,
+            },
+          }}
+        />
+        {/* 6. Styled text below */}
+        <p className="text-center text-cyan-400 font-mono text-sm mt-2 font-bold tracking-wide">
+          SPEED: {value.toFixed(1)}x
+        </p>
+      </Box>
+    </Tooltip>
   )
 })
 
