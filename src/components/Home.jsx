@@ -22,7 +22,7 @@ const containerVariants = {
 const ALGORITHMS = [
   {
     title: 'Sorting',
-    description: 'Visualizing Bubble, Merge, Quick, and Heap Sort.',
+    description: 'Visualizing Bubble, Merge, Quick, Heap, and Shell Sort.',
     color: 'bg-slate-900/50 border-blue-500/30 hover:border-blue-400',
     link: '/sort',
     image: SortingImg,
@@ -94,7 +94,7 @@ export const Home = () => {
             </span>
           </div>
 
-          <h1 className="text-6xl md:text-8xl font-black tracking-tighter">
+          <h1 className="text-6xl md:text-8xl font-black tracking-tighter logo-font">
             <span className="bg-clip-text text-transparent bg-gradient-to-br from-white via-white to-gray-500">
               Algo
             </span>
@@ -129,7 +129,7 @@ export const Home = () => {
             </a>
             <a
               href="/practice"
-              className="inline-flex items-center justify-center px-8 py-4 text-base font-bold text-white transition-all duration-200 bg-emerald-600/80 border border-emerald-500/40 rounded-lg hover:bg-emerald-500 hover:scale-105 hover:border-emerald-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500"
+              className="inline-flex items-center justify-center px-8 py-4 text-base font-bold text-emerald-300 transition-all duration-200 bg-emerald-500/[0.06] border border-emerald-400/30 rounded-lg backdrop-blur-md hover:text-emerald-100 hover:bg-emerald-500/10 hover:border-emerald-400/60 hover:scale-105 hover:shadow-[0_0_20px_rgba(52,211,153,0.15)] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500"
             >
               Practice
             </a>

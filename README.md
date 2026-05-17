@@ -323,7 +323,7 @@ We welcome contributions! Whether it's a bug fix, a new algorithm visualization,
 Thanks goes to these wonderful people who have contributed to AlgoScope:
 
 <a href="https://github.com/algoscope-hq/AlgoScope/graphs/contributors">
-  <img src="https://contrib.rocks/image?repo=algoscope-hq/AlgoScope&max=500&v=3" />
+  <img src="https://contrib.rocks/image?repo=algoscope-hq/AlgoScope&max=500&v=4" />
 </a>
 
 ---

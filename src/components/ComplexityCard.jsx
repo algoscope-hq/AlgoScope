@@ -7,30 +7,23 @@ const ComplexityCard = ({ algorithm }) => {
   const current = complexityMap[algorithm]
 
   return (
-    <div className="mt-4 bg-slate-950/70 border border-slate-700 rounded-xl p-4">
-      <h2 className="text-cyan-400 font-bold text-lg mb-4">
+    <div className="bg-slate-950/70 border border-slate-700 rounded-xl px-6 py-4 flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-0">
+      <h2 className="text-cyan-400 font-bold text-sm uppercase tracking-[0.18em] sm:w-1/4">
         Complexity Analysis
       </h2>
-
-      {/* Time Complexity */}
-      <div className="mb-4">
-        <p className="text-slate-400 text-sm mb-1">Time Complexity</p>
-
-        <p className="text-white font-semibold text-sm break-words">
-          {current.time}
-        </p>
-      </div>
-
-      {/* Divider */}
-      <div className="border-t border-slate-700 my-3"></div>
-
-      {/* Space Complexity */}
-      <div>
-        <p className="text-slate-400 text-sm mb-1">Space Complexity</p>
-
-        <p className="text-white font-semibold text-sm break-words">
-          {current.space}
-        </p>
+      <div className="flex flex-1 gap-6">
+        <div className="flex-1 bg-slate-900/60 rounded-lg px-4 py-3 border border-slate-700/50">
+          <p className="text-slate-400 text-xs mb-1 uppercase tracking-wider">
+            Time
+          </p>
+          <p className="text-white font-semibold text-sm">{current.time}</p>
+        </div>
+        <div className="flex-1 bg-slate-900/60 rounded-lg px-4 py-3 border border-slate-700/50">
+          <p className="text-slate-400 text-xs mb-1 uppercase tracking-wider">
+            Space
+          </p>
+          <p className="text-white font-semibold text-sm">{current.space}</p>
+        </div>
       </div>
     </div>
   )

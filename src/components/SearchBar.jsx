@@ -5,76 +5,129 @@ import { motion, AnimatePresence } from 'framer-motion'
 
 const ALGORITHMS = [
   // Sorting
-  { id: 'bubble', name: 'Bubble Sort', category: 'Sorting', route: '/sort' },
+  {
+    id: 'bubble',
+    name: 'Bubble Sort',
+    category: 'Sorting',
+    route: '/sort?algo=bubble',
+  },
   {
     id: 'selection',
     name: 'Selection Sort',
     category: 'Sorting',
-    route: '/sort',
+    route: '/sort?algo=selection',
   },
   {
     id: 'insertion',
     name: 'Insertion Sort',
     category: 'Sorting',
-    route: '/sort',
+    route: '/sort?algo=insertion',
   },
-  { id: 'quick', name: 'Quick Sort', category: 'Sorting', route: '/sort' },
-  { id: 'merge', name: 'Merge Sort', category: 'Sorting', route: '/sort' },
-  { id: 'heap', name: 'Heap Sort', category: 'Sorting', route: '/sort' },
+  {
+    id: 'quick',
+    name: 'Quick Sort',
+    category: 'Sorting',
+    route: '/sort?algo=quick',
+  },
+  {
+    id: 'merge',
+    name: 'Merge Sort',
+    category: 'Sorting',
+    route: '/sort?algo=merge',
+  },
+  {
+    id: 'heap',
+    name: 'Heap Sort',
+    category: 'Sorting',
+    route: '/sort?algo=heap',
+  },
   {
     id: 'counting',
     name: 'Counting Sort',
     category: 'Sorting',
-    route: '/sort',
+    route: '/sort?algo=counting',
   },
-  { id: 'radix', name: 'Radix Sort', category: 'Sorting', route: '/sort' },
+  {
+    id: 'radix',
+    name: 'Radix Sort',
+    category: 'Sorting',
+    route: '/sort?algo=radix',
+  },
+  {
+    id: 'shell',
+    name: 'Shell Sort',
+    category: 'Sorting',
+    route: '/sort?algo=shell',
+  },
   // Searching (Graph)
   {
     id: 'bfs',
     name: 'BFS (Breadth First Search)',
     category: 'Searching',
-    route: '/search',
+    route: '/search?algo=bfs',
   },
   {
     id: 'dfs',
     name: 'DFS (Depth First Search)',
     category: 'Searching',
-    route: '/search',
+    route: '/search?algo=dfs',
   },
   // Shortest Path
   {
     id: 'dijkstra',
     name: 'Dijkstra',
     category: 'Shortest Path',
-    route: '/spath',
+    route: '/spath?algo=dijkstra',
   },
   {
     id: 'floyd',
     name: 'Floyd-Warshall',
     category: 'Shortest Path',
-    route: '/spath',
+    route: '/spath?algo=floydwarshall',
   },
   // Array Search
   {
     id: 'linear',
     name: 'Linear Search',
     category: 'Array Search',
-    route: '/ldssearch',
+    route: '/ldssearch?algo=linear',
   },
   {
     id: 'binary',
     name: 'Binary Search',
     category: 'Array Search',
-    route: '/ldssearch',
+    route: '/ldssearch?algo=binary',
+  },
+  {
+    id: 'kadane',
+    name: "Kadane's Algorithm",
+    category: 'Dynamic Programming',
+    route: '/kadane',
+    keywords: [
+      'kadane',
+      'maximum subarray',
+      'max subarray',
+      'dynamic programming',
+    ],
   },
   // ADTs
-  { id: 'stack', name: 'Stack', category: 'Data Structures', route: '/adt' },
-  { id: 'queue', name: 'Queue', category: 'Data Structures', route: '/adt' },
+  {
+    id: 'stack',
+    name: 'Stack',
+    category: 'Data Structures',
+    route: '/adt?type=stack',
+  },
+  {
+    id: 'queue',
+    name: 'Queue',
+    category: 'Data Structures',
+    route: '/adt?type=queue',
+  },
   {
     id: 'tree',
     name: 'Binary Tree',
     category: 'Data Structures',
-    route: '/adt',
+    route: '/adt?type=tree',
   },
   // General
   {
@@ -97,7 +150,7 @@ const SearchBar = () => {
   // Initialize Fuse.js
   const fuse = useMemo(() => {
     return new Fuse(ALGORITHMS, {
-      keys: ['name', 'category'],
+      keys: ['name', 'category', 'keywords'],
       threshold: 0.4,
       includeMatches: true,
     })

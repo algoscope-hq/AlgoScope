@@ -43,6 +43,11 @@ const pageMetadata = {
     description:
       'Practice algorithms directly in the browser with a multi-language code editor and instant feedback inside AlgoScope.',
   },
+  '/kadane': {
+    title: 'Kadane Algorithm | AlgoScope',
+    description:
+      'Visualize Kadane’s algorithm step by step to understand maximum subarray sums with interactive animations and synchronized code.',
+  },
   '/about': {
     title: 'About AlgoScope',
     description:

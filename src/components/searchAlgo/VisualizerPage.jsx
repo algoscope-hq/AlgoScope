@@ -14,42 +14,48 @@ export const VisualizerPage = () => {
   const [algorithm, setAlgorithm] = useState(null)
   const [speed, setSpeed] = useState(1.0)
   const [language, setLanguage] = useState('javascript')
+  const [runKey, setRunKey] = useState(null)
 
   const handleSpeedChange = (event, newValue) => {
     setSpeed(newValue)
   }
 
+  const handleRun = () => {
+    if (!algorithm || !node) return
+    setRunKey((k) => (k === null ? 0 : k + 1))
+  }
+
+  const handleReset = () => {
+    setNode(null)
+    setAlgorithm(null)
+    setRunKey(null)
+  }
+
+  const canRun = !!algorithm && !!node
+
   const currentSource = useMemo(() => {
-    if (!algorithm || !graphSearchSources || !graphSearchSources[algorithm]) {
-      return null
-    }
-
-    const algoData = graphSearchSources[algorithm]
-    const langData = algoData[language]
-
-    if (!langData) return null
-
-    return typeof langData === 'string' ? langData : langData.code
+    if (!algorithm || !graphSearchSources[algorithm]) return null
+    return graphSearchSources[algorithm][language]?.code ?? ''
   }, [algorithm, language])
 
   return (
-    <>
-      <motion.div
-        className="lg:w-full w-auto flex flex-col lg:flex-row p-4 sm:p-6 bg-slate-950/50 min-h-screen shadow-2xl rounded-2xl border border-white/10 backdrop-blur-xl"
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 1, ease: 'easeInOut' }}
-      >
-        <div className="w-full lg:w-1/4 xl:w-1/5 p-4 flex flex-col justify-between bg-slate-900/80 shadow-xl rounded-xl border border-white/5 backdrop-blur-sm">
-          <h2 className="text-2xl font-bold text-center text-white border-b border-white/10 pb-4 tracking-tight">
+    <motion.div
+      className="w-full flex flex-col lg:flex-row p-4 sm:p-6 gap-4 sm:gap-6 bg-slate-950/50 min-h-screen shadow-2xl rounded-2xl border border-white/10 backdrop-blur-xl"
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 1, ease: 'easeInOut' }}
+    >
+      {/* Left Panel: Controls */}
+      <div className="w-full lg:w-1/4 p-4 flex flex-col gap-6 bg-slate-900/80 shadow-xl rounded-xl border border-white/5 backdrop-blur-sm overflow-y-auto">
+        {/* Header */}
+        <div className="border-b border-white/10 pb-4">
+          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-cyan-400/80 text-center mb-1">
+            Graph Search Visualizer
+          </p>
+          <h2 className="text-xl font-bold text-center text-white tracking-tight">
             Controls
           </h2>
-          <MenuSelectAlgorithm
-            algorithm={algorithm}
-            setAlgorithm={setAlgorithm}
-          />
-          <MenuSelectNodeSearch setNode={setNode} />
-          <SpeedSlider value={speed} onChange={handleSpeedChange} />
+        </div>
 
           <div className="pt-4 border-t border-white/5">
             <p className="mb-3 text-xs font-semibold uppercase tracking-[0.2em] text-cyan-400/80">
@@ -72,32 +78,99 @@ export const VisualizerPage = () => {
             </Tooltip>
           </div>
           <ComplexityCard algorithm={algorithm} />
+        {/* How to use stepper */}
+        <div className="bg-slate-950/60 rounded-xl border border-white/5 p-3 space-y-2">
+          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500 mb-2">
+            How to use
+          </p>
+          {[
+            { step: '1', label: 'Pick an algorithm' },
+            { step: '2', label: 'Choose a starting node' },
+            { step: '3', label: 'Press Run' },
+          ].map(({ step, label }) => {
+            const done =
+              (step === '1' && algorithm) ||
+              (step === '2' && node) ||
+              (step === '3' && runKey !== null)
+            return (
+              <div key={step} className="flex items-center gap-3">
+                <span
+                  className={`flex-shrink-0 w-5 h-5 rounded-full flex items-center justify-center text-xs font-bold transition-colors duration-300 ${
+                    done
+                      ? 'bg-cyan-500 text-white'
+                      : 'bg-slate-700 text-slate-400'
+                  }`}
+                >
+                  {done ? '✓' : step}
+                </span>
+                <span
+                  className={`text-sm transition-colors duration-300 ${
+                    done ? 'text-slate-200' : 'text-slate-500'
+                  }`}
+                >
+                  {label}
+                </span>
+              </div>
+            )
+          })}
         </div>
 
-        <div className="w-full xl:w-4/5 mt-4 lg:mt-0 lg:ml-6 flex flex-col gap-6">
-          <div className="rounded-xl overflow-hidden border border-white/10 shadow-lg">
-            <CanvasSearching
-              algorithm={algorithm}
-              vertex={node}
-              speed={speed}
-            />
-          </div>
-          <div className="w-full">
-            <CodePanel
-              title={
-                algorithm
-                  ? `${algorithm.toUpperCase()} Implementation`
-                  : 'Code Viewer'
-              }
-              code={
-                currentSource ||
-                '// Select an algorithm and node to see implementation'
-              }
-              language={language}
-            />
-          </div>
+        {/* Run / Reset buttons */}
+        <div className="flex flex-col gap-2">
+          <button
+            onClick={handleRun}
+            disabled={!canRun}
+            className={`w-full py-3 px-4 rounded-xl text-sm font-bold transition-all duration-300 ${
+              canRun
+                ? 'bg-cyan-600 hover:bg-cyan-500 text-white shadow-lg shadow-cyan-500/30 hover:scale-[1.02]'
+                : 'bg-slate-800 text-slate-600 cursor-not-allowed border border-slate-700'
+            }`}
+          >
+            ▶ Run
+          </button>
+          <button
+            onClick={handleReset}
+            className="w-full py-3 px-4 rounded-xl text-sm font-bold bg-slate-800 text-slate-300 border border-slate-700 hover:bg-slate-700 hover:text-white transition-all duration-300"
+          >
+            ↺ Reset
+          </button>
         </div>
-      </motion.div>
-    </>
+
+        <MenuSelectAlgorithm
+          algorithm={algorithm}
+          setAlgorithm={setAlgorithm}
+        />
+        <MenuSelectNodeSearch node={node} setNode={setNode} />
+        <SpeedSlider value={speed} onChange={handleSpeedChange} />
+      </div>
+
+      {/* Right Panel: Visualization and Code */}
+      <div className="w-full lg:w-3/4 flex flex-col gap-6">
+        <div className="rounded-xl overflow-hidden border border-white/10 shadow-lg">
+          <CanvasSearching
+            algorithm={algorithm}
+            vertex={node}
+            speed={speed}
+            runKey={runKey}
+          />
+        </div>
+        <ComplexityCard algorithm={algorithm} />
+        <div className="w-full">
+          <CodePanel
+            title={
+              algorithm
+                ? `${algorithm.toUpperCase()} Implementation`
+                : 'Code Viewer'
+            }
+            code={
+              currentSource ||
+              '// Select an algorithm and node to see implementation'
+            }
+            language={language}
+            onLanguageChange={setLanguage}
+          />
+        </div>
+      </div>
+    </motion.div>
   )
 }

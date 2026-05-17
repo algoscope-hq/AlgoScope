@@ -1,1 +1,15 @@
 @import 'tailwindcss';
+
+@layer base {
+  html,
+  body {
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 400;
+    font-style: normal;
+    font-optical-sizing: auto;
+  }
+
+  .logo-font {
+    font-family: 'Geist', sans-serif;
+  }
+}

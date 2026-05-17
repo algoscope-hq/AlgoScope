@@ -32,7 +32,7 @@ const Footer = () => {
                   className="w-full h-full object-contain rounded-lg"
                 />
               </div>
-              <h3 className="text-2xl font-bold text-white tracking-tight">
+              <h3 className="text-2xl font-bold text-white tracking-tight logo-font">
                 AlgoScope
               </h3>
             </div>
@@ -56,7 +56,7 @@ const Footer = () => {
                 { name: 'Graphs', path: '/spath' },
                 { name: 'Array Search', path: '/ldssearch' },
                 { name: 'ADTs', path: '/adt' },
-                { name: 'Kadane\'s Algorithm', path: '/kadane' },
+                { name: "Kadane's Algorithm", path: '/kadane' },
               ].map((link, i) => (
                 <li key={i}>
                   <Link

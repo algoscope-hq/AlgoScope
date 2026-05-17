@@ -7,6 +7,7 @@ const CodePanel = memo(function CodePanel({
   code,
   language = 'javascript',
   activeLine,
+  onLanguageChange,
 }) {
   const scrollContainerRef = useRef(null)
   const [theme, setTheme] = useState('vscDarkPlus')
@@ -64,9 +65,22 @@ const CodePanel = memo(function CodePanel({
         </div>
 
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-          <div className="rounded-full border border-slate-700 bg-slate-900/80 px-3 py-1 text-xs font-medium uppercase tracking-[0.2em] text-slate-300">
-            {language}
-          </div>
+          {onLanguageChange ? (
+            <select
+              value={language}
+              onChange={(e) => onLanguageChange(e.target.value)}
+              className="rounded-xl border border-slate-700 bg-slate-900 px-4 py-2 text-sm text-slate-100 transition focus:border-cyan-500 focus:outline-none"
+            >
+              <option value="javascript">JavaScript</option>
+              <option value="python">Python</option>
+              <option value="cpp">C++</option>
+              <option value="java">Java</option>
+            </select>
+          ) : (
+            <div className="rounded-full border border-slate-700 bg-slate-900/80 px-3 py-1 text-xs font-medium uppercase tracking-[0.2em] text-slate-300">
+              {language}
+            </div>
+          )}
 
           <div className="flex flex-col gap-3 sm:flex-row">
             <select
