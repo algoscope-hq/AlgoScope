@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react'
 import { useSearchParams } from 'react-router-dom'
+import Tooltip from '../Tooltip'
 
 export const MenuSetAlgoShortestPath = ({ setAlgorithm }) => {
   const [searchParams, setSearchParams] = useSearchParams()
@@ -36,16 +37,18 @@ export const MenuSetAlgoShortestPath = ({ setAlgorithm }) => {
       <form className="m-auto">
         <div className="w-full max-w-sm min-w-[200px]">
           <div className="relative">
-            <select
-              value={searchParams.get('algo') || ''}
-              onChange={handleChange}
-              className="w-full bg-slate-800 placeholder:text-slate-500 text-white text-sm border border-slate-700 rounded-xl pl-4 pr-10 py-3 transition duration-300 focus:outline-none focus:border-cyan-500 hover:border-slate-500 shadow-sm focus:shadow-md appearance-none cursor-pointer"
-            >
-              <option value="">Choose an Algorithm</option>
-              <option value="dijkstra">Dijkstra</option>
-              <option value="bellmanford">Bellman-Ford</option>
-              <option value="floydwarshall">Floyd–Warshall</option>
-            </select>
+            <Tooltip content="Select a shortest path algorithm" position="top" className="w-full">
+              <select
+                value={searchParams.get('algo') || ''}
+                onChange={handleChange}
+                className="w-full bg-slate-800 placeholder:text-slate-500 text-white text-sm border border-slate-700 rounded-xl pl-4 pr-10 py-3 transition duration-300 focus:outline-none focus:border-cyan-500 hover:border-slate-500 shadow-sm focus:shadow-md appearance-none cursor-pointer"
+              >
+                <option value="">Choose an Algorithm</option>
+                <option value="dijkstra">Dijkstra</option>
+                <option value="bellmanford">Bellman-Ford</option>
+                <option value="floydwarshall">Floyd–Warshall</option>
+              </select>
+            </Tooltip>
             <svg
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
@@ -63,12 +66,14 @@ export const MenuSetAlgoShortestPath = ({ setAlgorithm }) => {
           </div>
         </div>
       </form>
-      <button
-        onClick={handleReset}
-        className="w-full text-sm font-bold py-3 px-4 rounded-xl mt-2 transition-all duration-300 bg-slate-800 text-slate-300 border border-slate-700 hover:bg-slate-700 hover:text-white hover:shadow-lg transform hover:-translate-y-0.5"
-      >
-        Reset
-      </button>
+      <Tooltip content="Clear algorithm selection and reset" position="top" className="w-full">
+        <button
+          onClick={handleReset}
+          className="w-full text-sm font-bold py-3 px-4 rounded-xl mt-2 transition-all duration-300 bg-slate-800 text-slate-300 border border-slate-700 hover:bg-slate-700 hover:text-white hover:shadow-lg transform hover:-translate-y-0.5"
+        >
+          Reset
+        </button>
+      </Tooltip>
     </div>
   )
 }
