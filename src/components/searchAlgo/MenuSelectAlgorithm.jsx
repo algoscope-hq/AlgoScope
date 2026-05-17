@@ -35,7 +35,7 @@ export const MenuSelectAlgorithm = ({ algorithm, setAlgorithm }) => {
         Algorithm
       </h3>
       <div className="flex flex-col gap-2">
-        <Tooltip content="Explore nodes level by level" position="right" className="w-full">
+        <Tooltip content="Explore nodes level by level" position="top" className="w-full">
           <button
             onClick={() => handleSelect('bfs')}
             className={getButtonClass('bfs')}
@@ -43,7 +43,7 @@ export const MenuSelectAlgorithm = ({ algorithm, setAlgorithm }) => {
             Breadth-First Search (BFS)
           </button>
         </Tooltip>
-        <Tooltip content="Explore as deep as possible first" position="right" className="w-full">
+        <Tooltip content="Explore as deep as possible first" position="bottom" className="w-full">
           <button
             onClick={() => handleSelect('dfs')}
             className={getButtonClass('dfs')}

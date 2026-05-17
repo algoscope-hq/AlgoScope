@@ -6,6 +6,7 @@ import CodePanel from '../visualizer/CodePanel'
 import { CanvasKadane } from './CanvasKadane'
 import { MenuSetAlgoKadane } from './MenuSetAlgoKadane'
 import { kadaneSources } from '../../algorithms/kadane/kadaneSources'
+import Tooltip from '../Tooltip'
 
 const complexityData = {
   time: 'O(N)',
@@ -71,19 +72,21 @@ const VisualizerPage = () => {
             Code Language
           </p>
 
-          <select
-            value={language}
-            onChange={(e) => setLanguage(e.target.value)}
-            className="w-full rounded-xl border border-slate-700 bg-slate-950/80 px-4 py-3 text-sm text-slate-100 transition focus:border-cyan-500 focus:outline-none"
-          >
-            <option value="javascript">JavaScript</option>
-            <option value="python">Python</option>
-            <option value="cpp">C++</option>
-            <option value="java">Java</option>
-            <option value="c">C</option>
-            <option value="rust">Rust</option>
-            <option value="go">Go</option>
-          </select>
+          <Tooltip content="Switch the code language" position="top" className="w-full">
+            <select
+              value={language}
+              onChange={(e) => setLanguage(e.target.value)}
+              className="w-full rounded-xl border border-slate-700 bg-slate-950/80 px-4 py-3 text-sm text-slate-100 transition focus:border-cyan-500 focus:outline-none"
+            >
+              <option value="javascript">JavaScript</option>
+              <option value="python">Python</option>
+              <option value="cpp">C++</option>
+              <option value="java">Java</option>
+              <option value="c">C</option>
+              <option value="rust">Rust</option>
+              <option value="go">Go</option>
+            </select>
+          </Tooltip>
         </div>
 
         <ComplexityCard complexity={complexityData} />
