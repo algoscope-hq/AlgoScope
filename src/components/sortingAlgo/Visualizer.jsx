@@ -3,6 +3,7 @@ import { useSearchParams } from 'react-router-dom'
 import SpeedSlider from '../SpeedSlider.jsx'
 import CodePanel from '../visualizer/CodePanel'
 import { useStepPlayback } from '../visualizer/useStepPlayback'
+import Tooltip from '../Tooltip'
 
 import * as bubble from '../../algorithms/sorting/bubbleSortSteps'
 import * as selection from '../../algorithms/sorting/selectionSortSteps'
@@ -337,19 +338,21 @@ export default function Visualizer({ algorithmType }) {
                   Controls
                 </h3>
                 <div className="mt-4 space-y-4">
-                  <select
-                    value={selectedAlgorithm}
-                    onChange={handleAlgorithmChange}
-                    disabled={isRunning}
-                    className="w-full appearance-none rounded-xl border border-slate-700 bg-slate-900/80 py-3 pl-4 pr-10 text-sm text-white shadow-lg transition duration-300 hover:border-slate-600 focus:border-cyan-500 focus:outline-none disabled:opacity-50"
-                  >
-                    <option value="">Choose Algorithm</option>
-                    {algorithmOptions[algorithmType].map((alg) => (
-                      <option key={alg} value={alg}>
-                        {`${alg.charAt(0).toUpperCase() + alg.slice(1)} Sort`}
-                      </option>
-                    ))}
-                  </select>
+                  <Tooltip content="Select a sorting algorithm" position="top" className="w-full">
+                    <select
+                      value={selectedAlgorithm}
+                      onChange={handleAlgorithmChange}
+                      disabled={isRunning}
+                      className="w-full appearance-none rounded-xl border border-slate-700 bg-slate-900/80 py-3 pl-4 pr-10 text-sm text-white shadow-lg transition duration-300 hover:border-slate-600 focus:border-cyan-500 focus:outline-none disabled:opacity-50"
+                    >
+                      <option value="">Choose Algorithm</option>
+                      {algorithmOptions[algorithmType].map((alg) => (
+                        <option key={alg} value={alg}>
+                          {`${alg.charAt(0).toUpperCase() + alg.slice(1)} Sort`}
+                        </option>
+                      ))}
+                    </select>
+                  </Tooltip>
 
                   <div className="rounded-xl border border-slate-700/50 bg-slate-900/50 px-3 py-2">
                     <SpeedSlider
@@ -362,24 +365,38 @@ export default function Visualizer({ algorithmType }) {
                   </div>
 
                   <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-1">
-                    <button
-                      onClick={handleSort}
-                      disabled={isRunning || !selectedAlgorithm}
-                      className="text-sm font-bold rounded-xl bg-cyan-600 px-6 py-3 text-white transition-all duration-300 hover:-translate-y-0.5 hover:bg-cyan-500 hover:shadow-[0_0_15px_rgba(6,182,212,0.4)] disabled:cursor-not-allowed disabled:opacity-50"
+                    <Tooltip
+                      content={
+                        isRunning
+                          ? 'Visualization is running'
+                          : hasSteps
+                            ? 'Restart the sort from scratch'
+                            : 'Start visualization'
+                      }
+                      position="top"
+                      className="w-full"
                     >
-                      {isRunning
-                        ? 'Playing...'
-                        : hasSteps
-                          ? 'Restart Sort'
-                          : 'Start Sort'}
-                    </button>
-                    <button
-                      onClick={handleReset}
-                      disabled={isRunning}
-                      className="text-sm font-bold rounded-xl bg-slate-700 px-6 py-3 text-white transition-all duration-300 hover:-translate-y-0.5 hover:bg-slate-600 hover:shadow-lg disabled:cursor-not-allowed disabled:opacity-50"
-                    >
-                      Generate New Array
-                    </button>
+                      <button
+                        onClick={handleSort}
+                        disabled={isRunning || !selectedAlgorithm}
+                        className="w-full text-sm font-bold rounded-xl bg-cyan-600 px-6 py-3 text-white transition-all duration-300 hover:-translate-y-0.5 hover:bg-cyan-500 hover:shadow-[0_0_15px_rgba(6,182,212,0.4)] disabled:cursor-not-allowed disabled:opacity-50"
+                      >
+                        {isRunning
+                          ? 'Playing...'
+                          : hasSteps
+                            ? 'Restart Sort'
+                            : 'Start Sort'}
+                      </button>
+                    </Tooltip>
+                    <Tooltip content="Generate a fresh random array" position="top" className="w-full">
+                      <button
+                        onClick={handleReset}
+                        disabled={isRunning}
+                        className="w-full text-sm font-bold rounded-xl bg-slate-700 px-6 py-3 text-white transition-all duration-300 hover:-translate-y-0.5 hover:bg-slate-600 hover:shadow-lg disabled:cursor-not-allowed disabled:opacity-50"
+                      >
+                        Generate New Array
+                      </button>
+                    </Tooltip>
                   </div>
                 </div>
               </div>
@@ -405,29 +422,38 @@ export default function Visualizer({ algorithmType }) {
                   </div>
 
                   <div className="grid grid-cols-3 gap-3">
-                    <button
-                      type="button"
-                      onClick={isPlaying ? pausePlayback : playPlayback}
-                      disabled={isComplete && !isPlaying}
-                      className="rounded-xl border border-slate-700 bg-slate-800 px-3 py-2 text-sm font-medium text-slate-100 transition hover:border-cyan-500 hover:text-cyan-200 disabled:cursor-not-allowed disabled:opacity-50"
+                    <Tooltip
+                      content={isPlaying ? 'Pause visualization' : 'Resume visualization'}
+                      position="top"
                     >
-                      {isPlaying ? 'Pause' : 'Play'}
-                    </button>
-                    <button
-                      type="button"
-                      onClick={stepForward}
-                      disabled={isPlaying || isComplete}
-                      className="rounded-xl border border-slate-700 bg-slate-800 px-3 py-2 text-sm font-medium text-slate-100 transition hover:border-cyan-500 hover:text-cyan-200 disabled:cursor-not-allowed disabled:opacity-50"
-                    >
-                      Step
-                    </button>
-                    <button
-                      type="button"
-                      onClick={replayPlayback}
-                      className="rounded-xl border border-slate-700 bg-slate-800 px-3 py-2 text-sm font-medium text-slate-100 transition hover:border-cyan-500 hover:text-cyan-200"
-                    >
-                      Replay
-                    </button>
+                      <button
+                        type="button"
+                        onClick={isPlaying ? pausePlayback : playPlayback}
+                        disabled={isComplete && !isPlaying}
+                        className="w-full rounded-xl border border-slate-700 bg-slate-800 px-3 py-2 text-sm font-medium text-slate-100 transition hover:border-cyan-500 hover:text-cyan-200 disabled:cursor-not-allowed disabled:opacity-50"
+                      >
+                        {isPlaying ? 'Pause' : 'Play'}
+                      </button>
+                    </Tooltip>
+                    <Tooltip content="Advance one step forward" position="top">
+                      <button
+                        type="button"
+                        onClick={stepForward}
+                        disabled={isPlaying || isComplete}
+                        className="w-full rounded-xl border border-slate-700 bg-slate-800 px-3 py-2 text-sm font-medium text-slate-100 transition hover:border-cyan-500 hover:text-cyan-200 disabled:cursor-not-allowed disabled:opacity-50"
+                      >
+                        Step
+                      </button>
+                    </Tooltip>
+                    <Tooltip content="Replay from the beginning" position="top">
+                      <button
+                        type="button"
+                        onClick={replayPlayback}
+                        className="w-full rounded-xl border border-slate-700 bg-slate-800 px-3 py-2 text-sm font-medium text-slate-100 transition hover:border-cyan-500 hover:text-cyan-200"
+                      >
+                        Replay
+                      </button>
+                    </Tooltip>
                   </div>
                 </div>
               )}
@@ -436,19 +462,21 @@ export default function Visualizer({ algorithmType }) {
                 <p className="mb-3 text-xs font-semibold uppercase tracking-[0.2em] text-cyan-400/80">
                   Code Language
                 </p>
-                <select
-                  value={language}
-                  onChange={(event) => setLanguage(event.target.value)}
-                  className="w-full rounded-xl border border-slate-700 bg-slate-950/80 px-4 py-3 text-sm text-slate-100 transition focus:border-cyan-500 focus:outline-none"
-                >
-                  <option value="javascript">JavaScript</option>
-                  <option value="python">Python</option>
-                  <option value="java">Java</option>
-                  <option value="cpp">C++</option>
-                  <option value="c">C</option>
-                  <option value="rust">Rust</option>
-                  <option value="go">Go</option>
-                </select>
+                <Tooltip content="Switch the code language" position="top" className="w-full">
+                  <select
+                    value={language}
+                    onChange={(event) => setLanguage(event.target.value)}
+                    className="w-full rounded-xl border border-slate-700 bg-slate-950/80 px-4 py-3 text-sm text-slate-100 transition focus:border-cyan-500 focus:outline-none"
+                  >
+                    <option value="javascript">JavaScript</option>
+                    <option value="python">Python</option>
+                    <option value="java">Java</option>
+                    <option value="cpp">C++</option>
+                    <option value="c">C</option>
+                    <option value="rust">Rust</option>
+                    <option value="go">Go</option>
+                  </select>
+                </Tooltip>
               </div>
 
               <div className="rounded-2xl border border-slate-800 bg-slate-950/60 p-4">
