@@ -33,14 +33,13 @@ instructions: >
 # -------------------------------------------------------------------------
 # Review Configuration
 # -------------------------------------------------------------------------
-auto_review:
-  enabled: true
-  # Ignore Draft PRs so it doesn't waste reviews on incomplete work
-  drafts: false
-  # Ignore auto-generated bot PRs (like dependabot)
-  ignore_title_patterns:
-    - '^bump'
-    - "^chore\\(deps\\)"
+reviews:
+  auto_review:
+    enabled: true
+    drafts: false
+    ignore_title_keywords:
+      - '^bump'
+      - "^chore\\(deps\\)"
 
 # -------------------------------------------------------------------------
 # Chat Features
