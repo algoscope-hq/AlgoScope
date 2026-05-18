@@ -12,22 +12,29 @@ tone_instructions: >
 # -------------------------------------------------------------------------
 # Project Architecture & Specific Instructions
 # -------------------------------------------------------------------------
-instructions: >
-  This project is 'AlgoScope', a full-stack algorithmic visualizer.
-  - Frontend: React, Vite, Tailwind CSS, Monaco Editor.
-  - Backend: Serverless Node.js on Vercel, PostgreSQL, Clerk Authentication.
+# -------------------------------------------------------------------------
+# Review Configuration
+# -------------------------------------------------------------------------
+reviews:
+  path_instructions:
+    - path: "**/*"
+      instructions: >
+        This project is 'AlgoScope', a full-stack algorithmic visualizer.
+        - Frontend: React, Vite, Tailwind CSS, Monaco Editor.
+        - Backend: Serverless Node.js on Vercel, PostgreSQL, Clerk Authentication.
 
-  When reviewing pull requests, please enforce the following priorities:
+        When reviewing pull requests, please enforce the following priorities:
 
-  1. Algorithm Safety: Visualizing algorithms requires intense loops and recursion. 
-     Flag any potential infinite loops, memory leaks, or highly inefficient time complexities immediately.
-  2. React Performance: AlgoScope relies heavily on step-by-step state management for 
-     playback controls. Warn against unnecessary re-renders, deeply nested state, or direct DOM mutations.
-  3. Styling: Ensure new UI components use Tailwind CSS classes properly and maintain responsiveness across mobile and desktop.
-  4. AI-Generated Code: If a PR contains massive amounts of complex, undocumented logic (over 500+ lines in one file), 
-     politely advise the contributor to break it down into smaller PRs and explain their architectural choices.
-  5. Security: Ensure frontend API calls are properly routed to the Vercel backend and that no 
-     Clerk secrets, PostgreSQL URIs, or `.env` variables are exposed in the code.
+        1. Algorithm Safety: Visualizing algorithms requires intense loops and recursion. 
+           Flag any potential infinite loops, memory leaks, or highly inefficient time complexities immediately.
+        2. React Performance: AlgoScope relies heavily on step-by-step state management for 
+           playback controls. Warn against unnecessary re-renders, deeply nested state, or direct DOM mutations.
+        3. Styling: Ensure new UI components use Tailwind CSS classes properly and maintain responsiveness across mobile and desktop.
+        4. AI-Generated Code: If a PR contains massive amounts of complex, undocumented logic (over 500+ lines in one file), 
+           politely advise the contributor to break it down into smaller PRs and explain their architectural choices.
+        5. Security: Ensure frontend API calls are properly routed to the Vercel backend and that no 
+           Clerk secrets, PostgreSQL URIs, or `.env` variables are exposed in the code.
+  auto_review:
 
 # -------------------------------------------------------------------------
 # Review Configuration
