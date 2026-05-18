@@ -15,7 +15,7 @@ import * as heap from '../../algorithms/sorting/heapSortSteps'
 import * as counting from '../../algorithms/sorting/countingSortSteps'
 import * as radix from '../../algorithms/sorting/radixSortSteps'
 import * as shell from '../../algorithms/sorting/shellSortSteps'
-
+import ComplexityGraph from '../ComplexityGraph'
 const algoMap = {
   bubble,
   selection,
@@ -270,7 +270,7 @@ export default function Visualizer() {
               </div>
 
               <ComplexityCard algorithm={selectedAlgorithm} />
-
+              <ComplexityGraph algorithm={selectedAlgorithm} />
               <div className="grid gap-4 lg:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)]">
                 <div className="rounded-2xl border border-slate-700/80 bg-slate-900/70 p-4 sm:p-5 shadow-xl">
                   <p className="text-xs font-semibold uppercase tracking-[0.24em] text-cyan-400/80">

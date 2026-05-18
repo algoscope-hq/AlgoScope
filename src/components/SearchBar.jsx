@@ -143,6 +143,15 @@ const SearchBar = () => {
   const [query, setQuery] = useState('')
   const [results, setResults] = useState([])
   const [selectedIndex, setSelectedIndex] = useState(0)
+  const [isMac] = useState(() => {
+    if (typeof window === 'undefined') return false
+    const platform =
+      navigator.userAgentData?.platform || navigator.platform || ''
+    return (
+      platform.toLowerCase().includes('mac') ||
+      navigator.userAgent.toLowerCase().includes('macintosh')
+    )
+  })
 
   const inputRef = useRef(null)
   const navigate = useNavigate()
@@ -250,7 +259,7 @@ const SearchBar = () => {
           Search...
         </span>
         <div className="ml-auto hidden lg:flex items-center gap-1 opacity-40 group-hover:opacity-100 transition-opacity">
-          <kbd className="text-[10px] font-sans">⌘</kbd>
+          <kbd className="text-[10px] font-sans">{isMac ? '⌘' : 'Ctrl'}</kbd>
           <kbd className="text-[10px] font-sans">K</kbd>
         </div>
       </button>
@@ -347,7 +356,7 @@ const SearchBar = () => {
                         <div className="flex items-center gap-2">
                           {index === selectedIndex && (
                             <span className="text-[10px] text-slate-500 border border-slate-700 px-1 rounded bg-slate-800">
-                              Enter
+                              {isMac ? 'Return' : 'Enter'}
                             </span>
                           )}
                           <svg
@@ -393,7 +402,7 @@ const SearchBar = () => {
                   </span>
                   <span className="flex items-center gap-1">
                     <kbd className="px-1.5 py-0.5 border border-slate-700 rounded bg-slate-800">
-                      Enter
+                      {isMac ? 'Return' : 'Enter'}
                     </kbd>{' '}
                     Select
                   </span>

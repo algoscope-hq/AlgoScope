@@ -8,6 +8,7 @@ import SpeedSlider from '../SpeedSlider'
 import { shortestPathSources } from '../../algorithms/searching/shortestPathSources'
 import ComplexityCard from '../ComplexityCard'
 import Tooltip from '../Tooltip'
+import ComparisonMode from './ComparisonMode'
 
 export const ShortestPathPage = () => {
   const [algorithm, setAlgorithm] = useState(null)
@@ -16,6 +17,9 @@ export const ShortestPathPage = () => {
   const [speed, setSpeed] = useState(1.0)
   const [language, setLanguage] = useState('javascript')
   const [runKey, setRunKey] = useState(null)
+
+  // ✅ NEW: mode toggle
+  const [mode, setMode] = useState('solo') // 'solo' | 'compare'
 
   const handleSpeedChange = (event, newValue) => {
     setSpeed(newValue)
@@ -56,7 +60,7 @@ export const ShortestPathPage = () => {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 1, ease: 'easeInOut' }}
     >
-      {/* Left Panel: Controls */}
+      {/* LEFT PANEL */}
       <div className="w-full lg:w-1/4 p-4 flex flex-col gap-6 bg-slate-900/80 shadow-xl rounded-xl border border-white/5 backdrop-blur-sm overflow-y-auto">
         {/* Header */}
         <div className="border-b border-white/10 pb-4">
@@ -66,6 +70,31 @@ export const ShortestPathPage = () => {
           <h2 className="text-xl font-bold text-center text-white tracking-tight">
             Controls
           </h2>
+        </div>
+
+        {/* Mode Toggle */}
+        <div className="flex gap-2">
+          <button
+            onClick={() => setMode('solo')}
+            className={`w-1/2 py-2 rounded-lg text-xs font-bold transition-all ${
+              mode === 'solo'
+                ? 'bg-cyan-600 text-white'
+                : 'bg-slate-800 text-slate-400'
+            }`}
+          >
+            Solo
+          </button>
+
+          <button
+            onClick={() => setMode('compare')}
+            className={`w-1/2 py-2 rounded-lg text-xs font-bold transition-all ${
+              mode === 'compare'
+                ? 'bg-cyan-600 text-white'
+                : 'bg-slate-800 text-slate-400'
+            }`}
+          >
+            Compare
+          </button>
         </div>
 
         {/* How to use stepper */}
@@ -97,6 +126,7 @@ export const ShortestPathPage = () => {
               (step === '1' && algorithm) ||
               (step === '2' && source && target) ||
               (step === '3' && runKey !== null)
+
             return (
               <div key={step} className="flex items-center gap-3">
                 <span
@@ -120,19 +150,20 @@ export const ShortestPathPage = () => {
           })}
         </div>
 
-        {/* Run / Reset buttons */}
+        {/* Run / Reset */}
         <div className="flex flex-col gap-2">
           <button
             onClick={handleRun}
-            disabled={!canRun}
+            disabled={!canRun || mode === 'compare'}
             className={`w-full py-3 px-4 rounded-xl text-sm font-bold transition-all duration-300 ${
-              canRun
+              canRun && mode !== 'compare'
                 ? 'bg-cyan-600 hover:bg-cyan-500 text-white shadow-lg shadow-cyan-500/30 hover:scale-[1.02]'
                 : 'bg-slate-800 text-slate-600 cursor-not-allowed border border-slate-700'
             }`}
           >
             ▶ Run
           </button>
+
           <button
             onClick={handleReset}
             className="w-full py-3 px-4 rounded-xl text-sm font-bold bg-slate-800 text-slate-300 border border-slate-700 hover:bg-slate-700 hover:text-white transition-all duration-300"
@@ -154,33 +185,41 @@ export const ShortestPathPage = () => {
         <SpeedSlider value={speed} onChange={handleSpeedChange} />
       </div>
 
-      {/* Right Panel: Visualization and Code */}
+      {/* RIGHT PANEL */}
       <div className="w-full lg:w-3/4 flex flex-col gap-6">
-        <div className="rounded-xl overflow-hidden border border-white/10 shadow-lg">
-          <CanvasShortestPath
-            algorithm={algorithm}
-            source={source}
-            target={target}
-            speed={speed}
-            runKey={runKey}
-          />
-        </div>
-        <ComplexityCard algorithm={algorithm} />
-        <div className="w-full">
-          <CodePanel
-            title={
-              algorithm
-                ? `${getAlgorithmName(algorithm)} Implementation`
-                : 'Code Viewer'
-            }
-            code={
-              currentSource ||
-              '// Select an algorithm and nodes to see implementation'
-            }
-            language={language}
-            onLanguageChange={setLanguage}
-          />
-        </div>
+        {mode === 'solo' ? (
+          <>
+            <div className="rounded-xl overflow-hidden border border-white/10 shadow-lg">
+              <CanvasShortestPath
+                algorithm={algorithm}
+                source={source}
+                target={target}
+                speed={speed}
+                runKey={runKey}
+              />
+            </div>
+
+            <ComplexityCard algorithm={algorithm} />
+
+            <div className="w-full">
+              <CodePanel
+                title={
+                  algorithm
+                    ? `${getAlgorithmName(algorithm)} Implementation`
+                    : 'Code Viewer'
+                }
+                code={
+                  currentSource ||
+                  '// Select an algorithm and nodes to see implementation'
+                }
+                language={language}
+                onLanguageChange={setLanguage}
+              />
+            </div>
+          </>
+        ) : (
+          <ComparisonMode />
+        )}
       </div>
     </motion.div>
   )

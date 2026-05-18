@@ -1,0 +1,33 @@
+# yaml-language-server: $schema=https://coderabbit.ai/integrations/schema.v2.json
+language: 'en-US'
+early_access: false
+
+tone_instructions: 'Friendly mentor. Focus: DSA logic, React, Tailwind. Prioritize algorithm edge cases & performance. Be concise but explain *why* changes are needed to help beginners. Check conventional commits. Ignore code formatting/linting.'
+
+reviews:
+  profile: 'chill'
+  request_changes_workflow: false
+  high_level_summary: true
+  poem: false
+  auto_review:
+    enabled: true
+    drafts: false
+    base_branches:
+      - main
+  path_instructions:
+    - path: 'src/algorithms/**'
+      instructions: 'Ensure algorithmic correctness and optimize for performance. Check for edge cases like empty inputs, negative numbers, or large datasets.'
+    - path: 'src/components/**'
+      instructions: 'Focus on React best practices, avoiding unnecessary re-renders, and efficient state management. Ensure styles follow Tailwind CSS patterns.'
+  pre_merge_checks:
+    custom_checks:
+      - name: 'Algorithm Complexity'
+        instructions: 'Verify that the algorithm implementation matches the documented time and space complexity.'
+      - name: 'Conventional Commits'
+        instructions: 'Ensure the PR title and commit messages follow conventional commit standards (feat, fix, chore, refactor, etc.).'
+
+knowledge_base:
+  code_guidelines:
+    enabled: true
+  web_search:
+    enabled: true

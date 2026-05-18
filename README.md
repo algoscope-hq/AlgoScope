@@ -67,14 +67,17 @@ Learning Data Structures and Algorithms (DSA) is often a daunting task for stude
 
 ## ✨ Features
 
-| Feature                     | Description                                                                                                                      |
-| --------------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
-| **Real-time Visualization** | Watch algorithms come alive with smooth, step-by-step animations using Framer Motion and Anime.js.                               |
-| **Adjustable Speed**        | Full control over animation speed and input data to learn at your own pace.                                                      |
-| **Algorithm Coverage**      | Comprehensive support for Sorting (Quick, Merge, Bubble), Searching (Linear, Binary), and Graph Algorithms (BFS, DFS, Dijkstra). |
-| **Code Insights**           | See the actual implementation in multiple programming languages (C++, Java, Python, JS) alongside the visualization.             |
-| **Interactive Playground**  | Create custom inputs, change array sizes, and interact directly with the canvas.                                                 |
-| **Clean UI/UX**             | Modern, dark-themed interface built with Tailwind CSS v4.                                                                        |
+| Feature                     | Description                                                                                                                                     |
+| --------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Real-time Visualization** | Watch algorithms come alive with smooth, step-by-step animations using Framer Motion and Anime.js.                                              |
+| **Adjustable Speed**        | Full control over animation speed with +/- precision buttons and input data to learn at your own pace.                                          |
+| **Algorithm Coverage**      | Support for Sorting (Quick, Merge, Shell), Searching (Linear, Binary), Graph (BFS, DFS, Dijkstra), and Dynamic Programming (Kadane's, Moore's). |
+| **Comparison Mode**         | Side-by-side visualization of multiple algorithms to compare their efficiency and execution patterns in real-time.               |
+| **Code Insights**           | See implementations in C++, Java, Python, and JS with a multi-language viewer and one-click copy functionality.                                 |
+| **Complexity Analysis**     | Interactive performance graphs and complexity cards to visualize Big O notations and scaling behavior.                                          |
+| **URL Persistence**         | Shareable links that preserve the current algorithm state and parameters using URL search params.                                               |
+| **Interactive Playground**  | Create custom inputs, change array sizes, and interact directly with the canvas.                                                                |
+| **Secure & Modern UI**      | Dark-themed interface built with Tailwind CSS v4, featuring Clerk authentication and modal-based search.                                        |
 
 ---
 
@@ -98,6 +101,7 @@ Learning Data Structures and Algorithms (DSA) is often a daunting task for stude
 
 - **Syntax Highlighting:** [React Syntax Highlighter](https://github.com/react-syntax-highlighter/react-syntax-highlighter)
 - **Icons:** Lucide React
+- **Charts:** Recharts (Complexity Graphs)
 
 ---
 
@@ -157,6 +161,8 @@ api/
 └── vercel.json            # Vercel deployment configuration
 src/
 ├── algorithms/
+│   ├── kadane/            # Kadane's Algorithm step generator
+│   ├── mooreVoting/       # Moore Voting Algorithm step generator
 │   ├── searching/         # Search and shortest-path step generators/source data
 │   └── sorting/           # Sorting algorithm step generators
 ├── assets/                # Static images and icons
@@ -164,6 +170,8 @@ src/
 │   ├── about/             # About page cards and sections
 │   ├── arraySearch/       # Linear and binary search visualizers
 │   ├── dataStructures/    # Stack, queue, and tree visualizers
+│   ├── kadaneAlgo/        # Kadane's Algorithm visualizers
+│   ├── mooreVotingAlgo/   # Moore Voting Algorithm visualizers
 │   ├── searchAlgo/        # Graph traversal visualizers and controls
 │   ├── shortestPathAlgo/  # Shortest-path visualizers and controls
 │   ├── sortingAlgo/       # Sorting visualizers
@@ -323,7 +331,7 @@ We welcome contributions! Whether it's a bug fix, a new algorithm visualization,
 Thanks goes to these wonderful people who have contributed to AlgoScope:
 
 <a href="https://github.com/algoscope-hq/AlgoScope/graphs/contributors">
-  <img src="https://contrib.rocks/image?repo=algoscope-hq/AlgoScope&max=500&v=4" />
+  <img src="https://contrib.rocks/image?repo=algoscope-hq/AlgoScope" alt="AlgoScope Contributors" />
 </a>
 
 ---
