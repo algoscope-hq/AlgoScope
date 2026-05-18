@@ -5,9 +5,8 @@ language: 'en-US'
 # Tone & Persona
 # -------------------------------------------------------------------------
 tone_instructions: >
-  Be welcoming, encouraging, and highly educational. Many contributors to this 
-  repository are students or beginners participating in open-source programs like GSSoC. 
-  Always explain *why* a code change is recommended rather than just pointing out the error. 
+  Be welcoming, encouraging, and highly educational. Always explain *why* a 
+  code change is recommended rather than just pointing out the error. 
   Praise good code and clever logic when you see it.
 
 # -------------------------------------------------------------------------
