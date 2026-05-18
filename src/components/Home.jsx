@@ -55,11 +55,13 @@ const ALGORITHMS = [
   },
   {
     title: 'Abstract Data Types',
-    description: 'Stacks, Queues, Linked Lists (Beta).',
+    description:
+      'Stacks, Queues, Binary Trees, Binary Heaps, and Priority Queues.',
     color: 'bg-slate-900/50 border-emerald-500/30 hover:border-emerald-400',
     link: '/adt',
     image: adt,
-    imageAlt: 'Stack, queue, and linked list data structure visualization',
+    imageAlt:
+      'Stacks, Queues, Binary Trees, Binary Heaps, and Priority Queues data structures',
   },
   {
     title: 'Kadane Algorithm',

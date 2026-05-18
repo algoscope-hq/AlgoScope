@@ -4,6 +4,8 @@ import { motion } from 'framer-motion'
 import StackIV from './stackIV'
 import QueueIV from './queueIV'
 import TreeIV from './treeIV'
+import BinaryHeapIV from './binaryHeapIV'
+import PriorityQueueIV from './priorityQueueIV'
 import CodePanel from '../visualizer/CodePanel'
 import { adtSources } from './adtSources'
 import ComparisonMode from './ComparisonMode'
@@ -12,6 +14,8 @@ const tabs = [
   { id: 'stack', label: 'Stack' },
   { id: 'queue', label: 'Queue' },
   { id: 'tree', label: 'Binary Tree' },
+  { id: 'heap', label: 'Binary Heap' },
+  { id: 'priority-queue', label: 'Priority Queue' },
   { id: 'graph', label: 'Graph Builder' },
 ]
 
@@ -86,6 +90,14 @@ export const DSLayout = () => {
       return treeData[selectedLang] || ''
     }
 
+    if (activeTab === 'heap') {
+      return adtSources.heap['binary heap']?.[selectedLang] || ''
+    }
+
+    if (activeTab === 'priority-queue') {
+      return adtSources.priorityQueue['priority queue']?.[selectedLang] || ''
+    }
+
     return ''
   }, [activeTab, selectedLang, stackMode, treeTraversal])
 
@@ -93,6 +105,8 @@ export const DSLayout = () => {
     if (activeTab === 'stack') return `Stack (${stackMode.toUpperCase()})`
     if (activeTab === 'tree')
       return `Binary Tree (${treeTraversal.toUpperCase()})`
+    if (activeTab === 'heap') return 'Binary Heap'
+    if (activeTab === 'priority-queue') return 'Priority Queue'
     return 'Queue'
   }
 
@@ -127,7 +141,7 @@ export const DSLayout = () => {
       </div>
 
       {/* Mode Toggle (only for stack/queue/tree) */}
-      {activeTab !== 'graph' && (
+      {['stack', 'queue', 'tree'].includes(activeTab) && (
         <div className="flex gap-2 justify-center">
           <button
             onClick={() => setMode('solo')}
@@ -165,6 +179,10 @@ export const DSLayout = () => {
 
         {activeTab === 'tree' && mode === 'solo' && <TreeIV />}
 
+        {activeTab === 'heap' && mode === 'solo' && <BinaryHeapIV />}
+
+        {activeTab === 'priority-queue' && mode === 'solo' && <PriorityQueueIV />}
+
         {activeTab === 'graph' && (
           <div className="flex items-center justify-center min-h-[300px] text-slate-500">
             Graph Playground Coming Soon
@@ -172,7 +190,7 @@ export const DSLayout = () => {
         )}
 
         {/* Comparison Mode */}
-        {activeTab !== 'graph' && mode === 'compare' && <ComparisonMode />}
+        {['stack', 'queue', 'tree'].includes(activeTab) && mode === 'compare' && <ComparisonMode />}
       </div>
 
       {/* Code Panel */}

@@ -567,4 +567,205 @@ queue = queue[1:]`,
 }`,
     },
   },
+  heap: {
+    'binary heap': {
+      javascript: `class BinaryHeap {
+  constructor(compareFn = (a, b) => a > b) {
+    this.data = [];
+    this.compare = compareFn;
+  }
+  
+  insert(val) {
+    this.data.push(val);
+    this.up(this.data.length - 1);
+  }
+  
+  extract() {
+    if (this.data.length === 0) return null;
+    const top = this.data[0];
+    const bottom = this.data.pop();
+    if (this.data.length > 0) {
+      this.data[0] = bottom;
+      this.down(0);
+    }
+    return top;
+  }
+  
+  up(i) {
+    while (i > 0) {
+      const p = Math.floor((i - 1) / 2);
+      if (!this.compare(this.data[i], this.data[p])) break;
+      [this.data[i], this.data[p]] = [this.data[p], this.data[i]];
+      i = p;
+    }
+  }
+  
+  down(i) {
+    const len = this.data.length;
+    while (2 * i + 1 < len) {
+      let child = 2 * i + 1;
+      if (child + 1 < len && this.compare(this.data[child + 1], this.data[child])) {
+        child++;
+      }
+      if (!this.compare(this.data[child], this.data[i])) break;
+      [this.data[i], this.data[child]] = [this.data[child], this.data[i]];
+      i = child;
+    }
+  }
+}`,
+      python: `import heapq
+
+# Python's built-in heapq is a min-heap by default
+heap = []
+heapq.heappush(heap, element)
+peak = heapq.heappop(heap)`,
+      cpp: `#include <queue>
+#include <vector>
+
+// C++ std::priority_queue is a max-heap by default
+std::priority_queue<int> maxHeap;
+maxHeap.push(10);
+int maxVal = maxHeap.top();
+maxHeap.pop();
+
+// Min-heap declaration
+std::priority_queue<int, std::vector<int>, std::greater<int>> minHeap;`,
+      java: `import java.util.PriorityQueue;
+
+// Java PriorityQueue is a min-heap by default
+PriorityQueue<Integer> minHeap = new PriorityQueue<>();
+minHeap.add(10);
+int minVal = minHeap.poll();`,
+      c: `#define MAX 100
+int heap[MAX];
+int size = 0;
+
+void heapifyUp(int i) {
+    while (i > 0 && heap[i] > heap[(i - 1) / 2]) {
+        int temp = heap[i];
+        heap[i] = heap[(i - 1) / 2];
+        heap[(i - 1) / 2] = temp;
+        i = (i - 1) / 2;
+    }
+}`,
+      rust: `use std::collections::BinaryHeap;
+
+// Rust BinaryHeap is a Max-Heap by default
+let mut heap = BinaryHeap::new();
+heap.push(10);
+let max_val = heap.pop();`,
+      go: `// Go container/heap implements custom heap types:
+import "container/heap"
+
+// User defines custom IntHeap structure implementing heap.Interface`,
+    },
+  },
+  priorityQueue: {
+    'priority queue': {
+      javascript: `class PriorityQueue {
+  constructor() {
+    this.heap = [];
+  }
+  
+  enqueue(value, priority) {
+    this.heap.push({ value, priority });
+    this.bubbleUp(this.heap.length - 1);
+  }
+  
+  dequeue() {
+    if (this.heap.length === 0) return null;
+    const peak = this.heap[0];
+    const bottom = this.heap.pop();
+    if (this.heap.length > 0) {
+      this.heap[0] = bottom;
+      this.bubbleDown(0);
+    }
+    return peak;
+  }
+  
+  bubbleUp(i) {
+    while (i > 0) {
+      const p = Math.floor((i - 1) / 2);
+      if (this.heap[i].priority >= this.heap[p].priority) break;
+      [this.heap[i], this.heap[p]] = [this.heap[p], this.heap[i]];
+      i = p;
+    }
+  }
+  
+  bubbleDown(i) {
+    const len = this.heap.length;
+    while (2 * i + 1 < len) {
+      let child = 2 * i + 1;
+      if (child + 1 < len && this.heap[child + 1].priority < this.heap[child].priority) {
+        child++;
+      }
+      if (this.heap[i].priority <= this.heap[child].priority) break;
+      [this.heap[i], this.heap[child]] = [this.heap[child], this.heap[i]];
+      i = child;
+    }
+  }
+}`,
+      python: `import heapq
+
+# Priority Queue using tuple (priority, item) in heapq
+pq = []
+heapq.heappush(pq, (3, "Task A"))
+heapq.heappush(pq, (1, "Task B"))
+prio, task = heapq.heappop(pq) # yields Task B first`,
+      cpp: `#include <queue>
+#include <string>
+
+struct Task {
+    int priority;
+    std::string name;
+    bool operator<(const Task& other) const {
+        return priority < other.priority; // max-priority
+    }
+};
+
+std::priority_queue<Task> pq;
+pq.push({5, "Process A"});`,
+      java: `import java.util.PriorityQueue;
+
+class Task implements Comparable<Task> {
+    String name;
+    int priority;
+    
+    public int compareTo(Task other) {
+        return Integer.compare(this.priority, other.priority);
+    }
+}
+
+PriorityQueue<Task> pq = new PriorityQueue<>();`,
+      c: `struct Element {
+    char data[20];
+    int priority;
+};
+
+struct Element pq[100];
+int size = 0;`,
+      rust: `use std::collections::BinaryHeap;
+use std::cmp::Ordering;
+
+#[derive(Eq, PartialEq)]
+struct Task {
+    priority: i32,
+    name: String,
+}
+
+impl Ord for Task {
+    fn cmp(&self, other: &Self) -> Ordering {
+        other.priority.cmp(&self.priority) // min-priority
+    }
+}
+
+impl PartialOrd for Task {
+    fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
+        Some(self.cmp(other))
+    }
+}`,
+      go: `// Go container/heap can be implemented to store
+// priority structures and dynamically adjust priorities using heap.Fix`,
+    },
+  },
 }
