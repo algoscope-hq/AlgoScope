@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import React from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import {
   SignedIn,
@@ -163,9 +163,27 @@ export const Navbar = () => {
                     </p>
                   ) : (
                     history.map((item) => {
-                      const matched = algorithmLinks.find(
-                        (link) => link.name === item
-                      )
+                      const current = algorithmLinks.find(
+  (link) => link.href === pathname
+)?.name
+
+let history = []
+
+try {
+  const saved = localStorage.getItem('algo-history')
+  history = saved ? JSON.parse(saved) : []
+} catch (error) {
+  console.error('Failed to parse algo-history:', error)
+}
+
+if (current && !history.includes(current)) {
+  history = [current, ...history].slice(0, 5)
+
+  localStorage.setItem(
+    'algo-history',
+    JSON.stringify(history)
+  )
+}
 
                       return (
                         <Link
