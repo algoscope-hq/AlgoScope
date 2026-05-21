@@ -75,6 +75,7 @@ const algorithmLinks = [
   { name: 'Array Search', href: '/ldssearch' },
   { name: "Kadane's Algorithm", href: '/kadane' },
   { name: "Moore's Voting Algorithm", href: '/moore-voting' },
+  { name: 'Math Theory', href: '/math-theory' },
 ]
 
 export const Navbar = () => {

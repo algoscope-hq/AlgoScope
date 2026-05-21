@@ -1,5 +1,6 @@
 import React, { useMemo } from 'react'
 import { CanvasShortestPath } from './CanvasShortestPath'
+import GridVisualizer from './GridVisualizer'
 import CodePanel from '../visualizer/CodePanel'
 import { MenuSelectNodesShortestPath } from './MenuSelectNodesShortestPath'
 import { MenuSetAlgoShortestPath } from './MenuSetAlgoShortestPath'
@@ -14,13 +15,17 @@ export const ShortestPathPage = () => {
   const [searchParams, setSearchParams] = useSearchParams()
   const mode = searchParams.get('mode') === 'compare' ? 'compare' : 'solo'
 
+  const [viewMode, setViewMode] = React.useState('network')
+
   const setMode = (newMode) => {
     const newParams = new URLSearchParams(searchParams)
+
     if (newMode === 'compare') {
       newParams.set('mode', 'compare')
     } else {
       newParams.delete('mode')
     }
+
     setSearchParams(newParams)
   }
 
@@ -36,7 +41,10 @@ export const ShortestPathPage = () => {
   }
 
   const handleRun = () => {
-    if (!algorithm || !source || !target) return
+    if (!algorithm) return
+
+    if (viewMode === 'network' && (!source || !target)) return
+
     setRunKey((k) => (k === null ? 0 : k + 1))
   }
 
@@ -47,10 +55,12 @@ export const ShortestPathPage = () => {
     setRunKey(null)
   }
 
-  const canRun = !!algorithm && !!source && !!target
+  const canRun =
+    viewMode === 'grid' ? !!algorithm : !!algorithm && !!source && !!target
 
   const currentSource = useMemo(() => {
     if (!algorithm || !shortestPathSources[algorithm]) return null
+
     return shortestPathSources[algorithm][language]?.code ?? ''
   }, [algorithm, language])
 
@@ -60,6 +70,7 @@ export const ShortestPathPage = () => {
       bellmanford: 'Bellman-Ford',
       floydwarshall: 'Floyd-Warshall',
     }
+
     return names[algo] || algo
   }
 
@@ -70,56 +81,87 @@ export const ShortestPathPage = () => {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 1, ease: 'easeInOut' }}
     >
-      {/* LEFT PANEL */}
       <div className="w-full lg:w-1/4 p-4 flex flex-col gap-6 bg-slate-900/80 shadow-xl rounded-xl border border-white/5 backdrop-blur-sm overflow-y-auto">
-        {/* Header */}
         <div className="border-b border-white/10 pb-4">
           <p className="text-xs font-semibold uppercase tracking-[0.2em] text-cyan-400/80 text-center mb-1">
             Shortest Path Visualizer
           </p>
+
           <h2 className="text-xl font-bold text-center text-white tracking-tight">
             Controls
           </h2>
         </div>
 
-        {/* Mode Toggle */}
         <div className="flex gap-2">
           <button
-            onClick={() => setMode('solo')}
+            onClick={() => setViewMode('network')}
             className={`w-1/2 py-2 rounded-lg text-xs font-bold transition-all ${
-              mode === 'solo'
+              viewMode === 'network'
                 ? 'bg-cyan-600 text-white'
                 : 'bg-slate-800 text-slate-400'
             }`}
           >
-            Solo
+            Network View
           </button>
 
           <button
-            onClick={() => setMode('compare')}
+            onClick={() => setViewMode('grid')}
             className={`w-1/2 py-2 rounded-lg text-xs font-bold transition-all ${
-              mode === 'compare'
+              viewMode === 'grid'
                 ? 'bg-cyan-600 text-white'
                 : 'bg-slate-800 text-slate-400'
             }`}
           >
-            Compare
+            Grid View
           </button>
         </div>
 
-        {/* How to use stepper */}
+        {viewMode === 'network' && (
+          <div className="flex gap-2">
+            <button
+              onClick={() => setMode('solo')}
+              className={`w-1/2 py-2 rounded-lg text-xs font-bold transition-all ${
+                mode === 'solo'
+                  ? 'bg-cyan-600 text-white'
+                  : 'bg-slate-800 text-slate-400'
+              }`}
+            >
+              Solo
+            </button>
+
+            <button
+              onClick={() => setMode('compare')}
+              className={`w-1/2 py-2 rounded-lg text-xs font-bold transition-all ${
+                mode === 'compare'
+                  ? 'bg-cyan-600 text-white'
+                  : 'bg-slate-800 text-slate-400'
+              }`}
+            >
+              Compare
+            </button>
+          </div>
+        )}
+
         <div className="bg-slate-950/60 rounded-xl border border-white/5 p-3 space-y-2">
           <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500 mb-2">
             How to use
           </p>
+
           {[
             { step: '1', label: 'Pick an algorithm' },
-            { step: '2', label: 'Choose source & target' },
+            {
+              step: '2',
+              label:
+                viewMode === 'grid'
+                  ? 'Build your grid'
+                  : 'Choose source & target',
+            },
             { step: '3', label: 'Press Run' },
           ].map(({ step, label }) => {
             const done =
               (step === '1' && algorithm) ||
-              (step === '2' && source && target) ||
+              (step === '2' &&
+                (viewMode === 'grid' ? true : source && target)) ||
               (step === '3' && runKey !== null)
 
             return (
@@ -133,6 +175,7 @@ export const ShortestPathPage = () => {
                 >
                   {done ? '✓' : step}
                 </span>
+
                 <span
                   className={`text-sm transition-colors duration-300 ${
                     done ? 'text-slate-200' : 'text-slate-500'
@@ -145,7 +188,6 @@ export const ShortestPathPage = () => {
           })}
         </div>
 
-        {/* Run / Reset */}
         <div className="flex flex-col gap-2">
           <button
             onClick={handleRun}
@@ -171,24 +213,61 @@ export const ShortestPathPage = () => {
           algorithm={algorithm}
           setAlgorithm={setAlgorithm}
         />
-        <MenuSelectNodesShortestPath
-          source={source}
-          target={target}
-          setSource={setSource}
-          setTarget={setTarget}
-        />
+
+        {viewMode === 'network' && (
+          <MenuSelectNodesShortestPath
+            source={source}
+            target={target}
+            setSource={setSource}
+            setTarget={setTarget}
+          />
+        )}
+
         <SpeedSlider value={speed} onChange={handleSpeedChange} />
       </div>
 
-      {/* RIGHT PANEL */}
       <div className="w-full lg:w-3/4 flex flex-col gap-6">
-        {mode === 'solo' ? (
+        {viewMode === 'network' ? (
+          <>
+            {mode === 'solo' ? (
+              <>
+                <div className="rounded-xl overflow-hidden border border-white/10 shadow-lg">
+                  <CanvasShortestPath
+                    algorithm={algorithm}
+                    source={source}
+                    target={target}
+                    speed={speed}
+                    runKey={runKey}
+                  />
+                </div>
+
+                <ComplexityCard algorithm={algorithm} />
+
+                <div className="w-full">
+                  <CodePanel
+                    title={
+                      algorithm
+                        ? `${getAlgorithmName(algorithm)} Implementation`
+                        : 'Code Viewer'
+                    }
+                    code={
+                      currentSource ||
+                      '// Select an algorithm and nodes to see implementation'
+                    }
+                    language={language}
+                    onLanguageChange={setLanguage}
+                  />
+                </div>
+              </>
+            ) : (
+              <ComparisonMode />
+            )}
+          </>
+        ) : (
           <>
             <div className="rounded-xl overflow-hidden border border-white/10 shadow-lg">
-              <CanvasShortestPath
+              <GridVisualizer
                 algorithm={algorithm}
-                source={source}
-                target={target}
                 speed={speed}
                 runKey={runKey}
               />
@@ -200,20 +279,18 @@ export const ShortestPathPage = () => {
               <CodePanel
                 title={
                   algorithm
-                    ? `${getAlgorithmName(algorithm)} Implementation`
+                    ? `${getAlgorithmName(algorithm)} Grid Implementation`
                     : 'Code Viewer'
                 }
                 code={
                   currentSource ||
-                  '// Select an algorithm and nodes to see implementation'
+                  '// Select an algorithm to see implementation'
                 }
                 language={language}
                 onLanguageChange={setLanguage}
               />
             </div>
           </>
-        ) : (
-          <ComparisonMode />
         )}
       </div>
     </motion.div>

@@ -42,6 +42,7 @@ export const MathSoloVisualizer = ({ speed, language }) => {
 
   const {
     currentStep,
+    currentStepIndex,
     hasSteps,
     isPlaying,
     isComplete,
@@ -51,6 +52,7 @@ export const MathSoloVisualizer = ({ speed, language }) => {
     pause,
     replay,
     stepForward,
+    stepBackward,
   } = useStepPlayback({ speed })
 
   const handleVisualize = () => {
@@ -273,19 +275,28 @@ export const MathSoloVisualizer = ({ speed, language }) => {
           </Tooltip>
 
           {hasSteps && (
-            <div className="flex gap-2">
+            <div className="flex flex-col gap-2">
               <button
                 onClick={isPlaying ? pause : play}
-                className="flex-1 text-sm font-bold py-2.5 rounded-xl bg-slate-800 text-slate-300 border border-slate-700 hover:bg-slate-700 hover:text-white transition-all"
+                className="w-full text-sm font-bold py-2.5 rounded-xl bg-slate-800 text-slate-300 border border-slate-700 hover:bg-slate-700 hover:text-white transition-all"
               >
                 {isPlaying ? '⏸ Pause' : '▶ Play'}
               </button>
-              <button
-                onClick={stepForward}
-                className="flex-1 text-sm font-bold py-2.5 rounded-xl bg-slate-800 text-slate-300 border border-slate-700 hover:bg-slate-700 hover:text-white transition-all"
-              >
-                Step →
-              </button>
+              <div className="flex gap-2">
+                <button
+                  onClick={stepBackward}
+                  disabled={currentStepIndex <= 0}
+                  className="flex-1 text-xs font-bold py-2.5 rounded-xl bg-slate-800 text-slate-300 border border-slate-700 hover:bg-slate-700 hover:text-white transition-all disabled:opacity-40"
+                >
+                  ← Step
+                </button>
+                <button
+                  onClick={stepForward}
+                  className="flex-1 text-xs font-bold py-2.5 rounded-xl bg-slate-800 text-slate-300 border border-slate-700 hover:bg-slate-700 hover:text-white transition-all"
+                >
+                  Step →
+                </button>
+              </div>
             </div>
           )}
 

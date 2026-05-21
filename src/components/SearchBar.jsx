@@ -142,6 +142,13 @@ const ALGORITHMS = [
     category: 'General',
     route: '/about',
   },
+  // Math Theory
+  {
+    id: 'mathTheory',
+    name: 'Math Theory',
+    category: 'Math',
+    route: '/math-theory',
+  },
 ]
 
 const SearchBar = () => {

@@ -142,6 +142,18 @@ const goToStep = (stepIndex) => {
   setCurrentStepIndex(boundedIndex)
 }
 
+  const stepBackward = () => {
+    if (!hasSteps) {
+      return
+    }
+
+    window.clearTimeout(timeoutRef.current)
+    setIsPlaying(false)
+    setCurrentStepIndex((index) => {
+      return Math.max(index - 1, 0)
+    })
+  }
+
   return {
     steps,
     currentStep,
@@ -157,6 +169,5 @@ const goToStep = (stepIndex) => {
     replay,
     stepForward,
     stepBackward,
-    goToStep,
   }
 }
