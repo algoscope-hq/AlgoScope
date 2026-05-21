@@ -55,6 +55,8 @@ export default function Visualizer() {
     play: playPlayback,
     replay: replayPlayback,
     stepForward,
+    stepBackward,
+    goToStep,
   } = useStepPlayback({ speed })
 
   const algorithmOptions = {
@@ -496,7 +498,7 @@ export default function Visualizer() {
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-3 gap-3">
+                  <div className="grid grid-cols-4 gap-3">
                     <Tooltip
                       content={isPlaying ? 'Pause' : 'Start Visualization'}
                       position="top"
@@ -507,6 +509,16 @@ export default function Visualizer() {
                         disabled={isComplete && !isPlaying}
                         className="w-full rounded-xl border border-slate-700 bg-slate-800 px-3 py-2 text-sm font-medium text-slate-100 transition hover:border-cyan-500 hover:text-cyan-200 disabled:cursor-not-allowed disabled:opacity-50"
                       >
+                      <Tooltip content="Go one step backward" position="top">
+                      <button
+                      type="button"
+                        onClick={stepBackward}
+                       disabled={currentStepIndex <= 0 || isPlaying}
+                       className="w-full rounded-xl border border-slate-700 bg-slate-800 px-3 py-2 text-sm font-medium text-slate-100 transition hover:border-cyan-500 hover:text-cyan-200 disabled:cursor-not-allowed disabled:opacity-50"
+                       >
+                       Back
+                     </button>
+                     </Tooltip>
                         {isPlaying ? 'Pause' : 'Play'}
                       </button>
                     </Tooltip>
@@ -530,6 +542,24 @@ export default function Visualizer() {
                       </button>
                     </Tooltip>
                   </div>
+                  <div className="mt-4">
+  <input
+    type="range"
+    min={0}
+    max={steps.length - 1}
+    value={currentStepIndex}
+    onChange={(e) => goToStep(Number(e.target.value))}
+    className="w-full accent-cyan-500"
+  />
+
+  <div className="mt-1 flex justify-between text-xs text-slate-400">
+    <span>Start</span>
+    <span>
+      Step {currentStepIndex + 1} / {steps.length}
+    </span>
+    <span>End</span>
+  </div>
+</div>
                 </div>
               )}
             </div>

@@ -1,6 +1,6 @@
 import React, { lazy, Suspense } from 'react'
 import { createBrowserRouter, RouterProvider } from 'react-router-dom'
-import { SignedIn, SignedOut, RedirectToSignIn } from '@clerk/clerk-react'
+//import { SignedIn, SignedOut, RedirectToSignIn } from '@clerk/clerk-react'
 import AppLayout from './components/AppLayout'
 
 // Lazy load pages for better performance
@@ -101,12 +101,7 @@ function App() {
       element: (
         <Suspense fallback={<PageLoader />}>
           <AppLayout>
-            <SignedIn>
               <PracticePage />
-            </SignedIn>
-            <SignedOut>
-              <RedirectToSignIn />
-            </SignedOut>
           </AppLayout>
         </Suspense>
       ),
