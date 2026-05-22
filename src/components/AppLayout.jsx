@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import LogPanel from './LogPanel' 
+import LogPanel from './LogPanel.jsx'
 import { Navbar } from './Navbar'
 import Footer from './Footer'
 import { motion } from 'framer-motion'

@@ -20,6 +20,7 @@
     "@mui/material": "^7.3.4",
     "@tailwindcss/cli": "^4.1.12",
     "animejs": "^4.2.2",
+    "esbuild": "^0.28.0",
     "framer-motion": "^12.23.24",
     "fuse.js": "^7.3.0",
     "geist": "^1.5.1",
