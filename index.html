@@ -74,6 +74,28 @@
         ]
       }
     </script>
+    <script>
+      ;(() => {
+        const storageKey = 'algoscope-theme'
+        let savedTheme = null
+
+        try {
+          savedTheme = localStorage.getItem(storageKey)
+        } catch {
+          savedTheme = null
+        }
+
+        const theme =
+          savedTheme === 'light' || savedTheme === 'dark'
+            ? savedTheme
+            : matchMedia('(prefers-color-scheme: light)').matches
+              ? 'light'
+              : 'dark'
+
+        document.documentElement.dataset.theme = theme
+        document.documentElement.style.colorScheme = theme
+      })()
+    </script>
     <script src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"></script>
     <style>
       @import url('https://fonts.googleapis.com/css2?family=Geist:wght@100..900&display=swap');

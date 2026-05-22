@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom'
 const Footer = () => {
   return (
     <motion.footer
-      className="relative m-auto w-full text-slate-300 overflow-hidden rounded-xl bg-black/40 border-t border-white/10 backdrop-blur supports-[backdrop-filter]:bg-black/40 "
+      className="theme-footer relative m-auto w-full overflow-hidden rounded-xl border-t backdrop-blur"
       initial={{ opacity: 0, y: 50 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.8, ease: 'easeOut' }}
@@ -32,11 +32,11 @@ const Footer = () => {
                   className="w-full h-full object-contain rounded-lg"
                 />
               </div>
-              <h3 className="text-2xl font-bold text-white tracking-tight logo-font">
+              <h3 className="text-2xl font-bold theme-text-strong tracking-tight logo-font">
                 AlgoScope
               </h3>
             </div>
-            <p className="text-slate-400 text-sm max-w-xs font-light leading-relaxed">
+            <p className="theme-text-muted text-sm max-w-xs font-light leading-relaxed">
               Visualize and understand algorithms with smooth, interactive
               animations.
             </p>
@@ -48,7 +48,9 @@ const Footer = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.4 }}
           >
-            <h4 className="text-lg font-semibold mb-4 text-white">Explore</h4>
+            <h4 className="text-lg font-semibold mb-4 theme-text-strong">
+              Explore
+            </h4>
             <ul className="space-y-3 text-sm">
               {[
                 { name: 'Sorting', path: '/sort' },
@@ -78,7 +80,9 @@ const Footer = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.6 }}
           >
-            <h4 className="text-lg font-semibold mb-4 text-white">Company</h4>
+            <h4 className="text-lg font-semibold mb-4 theme-text-strong">
+              Company
+            </h4>
             <div className="flex flex-col space-y-3">
               <Link
                 to="/about"
@@ -141,7 +145,7 @@ const Footer = () => {
 
         {/* Bottom bar */}
         <motion.div
-          className="border-t border-white/5 bg-black/20 backdrop-blur-sm mt-6"
+          className="theme-footer-bottom border-t backdrop-blur-sm mt-6"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.8 }}
