@@ -1,4 +1,5 @@
-import React from 'react'
+import React, { useState } from 'react'
+import LogPanel from './LogPanel' 
 import { Navbar } from './Navbar'
 import Footer from './Footer'
 import { motion } from 'framer-motion'
@@ -12,6 +13,10 @@ const Background = () => (
 
 export default function AppLayout({ children, showBackground = true }) {
   const darkTheme = 'bg-[#020617] text-slate-200'
+  
+  // States to hold execution logs
+  const [logs, setLogs] = useState([])
+  const [activeStack, setActiveStack] = useState([])
 
   return (
     <motion.div
@@ -27,7 +32,22 @@ export default function AppLayout({ children, showBackground = true }) {
       <div className="flex-1 flex flex-col gap-4 p-2 sm:p-4 z-10">
         <Navbar />
 
-        <div className="flex-1">{children}</div>
+        {/* Main Workspace Layout (Row format for sidebar alignment) */}
+        <div className="flex-1 flex w-full gap-4 items-stretch relative">
+          
+          {/* Left Side: Existing components like grid, bars, forms */}
+          <div className="flex-1 min-w-0">
+            {React.Children.map(children, child => {
+              if (React.isValidElement(child)) {
+                return React.cloneElement(child, { setLogs, setActiveStack, logs, activeStack })
+              }
+              return child
+            })}
+          </div>
+
+          {/* Right Side: Collapsible Console-Style Panel */}
+          <LogPanel logs={logs} activeStack={activeStack} />
+        </div>
 
         <Footer />
       </div>
