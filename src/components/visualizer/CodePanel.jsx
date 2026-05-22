@@ -17,18 +17,30 @@ const CodePanel = memo(function CodePanel({
   const activeTheme = themes[theme] ?? themes.vscDarkPlus
 
   useEffect(() => {
-    if (!activeLine || !scrollContainerRef.current) {
-      return
-    }
+    if (!activeLine || !scrollContainerRef.current) return
 
     const activeNode = scrollContainerRef.current.querySelector(
       `[data-line-number="${activeLine}"]`
     )
 
-    activeNode?.scrollIntoView({
-      block: 'nearest',
-      behavior: 'smooth',
-    })
+    if (activeNode) {
+      const container = scrollContainerRef.current
+
+      const containerTop = container.scrollTop
+      const containerBottom = containerTop + container.clientHeight
+
+      const nodeTop = activeNode.offsetTop
+      const nodeBottom = nodeTop + activeNode.clientHeight
+
+      if (nodeTop < containerTop) {
+        container.scrollTo({ top: nodeTop - 20, behavior: 'smooth' })
+      } else if (nodeBottom > containerBottom) {
+        container.scrollTo({
+          top: nodeBottom - container.clientHeight + 20,
+          behavior: 'smooth',
+        })
+      }
+    }
   }, [activeLine])
 
   useEffect(() => {

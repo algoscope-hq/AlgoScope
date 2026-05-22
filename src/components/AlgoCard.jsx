@@ -31,6 +31,7 @@ export default function AlgoCard({
   return (
     <MotionLink
       to={link}
+      onClick={() => window.scrollTo(0, 0)}
       className={`group relative block w-full rounded-3xl p-8 backdrop-blur-xl transition-all duration-500 ease-out text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-500/50 overflow-hidden ${colorClasses} border hover:-translate-y-2 hover:shadow-[0_30px_60px_-15px_rgba(0,0,0,0.8)]`}
       variants={cardVariants}
       whileHover={{ y: -10 }}
