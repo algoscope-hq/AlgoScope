@@ -7,6 +7,7 @@ const CodeEditor = ({
   theme = 'vs-dark',
   onCodeChange,
   onRun,
+  height = '700px',
 }) => {
   const [value, setValue] = useState(defaultCode)
   const [copied, setCopied] = useState(false)
@@ -71,7 +72,10 @@ const CodeEditor = ({
   const isJavaScript = language === 'javascript'
 
   return (
-    <div className="flex flex-col w-full h-[700px] border border-slate-700/80 rounded-2xl overflow-hidden bg-slate-950/90 shadow-[0_24px_80px_rgba(15,23,42,0.45)] backdrop-blur-xl">
+    <div
+      className="flex flex-col w-full border border-slate-700/80 rounded-2xl overflow-hidden bg-slate-950/90 shadow-[0_24px_80px_rgba(15,23,42,0.45)] backdrop-blur-xl"
+      style={{ height }}
+    >
       {/* Editor Header / Toolbar */}
       <div className="flex items-center justify-between px-5 py-4 bg-slate-900/60 border-b border-slate-800">
         <div className="flex items-center gap-4">
