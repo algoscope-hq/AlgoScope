@@ -39,7 +39,7 @@ export default function AppLayout({ children, showBackground = true }) {
           <div className="flex-1 min-w-0">
             {React.Children.map(children, child => {
               if (React.isValidElement(child)) {
-                return React.cloneElement(child, { setLogs, setActiveStack, logs, activeStack })
+               return React.cloneElement(child, { setLogs, setActiveStack })
               }
               return child
             })}

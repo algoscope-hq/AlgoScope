@@ -17,6 +17,8 @@ const LogPanel = ({ logs = [], activeStack = [] }) => {
         onClick={() => setIsOpen(!isOpen)}
         className="absolute left-[-32px] top-4 bg-gray-800 text-white p-2 rounded-l-md border border-r-0 border-gray-700 hover:bg-gray-700 transition-colors z-50 font-mono text-xs"
         title={isOpen ? "Collapse Logs" : "Expand Logs"}
+        aria-label={isOpen ? "Collapse logs" : "Expand logs"}
+        aria-expanded={isOpen}
       >
         {isOpen ? "▶" : "◀"}
       </button>

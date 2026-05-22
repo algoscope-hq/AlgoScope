@@ -4,8 +4,8 @@ import { SignedIn, SignedOut, RedirectToSignIn } from '@clerk/clerk-react'
 import AppLayout from './components/AppLayout'
 
 // TEMPORARY BYPASS: Agar system mein .env file nahi hai, toh ye dummy key Clerk ko crash hone se bachayegi
-if (!import.meta.env.VITE_CLERK_PUBLISHABLE_KEY) {
-  import.meta.env.VITE_CLERK_PUBLISHABLE_KEY = "pk_test_bW9jay1jbGVyay1rZXktZm9yLWxvY2FsLWRldi1vbmx5LmNsZXJrLmFjY291bnRzLmRldiQ";
+if (import.meta.env.DEV && !import.meta.env.VITE_CLERK_PUBLISHABLE_KEY) {
+  import.meta.env.VITE_CLERK_PUBLISHABLE_KEY = "pk_test_bW9jay1...";
 }
 
 // Lazy load pages for better performance
