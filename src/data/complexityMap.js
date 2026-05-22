@@ -110,4 +110,17 @@ export const complexityMap = {
     worst: 'O(n²)',
     space: 'O(1)',
   },
+  nqueens: {
+    best: 'O(N!)',
+    average: 'O(N!)',
+    worst: 'O(N!)',
+    space: 'O(N²)',
+  },
+
+  sudoku: {
+    best: 'O(1)',
+    average: 'O(9^M)',
+    worst: 'O(9^M)',
+    space: 'O(M)',
+  },
 }

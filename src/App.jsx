@@ -43,6 +43,10 @@ const MooreVotingVisualizerPage = lazy(
   () => import('./components/mooreVotingAlgo/VisualizerPage')
 )
 
+const BacktrackingVisualizerPage = lazy(
+  () => import('./components/backtrackingAlgo/VisualizerPage')
+)
+
 const PracticePage = lazy(() => import('./components/PracticePage'))
 const AboutAlgoScope = lazy(() => import('./components/about/About'))
 const NotFound = lazy(() => import('./components/PageNotFound'))
@@ -162,6 +166,16 @@ function App() {
         <Suspense fallback={<PageLoader />}>
           <AppLayout>
             <MooreVotingVisualizerPage />
+          </AppLayout>
+        </Suspense>
+      ),
+    },
+    {
+      path: '/backtracking',
+      element: (
+        <Suspense fallback={<PageLoader />}>
+          <AppLayout>
+            <BacktrackingVisualizerPage />
           </AppLayout>
         </Suspense>
       ),

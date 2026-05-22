@@ -7,6 +7,7 @@ import GraphAlgoImg from '../assets/new-home-images/shortestPath.png'
 import KadaneImg from '../assets/new-home-images/KadaneImg.png'
 import MooreVotingImg from '../assets/new-home-images/MooreVoting.png'
 import { MathSoloVisualizer } from './MathTheory/MathSoloVisualizer'
+import BacktrackingImg from '../assets/new-home-images/KadaneImg.png'
 import adt from '../assets/new-home-images/adt.png'
 import { motion } from 'framer-motion'
 
@@ -90,6 +91,16 @@ const ALGORITHMS = [
     link: '/math-theory',
     image: KadaneImg, // or create/import a proper Math image if you have one
     imageAlt: 'Mathematical algorithms visualization',
+  },
+  {
+    title: 'Backtracking',
+    description:
+      'N-Queens and Sudoku Solver — watch the algorithm place, conflict, and undo in real time.',
+    color: 'bg-slate-900/50 border-rose-500/30 hover:border-rose-400',
+    link: '/backtracking',
+    image: BacktrackingImg,
+    imageAlt:
+      'N-Queens chessboard with queens placed and backtracking steps highlighted',
   },
 ]
 
