@@ -5,10 +5,10 @@ const LogPanel = ({ logs = [], activeStack = [] }) => {
   const logEndRef = useRef(null);
 
   useEffect(() => {
-    if (logEndRef.current) {
+    if (isOpen && logEndRef.current) {
       logEndRef.current.scrollIntoView({ behavior: "smooth" });
     }
-  }, [logs]);
+  }, [logs, isOpen]);
 
   return (
     <div className="relative flex h-full min-h-[500px] transition-all duration-300 ease-in-out">
@@ -41,7 +41,7 @@ const LogPanel = ({ logs = [], activeStack = [] }) => {
             <div className="flex flex-col-reverse gap-1 pl-2 border-l-2 border-green-600/40">
               {activeStack.map((frame, idx) => (
                 <div key={idx} className="text-blue-400 truncate">
-                  {"  ".repeat(idx)}→ {frame}
+                  {"  ".repeat(activeStack.length - 1 - idx)}→ {frame}
                 </div>
               ))}
             </div>
