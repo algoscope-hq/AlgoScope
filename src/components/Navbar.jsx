@@ -11,6 +11,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import githubIcon from '../assets/github-mark-white.svg'
 import logo from '../assets/logo2.png'
 import SearchBar from './SearchBar'
+import { useTheme } from '../context/useTheme'
 
 const bounceTransition = {
   type: 'spring',
@@ -60,11 +61,60 @@ const menuItemVariants = {
 
 const Line = ({ variants }) => (
   <motion.div
-    className="h-0.5 w-5 bg-slate-300"
+    className="h-0.5 w-5 bg-current"
     variants={variants}
     transition={bounceTransition}
   />
 )
+
+const ThemeToggleButton = ({ compact = false }) => {
+  const { isDark, toggleTheme } = useTheme()
+  const label = `Switch to ${isDark ? 'light' : 'dark'} mode`
+
+  return (
+    <button
+      type="button"
+      onClick={toggleTheme}
+      aria-label={label}
+      title={label}
+      className={`theme-toggle inline-flex items-center justify-center rounded-xl border transition-all duration-300 active:scale-95 focus:outline-none focus:ring-2 focus:ring-cyan-400/40 ${
+        compact ? 'h-10 w-10' : 'h-10 w-10 md:h-10 md:w-10'
+      }`}
+    >
+      {isDark ? (
+        <svg
+          className="h-5 w-5"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+          aria-hidden="true"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="M12 3v2m0 14v2m9-9h-2M5 12H3m15.36-6.36-1.42 1.42M7.05 16.95l-1.41 1.41m12.72 0-1.42-1.41M7.05 7.05 5.64 5.64M16 12a4 4 0 1 1-8 0 4 4 0 0 1 8 0z"
+          />
+        </svg>
+      ) : (
+        <svg
+          className="h-5 w-5"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+          aria-hidden="true"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="M21 12.8A8.5 8.5 0 1 1 11.2 3a6.5 6.5 0 0 0 9.8 9.8z"
+          />
+        </svg>
+      )}
+    </button>
+  )
+}
 
 const algorithmLinks = [
   { name: 'Search', href: '/search' },
@@ -113,7 +163,7 @@ export const Navbar = () => {
   }, [history])
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-white/10 bg-slate-950/50 backdrop-blur supports-[backdrop-filter]:bg-slate-950/40 rounded-xl shadow-2xl">
+    <header className="theme-navbar sticky top-0 z-50 w-full border-b backdrop-blur rounded-xl shadow-2xl">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="flex h-16 items-center justify-between relative">
           <Link
@@ -124,7 +174,7 @@ export const Navbar = () => {
               <img src={logo} alt="AlgoScope Logo" className="w-8 h-8" />
             </div>
 
-            <span className="mt-1 text-2xl text-white font-bold tracking-tighter">
+            <span className="mt-1 text-2xl theme-text-strong font-bold tracking-tighter">
               AlgoScope
             </span>
           </Link>
@@ -187,6 +237,8 @@ export const Navbar = () => {
               </li>
             </ul>
 
+            <ThemeToggleButton />
+
             <a
               href="https://github.com/algoscope-hq/AlgoScope"
               target="_blank"
@@ -228,6 +280,8 @@ export const Navbar = () => {
 
           {/* Mobile Menu Button */}
           <div className="flex items-center gap-4 md:hidden">
+            <ThemeToggleButton compact />
+
             <SignedIn>
               <UserButton
                 appearance={{
@@ -259,7 +313,7 @@ export const Navbar = () => {
         {open && (
           <motion.div
             key="mobile-menu"
-            className="md:hidden border-t border-white/5 bg-slate-950/90 backdrop-blur-xl shadow-2xl rounded-b-2xl overflow-hidden"
+            className="theme-mobile-menu md:hidden border-t backdrop-blur-xl shadow-2xl rounded-b-2xl overflow-hidden"
             variants={menuVariants}
             initial="closed"
             animate="open"

@@ -10,6 +10,7 @@ const CodePanel = memo(function CodePanel({
   onLanguageChange,
 }) {
   const scrollContainerRef = useRef(null)
+
   const [theme, setTheme] = useState('vscDarkPlus')
   const [copied, setCopied] = useState(false)
 
@@ -37,50 +38,67 @@ const CodePanel = memo(function CodePanel({
       setCopied(false)
     }, 1800)
 
-    return () => window.clearTimeout(timeoutId)
+    return () => {
+      window.clearTimeout(timeoutId)
+    }
   }, [copied])
 
   const handleCopy = async () => {
     try {
       await navigator.clipboard.writeText(code)
+
       setCopied(true)
-    } catch (err) {
-      console.error('Failed to copy code: ', err)
+    } catch (error) {
+      console.error(error)
     }
   }
 
   const handleDownload = () => {
     const extensions = {
       javascript: 'js',
-      cpp: 'cpp',
-      c: 'c',
       python: 'py',
+      cpp: 'cpp',
       java: 'java',
+      c: 'c',
       go: 'go',
       rust: 'rs',
     }
+
     const ext = extensions[language?.toLowerCase()] || 'txt'
 
     const cleanTitle = title?.replace(/[^a-zA-Z0-9\s]/g, '') || 'algorithm'
+
     const words = cleanTitle.trim().split(/\s+/)
+
     const algoName =
       words.length === 1
         ? words[0].toLowerCase()
         : words[0].toLowerCase() +
           words
             .slice(1)
-            .map((w) => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase())
+            .map(
+              (word) =>
+                word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
+            )
             .join('')
 
-    const blob = new Blob([code], { type: 'text/plain' })
+    const blob = new Blob([code], {
+      type: 'text/plain',
+    })
+
     const url = URL.createObjectURL(blob)
 
     const link = document.createElement('a')
+
     link.href = url
-    link.download = `${algoName || 'code'}.${ext}`
+    link.download = `${algoName}.${ext}`
+
     document.body.appendChild(link)
+
     link.click()
+
     document.body.removeChild(link)
+
     URL.revokeObjectURL(url)
   }
 
@@ -92,8 +110,10 @@ const CodePanel = memo(function CodePanel({
             <p className="text-xs font-semibold uppercase tracking-[0.24em] text-cyan-400/80">
               Live Code
             </p>
+
             <h3 className="text-lg font-semibold text-slate-100">{title}</h3>
           </div>
+
           <div className="absolute right-0 top-1/2 hidden -translate-y-1/2 rounded-full border border-cyan-500/20 bg-cyan-500/10 px-3 py-1 text-xs font-medium text-cyan-200 sm:block">
             {activeLine ? `Line ${activeLine}` : 'Waiting'}
           </div>
@@ -103,13 +123,22 @@ const CodePanel = memo(function CodePanel({
           {onLanguageChange ? (
             <select
               value={language}
-              onChange={(e) => onLanguageChange(e.target.value)}
+              onChange={(event) => onLanguageChange(event.target.value)}
               className="rounded-xl border border-slate-700 bg-slate-900 px-4 py-2 text-sm text-slate-100 transition focus:border-cyan-500 focus:outline-none"
             >
               <option value="javascript">JavaScript</option>
+
               <option value="python">Python</option>
+
               <option value="cpp">C++</option>
+
               <option value="java">Java</option>
+
+              <option value="c">C</option>
+
+              <option value="go">Go</option>
+
+              <option value="rust">Rust</option>
             </select>
           ) : (
             <div className="rounded-full border border-slate-700 bg-slate-900/80 px-3 py-1 text-xs font-medium uppercase tracking-[0.2em] text-slate-300">
@@ -124,9 +153,13 @@ const CodePanel = memo(function CodePanel({
               className="rounded-xl border border-slate-700 bg-slate-900 px-4 py-2 text-sm text-slate-100 transition focus:border-cyan-500 focus:outline-none"
             >
               <option value="vscDarkPlus">VSC Dark Plus</option>
+
               <option value="oneDark">One Dark</option>
+
               <option value="dracula">Dracula</option>
+
               <option value="coldarkDark">Coldark Dark</option>
+
               <option value="materialDark">Material Dark</option>
             </select>
 

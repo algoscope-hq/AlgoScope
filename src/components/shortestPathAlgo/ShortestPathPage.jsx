@@ -13,6 +13,7 @@ import ComparisonMode from './ComparisonMode'
 
 export const ShortestPathPage = () => {
   const [searchParams, setSearchParams] = useSearchParams()
+
   const mode = searchParams.get('mode') === 'compare' ? 'compare' : 'solo'
 
   const [viewMode, setViewMode] = React.useState('network')
@@ -36,16 +37,18 @@ export const ShortestPathPage = () => {
   const [language, setLanguage] = React.useState('javascript')
   const [runKey, setRunKey] = React.useState(null)
 
-  const handleSpeedChange = (event, newValue) => {
+  const handleSpeedChange = (_, newValue) => {
     setSpeed(newValue)
   }
 
   const handleRun = () => {
     if (!algorithm) return
 
-    if (viewMode === 'network' && (!source || !target)) return
+    if (viewMode === 'network' && (!source || !target)) {
+      return
+    }
 
-    setRunKey((k) => (k === null ? 0 : k + 1))
+    setRunKey((prev) => (prev === null ? 0 : prev + 1))
   }
 
   const handleReset = () => {
@@ -59,10 +62,18 @@ export const ShortestPathPage = () => {
     viewMode === 'grid' ? !!algorithm : !!algorithm && !!source && !!target
 
   const currentSource = useMemo(() => {
-    if (!algorithm || !shortestPathSources[algorithm]) return null
+    if (!algorithm) return ''
 
-    return shortestPathSources[algorithm][language]?.code ?? ''
-  }, [algorithm, language])
+    const algoSource = shortestPathSources[algorithm]
+
+    if (!algoSource) return ''
+
+    const viewSource = algoSource[viewMode]
+
+    if (!viewSource) return ''
+
+    return viewSource[language]?.code ?? ''
+  }, [algorithm, language, viewMode])
 
   const getAlgorithmName = (algo) => {
     const names = {
@@ -79,7 +90,10 @@ export const ShortestPathPage = () => {
       className="w-full flex flex-col lg:flex-row p-4 sm:p-6 gap-4 sm:gap-6 bg-slate-950/50 min-h-screen rounded-2xl shadow-2xl border border-white/10 backdrop-blur-xl"
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 1, ease: 'easeInOut' }}
+      transition={{
+        duration: 1,
+        ease: 'easeInOut',
+      }}
     >
       <div className="w-full lg:w-1/4 p-4 flex flex-col gap-6 bg-slate-900/80 shadow-xl rounded-xl border border-white/5 backdrop-blur-sm overflow-y-auto">
         <div className="border-b border-white/10 pb-4">
@@ -148,7 +162,10 @@ export const ShortestPathPage = () => {
           </p>
 
           {[
-            { step: '1', label: 'Pick an algorithm' },
+            {
+              step: '1',
+              label: 'Pick an algorithm',
+            },
             {
               step: '2',
               label:
@@ -156,7 +173,10 @@ export const ShortestPathPage = () => {
                   ? 'Build your grid'
                   : 'Choose source & target',
             },
-            { step: '3', label: 'Press Run' },
+            {
+              step: '3',
+              label: 'Press Run',
+            },
           ].map(({ step, label }) => {
             const done =
               (step === '1' && algorithm) ||

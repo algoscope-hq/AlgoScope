@@ -4,6 +4,7 @@ import { ClerkProvider } from '@clerk/clerk-react'
 import { simple } from '@clerk/themes'
 import './input.css'
 import App from './App.jsx'
+import { ThemeProvider } from './context/ThemeProvider.jsx'
 
 const PUBLISHABLE_KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY
 
@@ -27,101 +28,145 @@ createRoot(document.getElementById('root')).render(
       appearance={{
         baseTheme: simple,
         variables: {
-          colorPrimary: '#8b5cf6',
-          colorText: '#ffffff',
-          colorTextSecondary: '#a1a1aa',
-          colorBackground: '#0f0f0f',
-          colorInputText: '#07189D',
+          colorPrimary: 'var(--clerk-primary)',
+          colorText: 'var(--clerk-text)',
+          colorTextSecondary: 'var(--clerk-text-secondary)',
+          colorBackground: 'var(--clerk-bg)',
+          colorInputText: 'var(--clerk-input-text)',
           borderRadius: '12px',
-          colorBorder: '#27272a',
-          colorPrimaryText: '#ffffff',
-          fontFamily: 'Inter, sans-serif',
-          fontSize: '14px',
+          colorBorder: 'var(--clerk-border)',
+          colorPrimaryText: 'var(--clerk-text)',
+          fontFamily: 'var(--clerk-font-family)',
+          fontSize: '16px',
           spacingUnit: '1rem',
-          colorInputBorder: '#3f3f46',
-          colorInputPlaceholder: '#71717a',
-          shadowShimmer: '0 0 20px #8B5CF64D',
+          colorInputBorder: 'var(--clerk-border)',
+          colorInputPlaceholder: 'var(--clerk-input-placeholder)',
+          shadowShimmer: 'var(--clerk-card-shadow)',
+        },
+        layout: {
+          socialButtonsPlacement: 'top',
+          socialButtonsVariant: 'iconButton',
+          logoPlacement: 'inside',
         },
         elements: {
           card: {
-            background: `radial-gradient(circle at center,rgba(125, 211, 252, 0.35) 0%, rgba(30, 41, 59, 0.9) 35%,#020617 75% ) `,
+            background: 'var(--clerk-card-bg)',
             backdropFilter: 'blur(12px)',
-            boxShadow: '0 0 40px rgba(56, 189, 248, 0.15)',
+            boxShadow: 'var(--clerk-card-shadow)',
+            border: '1px solid var(--clerk-border)',
           },
 
           formFieldInput: {
-            background: 'rgba(15, 23, 42, 0.75)',
-            border: '1px solid #1e293b',
-            color: '#ffffff',
+            background: 'var(--clerk-input-bg) !important',
+            border: '1px solid var(--clerk-input-border) !important',
+            color: 'var(--clerk-input-text) !important',
             backdropFilter: 'blur(8px)',
           },
 
+          formFieldLabel: {
+            color: 'var(--clerk-text)',
+          },
+
+          headerTitle: {
+            color: 'var(--clerk-text)',
+          },
+          headerSubtitle: {
+            color: 'var(--clerk-text-secondary)',
+          },
+
+          dividerLine: {
+            background: 'var(--clerk-border)',
+          },
+          dividerText: {
+            color: 'var(--clerk-text-secondary)',
+          },
+
           footer: {
-            background: 'black',
+            background: 'var(--clerk-footer-bg-solid) !important', // Solid dark background to fix transparency
+            borderTop: '1px solid var(--clerk-border)',
+            padding: '1.5rem',
           },
 
           footerAction: {
-            background: 'black',
+            background: 'transparent !important',
           },
 
           footerActionText: {
-            color: '#a1a1aa',
+            color: 'var(--clerk-text-secondary)',
           },
 
           footerActionLink: {
-            color: '#8b5cf6',
+            color: 'var(--clerk-primary)',
+            '&:hover': {
+              color: 'var(--clerk-text)',
+            },
+          },
+
+          socialButtonsIconButton: {
+            borderColor: 'var(--clerk-border)',
+            background: 'var(--clerk-social-bg) !important', // White background so icons (especially Github) are clearly visible
+            height: '48px',
+            width: '100%',
+            transition: 'all 0.2s ease',
+            '&:hover': {
+              background: 'var(--clerk-social-hover) !important',
+              transform: 'translateY(-1px)',
+            },
           },
 
           socialButtonsBlockButtonText: {
-            color: '#ffffff',
-            fontWeight: '500',
+            color: 'var(--clerk-text)',
+            fontWeight: '600',
+            fontSize: '16px',
           },
 
           userButtonPopoverActionButton: {
-            color: '#ffffff !important',
+            color: 'var(--clerk-text) !important',
             background: 'transparent',
 
             '&:hover': {
-              background: '#111827',
-              color: '#ffffff !important',
+              background: 'var(--clerk-hover-bg)',
+              color: 'var(--clerk-text) !important',
             },
 
             '&:focus': {
-              color: '#ffffff !important',
+              color: 'var(--clerk-text) !important',
             },
 
             '&:active': {
-              color: '#ffffff !important',
+              color: 'var(--clerk-text) !important',
             },
           },
 
           userButtonPopoverActionButtonText: {
-            color: '#ffffff !important',
+            color: 'var(--clerk-text) !important',
           },
 
           userButtonPopoverActionButtonIcon: {
-            color: '#8b5cf6 !important',
+            color: 'var(--clerk-primary) !important',
           },
 
           formButtonPrimary: {
-            background: `radial-gradient(circle at center,rgba(125, 211, 252, 0.35) 0%,rgba(30, 41, 59, 0.9) 35%,#020617 75%)`,
+            background: 'var(--clerk-button-bg) !important',
             borderColor: 'transparent',
-            boxShadow: 'none !important',
-            color: '#ffffff',
-            outline: 'none',
+            color: 'var(--clerk-text)',
+            transition: 'all 0.2s ease-in-out',
 
             '&:focus': {
-              boxShadow: 'none !important',
-              outline: 'none',
+              boxShadow:
+                '0 0 0 2px var(--clerk-bg), 0 0 0 4px var(--clerk-primary) !important',
             },
             '&:hover': {
-              background: `radial-gradient(circle at center,rgba(125, 211, 252, 0.35) 0%,rgba(30, 41, 59, 0.9) 35%,#020617 75%)`,
+              background: 'var(--clerk-button-hover) !important',
+              transform: 'translateY(-1px)',
             },
           },
         },
       }}
     >
-      <App />
+      <ThemeProvider>
+        <App />
+      </ThemeProvider>
     </ClerkProvider>
   </StrictMode>
 )

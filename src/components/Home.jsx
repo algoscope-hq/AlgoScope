@@ -7,6 +7,7 @@ import GraphAlgoImg from '../assets/new-home-images/shortestPath.png'
 import KadaneImg from '../assets/new-home-images/KadaneImg.png'
 import MooreVotingImg from '../assets/new-home-images/MooreVoting.png'
 import { MathSoloVisualizer } from './MathTheory/MathSoloVisualizer'
+import BacktrackingImg from '../assets/new-home-images/KadaneImg.png'
 import adt from '../assets/new-home-images/adt.png'
 import { motion } from 'framer-motion'
 
@@ -25,7 +26,7 @@ const ALGORITHMS = [
   {
     title: 'Sorting',
     description: 'Visualizing Bubble, Merge, Quick, Heap, and Shell Sort.',
-    color: 'bg-slate-900/50 border-blue-500/30 hover:border-blue-400',
+    color: 'theme-card border-blue-500/30 hover:border-blue-400',
     link: '/sort',
     image: SortingImg,
     imageAlt: 'Array elements being rearranged for sorting algorithms',
@@ -33,7 +34,7 @@ const ALGORITHMS = [
   {
     title: 'Searching',
     description: 'Explore BFS, DFS, and other traversal methods.',
-    color: 'bg-slate-900/50 border-cyan-500/30 hover:border-cyan-400',
+    color: 'theme-card border-cyan-500/30 hover:border-cyan-400',
     link: '/search',
     image: SearchingImg,
     imageAlt: 'Graph traversal nodes and paths for searching algorithms',
@@ -41,7 +42,7 @@ const ALGORITHMS = [
   {
     title: 'Graph Algorithms',
     description: 'Dijkstra, Floyd-Warshall, and Topological Sort.',
-    color: 'bg-slate-900/50 border-purple-500/30 hover:border-purple-400',
+    color: 'theme-card border-purple-500/30 hover:border-purple-400',
     link: '/spath',
     image: GraphAlgoImg,
     imageAlt: 'Weighted graph path visualization for shortest path algorithms',
@@ -49,7 +50,7 @@ const ALGORITHMS = [
   {
     title: 'Array Search',
     description: 'Linear and Binary search visualization.',
-    color: 'bg-slate-900/50 border-orange-500/30 hover:border-orange-400',
+    color: 'theme-card border-orange-500/30 hover:border-orange-400',
     link: '/ldssearch',
     image: LinearSearchImg,
     imageAlt: 'Array search visualization highlighting a target value',
@@ -58,7 +59,7 @@ const ALGORITHMS = [
     title: 'Abstract Data Types',
     description:
       'Stacks, Queues, Binary Trees, Binary Heaps, and Priority Queues.',
-    color: 'bg-slate-900/50 border-emerald-500/30 hover:border-emerald-400',
+    color: 'theme-card border-emerald-500/30 hover:border-emerald-400',
     link: '/adt',
     image: adt,
     imageAlt:
@@ -67,7 +68,7 @@ const ALGORITHMS = [
   {
     title: 'Kadane Algorithm',
     description: 'Visualize Maximum Subarray Sum using Kadane’s Algorithm.',
-    color: 'bg-slate-900/50 border-pink-500/30 hover:border-pink-400',
+    color: 'theme-card border-pink-500/30 hover:border-pink-400',
     link: '/kadane',
     image: KadaneImg,
     imageAlt: 'Kadane algorithm visualization for maximum subarray sum',
@@ -76,7 +77,7 @@ const ALGORITHMS = [
     title: "Moore's Voting Algorithm",
     description:
       "Visualize the Moore's Voting Algorithm for finding the majority element.",
-    color: 'bg-slate-900/50 border-green-500/30 hover:border-green-400',
+    color: 'theme-card border-green-500/30 hover:border-green-400',
     link: '/moore-voting',
     image: MooreVotingImg,
     imageAlt:
@@ -86,21 +87,31 @@ const ALGORITHMS = [
     title: 'Math Theory',
     description:
       'Visualize GCD, Fast Exponentiation, and Bit Manipulation step-by-step.',
-    color: 'bg-slate-900/50 border-indigo-500/30 hover:border-indigo-400',
+    color: 'theme-card border-indigo-500/30 hover:border-indigo-400',
     link: '/math-theory',
     image: KadaneImg, // or create/import a proper Math image if you have one
     imageAlt: 'Mathematical algorithms visualization',
+  },
+  {
+    title: 'Backtracking',
+    description:
+      'N-Queens and Sudoku Solver — watch the algorithm place, conflict, and undo in real time.',
+    color: 'bg-slate-900/50 border-rose-500/30 hover:border-rose-400',
+    link: '/backtracking',
+    image: BacktrackingImg,
+    imageAlt:
+      'N-Queens chessboard with queens placed and backtracking steps highlighted',
   },
 ]
 
 export const Home = () => {
   return (
-    <div className="relative min-h-screen w-full bg-[#020617] text-white overflow-hidden selection:bg-cyan-500/30">
+    <div className="theme-home relative min-h-screen w-full overflow-hidden selection:bg-cyan-500/30">
       {/* Background Grid & Glow */}
       <div className="absolute inset-0 z-0 pointer-events-none">
-        <div className="absolute inset-0 bg-[linear-gradient(to_right,#1e293b_1px,transparent_1px),linear-gradient(to_bottom,#1e293b_1px,transparent_1px)] bg-[size:24px_24px] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)]"></div>
-        <div className="absolute left-0 right-0 top-0 -z-10 m-auto h-[300px] w-[300px] rounded-full bg-cyan-500 opacity-20 blur-[100px]"></div>
-        <div className="absolute right-0 bottom-0 -z-10 h-[300px] w-[300px] rounded-full bg-purple-500 opacity-10 blur-[120px]"></div>
+        <div className="theme-grid absolute inset-0 bg-[size:24px_24px] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)]"></div>
+        <div className="theme-glow-cyan absolute left-0 right-0 top-0 -z-10 m-auto h-[300px] w-[300px] rounded-full blur-[100px]"></div>
+        <div className="theme-glow-purple absolute right-0 bottom-0 -z-10 h-[300px] w-[300px] rounded-full blur-[120px]"></div>
       </div>
 
       <div className="relative z-10 flex flex-col items-center justify-center px-4 pt-32 pb-16">
@@ -118,7 +129,7 @@ export const Home = () => {
           </div>
 
           <h1 className="text-6xl md:text-8xl font-black tracking-tighter logo-font">
-            <span className="bg-clip-text text-transparent bg-gradient-to-br from-white via-white to-gray-500">
+            <span className="bg-clip-text text-transparent bg-gradient-to-br from-gray-600 via-gray-400 to-gray-900 ">
               Algo
             </span>
             <span className="bg-clip-text text-transparent bg-gradient-to-br from-cyan-400 to-purple-500">
@@ -146,7 +157,7 @@ export const Home = () => {
                   behavior: 'smooth',
                 })
               }}
-              className="inline-flex items-center justify-center px-8 py-4 text-base font-bold text-white transition-all duration-200 bg-white/5 border border-white/10 rounded-lg hover:bg-white/10 hover:scale-105 hover:border-cyan-500/50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-cyan-500"
+              className="theme-button-secondary inline-flex items-center justify-center px-8 py-4 text-base font-bold transition-all duration-200 border rounded-lg hover:scale-105 hover:border-cyan-500/50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-cyan-500"
             >
               Start Exploring
             </a>
@@ -163,14 +174,14 @@ export const Home = () => {
         <div id="explore" className="w-full max-w-7xl mx-auto mt-32 px-4">
           <div className="flex items-center gap-4 mb-12">
             <div className="h-px flex-1 bg-gradient-to-r from-transparent via-slate-700 to-transparent"></div>
-            <span className="text-slate-500 font-mono text-sm uppercase tracking-widest">
+            <span className="text-neutral-400 font-mono text-sm uppercase tracking-[0.3em]">
               Algorithms
             </span>
             <div className="h-px flex-1 bg-gradient-to-r from-transparent via-slate-700 to-transparent"></div>
           </div>
 
           <motion.div
-            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
             variants={containerVariants}
             initial="hidden"
             whileInView="visible"

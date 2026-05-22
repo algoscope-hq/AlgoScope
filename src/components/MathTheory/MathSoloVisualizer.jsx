@@ -24,8 +24,10 @@ const ALGO_TABS = [
   { key: 'bits', label: 'Bit Manipulation', complexityKey: 'bitmanip' },
 ]
 
-export const MathSoloVisualizer = ({ speed, language }) => {
+export const MathSoloVisualizer = () => {
   const [algo, setAlgo] = useState('gcd')
+  const [speed, setSpeed] = useState(1)
+  const [language, setLanguage] = useState('javascript')
 
   // GCD state
   const [gcdA, setGcdA] = useState(48)
@@ -259,6 +261,30 @@ export const MathSoloVisualizer = ({ speed, language }) => {
           </div>
         )}
 
+        <div className="space-y-3 pt-2 pb-2 border-t border-white/10">
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-400 mb-2">
+              Speed
+            </p>
+            <SpeedSlider value={speed} onChange={(e, v) => setSpeed(v)} />
+          </div>
+
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-400 mb-2">
+              Language
+            </p>
+            <select
+              value={language}
+              onChange={(e) => setLanguage(e.target.value)}
+              className="w-full rounded-xl border border-slate-700 bg-slate-800 px-4 py-2.5 text-white outline-none focus:border-cyan-500 text-sm"
+            >
+              <option value="javascript">JavaScript</option>
+              <option value="python">Python</option>
+              <option value="java">Java</option>
+              <option value="cpp">C++</option>
+            </select>
+          </div>
+        </div>
         {/* Playback buttons */}
         <div className="space-y-2">
           <Tooltip
