@@ -495,63 +495,57 @@ export default function Visualizer() {
                           : 'Paused'}
                     </div>
                   </div>
+              <div className="grid grid-cols-4 gap-2">
+  <Tooltip
+    content={isPlaying ? 'Pause' : 'Start Visualization'}
+    position="top"
+  >
+    <button
+      type="button"
+      onClick={isPlaying ? pausePlayback : playPlayback}
+      disabled={isComplete && !isPlaying}
+      className="w-full rounded-xl border border-slate-700 bg-slate-800 px-1 py-2 text-xs sm:text-sm font-medium text-slate-100 transition hover:border-cyan-500 hover:text-cyan-200 disabled:cursor-not-allowed disabled:opacity-50"
+    >
+      {isPlaying ? 'Pause' : 'Play'}
+    </button>
+  </Tooltip>
 
-                  <div className="grid grid-cols-4 gap-2">
-                    <Tooltip
-                      content={isPlaying ? 'Pause' : 'Start Visualization'}
-                      position="top"
-                    >
-                      <button
-                        type="button"
-                        onClick={isPlaying ? pausePlayback : playPlayback}
-                        disabled={isComplete && !isPlaying}
-                        className="w-full rounded-xl border border-slate-700 bg-slate-800 px-1 py-2 text-xs sm:text-sm font-medium text-slate-100 transition hover:border-cyan-500 hover:text-cyan-200 disabled:cursor-not-allowed disabled:opacity-50"
-                      >
-                      <Tooltip content="Go one step backward" position="top">
-                      <button
-                      type="button"
-                        onClick={stepBackward}
-                       disabled={currentStepIndex <= 0 || isPlaying}
-                       className="w-full rounded-xl border border-slate-700 bg-slate-800 px-3 py-2 text-sm font-medium text-slate-100 transition hover:border-cyan-500 hover:text-cyan-200 disabled:cursor-not-allowed disabled:opacity-50"
-                       >
-                       Back
-                     </button>
-                     </Tooltip>
-                        {isPlaying ? 'Pause' : 'Play'}
-                      </button>
-                    </Tooltip>
-                    <Tooltip content="Go back one step" position="top">
-                      <button
-                        type="button"
-                        onClick={stepBackward}
-                        disabled={isPlaying || currentStepIndex <= 0}
-                        className="w-full rounded-xl border border-slate-700 bg-slate-800 px-1 py-2 text-xs sm:text-sm font-medium text-slate-100 transition hover:border-cyan-500 hover:text-cyan-200 disabled:cursor-not-allowed disabled:opacity-50"
-                      >
-                        Back
-                      </button>
-                    </Tooltip>
-                    <Tooltip content="Advance one step forward" position="top">
-                      <button
-                        type="button"
-                        onClick={stepForward}
-                        disabled={isPlaying || isComplete}
-                        className="w-full rounded-xl border border-slate-700 bg-slate-800 px-1 py-2 text-xs sm:text-sm font-medium text-slate-100 transition hover:border-cyan-500 hover:text-cyan-200 disabled:cursor-not-allowed disabled:opacity-50"
-                      >
-                        Step
-                      </button>
-                    </Tooltip>
-                    <Tooltip content="Replay from the beginning" position="top">
-                      <button
-                        type="button"
-                        onClick={replayPlayback}
-                        className="w-full rounded-xl border border-slate-700 bg-slate-800 px-1 py-2 text-xs sm:text-sm font-medium text-slate-100 transition hover:border-cyan-500 hover:text-cyan-200"
-                      >
-                        Replay
-                      </button>
-                    </Tooltip>
-                  </div>
+  <Tooltip content="Go back one step" position="top">
+    <button
+      type="button"
+      onClick={stepBackward}
+      disabled={isPlaying || currentStepIndex <= 0}
+      className="w-full rounded-xl border border-slate-700 bg-slate-800 px-1 py-2 text-xs sm:text-sm font-medium text-slate-100 transition hover:border-cyan-500 hover:text-cyan-200 disabled:cursor-not-allowed disabled:opacity-50"
+    >
+      Back
+    </button>
+  </Tooltip>
+
+  <Tooltip content="Advance one step forward" position="top">
+    <button
+      type="button"
+      onClick={stepForward}
+      disabled={isPlaying || isComplete}
+      className="w-full rounded-xl border border-slate-700 bg-slate-800 px-1 py-2 text-xs sm:text-sm font-medium text-slate-100 transition hover:border-cyan-500 hover:text-cyan-200 disabled:cursor-not-allowed disabled:opacity-50"
+    >
+      Step
+    </button>
+  </Tooltip>
+
+  <Tooltip content="Replay from the beginning" position="top">
+    <button
+      type="button"
+      onClick={replayPlayback}
+      className="w-full rounded-xl border border-slate-700 bg-slate-800 px-1 py-2 text-xs sm:text-sm font-medium text-slate-100 transition hover:border-cyan-500 hover:text-cyan-200"
+    >
+      Replay
+    </button>
+  </Tooltip>
+</div>
+                 
                   <div className="mt-4">
   <input
+    aria-label="Playback step slider"
     type="range"
     min={0}
     max={steps.length - 1}

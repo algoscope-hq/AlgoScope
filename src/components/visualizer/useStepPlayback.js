@@ -98,6 +98,22 @@ export function useStepPlayback({ speed = 1 }) {
     setIsPlaying(steps.length > 1)
   }
 
+  const goToStep = (stepIndex) => {
+  if (!hasSteps) {
+    return
+  }
+
+  window.clearTimeout(timeoutRef.current)
+  setIsPlaying(false)
+
+  const boundedIndex = Math.max(
+    0,
+    Math.min(stepIndex, steps.length - 1)
+  )
+
+  setCurrentStepIndex(boundedIndex)
+}
+
   const stepForward = () => {
     if (!hasSteps) {
       return
@@ -142,17 +158,6 @@ const goToStep = (stepIndex) => {
   setCurrentStepIndex(boundedIndex)
 }
 
-  const stepBackward = () => {
-    if (!hasSteps) {
-      return
-    }
-
-    window.clearTimeout(timeoutRef.current)
-    setIsPlaying(false)
-    setCurrentStepIndex((index) => {
-      return Math.max(index - 1, 0)
-    })
-  }
 
   return {
     steps,
@@ -167,6 +172,7 @@ const goToStep = (stepIndex) => {
     play,
     reset,
     replay,
+    goToStep,
     stepForward,
     stepBackward,
   }
