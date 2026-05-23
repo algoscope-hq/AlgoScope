@@ -446,7 +446,12 @@ export const CanvasSearching = ({ algorithm, vertex, speed = 1, runKey }) => {
           </div>
         </div>
       </div>
-      {status && <StatusDisplay key={status} message={status} />}
+      <StatusDisplay
+        key={status || 'default-status'}
+        message={
+          status || 'Select algorithm and source, to start visualization.'
+        }
+      />
     </div>
   )
 }

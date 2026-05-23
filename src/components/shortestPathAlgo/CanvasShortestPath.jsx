@@ -429,7 +429,13 @@ export const CanvasShortestPath = ({
           </div>
         </div>
       </div>
-      {status && <StatusDisplay key={status} message={status} />}
+      <StatusDisplay
+        key={status || 'default-status'}
+        message={
+          status ||
+          'Select algorithm, source, and target to start visualization.'
+        }
+      />
     </div>
   )
 }
