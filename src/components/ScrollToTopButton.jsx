@@ -1,31 +1,27 @@
 import { useEffect, useState } from 'react'
+import { useTheme } from '../context/useTheme'
 
 const ScrollToTopButton = () => {
   const [isVisible, setIsVisible] = useState(false)
-
-  const [isDark, setIsDark] = useState(
-    document.documentElement.classList.contains('dark')
-  )
+  const { isDark } = useTheme()
 
   useEffect(() => {
-    const toggleVisibility = () => {
-      setIsVisible(window.scrollY > 300)
+    let throttleTimeout = null
+
+    const throttledToggle = () => {
+      if (throttleTimeout) return
+
+      throttleTimeout = setTimeout(() => {
+        setIsVisible(window.scrollY > 300)
+        throttleTimeout = null
+      }, 150)
     }
 
-    const observer = new MutationObserver(() => {
-      setIsDark(document.documentElement.classList.contains('dark'))
-    })
-
-    observer.observe(document.documentElement, {
-      attributes: true,
-      attributeFilter: ['class'],
-    })
-
-    window.addEventListener('scroll', toggleVisibility)
+    window.addEventListener('scroll', throttledToggle, { passive: true })
 
     return () => {
-      window.removeEventListener('scroll', toggleVisibility)
-      observer.disconnect()
+      window.removeEventListener('scroll', throttledToggle)
+      if (throttleTimeout) clearTimeout(throttleTimeout)
     }
   }, [])
 
@@ -43,7 +39,9 @@ const ScrollToTopButton = () => {
           onClick={scrollToTop}
           type="button"
           aria-label="Scroll to top"
-          className="fixed bottom-6 right-6 z-50 flex h-12 w-12 items-center justify-center rounded-full bg-indigo-500 text-white shadow-lg transition-all duration-300 hover:scale-110 active:scale-95 dark:bg-blue-950"
+          className={`fixed bottom-6 right-6 z-50 flex h-12 w-12 items-center justify-center rounded-full text-white shadow-lg transition-all duration-300 hover:scale-110 active:scale-95 ${
+            isDark ? 'bg-blue-950' : 'bg-indigo-500'
+          }`}
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
