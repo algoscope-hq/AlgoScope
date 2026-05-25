@@ -85,6 +85,27 @@ const ALGORITHMS = [
     category: 'Shortest Path',
     route: '/spath?algo=floydwarshall',
   },
+  // MST
+  {
+    id: 'prim',
+    name: "Prim's Algorithm",
+    category: 'Minimum Spanning Tree',
+    route: '/spath?algo=prim',
+    keywords: ['prim', 'mst', 'minimum spanning tree', 'greedy'],
+  },
+  {
+    id: 'kruskal',
+    name: "Kruskal's Algorithm",
+    category: 'Minimum Spanning Tree',
+    route: '/spath?algo=kruskal',
+    keywords: [
+      'kruskal',
+      'mst',
+      'minimum spanning tree',
+      'union find',
+      'disjoint set',
+    ],
+  },
   // Array Search
   {
     id: 'linear',
@@ -109,6 +130,31 @@ const ALGORITHMS = [
       'max subarray',
       'dynamic programming',
     ],
+  },
+  {
+    id: 'stringAlgo',
+    name: 'String Algorithms',
+    category: 'String',
+    route: '/string-algorithms',
+  },
+
+  {
+    id: 'kmp',
+    name: 'KMP Algorithm (Knuth-Morris-Pratt)',
+    category: 'String',
+    route: '/string-algorithms?algo=kmp',
+  },
+  {
+    id: 'rabinkarp',
+    name: 'Rabin-Karp Algorithm',
+    category: 'String',
+    route: '/string-algorithms?algo=rabinkarp',
+  },
+  {
+    id: 'zalgorithm',
+    name: 'Z-Algorithm',
+    category: 'String',
+    route: '/string-algorithms?algo=zalgorithm',
   },
   {
     id: 'mooreVoting',

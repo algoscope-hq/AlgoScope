@@ -218,6 +218,154 @@ func solve(board [][]rune, row, n int, results *[][]string) {
     },
   },
 
+  hanoi: {
+    javascript: {
+      code: `function towerOfHanoi(n, source, auxiliary, destination) {
+  if (n <= 0) {
+    return;
+  }
+
+  if (n === 1) {
+    console.log(\`Move disk 1 from \${source} to \${destination}\`);
+    return;
+  }
+
+  towerOfHanoi(n - 1, source, destination, auxiliary);
+  console.log(\`Move disk \${n} from \${source} to \${destination}\`);
+  towerOfHanoi(n - 1, auxiliary, source, destination);
+}
+
+towerOfHanoi(4, 'A', 'B', 'C');`,
+    },
+    python: {
+      code: `def tower_of_hanoi(n, source, auxiliary, destination):
+    if n <= 0:
+        return
+
+    if n == 1:
+        print(f"Move disk 1 from {source} to {destination}")
+        return
+
+    tower_of_hanoi(n - 1, source, destination, auxiliary)
+    print(f"Move disk {n} from {source} to {destination}")
+    tower_of_hanoi(n - 1, auxiliary, source, destination)
+
+tower_of_hanoi(4, 'A', 'B', 'C')`,
+    },
+    cpp: {
+      code: `#include <iostream>
+using namespace std;
+
+void towerOfHanoi(int n, char source, char auxiliary, char destination) {
+    if (n <= 0) {
+        return;
+    }
+
+    if (n == 1) {
+        cout << "Move disk 1 from " << source << " to " << destination << endl;
+        return;
+    }
+
+    towerOfHanoi(n - 1, source, destination, auxiliary);
+    cout << "Move disk " << n << " from " << source << " to " << destination << endl;
+    towerOfHanoi(n - 1, auxiliary, source, destination);
+}
+
+int main() {
+    towerOfHanoi(4, 'A', 'B', 'C');
+}`,
+    },
+    java: {
+      code: `public class TowerOfHanoi {
+    static void solve(int n, char source, char auxiliary, char destination) {
+        if (n <= 0) {
+            return;
+        }
+
+        if (n == 1) {
+            System.out.println("Move disk 1 from " + source + " to " + destination);
+            return;
+        }
+
+        solve(n - 1, source, destination, auxiliary);
+        System.out.println("Move disk " + n + " from " + source + " to " + destination);
+        solve(n - 1, auxiliary, source, destination);
+    }
+
+    public static void main(String[] args) {
+        solve(4, 'A', 'B', 'C');
+    }
+}`,
+    },
+    c: {
+      code: `#include <stdio.h>
+
+void towerOfHanoi(int n, char source, char auxiliary, char destination) {
+    if (n <= 0) {
+        return;
+    }
+
+    if (n == 1) {
+        printf("Move disk 1 from %c to %c\\n", source, destination);
+        return;
+    }
+
+    towerOfHanoi(n - 1, source, destination, auxiliary);
+    printf("Move disk %d from %c to %c\\n", n, source, destination);
+    towerOfHanoi(n - 1, auxiliary, source, destination);
+}
+
+int main() {
+    towerOfHanoi(4, 'A', 'B', 'C');
+    return 0;
+}`,
+    },
+    rust: {
+      code: `fn tower_of_hanoi(n: u32, source: char, auxiliary: char, destination: char) {
+    if n == 0 {
+        return;
+    }
+
+    if n == 1 {
+        println!("Move disk 1 from {} to {}", source, destination);
+        return;
+    }
+
+    tower_of_hanoi(n - 1, source, destination, auxiliary);
+    println!("Move disk {} from {} to {}", n, source, destination);
+    tower_of_hanoi(n - 1, auxiliary, source, destination);
+}
+
+fn main() {
+    tower_of_hanoi(4, 'A', 'B', 'C');
+}`,
+    },
+    go: {
+      code: `package main
+
+import "fmt"
+
+func towerOfHanoi(n int, source, auxiliary, destination string) {
+    if n <= 0 {
+        return
+    }
+
+    if n == 1 {
+        fmt.Printf("Move disk 1 from %s to %s\\n", source, destination)
+        return
+    }
+
+    towerOfHanoi(n-1, source, destination, auxiliary)
+    fmt.Printf("Move disk %d from %s to %s\\n", n, source, destination)
+    towerOfHanoi(n-1, auxiliary, source, destination)
+}
+
+func main() {
+    towerOfHanoi(4, "A", "B", "C")
+}`,
+    },
+  },
+
   sudoku: {
     javascript: {
       code: `function solveSudoku(board) {

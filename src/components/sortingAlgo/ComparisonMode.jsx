@@ -99,9 +99,32 @@ function AlgoPanel({
   const [elapsedMs, setElapsedMs] = useState(null)
   const [liveComparisons, setLiveComparisons] = useState(0)
   const [liveSwaps, setLiveSwaps] = useState(0)
+  const [prevSteps, setPrevSteps] = useState(steps)
+
   const timeoutRef = useRef(null)
   const startTimeRef = useRef(null)
   const stepIndexRef = useRef(steps.length > 0 ? 0 : -1)
+
+  if (steps !== prevSteps) {
+    setPrevSteps(steps)
+    setStepIndex(steps.length > 0 ? 0 : -1)
+    // We can't update ref here because of lint, but we can do it in useEffect
+    setIsPlaying(steps.length > 0)
+    setIsFinished(false)
+    setElapsedMs(null)
+    setLiveComparisons(0)
+    setLiveSwaps(0)
+  }
+
+  useEffect(() => {
+    // Sync ref and handle cleanup when steps change
+    stepIndexRef.current = steps.length > 0 ? 0 : -1
+    startTimeRef.current = null
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current)
+      timeoutRef.current = null
+    }
+  }, [steps])
 
   useEffect(() => {
     if (!isPlaying || steps.length === 0) return

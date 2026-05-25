@@ -123,6 +123,12 @@ export const complexityMap = {
     worst: 'O(9^M)',
     space: 'O(M)',
   },
+  hanoi: {
+    best: 'O(2^N)',
+    average: 'O(2^N)',
+    worst: 'O(2^N)',
+    space: 'O(N)',
+  },
   gcd: {
     best: 'O(log min(a, b))',
     average: 'O(log min(a, b))',
@@ -146,6 +152,20 @@ export const complexityMap = {
     average: 'O(N log log N)',
     worst: 'O(N log log N)',
     space: 'O(N)',
+  },
+
+  prim: {
+    best: 'O((E + V) log E)',
+    average: 'O((E + V) log E)',
+    worst: 'O((E + V) log E)',
+    space: 'O(V)',
+  },
+
+  kruskal: {
+    best: 'O(E log E)',
+    average: 'O(E log E)',
+    worst: 'O(E log E)',
+    space: 'O(V + E)',
   },
   fibonacci: {
     best: 'O(2^N)',

@@ -73,13 +73,38 @@ const Terminal = React.forwardRef(function Terminal({ logs, onClear }, ref) {
 
 const runCodeInWorker = (userCode, inputVal) => {
   return new Promise((resolve) => {
+    const executionToken =
+      typeof crypto !== 'undefined' && crypto.randomUUID
+        ? crypto.randomUUID()
+        : Math.random().toString(36).substring(2) + Date.now().toString(36)
+
     const workerCode = `
       self.onmessage = function(e) {
-        const { code, input } = e.data;
+        const { code, input, token } = e.data;
         const logs = [];
         
         const originalLog = self.console.log;
         const originalError = self.console.error;
+        const originalPostMessage = self.postMessage;
+        
+        // 1. Completely remove communication APIs from prototype chain
+        let currentProto = self;
+        while (currentProto) {
+          ['postMessage', 'close', 'importScripts'].forEach(method => {
+            if (currentProto.hasOwnProperty(method)) {
+               try { delete currentProto[method]; } catch(e) {}
+            }
+          });
+          currentProto = Object.getPrototypeOf(currentProto);
+        }
+
+        // 2. Shadow dangerous globals on the instance
+        self.postMessage = undefined;
+        self.close = undefined;
+        self.importScripts = undefined;
+        self.onmessage = undefined;
+        self.WorkerGlobalScope = undefined;
+        self.DedicatedWorkerGlobalScope = undefined;
         
         self.console.log = function(...args) {
           const content = args.map(arg => {
@@ -103,13 +128,15 @@ const runCodeInWorker = (userCode, inputVal) => {
         
         const startTime = self.performance.now();
         try {
-          const runner = new Function('input', code);
+          // 3. Wrap execution in an IIFE that shadows common aliases in local scope
+          const wrappedCode = "\\n(function(self, globalThis, postMessage, close, importScripts, onmessage) {\\n" + code + "\\n})();\\n";
+          const runner = new Function('input', wrappedCode);
           runner(input);
           const endTime = self.performance.now();
-          self.postMessage({ status: 'success', logs, duration: endTime - startTime });
+          originalPostMessage.call(self, { __token: token, status: 'success', logs, duration: endTime - startTime });
         } catch (err) {
           const endTime = self.performance.now();
-          self.postMessage({ status: 'error', error: err.message, logs, duration: endTime - startTime });
+          originalPostMessage.call(self, { __token: token, status: 'error', error: err.message, logs, duration: endTime - startTime });
         } finally {
           self.console.log = originalLog;
           self.console.error = originalError;
@@ -137,10 +164,13 @@ const runCodeInWorker = (userCode, inputVal) => {
     }, 3000)
 
     worker.onmessage = (e) => {
-      clearTimeout(timeout)
-      worker.terminate()
-      URL.revokeObjectURL(workerURL)
-      resolve(e.data)
+      if (e.data && e.data.__token === executionToken) {
+        clearTimeout(timeout)
+        worker.terminate()
+        URL.revokeObjectURL(workerURL)
+        const { __token, ...safeData } = e.data
+        resolve(safeData)
+      }
     }
 
     worker.onerror = (err) => {
@@ -157,7 +187,11 @@ const runCodeInWorker = (userCode, inputVal) => {
       })
     }
 
-    worker.postMessage({ code: userCode, input: inputVal })
+    worker.postMessage({
+      code: userCode,
+      input: inputVal,
+      token: executionToken,
+    })
   })
 }
 

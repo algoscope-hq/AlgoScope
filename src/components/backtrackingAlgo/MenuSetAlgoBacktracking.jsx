@@ -6,6 +6,8 @@ export const MenuSetAlgoBacktracking = ({
   setAlgo,
   boardSize,
   setBoardSize,
+  diskCount,
+  setDiskCount,
   onVisualize,
   onReset,
 }) => {
@@ -22,8 +24,8 @@ export const MenuSetAlgoBacktracking = ({
             Algorithm
           </label>
 
-          <div className="flex rounded-xl overflow-hidden border border-slate-700">
-            {['nqueens', 'sudoku'].map((key) => (
+          <div className="grid grid-cols-3 rounded-xl overflow-hidden border border-slate-700">
+            {['nqueens', 'sudoku', 'hanoi'].map((key) => (
               <button
                 key={key}
                 onClick={() => setAlgo(key)}
@@ -33,7 +35,11 @@ export const MenuSetAlgoBacktracking = ({
                     : 'bg-slate-800 text-slate-400 hover:text-white'
                 }`}
               >
-                {key === 'nqueens' ? 'N-Queens' : 'Sudoku'}
+                {key === 'nqueens'
+                  ? 'N-Queens'
+                  : key === 'sudoku'
+                    ? 'Sudoku'
+                    : 'Hanoi'}
               </button>
             ))}
           </div>
@@ -59,6 +65,33 @@ export const MenuSetAlgoBacktracking = ({
                 {[4, 5, 6, 7, 8].map((n) => (
                   <option key={n} value={n}>
                     {n} × {n}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </Tooltip>
+        )}
+
+        {/* Tower of Hanoi Disk Count */}
+        {algo === 'hanoi' && (
+          <Tooltip
+            content="Each extra disk doubles the number of moves"
+            position="right"
+            className="w-full"
+          >
+            <div>
+              <label className="block text-xs text-slate-400 mb-1 pl-1">
+                Disk Count
+              </label>
+
+              <select
+                value={diskCount}
+                onChange={(e) => setDiskCount(Number(e.target.value))}
+                className="w-full rounded-xl border border-slate-700 bg-slate-800 px-4 py-3 text-white outline-none focus:border-cyan-500"
+              >
+                {[3, 4, 5, 6, 7, 8].map((n) => (
+                  <option key={n} value={n}>
+                    {n} disks - {2 ** n - 1} moves
                   </option>
                 ))}
               </select>

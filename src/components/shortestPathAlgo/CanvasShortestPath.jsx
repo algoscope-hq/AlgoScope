@@ -163,6 +163,23 @@ export const CanvasShortestPath = ({
     })
   }, [runKey])
 
+  useEffect(() => {
+    if (networkRef.current) {
+      networkRef.current.setOptions({ physics: { enabled: physics } })
+    }
+  }, [physics])
+
+  useEffect(() => {
+    if (!networkRef.current) return
+
+    const isMST = algorithm === 'prim' || algorithm === 'kruskal'
+    networkRef.current.setOptions({
+      edges: {
+        arrows: { to: { enabled: !isMST, scaleFactor: 0.8 } },
+      },
+    })
+  }, [algorithm])
+
   // ── Reset styles ──────────────────────────────────────────────────────────
   const resetStyles = useCallback(() => {
     if (!nodesRef.current || !edgesRef.current) return
@@ -182,10 +199,26 @@ export const CanvasShortestPath = ({
     })
   }, [])
 
+  const getIdleStatusMessage = () => {
+    if (!algorithm) return 'Select an algorithm to start visualization.'
+    if (algorithm === 'kruskal') return "Press Run to start Kruskal's MST."
+    if (algorithm === 'prim') {
+      return "Select a start node to run Prim's MST."
+    }
+
+    return 'Select source and target to start visualization.'
+  }
+
   // ── Animate — fires only when runKey changes ──────────────────────────────
   useEffect(() => {
     resetStyles()
-    if (runKey === null || !algorithm || !source || !target) {
+    const isMST = algorithm === 'prim' || algorithm === 'kruskal'
+    if (
+      runKey === null ||
+      !algorithm ||
+      (!isMST && (!source || !target)) ||
+      (algorithm === 'prim' && !source)
+    ) {
       setTimeout(() => setStatus(''), 0)
       return
     }
@@ -200,6 +233,10 @@ export const CanvasShortestPath = ({
     nodeIds.forEach((id) => {
       adj[id] = []
     })
+    const mstAdj = {}
+    nodeIds.forEach((id) => {
+      mstAdj[id] = []
+    })
     edges.get().forEach((e) => {
       const edgeId = e.id
       const w =
@@ -207,10 +244,14 @@ export const CanvasShortestPath = ({
       if (!Number.isFinite(w)) return
       if (!adj[e.from]) adj[e.from] = []
       adj[e.from].push({ to: e.to, w, edgeId })
+      if (!mstAdj[e.from]) mstAdj[e.from] = []
+      if (!mstAdj[e.to]) mstAdj[e.to] = []
+      mstAdj[e.from].push({ to: e.to, w, edgeId })
+      mstAdj[e.to].push({ to: e.from, w, edgeId })
     })
 
-    const src = parseInt(source)
-    const dst = parseInt(target)
+    const src = source ? parseInt(source) : null
+    const dst = target ? parseInt(target) : null
 
     const timers = []
     const runVersion = graphVersionRef.current
@@ -399,9 +440,241 @@ export const CanvasShortestPath = ({
       reconstructAndAnimatePath(buildParentFromNext())
     }
 
+    const runPrim = () => {
+      setStatus(`Running Prim's MST algorithm starting from node ${src}...`)
+      const inMST = new Set()
+      const mstEdges = []
+      const mstNodes = []
+      const n = nodeIds.length
+      const bestWeight = {}
+
+      nodeIds.forEach((id) => {
+        bestWeight[id] = Infinity
+      })
+      bestWeight[src] = 0
+
+      const minHeap = []
+
+      const heapPush = (item) => {
+        minHeap.push(item)
+        let index = minHeap.length - 1
+
+        while (index > 0) {
+          const parent = Math.floor((index - 1) / 2)
+          if (minHeap[parent].weight <= minHeap[index].weight) break
+          ;[minHeap[parent], minHeap[index]] = [minHeap[index], minHeap[parent]]
+          index = parent
+        }
+      }
+
+      const heapPop = () => {
+        if (minHeap.length === 0) return null
+        const min = minHeap[0]
+        const last = minHeap.pop()
+
+        if (minHeap.length > 0) {
+          minHeap[0] = last
+          let index = 0
+
+          while (true) {
+            const left = index * 2 + 1
+            const right = index * 2 + 2
+            let smallest = index
+
+            if (
+              left < minHeap.length &&
+              minHeap[left].weight < minHeap[smallest].weight
+            ) {
+              smallest = left
+            }
+
+            if (
+              right < minHeap.length &&
+              minHeap[right].weight < minHeap[smallest].weight
+            ) {
+              smallest = right
+            }
+
+            if (smallest === index) break
+            ;[minHeap[index], minHeap[smallest]] = [
+              minHeap[smallest],
+              minHeap[index],
+            ]
+            index = smallest
+          }
+        }
+
+        return min
+      }
+
+      let delay = 0
+      heapPush({ node: src, weight: 0, edgeId: null })
+
+      while (minHeap.length > 0 && mstNodes.length < n) {
+        const current = heapPop()
+        if (!current || inMST.has(current.node)) continue
+
+        inMST.add(current.node)
+        mstNodes.push(current.node)
+
+        if (current.edgeId !== null) {
+          mstEdges.push(current.edgeId)
+          visitLaterEdge(current.edgeId, delay)
+          delay += 400 / speed
+        }
+
+        visitLaterNode(current.node, delay)
+        delay += 800 / speed
+
+        for (const edge of mstAdj[current.node] || []) {
+          if (!inMST.has(edge.to) && edge.w < bestWeight[edge.to]) {
+            bestWeight[edge.to] = edge.w
+            heapPush({
+              node: edge.to,
+              weight: edge.w,
+              edgeId: edge.edgeId,
+            })
+          }
+        }
+      }
+
+      const t = setTimeout(
+        () => {
+          mstNodes.forEach((nodeId) => {
+            nodes.update({
+              id: nodeId,
+              color: { background: '#10b981', border: '#ffffff' },
+              size: 28,
+            })
+          })
+          mstEdges.forEach((edgeId) => {
+            edges.update({
+              id: edgeId,
+              color: { color: '#10b981' },
+              width: 5,
+            })
+          })
+          setStatus(
+            `Minimum Spanning Tree found using Prim's algorithm. Total weight: ${mstEdges.reduce(
+              (acc, edgeId) => {
+                const e = edges.get(edgeId)
+                const w =
+                  typeof e.weight === 'number'
+                    ? e.weight
+                    : parseFloat(e.label ?? '1')
+                return acc + (Number.isFinite(w) ? w : 0)
+              },
+              0
+            )}.`
+          )
+        },
+        delay + 500 / speed
+      )
+      timers.push(t)
+    }
+
+    const runKruskal = () => {
+      setStatus(`Running Kruskal's MST algorithm...`)
+      const parentDSU = {}
+      nodeIds.forEach((id) => {
+        parentDSU[id] = id
+      })
+
+      const find = (i) => {
+        while (parentDSU[i] !== i) {
+          parentDSU[i] = parentDSU[parentDSU[i]]
+          i = parentDSU[i]
+        }
+        return i
+      }
+
+      const union = (i, j) => {
+        const rootI = find(i)
+        const rootJ = find(j)
+        if (rootI !== rootJ) {
+          parentDSU[rootI] = rootJ
+          return true
+        }
+        return false
+      }
+
+      const allEdges = edges
+        .get()
+        .map((e) => {
+          const w =
+            typeof e.weight === 'number' ? e.weight : parseFloat(e.label ?? '1')
+          return { ...e, weight: w }
+        })
+        .filter((e) => Number.isFinite(e.weight))
+
+      allEdges.sort((a, b) => a.weight - b.weight)
+
+      const mstEdges = []
+      const mstNodes = new Set()
+      let delay = 0
+
+      allEdges.forEach((e) => {
+        const u = e.from
+        const v = e.to
+
+        if (find(u) !== find(v)) {
+          union(u, v)
+          mstEdges.push(e.id)
+          mstNodes.add(u)
+          mstNodes.add(v)
+
+          const currentEdgeId = e.id
+          const nodeU = u
+          const nodeV = v
+
+          visitLaterNode(nodeU, delay)
+          visitLaterNode(nodeV, delay)
+          delay += 400 / speed
+          visitLaterEdge(currentEdgeId, delay)
+          delay += 800 / speed
+        }
+      })
+
+      const t = setTimeout(
+        () => {
+          mstNodes.forEach((nodeId) => {
+            nodes.update({
+              id: nodeId,
+              color: { background: '#10b981', border: '#ffffff' },
+              size: 28,
+            })
+          })
+          mstEdges.forEach((edgeId) => {
+            edges.update({
+              id: edgeId,
+              color: { color: '#10b981' },
+              width: 5,
+            })
+          })
+          setStatus(
+            `Minimum Spanning Tree found using Kruskal's algorithm. Total weight: ${mstEdges.reduce(
+              (acc, edgeId) => {
+                const e = edges.get(edgeId)
+                const w =
+                  typeof e.weight === 'number'
+                    ? e.weight
+                    : parseFloat(e.label ?? '1')
+                return acc + (Number.isFinite(w) ? w : 0)
+              },
+              0
+            )}.`
+          )
+        },
+        delay + 500 / speed
+      )
+      timers.push(t)
+    }
+
     if (algorithm === 'dijkstra') runDijkstra()
     if (algorithm === 'bellmanford') runBellmanFord()
     if (algorithm === 'floydwarshall') runFloydWarshall()
+    if (algorithm === 'prim') runPrim()
+    if (algorithm === 'kruskal') runKruskal()
 
     return () => {
       timers.forEach(clearTimeout)
@@ -487,10 +760,7 @@ export const CanvasShortestPath = ({
 
       <StatusDisplay
         key={status || 'default-status'}
-        message={
-          status ||
-          'Select algorithm, source, and target to start visualization.'
-        }
+        message={status || getIdleStatusMessage()}
       />
     </div>
   )

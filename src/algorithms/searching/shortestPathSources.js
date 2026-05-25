@@ -739,6 +739,389 @@ void floyd_warshall(int R, int C, int grid[100][100], int** dist) {
       },
     },
   },
+  prim: {
+    network: {
+      javascript: {
+        code: `function primMST(graph) {
+  const parent = {};
+  const key = {};
+  const inMST = new Set();
+  const heap = new MinHeap((a, b) => a.weight < b.weight);
+  const nodes = Object.keys(graph);
+  if (nodes.length === 0) return { parent, key };
+  for (const node of nodes) {
+    key[node] = Infinity;
+  }
+
+  const start = nodes[0];
+  key[start] = 0;
+  parent[start] = null;
+  heap.push({ node: start, weight: 0 });
+
+  while (!heap.isEmpty() && inMST.size < nodes.length) {
+    const { node: u } = heap.pop();
+    if (inMST.has(u)) continue;
+    inMST.add(u);
+
+    for (const [v, weight] of Object.entries(graph[u])) {
+      if (!inMST.has(v) && weight < key[v]) {
+        parent[v] = u;
+        key[v] = weight;
+        heap.push({ node: v, weight });
+      }
+    }
+  }
+
+  return { parent, key };
+}`,
+      },
+      python: {
+        code: `import heapq
+def prim_mst(graph):
+    mst_set = set()
+    parent = {}
+    keys = {node: float('inf') for node in graph}
+    start = list(graph.keys())[0]
+    keys[start] = 0
+    parent[start] = None
+    pq = [(0, start)]
+    while pq:
+        w, u = heapq.heappop(pq)
+        if u in mst_set: continue
+        mst_set.add(u)
+        for v, weight in graph[u].items():
+            if v not in mst_set and weight < keys[v]:
+                keys[v] = weight
+                parent[v] = u
+                heapq.heappush(pq, (weight, v))
+    return parent`,
+      },
+      cpp: {
+        code: `#include <vector>
+#include <queue>
+#include <climits>
+using namespace std;
+vector<pair<int, int>> primMST(int V, vector<vector<pair<int, int>>>& adj) {
+    vector<int> key(V, INT_MAX);
+    vector<int> parent(V, -1);
+    vector<bool> inMST(V, false);
+    priority_queue<pair<int, int>, vector<pair<int, int>>, greater<>> pq;
+    key[0] = 0; pq.push({0, 0});
+    while (!pq.empty()) {
+        int u = pq.top().second; pq.pop();
+        if (inMST[u]) continue;
+        inMST[u] = true;
+        for (auto& edge : adj[u]) {
+            int v = edge.first; int w = edge.second;
+            if (!inMST[v] && w < key[v]) {
+                key[v] = w;
+                pq.push({key[v], v});
+                parent[v] = u;
+            }
+        }
+    }
+    vector<pair<int, int>> mst;
+    for (int i = 1; i < V; i++) if (parent[i] != -1) mst.push_back({parent[i], i});
+    return mst;
+}`,
+      },
+      java: {
+        code: `import java.util.*;
+public int[] primMST(int V, List<List<int[]>> adj) {
+    int[] key = new int[V]; Arrays.fill(key, Integer.MAX_VALUE);
+    int[] parent = new int[V]; Arrays.fill(parent, -1);
+    boolean[] inMST = new boolean[V];
+    PriorityQueue<int[]> pq = new PriorityQueue<>(Comparator.comparingInt(a -> a[1]));
+    key[0] = 0; pq.add(new int[]{0, 0});
+    while (!pq.isEmpty()) {
+        int u = pq.poll()[0];
+        if (inMST[u]) continue;
+        inMST[u] = true;
+        for (int[] edge : adj.get(u)) {
+            int v = edge[0]; int w = edge[1];
+            if (!inMST[v] && w < key[v]) {
+                key[v] = w;
+                parent[v] = u;
+                pq.add(new int[]{v, key[v]});
+            }
+        }
+    }
+    return parent;
+}`,
+      },
+      c: {
+        code: `void primMST(int V, int graph[100][100], int parent[100]) {
+    int key[100];
+    int mstSet[100] = {0};
+    for (int i = 0; i < V; i++) key[i] = 1e9, parent[i] = -1;
+    key[0] = 0;
+    for (int count = 0; count < V - 1; count++) {
+        int u = -1, min = 1e9;
+        for (int v = 0; v < V; v++) if (!mstSet[v] && key[v] < min) min = key[v], u = v;
+        if (u == -1) break;
+        mstSet[u] = 1;
+        for (int v = 0; v < V; v++)
+            if (graph[u][v] && !mstSet[v] && graph[u][v] < key[v])
+                parent[v] = u, key[v] = graph[u][v];
+    }
+}`,
+      },
+      rust: {
+        code: `use std::collections::BinaryHeap;
+use std::cmp::Ordering;
+#[derive(Copy, Clone, Eq, PartialEq)] struct State { key: i32, node: usize }
+impl Ord for State { fn cmp(&self, other: &Self) -> Ordering { other.key.cmp(&self.key) } }
+impl PartialOrd for State { fn partial_cmp(&self, other: &Self) -> Option<Ordering> { Some(self.cmp(other)) } }
+fn prim_mst(v: usize, adj: &Vec<Vec<(usize, i32)>>) -> Vec<usize> {
+    let mut key = vec![i32::MAX; v];
+    let mut parent = vec![usize::MAX; v];
+    let mut in_mst = vec![false; v];
+    let mut pq = BinaryHeap::new();
+    key[0] = 0; pq.push(State { key: 0, node: 0 });
+    while let Some(State { node: u, .. }) = pq.pop() {
+        if in_mst[u] { continue; }
+        in_mst[u] = true;
+        for &(v, w) in &adj[u] {
+            if !in_mst[v] && w < key[v] {
+                key[v] = w;
+                parent[v] = u;
+                pq.push(State { key: w, node: v });
+            }
+        }
+    }
+    parent
+}`,
+      },
+      go: {
+        code: `import "container/heap"
+type Edge struct { to, weight int }
+type HeapItem struct { node, key int }
+type PriorityQueue []*HeapItem
+func (pq PriorityQueue) Len() int { return len(pq) }
+func (pq PriorityQueue) Less(i, j int) bool { return pq[i].key < pq[j].key }
+func (pq PriorityQueue) Swap(i, j int) { pq[i], pq[j] = pq[j], pq[i] }
+func (pq *PriorityQueue) Push(x interface{}) { *pq = append(*pq, x.(*HeapItem)) }
+func (pq *PriorityQueue) Pop() interface{} { old := *pq; n := len(old); item := old[n-1]; *pq = old[0:n-1]; return item }
+func primMST(V int, adj [][]Edge) []int {
+    key := make([]int, V); for i := range key { key[i] = 1e9 }
+    parent := make([]int, V); for i := range parent { parent[i] = -1 }
+    inMST := make([]bool, V)
+    key[0] = 0
+    pq := &PriorityQueue{{0, 0}}; heap.Init(pq)
+    for pq.Len() > 0 {
+        u := heap.Pop(pq).(*HeapItem).node
+        if inMST[u] { continue }
+        inMST[u] = true
+        for _, edge := range adj[u] {
+            v, w := edge.to, edge.weight
+            if !inMST[v] && w < key[v] {
+                key[v] = w
+                parent[v] = u
+                heap.Push(pq, &HeapItem{v, w})
+            }
+        }
+    }
+    return parent
+}`,
+      },
+    },
+  },
+  kruskal: {
+    network: {
+      javascript: {
+        code: `function kruskalMST(V, edges) {
+  const parent = Array.from({ length: V }, (_, i) => i);
+  const find = (i) => {
+    while (parent[i] !== i) i = parent[i];
+    return i;
+  };
+  const union = (i, j) => {
+    const rootI = find(i);
+    const rootJ = find(j);
+    if (rootI !== rootJ) {
+      parent[rootI] = rootJ;
+      return true;
+    }
+    return false;
+  };
+  const sortedEdges = [...edges].sort((a, b) => a.w - b.w);
+  const mst = [];
+  for (const edge of sortedEdges) {
+    if (union(edge.u, edge.v)) {
+      mst.push(edge);
+      if (mst.length === V - 1) break;
+    }
+  }
+  return mst;
+}`,
+      },
+      python: {
+        code: `def kruskal_mst(V, edges):
+    parent = list(range(V))
+    def find(i):
+        while parent[i] != i:
+            i = parent[i]
+        return i
+    def union(i, j):
+        root_i = find(i)
+        root_j = find(j)
+        if root_i != root_j:
+            parent[root_i] = root_j
+            return True
+        return False
+    sorted_edges = sorted(edges, key=lambda item: item[2])
+    mst = []
+    for u, v, w in sorted_edges:
+        if union(u, v):
+            mst.append((u, v, w))
+            if len(mst) == V - 1: break
+    return mst`,
+      },
+      cpp: {
+        code: `#include <vector>
+#include <algorithm>
+using namespace std;
+struct Edge { int u, v, w; };
+struct DSU {
+    vector<int> parent;
+    DSU(int n) { parent.resize(n); for(int i=0; i<n; i++) parent[i] = i; }
+    int find(int i) { return parent[i] == i ? i : parent[i] = find(parent[i]); }
+    bool unite(int i, int j) {
+        int rI = find(i); int rJ = find(j);
+        if (rI != rJ) { parent[rI] = rJ; return true; }
+        return false;
+    }
+};
+vector<Edge> kruskalMST(int V, vector<Edge>& edges) {
+    sort(edges.begin(), edges.end(), [](Edge a, Edge b) { return a.w < b.w; });
+    DSU dsu(V);
+    vector<Edge> mst;
+    for (auto& edge : edges) {
+        if (dsu.unite(edge.u, edge.v)) {
+            mst.push_back(edge);
+            if (mst.size() == V - 1) break;
+        }
+    }
+    return mst;
+}`,
+      },
+      java: {
+        code: `import java.util.*;
+public class Kruskal {
+    static class Edge implements Comparable<Edge> {
+        int u, v, w;
+        public int compareTo(Edge o) { return this.w - o.w; }
+    }
+    int[] parent;
+    int find(int i) { return parent[i] == i ? i : (parent[i] = find(parent[i])); }
+    boolean union(int i, int j) {
+        int rI = find(i), rJ = find(j);
+        if (rI != rJ) { parent[rI] = rJ; return true; }
+        return false;
+    }
+    public List<Edge> kruskalMST(int V, List<Edge> edges) {
+        Collections.sort(edges);
+        parent = new int[V]; for (int i = 0; i < V; i++) parent[i] = i;
+        List<Edge> mst = new ArrayList<>();
+        for (Edge edge : edges) {
+            if (union(edge.u, edge.v)) {
+                mst.add(edge);
+                if (mst.size() == V - 1) break;
+            }
+        }
+        return mst;
+    }
+}`,
+      },
+      c: {
+        code: `#include <stdlib.h>
+struct Edge { int u, v, w; };
+int compareEdges(const void* a, const void* b) { return ((struct Edge*)a)->w - ((struct Edge*)b)->w; }
+int find(int parent[], int i) {
+    if (parent[i] == i) return i;
+    return parent[i] = find(parent, parent[i]);
+}
+int unite(int parent[], int i, int j) {
+    int rootI = find(parent, i); int rootJ = find(parent, j);
+    if (rootI != rootJ) { parent[rootI] = rootJ; return 1; }
+    return 0;
+}
+void kruskalMST(int V, int E, struct Edge edges[], struct Edge mst[]) {
+    qsort(edges, E, sizeof(struct Edge), compareEdges);
+    int* parent = malloc(V * sizeof(int));
+    for (int i = 0; i < V; i++) parent[i] = i;
+    int mstSize = 0;
+    for (int i = 0; i < E; i++) {
+        if (unite(parent, edges[i].u, edges[i].v)) {
+            mst[mstSize++] = edges[i];
+            if (mstSize == V - 1) break;
+        }
+    }
+    free(parent);
+}`,
+      },
+      rust: {
+        code: `struct Edge { u: usize, v: usize, w: i32 }
+struct DSU { parent: Vec<usize> }
+impl DSU {
+    fn new(n: usize) -> Self { DSU { parent: (0..n).collect() } }
+    fn find(&mut self, i: usize) -> usize {
+        if self.parent[i] == i { return i; }
+        self.parent[i] = self.find(self.parent[i]);
+        self.parent[i]
+    }
+    fn union(&mut self, i: usize, j: usize) -> bool {
+        let r_i = self.find(i); let r_j = self.find(j);
+        if r_i != r_j { self.parent[r_i] = r_j; return true; }
+        false
+    }
+}
+fn kruskal_mst(v: usize, edges: &mut [Edge]) -> Vec<Edge> {
+    edges.sort_by_key(|e| e.w);
+    let mut dsu = DSU::new(v);
+    let mut mst = Vec::new();
+    for edge in edges {
+        if dsu.union(edge.u, edge.v) {
+            mst.push(Edge { u: edge.u, v: edge.v, w: edge.w });
+            if mst.len() == v - 1 { break; }
+        }
+    }
+    mst
+}`,
+      },
+      go: {
+        code: `import "sort"
+type Edge struct { u, v, w int }
+type DSU struct { parent []int }
+func NewDSU(n int) *DSU {
+    p := make([]int, n); for i := range p { p[i] = i }
+    return &DSU{p}
+}
+func (dsu *DSU) Find(i int) int {
+    if dsu.parent[i] == i { return i }
+    dsu.parent[i] = dsu.Find(dsu.parent[i])
+    return dsu.parent[i]
+}
+func (dsu *DSU) Union(i, j int) bool {
+    rI, rJ := dsu.Find(i), dsu.Find(j)
+    if rI != rJ { dsu.parent[rI] = rJ; return true }
+    return false
+}
+func kruskalMST(V int, edges []Edge) []Edge {
+    sort.Slice(edges, func(i, j int) bool { return edges[i].w < edges[j].w })
+    dsu := NewDSU(V)
+    var mst []Edge
+    for _, edge := range edges {
+        if dsu.Union(edge.u, edge.v) {
+            mst = append(mst, edge)
+            if len(mst) == V-1 { break }
+        }
+    }
+    return mst
+}`,
+      },
+    },
+  },
 }
 
 export const getSource = (algorithm, viewMode, language) => {
