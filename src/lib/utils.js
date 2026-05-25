@@ -16,12 +16,13 @@
 export const createStep = ({
   lineKey,
   type,
-  array,
+  array = [],
   indices = [],
   sortedIndices = [],
   message = '',
   variables = {},
   duration,
+  ...rest
 }) => ({
   lineKey,
   type,
@@ -31,6 +32,7 @@ export const createStep = ({
   message,
   variables,
   duration,
+  ...rest,
 })
 
 /**
@@ -47,9 +49,21 @@ export const calculateStepDelay = (
   speed = 1,
   minDelay = 120
 ) => {
-  const adjustedSpeed = Math.max(speed, 0.1)
-  const base = stepDuration ?? 700
-  return Math.max(minDelay, Math.round(base / adjustedSpeed))
+  const baseValue = stepDuration ?? 700
+  const parsedDuration = Number(baseValue)
+  const safeStepDuration = isFinite(parsedDuration) ? parsedDuration : 700
+
+  const baseSpeed = speed ?? 1
+  const parsedSpeed = Number(baseSpeed)
+  const safeSpeed = isFinite(parsedSpeed) ? parsedSpeed : 1
+
+  const baseMinDelay = minDelay ?? 120
+  const parsedMinDelay = Number(baseMinDelay)
+  const safeMinDelay = isFinite(parsedMinDelay) ? parsedMinDelay : 120
+
+  const adjustedSpeed = Math.max(safeSpeed, 0.1)
+  const base = Math.max(0, safeStepDuration)
+  return Math.max(safeMinDelay, Math.round(base / adjustedSpeed))
 }
 
 /**
@@ -62,9 +76,21 @@ export const calculateStepDelay = (
  * @returns {Array<number>} An array of randomly generated integers.
  */
 export const generateRandomArray = (length, min, max) => {
+  const parsedLength = Math.max(0, Math.floor(Number(length) || 0))
+  const safeLength = isFinite(parsedLength) ? parsedLength : 0
+
+  let safeMin = isFinite(Number(min)) ? Math.floor(Number(min)) : 0
+  let safeMax = isFinite(Number(max)) ? Math.floor(Number(max)) : 100
+
+  if (safeMin > safeMax) {
+    const temp = safeMin
+    safeMin = safeMax
+    safeMax = temp
+  }
+
   return Array.from(
-    { length },
-    () => Math.floor(Math.random() * (max - min + 1)) + min
+    { length: safeLength },
+    () => Math.floor(Math.random() * (safeMax - safeMin + 1)) + safeMin
   )
 }
 

@@ -55,6 +55,5 @@ jobs:
         # Fails the PR if the code causes a fatal compilation error
         run: npm run build
 
-      # uncomment the lines below to enforce testing on PRs.
-      # - name: Run Unit Tests
-      #   run: npm test
+      - name: Run Unit Tests
+        run: npm test

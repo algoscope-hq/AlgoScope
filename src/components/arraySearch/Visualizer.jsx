@@ -5,6 +5,7 @@ import CodePanel from '../visualizer/CodePanel'
 import { useStepPlayback } from '../visualizer/useStepPlayback'
 import ComplexityCard from '../ComplexityCard'
 import Tooltip from '../Tooltip'
+import TestCaseManager from '../testCaseManager/TestCaseManager'
 
 import * as linear from '../../algorithms/searching/linearSearchSteps'
 import * as binary from '../../algorithms/searching/binarySearchSteps'
@@ -19,6 +20,50 @@ const createArray = (type) => {
     return [17, 30, 37, 45, 50, 72, 88, 90, 99, 101, 120, 160, 203]
   }
   return [50, 120, 72, 30, 203, 90, 160, 88, 17, 45, 37, 99, 101, 93, 63]
+}
+
+const SEARCH_SAMPLE_CASES = [
+  {
+    name: 'Linear Search Hit',
+    algorithm: 'linearSearch',
+    input: JSON.stringify({
+      array: [14, 27, 35, 42, 58, 63],
+      target: 42,
+    }),
+    description: 'Target is in the middle of an unsorted array.',
+  },
+]
+
+const parseStoredSearchCase = (input) => {
+  if (!input) return null
+
+  try {
+    const parsed = JSON.parse(input)
+    if (parsed && Array.isArray(parsed.array)) {
+      const hasTarget = Object.prototype.hasOwnProperty.call(parsed, 'target')
+      const target = hasTarget ? Number(parsed.target) : undefined
+
+      if (hasTarget && Number.isNaN(target)) {
+        return null
+      }
+
+      return {
+        array: parsed.array.map(Number).filter((item) => !Number.isNaN(item)),
+        ...(hasTarget ? { target } : {}),
+      }
+    }
+  } catch {
+    // Fall through to legacy comma-separated array input.
+  }
+
+  const array = input
+    .split(/[,\s]+/)
+    .map((item) => Number(item.trim()))
+    .filter((item) => !Number.isNaN(item))
+
+  if (!array.length) return null
+
+  return { array }
 }
 
 export default function Visualizer() {
@@ -47,7 +92,9 @@ export default function Visualizer() {
 
   useEffect(() => {
     const params = {}
-    if (target) params.target = target
+    if (target !== '' && target !== null && target !== undefined) {
+      params.target = target
+    }
     if (language) params.lang = language
     if (algorithm) params.algo = algorithm
     setSearchParams(params, { replace: true })
@@ -83,6 +130,17 @@ export default function Visualizer() {
   const handleReset = () => {
     clearPlayback()
     setBaseArray(createArray(algorithm))
+  }
+
+  const handleLoadTestCase = (input) => {
+    const storedCase = parseStoredSearchCase(input)
+    if (!storedCase) return
+
+    clearPlayback()
+    setBaseArray(storedCase.array)
+    if (storedCase.target !== undefined) {
+      setTarget(storedCase.target)
+    }
   }
 
   const isRunning = isPlaying
@@ -263,7 +321,10 @@ export default function Visualizer() {
                 ].map(({ step, label }) => {
                   const done =
                     (step === '1' && algorithm) ||
-                    (step === '2' && target) ||
+                    (step === '2' &&
+                      target !== '' &&
+                      target !== null &&
+                      target !== undefined) ||
                     (step === '3' && hasSteps)
                   return (
                     <div key={step} className="flex items-center gap-3">
@@ -290,6 +351,16 @@ export default function Visualizer() {
 
               <div className="rounded-2xl border border-slate-700/80 bg-slate-900/60 p-4 shadow-xl">
                 <div className="space-y-4">
+                  <TestCaseManager
+                    algorithm={algorithm}
+                    currentInput={JSON.stringify({
+                      array: baseArray,
+                      target,
+                    })}
+                    sampleCases={SEARCH_SAMPLE_CASES}
+                    onLoad={handleLoadTestCase}
+                  />
+
                   <div>
                     <p className="mb-2 text-xs font-semibold uppercase tracking-[0.2em] text-cyan-400/80">
                       Algorithm
@@ -352,7 +423,12 @@ export default function Visualizer() {
                     >
                       <button
                         onClick={handleSearch}
-                        disabled={isRunning || !target}
+                        disabled={
+                          isRunning ||
+                          target === '' ||
+                          target === null ||
+                          target === undefined
+                        }
                         className="w-full text-sm font-bold rounded-xl bg-cyan-600 px-6 py-3 text-white transition-all duration-300 hover:-translate-y-0.5 hover:bg-cyan-500 hover:shadow-[0_0_15px_rgba(6,182,212,0.4)] disabled:cursor-not-allowed disabled:opacity-50"
                       >
                         {isRunning

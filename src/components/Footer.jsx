@@ -27,6 +27,13 @@ const Footer = () => {
       color: 'hover:border-purple-500/30 text-purple-400 bg-purple-500/5',
     },
     {
+      name: 'Backtracking',
+      path: '/backtracking',
+      desc: 'N-Queens, Sudoku solver & more',
+      complexity: 'O(N!)',
+      color: 'hover:border-rose-500/30 text-rose-400 bg-rose-500/5',
+    },
+    {
       name: 'Arrays',
       path: '/ldssearch',
       desc: 'Kadane, Moore, sliding windows', // Fixed typo here
@@ -45,7 +52,7 @@ const Footer = () => {
 
   return (
     <motion.footer
-      className="theme-footer relative max-w-7xl mx-auto mt-24 mb-6 overflow-hidden rounded-2xl border border-white/[0.05] backdrop-blur-xl p-6 sm:p-8 shadow-[0_0_50px_-12px_rgba(0,0,0,0.5)]"
+      className="theme-footer relative max-w-7xl mx-auto mt-24 mb-6 overflow-hidden rounded-2xl border theme-border backdrop-blur-xl p-6 sm:p-8 shadow-2xl"
       initial={{ opacity: 0, y: 40 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.8, ease: 'easeOut' }}
@@ -57,10 +64,10 @@ const Footer = () => {
 
       <div className="relative z-10 grid grid-cols-1 lg:grid-cols-3 gap-6 items-stretch">
         {/* Box 1: Core Brand Showcase */}
-        <div className="lg:col-span-1 bg-white/[0.02] border border-white/[0.05] rounded-xl p-6 flex flex-col justify-between space-y-8">
+        <div className="lg:col-span-1 theme-media-surface border theme-border rounded-xl p-6 flex flex-col justify-between space-y-8">
           <div className="space-y-4">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-white/10 rounded-xl flex items-center justify-center p-1.5 border border-white/10 backdrop-blur shadow-inner">
+              <div className="w-10 h-10 theme-media-surface rounded-xl flex items-center justify-center p-1.5 border theme-border backdrop-blur shadow-inner">
                 <img
                   src="/logo3.png"
                   alt="AlgoScope"
@@ -69,7 +76,7 @@ const Footer = () => {
                 />
               </div>
               <div>
-                <h3 className="text-xl font-bold tracking-tight bg-gradient-to-r from-white via-slate-200 to-slate-400 bg-clip-text text-transparent logo-font">
+                <h3 className="text-xl font-bold tracking-tight theme-text-strong logo-font">
                   AlgoScope
                 </h3>
                 {/* Fixed Gap Space here */}
@@ -78,38 +85,38 @@ const Footer = () => {
                     <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-75"></span>
                     <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-cyan-500"></span>
                   </span>
-                  <span className="text-[9px] uppercase font-mono tracking-widest text-cyan-400/80">
+                  <span className="text-[9px] uppercase font-mono tracking-widest text-cyan-500 dark:text-cyan-400/80">
                     Telemetry Active
                   </span>
                 </div>
               </div>
             </div>
-            <p className="text-sm font-light leading-relaxed text-slate-400">
+            <p className="text-sm font-light leading-relaxed theme-text-muted">
               Deconstructing complex data structures and algorithm runtime
               behaviors through smooth, interactive web modules.
             </p>
           </div>
 
-          <div className="flex items-center justify-between pt-4 border-t border-white/[0.05]">
+          <div className="flex items-center justify-between pt-4 border-t theme-border">
             <div className="flex gap-2">
               <motion.a
                 href="https://github.com/algoscope-hq/AlgoScope.git"
                 target="_blank"
                 rel="noreferrer"
-                className="w-9 h-9 bg-white/5 border border-white/10 rounded-lg flex items-center justify-center text-slate-400 hover:text-white transition-all"
+                className="w-9 h-9 theme-media-surface border theme-border rounded-lg flex items-center justify-center theme-text-muted hover:theme-text-strong transition-all"
                 whileHover={{ scale: 1.05, y: -2 }}
               >
                 <img
                   src={githubIcon}
                   alt="GitHub"
-                  className="h-4 w-4 opacity-80 invert"
+                  className="h-4 w-4 theme-text-muted invert dark:invert-0 opacity-80"
                 />
               </motion.a>
               <motion.a
                 href="https://discord.gg/Yj43j7YV9T"
                 target="_blank"
                 rel="noreferrer"
-                className="w-9 h-9 bg-white/5 border border-white/10 rounded-lg flex items-center justify-center text-slate-400 hover:text-[#5865F2] hover:bg-[#5865F2]/10 hover:border-[#5865F2]/20 transition-all"
+                className="w-9 h-9 theme-media-surface border theme-border rounded-lg flex items-center justify-center theme-text-muted hover:text-[#5865F2] hover:bg-[#5865F2]/10 hover:border-[#5865F2]/20 transition-all"
                 whileHover={{ scale: 1.05, y: -2 }}
               >
                 <svg
@@ -125,7 +132,7 @@ const Footer = () => {
             <Link
               to="/about"
               onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-              className="text-xs text-slate-400 hover:text-cyan-400 font-medium transition-colors"
+              className="text-xs theme-text-muted hover:theme-text-strong font-medium transition-colors"
             >
               About Project &rarr;
             </Link>
@@ -143,25 +150,25 @@ const Footer = () => {
                 key={i}
                 to={algo.path}
                 onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-                className={`group relative bg-white/[0.01] hover:bg-white/[0.03] border border-white/[0.04] ${borderHoverClass} rounded-xl p-5 flex flex-col justify-between transition-all duration-300 transform hover:-translate-y-0.5`}
+                className={`group relative theme-media-surface border theme-border ${borderHoverClass} rounded-xl p-5 flex flex-col justify-between transition-all duration-300 transform hover:-translate-y-0.5`}
               >
                 <div className="space-y-2">
                   <div className="flex justify-between items-start gap-2">
-                    <h4 className="text-md font-semibold text-slate-200 group-hover:text-white transition-colors">
+                    <h4 className="text-md font-semibold theme-text-muted group-hover:theme-text-strong transition-colors">
                       {algo.name} Module
                     </h4>
                     <span
-                      className={`text-[10px] font-mono px-2 py-0.5 rounded-md border border-white/[0.06] backdrop-blur-sm ${badgeClasses} tracking-wide font-medium shadow-sm transition-all duration-300 group-hover:scale-105`}
+                      className={`text-[10px] font-mono px-2 py-0.5 rounded-md border theme-border backdrop-blur-sm ${badgeClasses} tracking-wide font-medium shadow-sm transition-all duration-300 group-hover:scale-105`}
                     >
                       {algo.complexity}
                     </span>
                   </div>
-                  <p className="text-xs text-slate-500 group-hover:text-slate-400 transition-colors font-light leading-relaxed">
+                  <p className="text-xs theme-text-muted group-hover:theme-text-strong transition-colors font-light leading-relaxed opacity-70 group-hover:opacity-100">
                     {algo.desc}
                   </p>
                 </div>
 
-                <div className="mt-5 flex items-center justify-between text-[10px] uppercase tracking-wider text-slate-600 group-hover:text-cyan-400 font-semibold transition-colors">
+                <div className="mt-5 flex items-center justify-between text-[10px] uppercase tracking-wider theme-text-subtle group-hover:theme-text-strong font-semibold transition-colors">
                   <span>Launch Visualizer</span>
                   <span className="text-xs transform group-hover:translate-x-0.5 transition-transform duration-300">
                     &rarr;
@@ -174,17 +181,17 @@ const Footer = () => {
       </div>
 
       {/* Box 3: Minimalist Bottom Ribbon & Interactive Complexity Counter */}
-      <div className="mt-8 pt-6 border-t border-white/[0.04] flex flex-col lg:flex-row justify-between items-center gap-6">
-        <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-4 text-xs text-slate-500 w-full lg:w-auto justify-between lg:justify-start">
+      <div className="mt-8 pt-6 border-t theme-border flex flex-col lg:flex-row justify-between items-center gap-6">
+        <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-4 text-xs theme-text-subtle w-full lg:w-auto justify-between lg:justify-start">
           <p>
             &copy; {new Date().getFullYear()}{' '}
-            <span className="text-slate-400 font-medium">AlgoScope</span> &bull;
-            Open Source Sandbox
+            <span className="theme-text-muted font-medium">AlgoScope</span>{' '}
+            &bull; Open Source Sandbox
           </p>
-          <div className="text-[11px] text-slate-600">
+          <div className="text-[11px] theme-text-subtle">
             Maintained by{' '}
             <a
-              className="text-slate-400 hover:text-cyan-400 transition-colors"
+              className="theme-text-muted hover:theme-text-strong transition-colors"
               href="https://github.com/Bimbok"
               target="_blank"
               rel="noreferrer"
@@ -193,7 +200,7 @@ const Footer = () => {
             </a>
             {' & '}
             <a
-              className="text-slate-400 hover:text-purple-400 transition-colors"
+              className="theme-text-muted hover:theme-text-strong transition-colors"
               href="https://github.com/adityapaul26"
               target="_blank"
               rel="noreferrer"
@@ -203,14 +210,14 @@ const Footer = () => {
           </div>
         </div>
 
-        <div className="flex flex-wrap items-center justify-center gap-2 bg-white/[0.02] border border-white/[0.04] px-3 py-1.5 rounded-xl backdrop-blur-sm w-full lg:w-auto">
-          <span className="text-[10px] uppercase font-bold tracking-wider text-slate-600 mr-1 cursor-default">
+        <div className="flex flex-wrap items-center justify-center gap-2 theme-media-surface border theme-border px-3 py-1.5 rounded-xl backdrop-blur-sm w-full lg:w-auto">
+          <span className="text-[10px] uppercase font-bold tracking-wider theme-text-subtle mr-1 cursor-default">
             Asymptotic Scales:
           </span>
           {performanceMetrics.map((metric, index) => (
             <motion.div
               key={index}
-              className="text-[10px] font-mono px-2 py-0.5 rounded bg-white/[0.02] border border-white/[0.03] text-slate-400 cursor-help shadow-sm"
+              className="text-[10px] font-mono px-2 py-0.5 rounded theme-media-surface border theme-border theme-text-muted cursor-help shadow-sm"
               whileHover={{
                 scale: 1.05,
                 backgroundColor: 'rgba(251, 113, 133, 0.05)',

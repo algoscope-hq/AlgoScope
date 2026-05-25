@@ -1,5 +1,36 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
 import StatusDisplay from '../StatusDisplay'
+import { GraphBuilderToolbar } from '../shared/GraphBuilderToolbar'
+import { scheduleNetworkReady } from '../../lib/scheduleNetworkReady'
+
+// ── Preset graph data (also used by Reset button in toolbar) ──────────────────
+const PRESET_NODES = [
+  { id: 1, label: '1' },
+  { id: 2, label: '2' },
+  { id: 3, label: '3' },
+  { id: 4, label: '4' },
+  { id: 5, label: '5' },
+  { id: 6, label: '6' },
+  { id: 7, label: '7' },
+  { id: 8, label: '8' },
+  { id: 9, label: '9' },
+]
+
+const PRESET_EDGES = [
+  { id: 1, from: 1, to: 2, label: '2', weight: 2 },
+  { id: 2, from: 1, to: 3, label: '4', weight: 4 },
+  { id: 3, from: 2, to: 3, label: '1', weight: 1 },
+  { id: 4, from: 2, to: 4, label: '7', weight: 7 },
+  { id: 5, from: 3, to: 5, label: '3', weight: 3 },
+  { id: 6, from: 4, to: 6, label: '1', weight: 1 },
+  { id: 7, from: 5, to: 4, label: '2', weight: 2 },
+  { id: 8, from: 5, to: 6, label: '5', weight: 5 },
+  { id: 9, from: 6, to: 7, label: '2', weight: 2 },
+  { id: 10, from: 7, to: 8, label: '1', weight: 1 },
+  { id: 11, from: 8, to: 9, label: '4', weight: 4 },
+  { id: 12, from: 3, to: 9, label: '12', weight: 12 },
+  { id: 13, from: 4, to: 3, label: '-1', weight: -1 },
+]
 
 export const CanvasShortestPath = ({
   algorithm,
@@ -7,6 +38,7 @@ export const CanvasShortestPath = ({
   target,
   speed = 1,
   runKey,
+  onGraphChange,
 }) => {
   const containerRef = useRef(null)
   const networkRef = useRef(null)
@@ -14,41 +46,31 @@ export const CanvasShortestPath = ({
   const edgesRef = useRef(null)
   const [status, setStatus] = useState('')
   const [physics, setPhysics] = useState(false)
+  const [networkReady, setNetworkReady] = useState(false)
+  const graphVersionRef = useRef(0)
+  const onGraphChangeRef = useRef(onGraphChange)
 
-  // initialize network
+  useEffect(() => {
+    onGraphChangeRef.current = onGraphChange
+  }, [onGraphChange])
+
+  // Notify parent of node list (stable callback for vis init effect)
+  const notifyGraphChange = useCallback(() => {
+    if (!nodesRef.current || !onGraphChangeRef.current) return
+    onGraphChangeRef.current(nodesRef.current.getIds())
+  }, [])
+
+  const handleCanvasGraphChange = useCallback((ids) => {
+    graphVersionRef.current += 1
+    onGraphChangeRef.current?.(ids)
+  }, [])
+
+  // ── Initialize vis-network ─────────────────────────────────────────────────
   useEffect(() => {
     if (!window.vis || !containerRef.current) return
 
-    const someNodes = [
-      { id: 1, label: '1' },
-      { id: 2, label: '2' },
-      { id: 3, label: '3' },
-      { id: 4, label: '4' },
-      { id: 5, label: '5' },
-      { id: 6, label: '6' },
-      { id: 7, label: '7' },
-      { id: 8, label: '8' },
-      { id: 9, label: '9' },
-    ]
-
-    const nodes = new window.vis.DataSet(someNodes)
-
-    const edges = new window.vis.DataSet([
-      { from: 1, to: 2, label: '2', weight: 2 },
-      { from: 1, to: 3, label: '4', weight: 4 },
-      { from: 2, to: 3, label: '1', weight: 1 },
-      { from: 2, to: 4, label: '7', weight: 7 },
-      { from: 3, to: 5, label: '3', weight: 3 },
-      { from: 4, to: 6, label: '1', weight: 1 },
-      { from: 5, to: 4, label: '2', weight: 2 },
-      { from: 5, to: 6, label: '5', weight: 5 },
-      { from: 6, to: 7, label: '2', weight: 2 },
-      { from: 7, to: 8, label: '1', weight: 1 },
-      { from: 8, to: 9, label: '4', weight: 4 },
-      { from: 3, to: 9, label: '12', weight: 12 },
-      { from: 4, to: 3, label: '-1', weight: -1 },
-    ])
-
+    const nodes = new window.vis.DataSet(PRESET_NODES)
+    const edges = new window.vis.DataSet(PRESET_EDGES)
     const data = { nodes, edges }
 
     const options = {
@@ -111,12 +133,29 @@ export const CanvasShortestPath = ({
     edgesRef.current = edges
     networkRef.current = network
 
-    return () => {
-      network.destroy()
-    }
-  }, [])
+    const cancelReady = scheduleNetworkReady(network, () => {
+      setNetworkReady(true)
+      notifyGraphChange()
+    })
 
-  // Recenter on run
+    return () => {
+      cancelReady()
+      network.destroy()
+      networkRef.current = null
+      nodesRef.current = null
+      edgesRef.current = null
+      setNetworkReady(false)
+    }
+  }, [notifyGraphChange])
+
+  // ── Physics toggle ─────────────────────────────────────────────────────────
+  useEffect(() => {
+    if (networkRef.current) {
+      networkRef.current.setOptions({ physics: { enabled: physics } })
+    }
+  }, [physics])
+
+  // ── Recenter when animation starts ────────────────────────────────────────
   useEffect(() => {
     if (!networkRef.current || runKey === null) return
     networkRef.current.fit({
@@ -124,13 +163,8 @@ export const CanvasShortestPath = ({
     })
   }, [runKey])
 
-  useEffect(() => {
-    if (networkRef.current) {
-      networkRef.current.setOptions({ physics: { enabled: physics } })
-    }
-  }, [physics])
-
-  const resetStyles = () => {
+  // ── Reset styles ──────────────────────────────────────────────────────────
+  const resetStyles = useCallback(() => {
     if (!nodesRef.current || !edgesRef.current) return
     nodesRef.current.get().forEach((n) => {
       nodesRef.current.update({
@@ -146,9 +180,9 @@ export const CanvasShortestPath = ({
         width: 3,
       })
     })
-  }
+  }, [])
 
-  // Animate — only fires when runKey changes
+  // ── Animate — fires only when runKey changes ──────────────────────────────
   useEffect(() => {
     resetStyles()
     if (runKey === null || !algorithm || !source || !target) {
@@ -179,27 +213,35 @@ export const CanvasShortestPath = ({
     const dst = parseInt(target)
 
     const timers = []
+    const runVersion = graphVersionRef.current
+    const isStale = () => runVersion !== graphVersionRef.current
 
     const visitLaterNode = (id, delay) => {
       const t = setTimeout(() => {
+        if (isStale()) return
         nodes.update({
           id,
           color: { background: '#f43f5e', border: '#ffffff' },
           size: 35,
         })
-        setTimeout(() => {
+        const t2 = setTimeout(() => {
+          if (isStale()) return
           nodes.update({ id, size: 30 })
         }, 300 / speed)
+        timers.push(t2)
       }, delay)
       timers.push(t)
     }
 
     const visitLaterEdge = (edgeId, delay) => {
       const t = setTimeout(() => {
+        if (isStale()) return
         edges.update({ id: edgeId, color: { color: '#10b981' }, width: 6 })
-        setTimeout(() => {
+        const t2 = setTimeout(() => {
+          if (isStale()) return
           edges.update({ id: edgeId, width: 5 })
         }, 200 / speed)
+        timers.push(t2)
       }, delay)
       timers.push(t)
     }
@@ -233,8 +275,9 @@ export const CanvasShortestPath = ({
         }
       })
 
-      setTimeout(
+      const pathDoneTimer = setTimeout(
         () => {
+          if (isStale()) return
           pathNodes.forEach((n) => {
             nodes.update({
               id: n,
@@ -249,6 +292,7 @@ export const CanvasShortestPath = ({
         },
         delay + 500 / speed
       )
+      timers.push(pathDoneTimer)
     }
 
     const runDijkstra = () => {
@@ -362,7 +406,7 @@ export const CanvasShortestPath = ({
     return () => {
       timers.forEach(clearTimeout)
     }
-  }, [runKey, algorithm, source, target, speed])
+  }, [runKey, algorithm, source, target, speed, resetStyles])
 
   return (
     <div className="w-full flex flex-col gap-2">
@@ -374,25 +418,39 @@ export const CanvasShortestPath = ({
           style={{ background: 'transparent' }}
         />
 
+        {/* Graph Builder Toolbar — rendered after network is ready */}
+        {networkReady && (
+          <GraphBuilderToolbar
+            networkRef={networkRef}
+            nodesRef={nodesRef}
+            edgesRef={edgesRef}
+            presetNodes={PRESET_NODES}
+            presetEdges={PRESET_EDGES}
+            weighted={true}
+            onGraphChange={handleCanvasGraphChange}
+          />
+        )}
+
         {/* Color legend */}
         <div className="absolute bottom-3 left-3 z-10 flex items-center gap-3 bg-slate-900/80 backdrop-blur-md border border-white/10 rounded-lg px-3 py-2">
           <span className="flex items-center gap-1.5 text-xs text-slate-300">
-            <span className="w-3 h-3 rounded-full bg-cyan-500 inline-block"></span>
+            <span className="w-3 h-3 rounded-full bg-cyan-500 inline-block" />
             Unvisited
           </span>
           <span className="flex items-center gap-1.5 text-xs text-slate-300">
-            <span className="w-3 h-3 rounded-full bg-rose-500 inline-block"></span>
+            <span className="w-3 h-3 rounded-full bg-rose-500 inline-block" />
             Visiting
           </span>
           <span className="flex items-center gap-1.5 text-xs text-slate-300">
-            <span className="w-3 h-3 rounded-full bg-emerald-500 inline-block"></span>
+            <span className="w-3 h-3 rounded-full bg-emerald-500 inline-block" />
             Path
           </span>
         </div>
 
         {/* Physics toggle */}
-        <div className="absolute top-3 right-3 z-10 group">
+        <div className="absolute bottom-3 right-3 z-10 group">
           <button
+            id="sp-physics-toggle"
             onClick={() => setPhysics(!physics)}
             className={`flex items-center gap-2 px-3 py-2 text-xs font-bold rounded-lg shadow-md transition-all duration-300 border backdrop-blur-md ${
               physics
@@ -424,11 +482,9 @@ export const CanvasShortestPath = ({
             </svg>
             {physics ? 'Physics ON' : 'Physics OFF'}
           </button>
-          <div className="absolute right-0 top-full mt-1 w-48 bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-xs text-slate-400 opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none">
-            Enables dragging nodes to rearrange the graph layout.
-          </div>
         </div>
       </div>
+
       <StatusDisplay
         key={status || 'default-status'}
         message={

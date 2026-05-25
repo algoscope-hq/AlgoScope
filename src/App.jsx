@@ -1,6 +1,8 @@
 import React, { lazy, Suspense } from 'react'
-import { createBrowserRouter, RouterProvider } from 'react-router-dom'
+import { createBrowserRouter, RouterProvider, Navigate } from 'react-router-dom'
 import { SignedIn, SignedOut, RedirectToSignIn } from '@clerk/clerk-react'
+
+const HAS_CLERK = Boolean(import.meta.env.VITE_CLERK_PUBLISHABLE_KEY)
 import AppLayout from './components/AppLayout'
 
 // TEMPORARY BYPASS: Sirf development mein
@@ -50,6 +52,9 @@ const MooreVotingVisualizerPage = lazy(
 
 const BacktrackingVisualizerPage = lazy(
   () => import('./components/backtrackingAlgo/VisualizerPage')
+)
+const StringAlgoVisualizerPage = lazy(
+  () => import('./components/stringAlgo/VisualizerPage')
 )
 
 const PracticePage = lazy(() => import('./components/PracticePage'))
@@ -110,12 +115,22 @@ function App() {
       element: (
         <Suspense fallback={<PageLoader />}>
           <AppLayout>
-            <SignedIn>
+            {HAS_CLERK ? (
+              <>
+                <SignedIn>
+                  <PracticePage />
+                </SignedIn>
+                <SignedOut>
+                  <RedirectToSignIn />
+                </SignedOut>
+              </>
+            ) : import.meta.env.DEV ? (
+              // Allow access to PracticePage only in development when Clerk is not configured
               <PracticePage />
-            </SignedIn>
-            <SignedOut>
-              <RedirectToSignIn />
-            </SignedOut>
+            ) : (
+              // In non-dev environments without Clerk, redirect to home (or show unauthorized)
+              <Navigate to="/" replace />
+            )}
           </AppLayout>
         </Suspense>
       ),
@@ -186,6 +201,16 @@ function App() {
         <Suspense fallback={<PageLoader />}>
           <AppLayout>
             <BacktrackingVisualizerPage />
+          </AppLayout>
+        </Suspense>
+      ),
+    },
+    {
+      path: '/string-algorithms',
+      element: (
+        <Suspense fallback={<PageLoader />}>
+          <AppLayout>
+            <StringAlgoVisualizerPage />
           </AppLayout>
         </Suspense>
       ),

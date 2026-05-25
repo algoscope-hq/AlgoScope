@@ -9,6 +9,41 @@ const START_COL = 5
 const END_ROW = 10
 const END_COL = 34
 
+const MAZE_WALL_PROBABILITY = 0.25
+
+const DRAW_MODES = ['wall', 'weight', 'erase']
+
+const LEGEND_ITEMS = [
+  { l: 'Start', c: 'bg-green-500' },
+  { l: 'End', c: 'bg-red-500' },
+  { l: 'Wall', c: 'bg-black' },
+  { l: 'Visited', c: 'bg-cyan-500' },
+  { l: 'Path', c: 'bg-yellow-400' },
+  { l: 'Weighted', c: 'bg-orange-500' },
+]
+
+const getCellClassName = (node) => {
+  return `w-7 h-7 border border-slate-800 flex items-center justify-center text-[11px] text-white ${
+    node.isStart
+      ? 'bg-green-500'
+      : node.isEnd
+        ? 'bg-red-500'
+        : node.isWall
+          ? 'bg-black'
+          : node.isWeighted
+            ? node.path
+              ? 'bg-orange-500 ring-1 ring-yellow-300'
+              : node.visited
+                ? 'bg-orange-400'
+                : 'bg-orange-500'
+            : node.path
+              ? 'bg-yellow-400'
+              : node.visited
+                ? 'bg-cyan-500'
+                : 'bg-[#0f172a]'
+  }`
+}
+
 const createNode = (row, col) => {
   return {
     row,
@@ -18,41 +53,36 @@ const createNode = (row, col) => {
     isWall: false,
     visited: false,
     path: false,
+    weight: 1,
+    isWeighted: false,
   }
 }
 
 const createGrid = () => {
   const grid = []
-
   for (let row = 0; row < ROWS; row++) {
     const currentRow = []
-
     for (let col = 0; col < COLS; col++) {
       currentRow.push(createNode(row, col))
     }
-
     grid.push(currentRow)
   }
-
   return grid
 }
 
 const getNeighbors = (node, currentGrid) => {
   const neighbors = []
   const { row, col } = node
-
   if (row > 0) neighbors.push(currentGrid[row - 1][col])
   if (row < ROWS - 1) neighbors.push(currentGrid[row + 1][col])
   if (col > 0) neighbors.push(currentGrid[row][col - 1])
   if (col < COLS - 1) neighbors.push(currentGrid[row][col + 1])
-
   return neighbors.filter((n) => !n.isWall)
 }
 
 const runDijkstra = (currentGrid) => {
   const startNode = currentGrid[START_ROW][START_COL]
   const endNode = currentGrid[END_ROW][END_COL]
-
   const distances = {}
   const visited = new Set()
   const parent = {}
@@ -73,7 +103,6 @@ const runDijkstra = (currentGrid) => {
     for (const row of currentGrid) {
       for (const node of row) {
         const key = `${node.row}-${node.col}`
-
         if (!visited.has(key) && distances[key] < smallest) {
           smallest = distances[key]
           current = node
@@ -81,70 +110,99 @@ const runDijkstra = (currentGrid) => {
       }
     }
 
-    if (!current) break
+    if (!current || current.isWall) break
 
-    const currentKey = `${current.row}-${current.col}`
-
-    visited.add(currentKey)
-
-    if (current.isWall) continue
-
+    visited.add(`${current.row}-${current.col}`)
     order.push(current)
 
-    if (current.row === endNode.row && current.col === endNode.col) {
-      break
-    }
+    if (current.row === endNode.row && current.col === endNode.col) break
 
     const neighbors = getNeighbors(current, currentGrid)
-
     for (const next of neighbors) {
       const nextKey = `${next.row}-${next.col}`
-      const newDistance = distances[currentKey] + 1
-
+      const newDistance =
+        distances[`${current.row}-${current.col}`] + next.weight
       if (newDistance < distances[nextKey]) {
         distances[nextKey] = newDistance
         parent[nextKey] = current
       }
     }
   }
+  return { order, parent, distances }
+}
 
-  return { order, parent }
+const runBellmanFord = (currentGrid) => {
+  const startNode = currentGrid[START_ROW][START_COL]
+  const dists = {}
+  const parent = {}
+  const order = []
+  const orderSet = new Set()
+
+  for (const row of currentGrid) {
+    for (const node of row) dists[`${node.row}-${node.col}`] = Infinity
+  }
+  dists[`${startNode.row}-${startNode.col}`] = 0
+
+  for (let i = 0; i < ROWS * COLS - 1; i++) {
+    let changed = false
+    for (const row of currentGrid) {
+      for (const u of row) {
+        if (u.isWall || dists[`${u.row}-${u.col}`] === Infinity) continue
+        for (const v of getNeighbors(u, currentGrid)) {
+          if (
+            dists[`${u.row}-${u.col}`] + v.weight <
+            dists[`${v.row}-${v.col}`]
+          ) {
+            dists[`${v.row}-${v.col}`] = dists[`${u.row}-${u.col}`] + v.weight
+            parent[`${v.row}-${v.col}`] = u
+            if (!orderSet.has(v)) {
+              orderSet.add(v)
+              order.push(v)
+            }
+            changed = true
+          }
+        }
+      }
+    }
+    if (!changed) break
+  }
+  return { order, parent, distances: dists }
+}
+
+// Grid visualization uses a single start/end pair,
+// so Floyd-Warshall delegates to Dijkstra for visualization consistency.
+const runFloydWarshallVisualization = (currentGrid) => {
+  const visualizationResult = runDijkstra(currentGrid)
+  return visualizationResult
 }
 
 const buildPath = (parent, currentGrid) => {
   const path = []
-
-  const startNode = currentGrid[START_ROW][START_COL]
-  const endNode = currentGrid[END_ROW][END_COL]
-
-  let current = endNode
-  const endKey = `${endNode.row}-${endNode.col}`
-
-  if (
-    !parent[endKey] &&
-    !(endNode.row === startNode.row && endNode.col === startNode.col)
-  ) {
-    return []
-  }
-
-  while (current) {
+  const visited = new Set()
+  let current = currentGrid[END_ROW][END_COL]
+  while (current && !visited.has(current)) {
+    visited.add(current)
     path.unshift(current)
-
-    const key = `${current.row}-${current.col}`
-    current = parent[key]
+    current = parent[`${current.row}-${current.col}`]
   }
-
-  return path
+  return path[0]?.isStart ? path : []
 }
 
 const GridVisualizer = ({ algorithm, runKey, speed }) => {
   const [grid, setGrid] = useState(() => createGrid())
   const [mousePressed, setMousePressed] = useState(false)
   const [running, setRunning] = useState(false)
-  const [drawWallMode, setDrawWallMode] = useState(true)
+  const [drawMode, setDrawMode] = useState('wall')
+  const [pathCost, setPathCost] = useState(0)
+  const [visitedCount, setVisitedCount] = useState(0)
 
   const timeouts = useRef([])
   const gridRef = useRef(null)
+  const speedRef = useRef(speed)
+
+  useEffect(() => {
+    speedRef.current = speed
+  }, [speed])
 
   useEffect(() => {
     gridRef.current = grid
@@ -157,284 +215,287 @@ const GridVisualizer = ({ algorithm, runKey, speed }) => {
 
   const clearPath = useCallback(() => {
     clearTimers()
-
     setGrid((prev) =>
       prev.map((row) =>
-        row.map((node) => ({
-          ...node,
-          visited: false,
-          path: false,
-        }))
+        row.map((node) => ({ ...node, visited: false, path: false }))
       )
     )
-
     setRunning(false)
+    setPathCost(0)
+    setVisitedCount(0)
   }, [clearTimers])
 
   const clearGrid = () => {
     clearTimers()
     setRunning(false)
     setGrid(createGrid())
+    setPathCost(0)
+    setVisitedCount(0)
   }
 
-  const handleMouseDown = (row, col) => {
+  const handleMouseInteraction = (row, col) => {
     if (running) return
+    setGrid((prev) => {
+      const node = prev[row][col]
+      if (node.isStart || node.isEnd) return prev
 
-    const updated = grid.map((r) => r.map((node) => ({ ...node })))
-    const current = updated[row][col]
-
-    if (!current.isStart && !current.isEnd) {
-      const newWallState = !current.isWall
-
-      current.isWall = newWallState
-      setDrawWallMode(newWallState)
-    }
-
-    setGrid(updated)
-    setMousePressed(true)
-  }
-
-  const handleMouseEnter = (row, col) => {
-    if (!mousePressed || running) return
-
-    const updated = grid.map((r) => r.map((node) => ({ ...node })))
-    const current = updated[row][col]
-
-    if (!current.isStart && !current.isEnd) {
-      if (current.isWall === drawWallMode) return
-
-      current.isWall = drawWallMode
-    }
-
-    setGrid(updated)
-  }
-
-  const handleMouseUp = () => {
-    setMousePressed(false)
+      if (drawMode === 'wall') {
+        return prev.map((r, y) =>
+          r.map((n, x) =>
+            y === row && x === col
+              ? { ...n, isWall: !n.isWall, isWeighted: false, weight: 1 }
+              : n
+          )
+        )
+      } else if (drawMode === 'weight') {
+        return prev.map((r, y) =>
+          r.map((n, x) =>
+            y === row && x === col
+              ? { ...n, isWall: false, isWeighted: true, weight: 5 }
+              : n
+          )
+        )
+      } else if (drawMode === 'erase') {
+        return prev.map((r, y) =>
+          r.map((n, x) =>
+            y === row && x === col
+              ? { ...n, isWall: false, isWeighted: false, weight: 1 }
+              : n
+          )
+        )
+      }
+      return prev
+    })
   }
 
   const generateMaze = () => {
     if (running) return
-
     const freshGrid = createGrid()
-
     for (let row = 0; row < ROWS; row++) {
       for (let col = 0; col < COLS; col++) {
         const node = freshGrid[row][col]
-
-        if (!node.isStart && !node.isEnd && Math.random() < 0.25) {
+        if (
+          !node.isStart &&
+          !node.isEnd &&
+          Math.random() < MAZE_WALL_PROBABILITY
+        ) {
           node.isWall = true
         }
       }
     }
-
     setGrid(freshGrid)
   }
 
   const animate = useCallback(
-    (visitedNodes, shortestPath) => {
+    (visitedNodes, shortestPath, finalDistances) => {
       clearPath()
       setRunning(true)
-
-      const visitSpeed = 15 / speed
-      const pathSpeed = 40 / speed
+      const visitSpeed = 15 / speedRef.current
+      const pathSpeed = 40 / speedRef.current
 
       visitedNodes.forEach((node, index) => {
         const timer = setTimeout(() => {
           setGrid((prev) =>
-            prev.map((row) =>
-              row.map((cell) => {
-                if (
-                  cell.row === node.row &&
-                  cell.col === node.col &&
-                  !cell.isStart &&
-                  !cell.isEnd
-                ) {
-                  return {
-                    ...cell,
-                    visited: true,
-                  }
-                }
-
-                return cell
-              })
+            prev.map((r) =>
+              r.map((c) =>
+                c.row === node.row &&
+                c.col === node.col &&
+                !c.isStart &&
+                !c.isEnd
+                  ? { ...c, visited: true }
+                  : c
+              )
             )
           )
+          setVisitedCount(index + 1)
         }, index * visitSpeed)
-
         timeouts.current.push(timer)
       })
 
       const pathStart = visitedNodes.length * visitSpeed
-
-      if (shortestPath.length === 0) {
-        const timer = setTimeout(() => {
-          setRunning(false)
-        }, pathStart)
-
-        timeouts.current.push(timer)
-        return
-      }
-
       shortestPath.forEach((node, index) => {
         const timer = setTimeout(
           () => {
             setGrid((prev) =>
-              prev.map((row) =>
-                row.map((cell) => {
-                  if (
-                    cell.row === node.row &&
-                    cell.col === node.col &&
-                    !cell.isStart &&
-                    !cell.isEnd
-                  ) {
-                    return {
-                      ...cell,
-                      path: true,
-                    }
-                  }
-
-                  return cell
-                })
+              prev.map((r) =>
+                r.map((c) =>
+                  c.row === node.row &&
+                  c.col === node.col &&
+                  !c.isStart &&
+                  !c.isEnd
+                    ? { ...c, path: true }
+                    : c
+                )
               )
             )
-
             if (index === shortestPath.length - 1) {
+              setPathCost(finalDistances[`${node.row}-${node.col}`] ?? 0)
               setRunning(false)
             }
           },
           pathStart + index * pathSpeed
         )
-
         timeouts.current.push(timer)
       })
+
+      if (shortestPath.length === 0) {
+        const timer = setTimeout(() => {
+          setRunning(false)
+          setPathCost(0)
+        }, pathStart)
+
+        timeouts.current.push(timer)
+      }
     },
-    [clearPath, speed]
+    [clearPath]
   )
 
   useEffect(() => {
-    if (runKey === null) return
-    if (!algorithm) return
-
-    clearTimers()
-
+    if (runKey === null || !algorithm) return
     const runGrid = gridRef.current.map((row) =>
-      row.map((node) => ({
-        ...node,
-      }))
+      row.map((node) => ({ ...node }))
     )
+    let result
+    if (algorithm === 'dijkstra') result = runDijkstra(runGrid)
+    else if (algorithm === 'bellmanford') result = runBellmanFord(runGrid)
+    else if (algorithm === 'floydwarshall')
+      result = runFloydWarshallVisualization(runGrid)
 
-    const frame = requestAnimationFrame(() => {
-      let result
-
-      if (algorithm === 'dijkstra') {
-        result = runDijkstra(runGrid)
-      } else if (algorithm === 'bellmanford') {
-        console.warn('Bellman-Ford grid visualization not implemented yet')
-        result = runDijkstra(runGrid)
-      } else if (algorithm === 'floydwarshall') {
-        console.warn('Floyd-Warshall grid visualization not implemented yet')
-        result = runDijkstra(runGrid)
-      }
-
-      if (!result) return
-
-      const shortestPath = buildPath(result.parent, runGrid)
-
-      animate(result.order, shortestPath)
-    })
-
-    return () => {
-      cancelAnimationFrame(frame)
-      clearTimers()
+    if (result) {
+      setTimeout(() => {
+        animate(
+          result.order,
+          buildPath(result.parent, runGrid),
+          result.distances
+        )
+      }, 0)
     }
-  }, [runKey, algorithm, speed, animate, clearTimers])
+  }, [runKey, algorithm, animate])
 
   return (
     <div className="w-full bg-[#020617] p-4 rounded-xl">
       <div className="flex flex-wrap gap-3 mb-5">
+        {DRAW_MODES.map((mode) => (
+          <button
+            key={mode}
+            aria-label={`${mode.charAt(0).toUpperCase() + mode.slice(1)} Mode`}
+            onClick={() => setDrawMode(mode)}
+            className={`px-4 py-2 rounded-lg text-white font-semibold text-sm ${drawMode === mode ? 'bg-cyan-600' : 'bg-slate-800'}`}
+          >
+            {mode.toUpperCase()} Mode
+          </button>
+        ))}
         <button
+          aria-label="Generate Maze"
           onClick={generateMaze}
           disabled={running}
-          className="px-4 py-2 bg-cyan-600 hover:bg-cyan-500 transition-all rounded-lg text-white font-semibold text-sm disabled:opacity-50"
+          className="px-4 py-2 bg-slate-800 rounded-lg text-white font-semibold text-sm"
         >
           Generate Maze
         </button>
-
         <button
+          aria-label="Clear Grid"
           onClick={clearGrid}
-          className="px-4 py-2 bg-slate-800 hover:bg-slate-700 transition-all rounded-lg text-white font-semibold text-sm"
+          className="px-4 py-2 bg-slate-800 rounded-lg text-white font-semibold text-sm"
         >
           Clear Grid
         </button>
-
         <button
+          aria-label="Clear Path"
           onClick={clearPath}
-          className="px-4 py-2 bg-slate-800 hover:bg-slate-700 transition-all rounded-lg text-white font-semibold text-sm"
+          className="px-4 py-2 bg-slate-800 rounded-lg text-white font-semibold text-sm"
         >
           Clear Path
         </button>
       </div>
 
-      <div
-        className="inline-block border border-slate-700 overflow-hidden rounded-lg"
-        onMouseLeave={handleMouseUp}
-      >
-        {grid.map((row, rowIndex) => (
-          <div key={rowIndex} className="flex">
-            {row.map((node, nodeIndex) => (
-              <div
-                key={nodeIndex}
-                onMouseDown={() => handleMouseDown(node.row, node.col)}
-                onMouseEnter={() => handleMouseEnter(node.row, node.col)}
-                onMouseUp={handleMouseUp}
-                className={`w-7 h-7 border border-slate-800 transition-all duration-150 ${
-                  node.isStart
-                    ? 'bg-green-500'
-                    : node.isEnd
-                      ? 'bg-red-500'
-                      : node.isWall
-                        ? 'bg-black'
-                        : node.path
-                          ? 'bg-yellow-400'
-                          : node.visited
-                            ? 'bg-cyan-500'
-                            : 'bg-[#0f172a]'
-                }`}
-              />
-            ))}
+      <div className="flex gap-6">
+        <div className="w-64 space-y-4">
+          <div className="bg-slate-800 p-4 rounded-lg text-white text-sm">
+            <h3 className="font-bold mb-2">HOW TO USE</h3>
+            <ol className="text-slate-400 text-xs list-decimal pl-4 space-y-1">
+              <li>Pick a shortest path algorithm.</li>
+              <li>Select a grid tool: Wall, Weight, or Erase.</li>
+              <li>
+                Build your grid: Click or drag on the grid to draw. Orange nodes
+                marked with &quot;5&quot; are weighted nodes.
+              </li>
+              <li>
+                Press Run to visualize traversal and shortest path generation.
+              </li>
+            </ol>
           </div>
-        ))}
+          <div className="bg-slate-800 p-4 rounded-lg text-white text-sm">
+            <h3 className="font-bold mb-2">GRID TOOLS</h3>
+            <ul className="space-y-3 text-xs text-slate-400">
+              <li>
+                🧱 <b>Wall Mode</b>
+                <br />
+                Click or drag to create blocked walls that algorithms cannot
+                cross.
+              </li>
+              <li>
+                ⚖️ <b>Weight Mode</b>
+                <br />
+                Click or drag on the grid BEFORE running to place weighted
+                nodes. Normal nodes have traversal cost 1; Orange nodes marked
+                &quot;5&quot; have traversal cost 5. Algorithms avoid expensive
+                nodes when cheaper paths exist.
+              </li>
+              <li>
+                🧽 <b>Erase Mode</b>
+                <br />
+                Removes walls and weighted nodes.
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <div
+          className="inline-block border border-slate-700 overflow-hidden rounded-lg"
+          onMouseLeave={() => setMousePressed(false)}
+        >
+          {grid.map((row, r) => (
+            <div key={r} className="flex">
+              {row.map((node, c) => (
+                <div
+                  key={`${r}-${c}`}
+                  onMouseDown={() => {
+                    setMousePressed(true)
+                    handleMouseInteraction(r, c)
+                  }}
+                  onMouseEnter={() =>
+                    mousePressed && handleMouseInteraction(r, c)
+                  }
+                  onMouseUp={() => setMousePressed(false)}
+                  className={getCellClassName(node)}
+                >
+                  {node.isWeighted ? node.weight : null}
+                </div>
+              ))}
+            </div>
+          ))}
+        </div>
       </div>
 
-      <div className="flex flex-wrap gap-5 mt-5 text-sm text-slate-300">
-        <div className="flex items-center gap-2">
-          <div className="w-4 h-4 rounded-sm bg-green-500" />
-          <span>Start</span>
+      <div className="flex gap-4 mt-5">
+        <div className="bg-slate-800 px-4 py-2 rounded-lg text-slate-200 text-sm">
+          Visited Nodes: {visitedCount}
         </div>
+        <div className="bg-slate-800 px-4 py-2 rounded-lg text-slate-200 text-sm">
+          Path Cost: {pathCost}
+        </div>
+      </div>
 
-        <div className="flex items-center gap-2">
-          <div className="w-4 h-4 rounded-sm bg-red-500" />
-          <span>Target</span>
-        </div>
-
-        <div className="flex items-center gap-2">
-          <div className="w-4 h-4 rounded-sm bg-black border border-slate-700" />
-          <span>Wall</span>
-        </div>
-
-        <div className="flex items-center gap-2">
-          <div className="w-4 h-4 rounded-sm bg-cyan-500" />
-          <span>Visited</span>
-        </div>
-
-        <div className="flex items-center gap-2">
-          <div className="w-4 h-4 rounded-sm bg-yellow-400" />
-          <span>Shortest Path</span>
-        </div>
+      <div className="flex flex-wrap gap-4 mt-5 text-xs text-slate-400">
+        {LEGEND_ITEMS.map((i) => (
+          <div key={i.l} className="flex items-center gap-1">
+            <div className={`w-3 h-3 ${i.c}`} />
+            {i.l}
+          </div>
+        ))}
       </div>
     </div>
   )
 }
-
 export default GridVisualizer

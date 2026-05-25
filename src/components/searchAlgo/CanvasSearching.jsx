@@ -1,88 +1,110 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
 import StatusDisplay from '../StatusDisplay'
+import { GraphBuilderToolbar } from '../shared/GraphBuilderToolbar'
+import { scheduleNetworkReady } from '../../lib/scheduleNetworkReady'
 
-export const CanvasSearching = ({ algorithm, vertex, speed = 1, runKey }) => {
+// ── Preset graph data (also used by Reset button in toolbar) ──────────────────
+const PRESET_NODES = [
+  { id: 1, label: '1' },
+  { id: 2, label: '2' },
+  { id: 3, label: '3' },
+  { id: 4, label: '4' },
+  { id: 5, label: '5' },
+  { id: 6, label: '6' },
+  { id: 7, label: '7' },
+  { id: 8, label: '8' },
+  { id: 9, label: '9' },
+  { id: 10, label: '10' },
+  { id: 11, label: '11' },
+  { id: 12, label: '12' },
+  { id: 13, label: '13' },
+  { id: 14, label: '14' },
+  { id: 15, label: '15' },
+]
+
+const PRESET_EDGES = [
+  // Main chain
+  { id: 1, from: 1, to: 2 },
+  { id: 2, from: 2, to: 3 },
+  { id: 3, from: 3, to: 4 },
+  { id: 4, from: 4, to: 5 },
+  { id: 5, from: 5, to: 6 },
+  { id: 6, from: 6, to: 7 },
+  // Branches
+  { id: 7, from: 2, to: 8 },
+  { id: 8, from: 3, to: 9 },
+  { id: 9, from: 5, to: 10 },
+  { id: 10, from: 6, to: 11 },
+  { id: 11, from: 4, to: 12 },
+  // Sub-branches
+  { id: 12, from: 8, to: 13 },
+  { id: 13, from: 9, to: 14 },
+  { id: 14, from: 10, to: 15 },
+  // Cross-connections
+  { id: 15, from: 7, to: 11 },
+  { id: 16, from: 9, to: 5 },
+  { id: 17, from: 10, to: 6 },
+  { id: 18, from: 8, to: 4 },
+  { id: 19, from: 3, to: 12 },
+  { id: 20, from: 2, to: 1 },
+]
+
+export const CanvasSearching = ({
+  algorithm,
+  vertex,
+  speed = 1,
+  runKey,
+  onGraphChange,
+}) => {
   const containerRef = useRef(null)
   const networkRef = useRef(null)
   const nodesRef = useRef(null)
   const edgesRef = useRef(null)
   const [status, setStatus] = useState('')
   const [physics, setPhysics] = useState(false)
+  const [networkReady, setNetworkReady] = useState(false)
+  const graphVersionRef = useRef(0)
+  const onGraphChangeRef = useRef(onGraphChange)
 
-  // initialize network
+  useEffect(() => {
+    onGraphChangeRef.current = onGraphChange
+  }, [onGraphChange])
+
+  // Notify parent of node list (stable callback for vis init effect)
+  const notifyGraphChange = useCallback(() => {
+    if (!nodesRef.current || !onGraphChangeRef.current) return
+    onGraphChangeRef.current(nodesRef.current.getIds())
+  }, [])
+
+  const handleCanvasGraphChange = useCallback((ids) => {
+    graphVersionRef.current += 1
+    onGraphChangeRef.current?.(ids)
+  }, [])
+
+  // ── Initialize vis-network ─────────────────────────────────────────────────
   useEffect(() => {
     if (!window.vis || !containerRef.current) return
-    const someNodes = [
-      { id: 1, label: '1' },
-      { id: 2, label: '2' },
-      { id: 3, label: '3' },
-      { id: 4, label: '4' },
-      { id: 5, label: '5' },
-      { id: 6, label: '6' },
-      { id: 7, label: '7' },
-      { id: 8, label: '8' },
-      { id: 9, label: '9' },
-      { id: 10, label: '10' },
-      { id: 11, label: '11' },
-      { id: 12, label: '12' },
-      { id: 13, label: '13' },
-      { id: 14, label: '14' },
-      { id: 15, label: '15' },
-    ]
-    const nodes = new window.vis.DataSet(someNodes)
-    // const length = someNodes.length
-    const edges = new window.vis.DataSet([
-      // Main chain (like a backbone)
-      { id: 1, from: 1, to: 2 },
-      { id: 2, from: 2, to: 3 },
-      { id: 3, from: 3, to: 4 },
-      { id: 4, from: 4, to: 5 },
-      { id: 5, from: 5, to: 6 },
-      { id: 6, from: 6, to: 7 },
 
-      // Branches from the main chain
-      { id: 7, from: 2, to: 8 },
-      { id: 8, from: 3, to: 9 },
-      { id: 9, from: 5, to: 10 },
-      { id: 10, from: 6, to: 11 },
-      { id: 11, from: 4, to: 12 },
-
-      // Sub-branches
-      { id: 12, from: 8, to: 13 },
-      { id: 13, from: 9, to: 14 },
-      { id: 14, from: 10, to: 15 },
-
-      // Light cross-connections (for reachability, not clutter)
-      { id: 15, from: 7, to: 11 },
-      { id: 16, from: 9, to: 5 },
-      { id: 17, from: 10, to: 6 },
-      { id: 18, from: 8, to: 4 },
-      { id: 19, from: 3, to: 12 },
-      { id: 20, from: 2, to: 1 },
-    ])
-
+    const nodes = new window.vis.DataSet(PRESET_NODES)
+    const edges = new window.vis.DataSet(PRESET_EDGES)
     const data = { nodes, edges }
 
     const options = {
       physics: {
         enabled: false,
-        stabilization: {
-          enabled: true,
-          iterations: 100,
-          updateInterval: 25,
-        },
+        stabilization: { enabled: true, iterations: 100, updateInterval: 25 },
       },
       nodes: {
         shape: 'dot',
         size: 15,
         color: {
-          background: '#06b6d4', // Cyan-500
-          border: '#e2e8f0', // Slate-200
+          background: '#06b6d4',
+          border: '#e2e8f0',
           highlight: { background: '#22d3ee', border: '#ffffff' },
         },
         font: {
           size: 20,
-          color: '#f8fafc', // Slate-50
+          color: '#f8fafc',
           face: 'Arial',
           bold: true,
         },
@@ -98,15 +120,12 @@ export const CanvasSearching = ({ algorithm, vertex, speed = 1, runKey }) => {
       edges: {
         arrows: { to: { enabled: true, scaleFactor: 1.0 } },
         color: {
-          color: '#64748b', // Slate-500
-          highlight: '#22d3ee', // Cyan-400
+          color: '#64748b',
+          highlight: '#22d3ee',
           hover: '#22d3ee',
         },
         width: 3,
-        smooth: {
-          type: 'curvedCW',
-          roundness: 0.0,
-        },
+        smooth: { type: 'curvedCW', roundness: 0.0 },
         shadow: {
           enabled: true,
           color: 'rgba(0,0,0,0.5)',
@@ -130,12 +149,29 @@ export const CanvasSearching = ({ algorithm, vertex, speed = 1, runKey }) => {
     edgesRef.current = edges
     networkRef.current = network
 
-    return () => {
-      network.destroy()
-    }
-  }, [])
+    const cancelReady = scheduleNetworkReady(network, () => {
+      setNetworkReady(true)
+      notifyGraphChange()
+    })
 
-  // Lock interaction when idle, unlock + recenter when running
+    return () => {
+      cancelReady()
+      network.destroy()
+      networkRef.current = null
+      nodesRef.current = null
+      edgesRef.current = null
+      setNetworkReady(false)
+    }
+  }, [notifyGraphChange])
+
+  // ── Physics toggle ─────────────────────────────────────────────────────────
+  useEffect(() => {
+    if (networkRef.current) {
+      networkRef.current.setOptions({ physics: { enabled: physics } })
+    }
+  }, [physics])
+
+  // ── Recenter when animation starts ────────────────────────────────────────
   useEffect(() => {
     if (!networkRef.current) return
     if (runKey !== null) {
@@ -145,24 +181,13 @@ export const CanvasSearching = ({ algorithm, vertex, speed = 1, runKey }) => {
     }
   }, [runKey])
 
-  useEffect(() => {
-    if (networkRef.current) {
-      networkRef.current.setOptions({
-        physics: { enabled: physics },
-      })
-    }
-  }, [physics])
-
-  // Reset nodes to default color with smooth transition
-  const resetNodes = () => {
+  // ── Reset node/edge styles ─────────────────────────────────────────────────
+  const resetNodes = useCallback(() => {
     if (nodesRef.current) {
       nodesRef.current.get().forEach((n) => {
         nodesRef.current.update({
           id: n.id,
-          color: {
-            background: '#06b6d4',
-            border: '#e2e8f0',
-          },
+          color: { background: '#06b6d4', border: '#e2e8f0' },
           size: 15,
         })
       })
@@ -176,15 +201,14 @@ export const CanvasSearching = ({ algorithm, vertex, speed = 1, runKey }) => {
         })
       })
     }
-  }
+  }, [])
 
-  // Reset nodes when algorithm or vertex changes (but not on run)
   useEffect(() => {
     resetNodes()
     setTimeout(() => setStatus(''), 0)
-  }, [algorithm, vertex])
+  }, [algorithm, vertex, resetNodes])
 
-  // animate algorithm with enhanced visual effects — only fires when runKey changes
+  // ── BFS / DFS animation — fires only when runKey changes ──────────────────
   useEffect(() => {
     if (
       runKey === null ||
@@ -198,11 +222,10 @@ export const CanvasSearching = ({ algorithm, vertex, speed = 1, runKey }) => {
     const nodes = nodesRef.current
     const edges = edgesRef.current
 
-    // reset all nodes to default color before starting
     nodes.get().forEach((n) =>
       nodes.update({
         id: n.id,
-        color: { background: '#1e293b', border: '#475569' }, // Dark slate for unvisited
+        color: { background: '#1e293b', border: '#475569' },
         size: 25,
       })
     )
@@ -214,25 +237,29 @@ export const CanvasSearching = ({ algorithm, vertex, speed = 1, runKey }) => {
     })
 
     const timers = []
+    const runVersion = graphVersionRef.current
+    const isStale = () => runVersion !== graphVersionRef.current
+
     const visit = (id, delay) => {
       const t = setTimeout(() => {
-        // Animate node size and color
+        if (isStale()) return
         nodes.update({
           id,
-          color: { background: '#f43f5e', border: '#ffffff' }, // Rose-500
+          color: { background: '#f43f5e', border: '#ffffff' },
           size: 35,
         })
-        console.log(`node ${id} is visited.`)
-        // Add pulsing effect
-        setTimeout(() => {
+        const t2 = setTimeout(() => {
+          if (isStale()) return
           nodes.update({ id, size: 30 })
         }, 200 / speed)
+        timers.push(t2)
       }, delay)
       timers.push(t)
     }
 
     const setStatusAtDelay = (message, delay) => {
       const t = setTimeout(() => {
+        if (isStale()) return
         setStatus(message)
       }, delay)
       timers.push(t)
@@ -240,12 +267,12 @@ export const CanvasSearching = ({ algorithm, vertex, speed = 1, runKey }) => {
 
     const markCompleted = (completionDelay) => {
       const t = setTimeout(() => {
-        // Show completion by changing all visited nodes to green with animation
+        if (isStale()) return
         nodes.get().forEach((n) => {
-          if (n.color.background === '#f43f5e') {
+          if (n.color && n.color.background === '#f43f5e') {
             nodes.update({
               id: n.id,
-              color: { background: '#10b981', border: '#ffffff' }, // Emerald-500
+              color: { background: '#10b981', border: '#ffffff' },
               size: 28,
             })
           }
@@ -255,15 +282,15 @@ export const CanvasSearching = ({ algorithm, vertex, speed = 1, runKey }) => {
     }
 
     if (algorithm === 'bfs') {
-      let queue = [parseInt(vertex)]
-      let visited = new Set([parseInt(vertex)])
+      const queue = [parseInt(vertex)]
+      const visited = new Set([parseInt(vertex)])
       let delay = 0
 
       setStatusAtDelay(`Starting BFS from node ${vertex}`, delay)
       delay += 1200 / speed
 
       while (queue.length) {
-        let node = queue.shift()
+        const node = queue.shift()
         visit(node, delay)
         setStatusAtDelay(
           `Visiting node ${node}. Queue: [${queue.join(', ')}]`,
@@ -287,11 +314,11 @@ export const CanvasSearching = ({ algorithm, vertex, speed = 1, runKey }) => {
               `Adding ${n} to queue. Queue: [${queue.join(', ')}]`,
               delay
             )
-
             const edge = edges.get().find((e) => e.from === node && e.to === n)
             if (edge) {
-              setTimeout(
+              const edgeTimer = setTimeout(
                 () => {
+                  if (isStale()) return
                   edges.update({
                     id: edge.id,
                     color: { color: '#f43f5e' },
@@ -300,6 +327,7 @@ export const CanvasSearching = ({ algorithm, vertex, speed = 1, runKey }) => {
                 },
                 delay - 200 / speed
               )
+              timers.push(edgeTimer)
             }
           }
         })
@@ -310,7 +338,7 @@ export const CanvasSearching = ({ algorithm, vertex, speed = 1, runKey }) => {
     }
 
     if (algorithm === 'dfs') {
-      let visited = new Set()
+      const visited = new Set()
       let delay = 0
 
       const dfs = (node) => {
@@ -334,8 +362,9 @@ export const CanvasSearching = ({ algorithm, vertex, speed = 1, runKey }) => {
             hasUnvisitedNeighbors = true
             const edge = edges.get().find((e) => e.from === node && e.to === n)
             if (edge) {
-              setTimeout(
+              const edgeTimer = setTimeout(
                 () => {
+                  if (isStale()) return
                   edges.update({
                     id: edge.id,
                     color: { color: '#f43f5e' },
@@ -344,6 +373,7 @@ export const CanvasSearching = ({ algorithm, vertex, speed = 1, runKey }) => {
                 },
                 delay - 200 / speed
               )
+              timers.push(edgeTimer)
             }
             dfs(n)
             setStatusAtDelay(`Backtracking from ${n} to node ${node}`, delay)
@@ -390,25 +420,39 @@ export const CanvasSearching = ({ algorithm, vertex, speed = 1, runKey }) => {
           style={{ background: 'transparent' }}
         />
 
+        {/* Graph Builder Toolbar — rendered after network is ready */}
+        {networkReady && (
+          <GraphBuilderToolbar
+            networkRef={networkRef}
+            nodesRef={nodesRef}
+            edgesRef={edgesRef}
+            presetNodes={PRESET_NODES}
+            presetEdges={PRESET_EDGES}
+            weighted={false}
+            onGraphChange={handleCanvasGraphChange}
+          />
+        )}
+
         {/* Color legend */}
         <div className="absolute bottom-3 left-3 z-10 flex items-center gap-3 bg-slate-900/80 backdrop-blur-md border border-white/10 rounded-lg px-3 py-2">
           <span className="flex items-center gap-1.5 text-xs text-slate-300">
-            <span className="w-3 h-3 rounded-full bg-cyan-500 inline-block"></span>
+            <span className="w-3 h-3 rounded-full bg-cyan-500 inline-block" />
             Unvisited
           </span>
           <span className="flex items-center gap-1.5 text-xs text-slate-300">
-            <span className="w-3 h-3 rounded-full bg-rose-500 inline-block"></span>
+            <span className="w-3 h-3 rounded-full bg-rose-500 inline-block" />
             Visiting
           </span>
           <span className="flex items-center gap-1.5 text-xs text-slate-300">
-            <span className="w-3 h-3 rounded-full bg-emerald-500 inline-block"></span>
+            <span className="w-3 h-3 rounded-full bg-emerald-500 inline-block" />
             Visited
           </span>
         </div>
 
         {/* Physics toggle */}
-        <div className="absolute top-3 right-3 z-10 group">
+        <div className="absolute bottom-3 right-3 z-10 group">
           <button
+            id="graph-physics-toggle"
             onClick={() => setPhysics(!physics)}
             title="Toggle physics to freely drag and reposition nodes"
             className={`flex items-center gap-2 px-3 py-2 text-xs font-bold rounded-lg shadow-md transition-all duration-300 border backdrop-blur-md ${
@@ -441,11 +485,9 @@ export const CanvasSearching = ({ algorithm, vertex, speed = 1, runKey }) => {
             </svg>
             {physics ? 'Physics ON' : 'Physics OFF'}
           </button>
-          <div className="absolute right-0 top-full mt-1 w-48 bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-xs text-slate-400 opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none">
-            Enables dragging nodes to rearrange the graph layout.
-          </div>
         </div>
       </div>
+
       <StatusDisplay
         key={status || 'default-status'}
         message={

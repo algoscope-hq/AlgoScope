@@ -184,6 +184,21 @@ export const VisualizerPage = () => {
   const [speed, setSpeed] = React.useState(1.0)
   const [language, setLanguage] = React.useState('javascript')
   const [runKey, setRunKey] = React.useState(null)
+  // Live list of node IDs from the canvas (kept in sync via onGraphChange)
+  const [nodeIds, setNodeIds] = React.useState(
+    Array.from({ length: 15 }, (_, i) => i + 1)
+  )
+
+  const handleGraphChange = React.useCallback(
+    (ids) => {
+      setNodeIds(ids)
+      // Deselect starting node if it no longer exists on canvas
+      if (node !== null && !ids.includes(parseInt(node))) {
+        setNode(null)
+      }
+    },
+    [node]
+  )
 
   const handleSpeedChange = (event, newValue) => {
     setSpeed(newValue)
@@ -257,14 +272,16 @@ export const VisualizerPage = () => {
             How to use
           </p>
           {[
-            { step: '1', label: 'Pick an algorithm' },
-            { step: '2', label: 'Choose a starting node' },
-            { step: '3', label: 'Press Run' },
+            { step: '1', label: 'Build your graph (toolbar on canvas)' },
+            { step: '2', label: 'Pick an algorithm' },
+            { step: '3', label: 'Choose a starting node' },
+            { step: '4', label: 'Press Run' },
           ].map(({ step, label }) => {
             const done =
-              (step === '1' && algorithm) ||
-              (step === '2' && node) ||
-              (step === '3' && runKey !== null)
+              (step === '1' && nodeIds.length > 0) ||
+              (step === '2' && algorithm) ||
+              (step === '3' && node) ||
+              (step === '4' && runKey !== null)
 
             return (
               <div key={step} className="flex items-center gap-3">
@@ -315,7 +332,7 @@ export const VisualizerPage = () => {
           algorithm={algorithm}
           setAlgorithm={setAlgorithm}
         />
-        <MenuSelectNodeSearch node={node} setNode={setNode} />
+        <MenuSelectNodeSearch node={node} setNode={setNode} nodeIds={nodeIds} />
         <SpeedSlider value={speed} onChange={handleSpeedChange} />
       </div>
 
@@ -323,12 +340,13 @@ export const VisualizerPage = () => {
       <div className="w-full lg:w-3/4 flex flex-col gap-6">
         {mode === 'solo' ? (
           <>
-            <div className="rounded-xl overflow-hidden border border-white/10 shadow-lg">
+            <div className="rounded-xl border border-white/10 shadow-lg">
               <CanvasSearching
                 algorithm={algorithm}
                 vertex={node}
                 speed={speed}
                 runKey={runKey}
+                onGraphChange={handleGraphChange}
               />
             </div>
 

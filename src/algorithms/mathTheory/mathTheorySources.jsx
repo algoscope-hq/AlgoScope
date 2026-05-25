@@ -363,3 +363,289 @@ export const getBitManipSource = (language) =>
 
 export const resolveBitManipLine = (language, lineKey) =>
   (bitManipSources[language] ?? bitManipSources.javascript).lineMap?.[lineKey]
+
+// ─── SIEVE OF ERATOSTHENES ──────────────────────────────────────────────────
+
+export const sieveSources = {
+  javascript: {
+    code: `function sieve(n) {
+  const isPrime = new Array(n + 1).fill(true);
+  isPrime[0] = isPrime[1] = false;
+  
+  for (let i = 2; i * i <= n; i++) {
+    if (isPrime[i]) {
+      for (let j = i * i; j <= n; j += i) {
+        isPrime[j] = false;
+      }
+    }
+  }
+  
+  const primes = [];
+  for (let i = 2; i <= n; i++) {
+    if (isPrime[i]) primes.push(i);
+  }
+  return primes;
+}
+
+console.log(sieve(30));`,
+    lineMap: { start: 2, checkPrime: 5, markFalse: 8, result: 17 },
+  },
+  python: {
+    code: `def sieve_of_eratosthenes(n):
+    is_prime = [True] * (n + 1)
+    is_prime[0] = is_prime[1] = False
+    
+    for i in range(2, int(n**0.5) + 1):
+        if is_prime[i]:
+            for j in range(i * i, n + 1, i):
+                is_prime[j] = False
+                
+    return [i for i in range(2, n + 1) if is_prime[i]]
+
+print(sieve_of_eratosthenes(30))`,
+    lineMap: { start: 2, checkPrime: 5, markFalse: 8, result: 10 },
+  },
+  cpp: {
+    code: `#include <iostream>
+#include <vector>
+using namespace std;
+
+vector<int> sieve(int n) {
+    vector<bool> isPrime(n + 1, true);
+    isPrime[0] = isPrime[1] = false;
+    
+    for (int i = 2; i * i <= n; i++) {
+        if (isPrime[i]) {
+            for (int j = i * i; j <= n; j += i) {
+                isPrime[j] = false;
+            }
+        }
+    }
+    
+    vector<int> primes;
+    for (int i = 2; i <= n; i++) {
+        if (isPrime[i]) primes.push_back(i);
+    }
+    return primes;
+}
+
+int main() {
+    vector<int> res = sieve(30);
+    for (int p : res) cout << p << " ";
+}`,
+    lineMap: { start: 6, checkPrime: 9, markFalse: 12, result: 21 },
+  },
+  java: {
+    code: `import java.util.*;
+
+public class Sieve {
+    public static List<Integer> sieve(int n) {
+        boolean[] isPrime = new boolean[n + 1];
+        Arrays.fill(isPrime, true);
+        if (n >= 0) isPrime[0] = false;
+        if (n >= 1) isPrime[1] = false;
+        
+        for (int i = 2; i * i <= n; i++) {
+            if (isPrime[i]) {
+                for (int j = i * i; j <= n; j += i) {
+                    isPrime[j] = false;
+                }
+            }
+        }
+        
+        List<Integer> primes = new ArrayList<>();
+        for (int i = 2; i <= n; i++) {
+            if (isPrime[i]) primes.add(i);
+        }
+        return primes;
+    }
+
+    public static void main(String[] args) {
+        System.out.println(sieve(30));
+    }
+}`,
+    lineMap: { start: 5, checkPrime: 10, markFalse: 13, result: 22 },
+  },
+  c: {
+    code: `#include <stdio.h>
+#include <stdbool.h>
+
+void sieve(int n) {
+    bool isPrime[1000];
+    for (int i = 0; i <= n; i++) isPrime[i] = true;
+    isPrime[0] = isPrime[1] = false;
+    
+    for (int i = 2; i * i <= n; i++) {
+        if (isPrime[i]) {
+            for (int j = i * i; j <= n; j += i) {
+                isPrime[j] = false;
+            }
+        }
+    }
+    
+    for (int i = 2; i <= n; i++) {
+        if (isPrime[i]) printf("%d ", i);
+    }
+}
+
+int main() {
+    sieve(30);
+}`,
+    lineMap: { start: 5, checkPrime: 9, markFalse: 12, result: 18 },
+  },
+  rust: {
+    code: `fn sieve(n: usize) -> Vec<usize> {
+    let mut is_prime = vec![true; n + 1];
+    if n >= 2 {
+        is_prime[0] = false;
+        is_prime[1] = false;
+    }
+    
+    let mut i = 2;
+    while i * i <= n {
+        if is_prime[i] {
+            let mut j = i * i;
+            while j <= n {
+                is_prime[j] = false;
+                j += i;
+            }
+        }
+        i += 1;
+    }
+    
+    (2..=n).filter(|&x| is_prime[x]).collect()
+}
+
+fn main() {
+    println!("{:?}", sieve(30));
+}`,
+    lineMap: { start: 2, checkPrime: 9, markFalse: 13, result: 20 },
+  },
+  go: {
+    code: `package main
+
+import "fmt"
+
+func sieve(n int) []int {
+    isPrime := make([]bool, n+1)
+    for i := range isPrime {
+        isPrime[i] = true
+    }
+    if n >= 0 { isPrime[0] = false }
+    if n >= 1 { isPrime[1] = false }
+    
+    for i := 2; i*i <= n; i++ {
+        if isPrime[i] {
+            for j := i * i; j <= n; j += i {
+                isPrime[j] = false
+            }
+        }
+    }
+    
+    var primes []int
+    for i := 2; i <= n; i++ {
+        if isPrime[i] {
+            primes = append(primes, i)
+        }
+    }
+    return primes
+}
+
+func main() {
+    fmt.Println(sieve(30))
+}`,
+    lineMap: { start: 5, checkPrime: 12, markFalse: 15, result: 26 },
+  },
+}
+
+export const getSieveSource = (language) =>
+  sieveSources[language]?.code ?? sieveSources.javascript.code
+
+export const resolveSieveLine = (language, lineKey) =>
+  (sieveSources[language] ?? sieveSources.javascript).lineMap?.[lineKey]
+
+// ─── FIBONACCI ──────────────────────────────────────────────────────────────
+
+export const fibonacciSources = {
+  javascript: {
+    code: `function fib(n) {
+  if (n <= 1) {
+    return n;
+  }
+  return fib(n - 1) + fib(n - 2);
+}
+
+console.log(fib(6)); // 8`,
+    lineMap: {
+      start: 1,
+      baseCase: 2,
+      returnBase: 3,
+      recursiveCall: 5,
+      result: 5,
+    },
+  },
+  python: {
+    code: `def fib(n):
+    if n <= 1:
+        return n
+    return fib(n - 1) + fib(n - 2)
+
+print(fib(6))  # 8`,
+    lineMap: {
+      start: 1,
+      baseCase: 2,
+      returnBase: 3,
+      recursiveCall: 4,
+      result: 4,
+    },
+  },
+  cpp: {
+    code: `#include <iostream>
+using namespace std;
+
+int fib(int n) {
+    if (n <= 1) {
+        return n;
+    }
+    return fib(n - 1) + fib(n - 2);
+}
+
+int main() {
+    cout << fib(6); // 8
+}`,
+    lineMap: {
+      start: 4,
+      baseCase: 5,
+      returnBase: 6,
+      recursiveCall: 8,
+      result: 8,
+    },
+  },
+  java: {
+    code: `public class Fibonacci {
+    public static int fib(int n) {
+        if (n <= 1) {
+            return n;
+        }
+        return fib(n - 1) + fib(n - 2);
+    }
+
+    public static void main(String[] args) {
+        System.out.println(fib(6)); // 8
+    }
+}`,
+    lineMap: {
+      start: 2,
+      baseCase: 3,
+      returnBase: 4,
+      recursiveCall: 6,
+      result: 6,
+    },
+  },
+}
+
+export const getFibonacciSource = (language) =>
+  fibonacciSources[language]?.code ?? fibonacciSources.javascript.code
+
+export const resolveFibonacciLine = (language, lineKey) =>
+  (fibonacciSources[language] ?? fibonacciSources.javascript).lineMap?.[lineKey]

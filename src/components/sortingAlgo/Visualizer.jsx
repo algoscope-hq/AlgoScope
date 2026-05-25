@@ -5,6 +5,7 @@ import CodePanel from '../visualizer/CodePanel'
 import { useStepPlayback } from '../visualizer/useStepPlayback'
 import ComplexityCard from '../ComplexityCard'
 import Tooltip from '../Tooltip'
+import TestCaseManager from '../testCaseManager/TestCaseManager'
 
 import * as bubble from '../../algorithms/sorting/bubbleSortSteps'
 import * as selection from '../../algorithms/sorting/selectionSortSteps'
@@ -16,6 +17,7 @@ import * as counting from '../../algorithms/sorting/countingSortSteps'
 import * as radix from '../../algorithms/sorting/radixSortSteps'
 import * as shell from '../../algorithms/sorting/shellSortSteps'
 import ComplexityGraph from '../ComplexityGraph'
+
 const algoMap = {
   bubble,
   selection,
@@ -28,8 +30,70 @@ const algoMap = {
   shell,
 }
 
+const DEFAULT_ARRAY_SIZE = 8
+const RANDOM_MIN = 50
+const RANDOM_MAX = 250
+const MAX_CUSTOM_INPUT_SIZE = 100
+
 const createRandomArray = () =>
-  Array.from({ length: 8 }, () => Math.floor(Math.random() * 200) + 50)
+  Array.from(
+    { length: DEFAULT_ARRAY_SIZE },
+    () => Math.floor(Math.random() * (RANDOM_MAX - RANDOM_MIN)) + RANDOM_MIN
+  )
+
+const parseStoredArray = (value) =>
+  value
+    .split(/[,\s]+/)
+    .map((item) => Number(item.trim()))
+    .filter((item) => !Number.isNaN(item))
+
+const validateParsedNumbers = (parsedNumbers, selectedAlgorithm) => {
+  if (parsedNumbers.length > MAX_CUSTOM_INPUT_SIZE) {
+    return 'Please enter 100 numbers or fewer.'
+  }
+
+  if (['counting', 'radix'].includes(selectedAlgorithm)) {
+    if (parsedNumbers.some((n) => n < 0 || !Number.isInteger(n))) {
+      return 'Counting Sort and Radix Sort only support non-negative integers.'
+    }
+  }
+
+  return ''
+}
+
+const applyParsedNumbers = (
+  parsedNumbers,
+  selectedAlgorithm,
+  setBaseArray,
+  clearPlayback,
+  setCustomInput,
+  setInputError,
+  customInputValue
+) => {
+  const validationError = validateParsedNumbers(
+    parsedNumbers,
+    selectedAlgorithm
+  )
+  if (validationError) {
+    setInputError(validationError)
+    return false
+  }
+
+  clearPlayback()
+  setBaseArray(parsedNumbers)
+  setCustomInput(customInputValue)
+  setInputError('')
+  return true
+}
+
+const buildSortSampleCases = (algorithm) => [
+  {
+    name: 'Nearly Sorted Array',
+    algorithm,
+    input: '12, 18, 21, 25, 19, 29, 34, 41',
+    description: 'A small array with one out-of-place element.',
+  },
+]
 
 const STATE_COLORS = {
   compare: { bg: '#2563eb', border: '#60a5fa' },
@@ -98,10 +162,17 @@ export default function Visualizer() {
   const [speed, setSpeed] = useState(1)
   const [language, setLanguage] = useState('javascript')
   const [algorithmType, setAlgorithmType] = useState('simple')
+  const [customInput, setCustomInput] = useState('')
+  const [inputError, setInputError] = useState('')
 
   const algoFromUrl = searchParams.get('algo')
   const selectedAlgorithm =
     algoFromUrl && algoMap[algoFromUrl] ? algoFromUrl : ''
+  const testCaseAlgorithm = selectedAlgorithm || algorithmType
+  const sortSampleCases = useMemo(
+    () => buildSortSampleCases(testCaseAlgorithm),
+    [testCaseAlgorithm]
+  )
 
   const {
     currentStep,
@@ -141,6 +212,41 @@ export default function Visualizer() {
   const handleReset = () => {
     clearPlayback()
     setBaseArray(createRandomArray())
+  }
+
+  const handleApplyCustomArray = () => {
+    setInputError('')
+    let input = customInput.trim()
+
+    if (!input) {
+      setInputError('Please enter at least one number.')
+      return
+    }
+
+    if (input.startsWith('[') && input.endsWith(']')) {
+      input = input.slice(1, -1)
+    }
+
+    // Parse input string into numeric array
+    const parts = input.split(/[\s,]+/).filter(Boolean)
+    const parsedNumbers = parts.map(Number)
+
+    if (parsedNumbers.some((num) => Number.isNaN(num))) {
+      setInputError(
+        'Invalid input. Please enter only numbers separated by commas or spaces.'
+      )
+      return
+    }
+
+    applyParsedNumbers(
+      parsedNumbers,
+      selectedAlgorithm,
+      setBaseArray,
+      clearPlayback,
+      setCustomInput,
+      setInputError,
+      ''
+    )
   }
 
   const isRunning = isPlaying
@@ -340,7 +446,6 @@ export default function Visualizer() {
             </div>
 
             <div className="flex min-w-0 flex-col gap-4">
-              {/* How to use stepper */}
               <div className="rounded-2xl border border-white/5 bg-slate-950/60 p-3 space-y-2">
                 <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500 mb-2">
                   How to use
@@ -379,6 +484,26 @@ export default function Visualizer() {
 
               <div className="rounded-2xl border border-slate-700/80 bg-slate-900/60 p-4 shadow-xl">
                 <div className="space-y-4">
+                  <TestCaseManager
+                    algorithm={testCaseAlgorithm}
+                    currentInput={baseArray.join(',')}
+                    sampleCases={sortSampleCases}
+                    onLoad={(input) => {
+                      const parsed = parseStoredArray(input)
+                      if (!parsed.length) return
+
+                      applyParsedNumbers(
+                        parsed,
+                        selectedAlgorithm,
+                        setBaseArray,
+                        clearPlayback,
+                        setCustomInput,
+                        setInputError,
+                        parsed.join(', ')
+                      )
+                    }}
+                  />
+
                   <div>
                     <p className="mb-2 text-xs font-semibold uppercase tracking-[0.2em] text-cyan-400/80">
                       Sort Category
@@ -449,6 +574,7 @@ export default function Visualizer() {
                       position="top"
                     >
                       <button
+                        type="button"
                         onClick={handleSort}
                         disabled={isRunning || !selectedAlgorithm}
                         className="w-full text-sm font-bold rounded-xl bg-cyan-600 px-6 py-3 text-white transition-all duration-300 hover:-translate-y-0.5 hover:bg-cyan-500 hover:shadow-[0_0_15px_rgba(6,182,212,0.4)] disabled:cursor-not-allowed disabled:opacity-50"
@@ -465,6 +591,7 @@ export default function Visualizer() {
                       position="top"
                     >
                       <button
+                        type="button"
                         onClick={handleReset}
                         disabled={isRunning}
                         className="w-full text-sm font-bold rounded-xl bg-slate-700 px-6 py-3 text-white transition-all duration-300 hover:-translate-y-0.5 hover:bg-slate-600 hover:shadow-lg disabled:cursor-not-allowed disabled:opacity-50"
@@ -472,6 +599,34 @@ export default function Visualizer() {
                         Generate New Array
                       </button>
                     </Tooltip>
+                  </div>
+
+                  <div className="pt-4 border-t border-slate-700/50">
+                    <p className="mb-2 text-xs font-semibold uppercase tracking-[0.2em] text-cyan-400/80">
+                      Custom Array Input
+                    </p>
+                    <textarea
+                      aria-label="Custom array input"
+                      value={customInput}
+                      onChange={(e) => setCustomInput(e.target.value)}
+                      disabled={isRunning}
+                      placeholder="Example: 5, 3, 8, 1, 9"
+                      className="w-full rounded-xl border border-slate-700 bg-slate-900/80 p-3 text-sm text-white shadow-lg transition duration-300 hover:border-slate-600 focus:border-cyan-500 focus:outline-none disabled:opacity-50 h-20 resize-none"
+                    />
+                    <p className="mt-1 text-[10px] text-slate-500">
+                      Supports comma-separated numbers or JSON arrays.
+                    </p>
+                    <button
+                      type="button"
+                      onClick={handleApplyCustomArray}
+                      disabled={isRunning}
+                      className="mt-3 w-full text-sm font-bold rounded-xl bg-cyan-600 px-6 py-2.5 text-white transition-all duration-300 hover:bg-cyan-500 disabled:opacity-50"
+                    >
+                      Apply Custom Array
+                    </button>
+                    {inputError && (
+                      <p className="mt-2 text-xs text-red-400">{inputError}</p>
+                    )}
                   </div>
                 </div>
               </div>

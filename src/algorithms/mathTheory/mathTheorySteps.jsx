@@ -358,3 +358,241 @@ export function generateBitOpSteps(a, b, operation) {
 
   return steps
 }
+
+// ─────────────────────────────────────────────
+// SIEVE OF ERATOSTHENES
+// ─────────────────────────────────────────────
+
+export function generateSieveSteps(n) {
+  const steps = []
+  const isPrime = new Array(n + 1).fill(true)
+  if (n >= 0) isPrime[0] = false
+  if (n >= 1) isPrime[1] = false
+
+  // Helper to extract primes found so far
+  const getPrimesList = (arr) => {
+    const list = []
+    for (let i = 2; i < arr.length; i++) {
+      if (arr[i]) list.push(i)
+    }
+    return list
+  }
+
+  steps.push(
+    createStep({
+      lineKey: 'start',
+      type: 'start',
+      array: [...isPrime],
+      message: `Initialize isPrime array from 0 to ${n} with true. Mark 0 and 1 as false (not prime).`,
+      variables: { i: null, j: null, primesCount: 0 },
+      duration: 800,
+    })
+  )
+
+  for (let i = 2; i * i <= n; i++) {
+    steps.push(
+      createStep({
+        lineKey: 'checkPrime',
+        type: 'compare',
+        array: [...isPrime],
+        indices: [i],
+        message: `Check if ${i} is prime: ${isPrime[i] ? 'Yes, search and mark its multiples' : 'No, already marked composite'}`,
+        variables: { i, j: null, primesCount: getPrimesList(isPrime).length },
+        duration: 750,
+      })
+    )
+
+    if (isPrime[i]) {
+      for (let j = i * i; j <= n; j += i) {
+        isPrime[j] = false
+        steps.push(
+          createStep({
+            lineKey: 'markFalse',
+            type: 'swap',
+            array: [...isPrime],
+            indices: [j],
+            message: `Mark multiple of ${i}: ${j} as composite (false).`,
+            variables: { i, j, primesCount: getPrimesList(isPrime).length },
+            duration: 600,
+          })
+        )
+      }
+    }
+  }
+
+  const finalPrimes = getPrimesList(isPrime)
+
+  steps.push(
+    createStep({
+      lineKey: 'result',
+      type: 'complete',
+      array: [...isPrime],
+      message: `Completed! Found ${finalPrimes.length} primes: [${finalPrimes.join(', ')}]`,
+      variables: { i: null, j: null, primesCount: finalPrimes.length },
+      duration: 1000,
+    })
+  )
+
+  return steps
+}
+
+// ─────────────────────────────────────────────
+// FIBONACCI SEQUENCE (Golden Spiral vs Recursion Tree)
+// ─────────────────────────────────────────────
+
+export function generateFibonacciSteps(n) {
+  const steps = []
+
+  // 1. Pre-build the entire tree structure skeleton
+  const treeState = {}
+
+  function initTree(valN, path = 'root', parentPath = null) {
+    treeState[path] = {
+      id: path,
+      n: valN,
+      val: null,
+      state: 'inactive',
+      parent: parentPath,
+      children: [],
+    }
+
+    if (valN > 1) {
+      const leftPath = path + '-L'
+      const rightPath = path + '-R'
+      treeState[path].children = [leftPath, rightPath]
+      initTree(valN - 1, leftPath, path)
+      initTree(valN - 2, rightPath, path)
+    }
+  }
+
+  initTree(n)
+
+  const getTreeSnapshot = () => {
+    const snapshot = {}
+    for (const key in treeState) {
+      snapshot[key] = { ...treeState[key] }
+    }
+    return snapshot
+  }
+
+  let maxNResolved = 0
+
+  // Start step
+  steps.push(
+    createStep({
+      lineKey: 'start',
+      type: 'start',
+      message: `Start: Compute fib(${n})`,
+      variables: { n, activeNode: null, maxNResolved: 0 },
+      treeState: getTreeSnapshot(),
+      activePath: null,
+      spiralCount: 0,
+      duration: 800,
+    })
+  )
+
+  function recurse(valN, path = 'root') {
+    // Set node to active
+    treeState[path].state = 'active'
+
+    steps.push(
+      createStep({
+        lineKey: 'baseCase',
+        type: 'compare',
+        message: `fib(${valN}) called. Check base case: is n <= 1?`,
+        variables: { n: valN, activeNode: path, maxNResolved },
+        treeState: getTreeSnapshot(),
+        activePath: path,
+        spiralCount: maxNResolved,
+        duration: 800,
+      })
+    )
+
+    if (valN <= 1) {
+      treeState[path].state = 'resolved'
+      treeState[path].val = valN
+      maxNResolved = Math.max(maxNResolved, valN)
+
+      steps.push(
+        createStep({
+          lineKey: 'returnBase',
+          type: 'swap',
+          message: `Base case met: fib(${valN}) = ${valN}`,
+          variables: { n: valN, result: valN, activeNode: path, maxNResolved },
+          treeState: getTreeSnapshot(),
+          activePath: path,
+          spiralCount: maxNResolved,
+          duration: 700,
+        })
+      )
+      return valN
+    }
+
+    // Recursive left call: fib(n-1)
+    const leftVal = recurse(valN - 1, path + '-L')
+
+    // Back to current node
+    treeState[path].state = 'active'
+    steps.push(
+      createStep({
+        lineKey: 'recursiveCall',
+        type: 'compare',
+        message: `Returned fib(${valN - 1}) = ${leftVal}. Now call fib(${valN - 2})`,
+        variables: { n: valN, leftVal, activeNode: path, maxNResolved },
+        treeState: getTreeSnapshot(),
+        activePath: path,
+        spiralCount: maxNResolved,
+        duration: 800,
+      })
+    )
+
+    // Recursive right call: fib(n-2)
+    const rightVal = recurse(valN - 2, path + '-R')
+
+    // Combine results
+    const result = leftVal + rightVal
+    treeState[path].state = 'resolved'
+    treeState[path].val = result
+    maxNResolved = Math.max(maxNResolved, valN)
+
+    steps.push(
+      createStep({
+        lineKey: 'recursiveCall',
+        type: 'swap',
+        message: `Combine: fib(${valN}) = fib(${valN - 1}) + fib(${valN - 2}) = ${leftVal} + ${rightVal} = ${result}`,
+        variables: {
+          n: valN,
+          leftVal,
+          rightVal,
+          result,
+          activeNode: path,
+          maxNResolved,
+        },
+        treeState: getTreeSnapshot(),
+        activePath: path,
+        spiralCount: maxNResolved,
+        duration: 950,
+      })
+    )
+
+    return result
+  }
+
+  const finalResult = recurse(n)
+
+  // Final step
+  steps.push(
+    createStep({
+      lineKey: 'result',
+      type: 'complete',
+      message: `Completed! fib(${n}) = ${finalResult}`,
+      variables: { n, result: finalResult, activeNode: null, maxNResolved },
+      treeState: getTreeSnapshot(),
+      activePath: null,
+      spiralCount: maxNResolved,
+      duration: 1000,
+    })
+  )
+
+  return steps
+}

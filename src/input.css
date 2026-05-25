@@ -32,47 +32,47 @@
 [data-theme='light'],
 .light {
   --clerk-primary: #7c3aed;
-  --clerk-text: #020617;
-  --clerk-text-secondary: #64748b;
-  --clerk-bg: #ffffff;
-  --clerk-border: #e2e8f0;
-  --clerk-input-bg: #f8fafc;
-  --clerk-input-border: #cbd5e1;
-  --clerk-input-text: #020617;
-  --clerk-input-placeholder: #94a3b8;
-  --clerk-card-bg: #ffffff;
+  --clerk-text: #1c1917;
+  --clerk-text-secondary: #44403c;
+  --clerk-bg: #d6d3d1;
+  --clerk-border: #a8a29e;
+  --clerk-input-bg: #e7e5e4;
+  --clerk-input-border: #78716c;
+  --clerk-input-text: #1c1917;
+  --clerk-input-placeholder: #57534e;
+  --clerk-card-bg: #e7e5e4;
   --clerk-card-shadow:
-    0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.025);
   --clerk-footer-bg: transparent;
-  --clerk-footer-bg-solid: #f8fafc;
-  --clerk-hover-bg: #f1f5f9;
+  --clerk-footer-bg-solid: #d6d3d1;
+  --clerk-hover-bg: #d6d3d1;
   --clerk-button-bg: linear-gradient(135deg, #7c3aed 0%, #4f46e5 100%);
   --clerk-button-hover: linear-gradient(135deg, #6d28d9 0%, #4338ca 100%);
-  --clerk-social-bg: #ffffff;
-  --clerk-social-hover: #f8fafc;
+  --clerk-social-bg: #e7e5e4;
+  --clerk-social-hover: #d6d3d1;
 }
 
 @media (prefers-color-scheme: light) {
   :root:not([data-theme='dark']) {
     --clerk-primary: #7c3aed;
-    --clerk-text: #020617;
-    --clerk-text-secondary: #64748b;
-    --clerk-bg: #ffffff;
-    --clerk-border: #e2e8f0;
-    --clerk-input-bg: #f8fafc;
-    --clerk-input-border: #cbd5e1;
-    --clerk-input-text: #020617;
-    --clerk-input-placeholder: #94a3b8;
-    --clerk-card-bg: #ffffff;
+    --clerk-text: #1c1917;
+    --clerk-text-secondary: #44403c;
+    --clerk-bg: #d6d3d1;
+    --clerk-border: #a8a29e;
+    --clerk-input-bg: #e7e5e4;
+    --clerk-input-border: #78716c;
+    --clerk-input-text: #1c1917;
+    --clerk-input-placeholder: #57534e;
+    --clerk-card-bg: #e7e5e4;
     --clerk-card-shadow:
-      0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+      0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.025);
     --clerk-footer-bg: transparent;
-    --clerk-footer-bg-solid: #f8fafc;
-    --clerk-hover-bg: #f1f5f9;
+    --clerk-footer-bg-solid: #d6d3d1;
+    --clerk-hover-bg: #d6d3d1;
     --clerk-button-bg: linear-gradient(135deg, #7c3aed 0%, #4f46e5 100%);
     --clerk-button-hover: linear-gradient(135deg, #6d28d9 0%, #4338ca 100%);
-    --clerk-social-bg: #ffffff;
-    --clerk-social-hover: #f8fafc;
+    --clerk-social-bg: #e7e5e4;
+    --clerk-social-hover: #d6d3d1;
   }
 }
 
@@ -93,24 +93,40 @@
     --theme-shadow: 0 24px 80px rgba(2, 6, 23, 0.45);
     --theme-glow-cyan: rgba(6, 182, 212, 0.2);
     --theme-glow-purple: rgba(168, 85, 247, 0.1);
+
+    --theme-button-primary: #ffffff;
+    --theme-button-primary-hover: #f1f5f9;
+    --theme-button-primary-text: #020617;
+    --theme-button-secondary: rgba(255, 255, 255, 0.03);
+    --theme-button-secondary-hover: rgba(255, 255, 255, 0.08);
+    --theme-button-secondary-text: #ffffff;
+    --theme-button-secondary-border: rgba(255, 255, 255, 0.1);
   }
 
   :root[data-theme='light'] {
-    --theme-bg: #f8fafc;
-    --theme-bg-soft: rgba(255, 255, 255, 0.78);
-    --theme-surface: rgba(255, 255, 255, 0.82);
-    --theme-surface-strong: rgba(255, 255, 255, 0.94);
-    --theme-surface-muted: rgba(241, 245, 249, 0.84);
-    --theme-border: rgba(15, 23, 42, 0.12);
-    --theme-border-strong: rgba(148, 163, 184, 0.6);
-    --theme-text: #1e293b;
-    --theme-text-strong: #0f172a;
-    --theme-text-muted: #475569;
-    --theme-text-subtle: #64748b;
-    --theme-grid-line: rgba(148, 163, 184, 0.45);
-    --theme-shadow: 0 24px 70px rgba(15, 23, 42, 0.12);
-    --theme-glow-cyan: rgba(14, 165, 233, 0.16);
-    --theme-glow-purple: rgba(124, 58, 237, 0.1);
+    --theme-bg: #d6d3d1;
+    --theme-bg-soft: rgba(214, 211, 209, 0.85);
+    --theme-surface: #e7e5e4;
+    --theme-surface-strong: #f5f5f4;
+    --theme-surface-muted: rgba(168, 162, 158, 0.8);
+    --theme-border: rgba(41, 37, 36, 0.2);
+    --theme-border-strong: rgba(68, 64, 60, 0.5);
+    --theme-text: #292524;
+    --theme-text-strong: #1c1917;
+    --theme-text-muted: #44403c;
+    --theme-text-subtle: #57534e;
+    --theme-grid-line: rgba(120, 113, 108, 0.2);
+    --theme-shadow: 0 24px 70px rgba(41, 37, 36, 0.12);
+    --theme-glow-cyan: rgba(14, 165, 233, 0.08);
+    --theme-glow-purple: rgba(124, 58, 237, 0.04);
+
+    --theme-button-primary: #1c1917;
+    --theme-button-primary-hover: #000000;
+    --theme-button-primary-text: #ffffff;
+    --theme-button-secondary: #8b5cf6;
+    --theme-button-secondary-hover: #7c3aed;
+    --theme-button-secondary-text: #ffffff;
+    --theme-button-secondary-border: transparent;
   }
 
   html,
@@ -205,9 +221,22 @@
 
   .theme-media-surface,
   .theme-button-secondary {
-    background: var(--theme-surface-muted);
-    border-color: var(--theme-border);
-    color: var(--theme-text-strong);
+    background: var(--theme-button-secondary);
+    border-color: var(--theme-button-secondary-border);
+    color: var(--theme-button-secondary-text);
+  }
+
+  .theme-button-primary {
+    background: var(--theme-button-primary);
+    color: var(--theme-button-primary-text);
+  }
+
+  .theme-button-primary:hover {
+    background: var(--theme-button-primary-hover);
+  }
+
+  .theme-button-secondary:hover {
+    background: var(--theme-button-secondary-hover);
   }
 }
 
@@ -311,4 +340,46 @@
 
 *::-webkit-scrollbar-thumb:hover {
   background-color: #7c3aed;
+}
+
+/* Clerk UserProfile - photo upload button color */
+.cl-avatarImageActionsUpload {
+  color: #8b5cf6 !important; /* Purple to match  theme */
+}
+.cl-avatarImageActionsUpload:hover {
+  color: #7c3aed !important; /* Slightly darker on hover */
+}
+
+/* Clerk UserProfile - Primary badge color (next to email only) */
+.cl-profileSection__emailAddresses .cl-badge {
+  color: #a78bfa !important; /* Light purple for readability */
+  border-color: #7c3aed !important; /* Purple border */
+  background: rgba(
+    139,
+    92,
+    246,
+    0.15
+  ) !important; /* Subtle purple background */
+}
+
+/* Clerk UserProfile - "This device" badge color (Security page only) */
+.cl-profileSection__activeDevices .cl-badge {
+  color: #a78bfa !important; /* Light purple for readability */
+  border-color: #7c3aed !important; /* Purple border */
+  background: rgba(
+    139,
+    92,
+    246,
+    0.15
+  ) !important; /* Subtle purple background */
+}
+
+/* Clerk UserProfile - three dots menu button visibility in dark mode */
+.cl-profileSection__emailAddresses .cl-menuButton,
+.cl-profileSection__connectedAccounts .cl-menuButton {
+  color: #8b5cf6 !important; /* Purple to match theme */
+}
+.cl-profileSection__emailAddresses .cl-menuButton:hover,
+.cl-profileSection__connectedAccounts .cl-menuButton:hover {
+  color: #a78bfa !important; /* Lighter purple on hover */
 }

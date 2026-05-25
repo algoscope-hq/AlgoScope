@@ -34,11 +34,16 @@ const VisualizerPage = () => {
   }
 
   const currentSource = useMemo(() => {
-    return (
+    let code =
       mooreVotingSources?.mooreVoting?.[language]?.code ||
       '// No implementation available'
-    )
-  }, [language])
+    if (code !== '// No implementation available' && arrayInput) {
+      code = code.replace(/\[2,2,1,1,1,2,2\]/g, `[${arrayInput}]`)
+      code = code.replace(/\{2,2,1,1,1,2,2\}/g, `{${arrayInput}}`)
+      code = code.replace(/\{-2,1,-3,4,-1,2,1,-5,4\}/g, `{${arrayInput}}`)
+    }
+    return code
+  }, [language, arrayInput])
 
   return (
     <motion.div

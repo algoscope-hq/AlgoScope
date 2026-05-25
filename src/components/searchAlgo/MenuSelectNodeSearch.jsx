@@ -1,7 +1,15 @@
 import React from 'react'
 import Tooltip from '../Tooltip'
 
-export const MenuSelectNodeSearch = ({ node, setNode }) => {
+/**
+ * MenuSelectNodeSearch
+ *
+ * Props:
+ *  - node     : currently selected starting node
+ *  - setNode  : setter
+ *  - nodeIds  : number[] – live list of node IDs from the canvas
+ */
+export const MenuSelectNodeSearch = ({ node, setNode, nodeIds = [] }) => {
   const handleChange = (e) => {
     setNode(e.target.value || null)
   }
@@ -18,14 +26,15 @@ export const MenuSelectNodeSearch = ({ node, setNode }) => {
           className="w-full"
         >
           <select
+            id="search-start-node-select"
             value={node ?? ''}
             onChange={handleChange}
             className="w-full bg-slate-800 text-white text-sm border border-slate-700 rounded-xl pl-4 pr-10 py-3 transition duration-300 focus:outline-none focus:border-cyan-500 hover:border-slate-500 shadow-sm appearance-none cursor-pointer"
           >
             <option value="">Choose a Starting Node</option>
-            {Array.from({ length: 15 }, (_, i) => i + 1).map((element) => (
-              <option key={element} value={element}>
-                {element}
+            {nodeIds.map((id) => (
+              <option key={id} value={id}>
+                {id}
               </option>
             ))}
           </select>
@@ -45,6 +54,12 @@ export const MenuSelectNodeSearch = ({ node, setNode }) => {
           />
         </svg>
       </div>
+
+      {nodeIds.length === 0 && (
+        <p className="text-xs text-amber-400/80 pl-1">
+          No nodes on canvas. Add nodes using the toolbar above.
+        </p>
+      )}
     </div>
   )
 }

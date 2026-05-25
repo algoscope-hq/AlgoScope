@@ -12,7 +12,7 @@ const ComplexityCard = ({ algorithm }) => {
         Complexity Analysis
       </h2>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 gap-4">
         <div className="bg-slate-900/60 rounded-lg px-4 py-3 border border-slate-700/50">
           <p className="text-slate-400 text-xs mb-1 uppercase tracking-wider">
             Best

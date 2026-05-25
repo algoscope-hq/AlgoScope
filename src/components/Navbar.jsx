@@ -6,6 +6,8 @@ import {
   SignInButton,
   UserButton,
 } from '@clerk/clerk-react'
+
+const HAS_CLERK = Boolean(import.meta.env.VITE_CLERK_PUBLISHABLE_KEY)
 import { motion, AnimatePresence } from 'framer-motion'
 
 import githubIcon from '../assets/github-mark-white.svg'
@@ -255,26 +257,40 @@ export const Navbar = () => {
             </a>
 
             <div className="flex items-center gap-4 border-l border-white/10 pl-6">
-              <SignedOut>
-                <SignInButton mode="modal">
-                  <button className="relative group overflow-hidden rounded-xl bg-slate-900 px-6 py-2 text-sm font-bold text-white transition-all duration-300 active:scale-95">
-                    <span className="relative z-10">Sign In</span>
+              {HAS_CLERK ? (
+                <>
+                  <SignedOut>
+                    <SignInButton mode="modal">
+                      <button className="relative group overflow-hidden rounded-xl bg-slate-900 px-6 py-2 text-sm font-bold text-white transition-all duration-300 active:scale-95">
+                        <span className="relative z-10">Sign In</span>
 
-                    <div className="absolute inset-0 bg-gradient-to-r from-indigo-600/20 to-purple-600/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                        <div className="absolute inset-0 bg-gradient-to-r from-indigo-600/20 to-purple-600/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                      </button>
+                    </SignInButton>
+                  </SignedOut>
+
+                  <SignedIn>
+                    <UserButton
+                      appearance={{
+                        elements: {
+                          userButtonAvatarBox:
+                            'w-9 h-9 border border-white/10 shadow-xl',
+                        },
+                      }}
+                    />
+                  </SignedIn>
+                </>
+              ) : (
+                <>
+                  <button
+                    title="Auth not configured"
+                    disabled
+                    className="relative group overflow-hidden rounded-xl bg-slate-900 px-6 py-2 text-sm font-bold text-white transition-all duration-300 opacity-50 cursor-not-allowed"
+                  >
+                    Sign In
                   </button>
-                </SignInButton>
-              </SignedOut>
-
-              <SignedIn>
-                <UserButton
-                  appearance={{
-                    elements: {
-                      userButtonAvatarBox:
-                        'w-9 h-9 border border-white/10 shadow-xl',
-                    },
-                  }}
-                />
-              </SignedIn>
+                </>
+              )}
             </div>
           </div>
 
@@ -282,15 +298,17 @@ export const Navbar = () => {
           <div className="flex items-center gap-4 md:hidden">
             <ThemeToggleButton compact />
 
-            <SignedIn>
-              <UserButton
-                appearance={{
-                  elements: {
-                    userButtonAvatarBox: 'w-8 h-8 border border-white/10',
-                  },
-                }}
-              />
-            </SignedIn>
+            {HAS_CLERK && (
+              <SignedIn>
+                <UserButton
+                  appearance={{
+                    elements: {
+                      userButtonAvatarBox: 'w-8 h-8 border border-white/10',
+                    },
+                  }}
+                />
+              </SignedIn>
+            )}
 
             <motion.button
               type="button"
@@ -346,15 +364,25 @@ export const Navbar = () => {
                 variants={menuItemVariants}
                 className="mt-6 flex flex-col gap-3"
               >
-                <SignedOut>
-                  <SignInButton mode="modal">
-                    <button className="w-full relative group overflow-hidden rounded-xl bg-slate-900 border border-white/10 px-4 py-3 text-base font-bold text-white transition-all duration-300 active:scale-[0.98]">
-                      <span className="relative z-10">Sign In</span>
+                {HAS_CLERK ? (
+                  <SignedOut>
+                    <SignInButton mode="modal">
+                      <button className="w-full relative group overflow-hidden rounded-xl bg-slate-900 border border-white/10 px-4 py-3 text-base font-bold text-white transition-all duration-300 active:scale-[0.98]">
+                        <span className="relative z-10">Sign In</span>
 
-                      <div className="absolute inset-0 bg-gradient-to-r from-indigo-600/10 to-purple-600/10" />
-                    </button>
-                  </SignInButton>
-                </SignedOut>
+                        <div className="absolute inset-0 bg-gradient-to-r from-indigo-600/10 to-purple-600/10" />
+                      </button>
+                    </SignInButton>
+                  </SignedOut>
+                ) : (
+                  <button
+                    title="Auth not configured"
+                    disabled
+                    className="w-full relative group overflow-hidden rounded-xl bg-slate-900 border border-white/10 px-4 py-3 text-base font-bold text-white transition-all duration-300 opacity-50 cursor-not-allowed"
+                  >
+                    Sign In
+                  </button>
+                )}
 
                 <a
                   href="https://github.com/algoscope-hq/AlgoScope"

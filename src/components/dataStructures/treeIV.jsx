@@ -18,7 +18,7 @@ const insertNode = (root, value) => {
   if (!root) return new TreeNode(value)
   if (value < root.value) {
     root.left = insertNode(root.left, value)
-  } else if (value > root.value) {
+  } else {
     root.right = insertNode(root.right, value)
   }
   return root
@@ -140,19 +140,6 @@ export default function TreeIV() {
     if (isTraversing) return
     const val = parseInt(inputValue)
     if (isNaN(val)) return
-
-    // Check duplicates
-    const exists = (node, v) => {
-      if (!node) return false
-      if (node.value === v) return true
-      return v < node.value ? exists(node.left, v) : exists(node.right, v)
-    }
-
-    if (exists(root, val)) {
-      setMessage(`Value ${val} already exists!`)
-      return
-    }
-
     const newRoot = insertNode(root ? cloneTree(root) : null, val)
     setRoot(newRoot)
     setInputValue('')
@@ -245,7 +232,12 @@ export default function TreeIV() {
             onChange={(e) => setInputValue(e.target.value)}
             placeholder="Val"
             className="bg-slate-900 border border-slate-700 rounded-lg px-4 py-2 text-white outline-none focus:border-cyan-500 transition-colors w-24"
-            onKeyDown={(e) => e.key === 'Enter' && handleInsert()}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') {
+                e.preventDefault()
+                handleInsert()
+              }
+            }}
             disabled={isTraversing}
           />
           <button

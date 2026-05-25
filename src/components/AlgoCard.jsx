@@ -1,17 +1,24 @@
+import { useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import { ArrowRight } from 'lucide-react'
+import { MoveUpRight } from 'lucide-react'
 
 const MotionLink = motion(Link)
 
-export default function AlgoCard({
-  title,
-  description,
-  link,
-  image,
-  imageAlt,
-  color,
-}) {
+export default function AlgoCard({ title, description, link, color }) {
+  const cardRef = useRef(null)
+  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 })
+  const [isHovering, setIsHovering] = useState(false)
+
+  const handleMouseMove = (e) => {
+    if (!cardRef.current) return
+    const rect = cardRef.current.getBoundingClientRect()
+    setMousePosition({
+      x: e.clientX - rect.left,
+      y: e.clientY - rect.top,
+    })
+  }
+
   const cardVariants = {
     hidden: { opacity: 0, y: 30 },
     visible: {
@@ -24,61 +31,80 @@ export default function AlgoCard({
     },
   }
 
-  // Extract color classes or fallback
   const colorClasses =
-    color || 'bg-neutral-900/60 border-neutral-800/80 hover:border-neutral-700'
+    color || 'theme-card theme-border hover:border-neutral-700'
 
   return (
     <MotionLink
       to={link}
       onClick={() => window.scrollTo(0, 0)}
-      className={`group relative block w-full rounded-3xl p-8 backdrop-blur-xl transition-all duration-500 ease-out text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-500/50 overflow-hidden ${colorClasses} border hover:-translate-y-2 hover:shadow-[0_30px_60px_-15px_rgba(0,0,0,0.8)]`}
+      ref={cardRef}
+      onMouseMove={handleMouseMove}
+      onMouseEnter={() => setIsHovering(true)}
+      onMouseLeave={() => setIsHovering(false)}
+      className={`group relative block w-full rounded-3xl p-8 backdrop-blur-2xl transition-all duration-500 ease-out text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-500/50 overflow-hidden ${colorClasses} border hover:-translate-y-2 hover:shadow-2xl`}
       variants={cardVariants}
-      whileHover={{ y: -10 }}
+      whileHover={{ scale: 1.02 }}
+      whileTap={{ scale: 0.98 }}
     >
-      {/* Glossy overlay */}
-      <div className="absolute inset-0 bg-gradient-to-tr from-white/[0.02] to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
+      {/* Dynamic Mouse Spotlight Background */}
+      <motion.div
+        className="absolute inset-0 z-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
+        style={{
+          background: isHovering
+            ? `radial-gradient(600px circle at ${mousePosition.x}px ${mousePosition.y}px, var(--theme-border-strong), transparent 40%)`
+            : 'transparent',
+        }}
+      />
 
-      {/* Subtle background glow on hover */}
-      <div className="absolute -right-20 -top-20 w-64 h-64 bg-white/5 rounded-full blur-[80px] group-hover:bg-white/10 transition-colors duration-700 pointer-events-none" />
+      {/* Subtle Inner Glow Border tracking mouse */}
+      <motion.div
+        className="absolute inset-0 z-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-3xl pointer-events-none"
+        style={{
+          background: isHovering
+            ? `radial-gradient(400px circle at ${mousePosition.x}px ${mousePosition.y}px, var(--theme-border), transparent 40%)`
+            : 'transparent',
+          WebkitMask:
+            'linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)',
+          WebkitMaskComposite: 'xor',
+          maskComposite: 'exclude',
+          padding: '1px',
+        }}
+      />
 
-      {/* Icon/Image Container */}
-      {image && (
-        <div className="relative z-10 w-20 h-20 flex items-center justify-center rounded-2xl bg-white/[0.03] border border-white/10 mb-8 group-hover:scale-105 group-hover:border-white/20 transition-all duration-500 ease-out shadow-2xl">
-          <img
-            src={image}
-            alt={imageAlt || `${title} visualization`}
-            className="w-12 h-12 object-contain opacity-70 group-hover:opacity-100 transition-all duration-500"
-          />
-          {/* Inner Glow */}
-          <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-white/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-        </div>
-      )}
+      {/* Background Dots Pattern */}
+      <div className="absolute inset-0 z-0 opacity-[0.05] group-hover:opacity-[0.1] transition-all duration-700 bg-[radial-gradient(var(--theme-text-strong)_1px,transparent_1px)] [background-size:16px_16px] pointer-events-none" />
+
+      {/* Decorative Abstract Shape */}
+      <div className="absolute top-8 right-8 pointer-events-none opacity-20 group-hover:opacity-40 transition-opacity duration-700 dark:mix-blend-overlay">
+        <div className="w-20 h-20 border-[1px] border-current rounded-full absolute -top-4 -right-4 group-hover:scale-[1.3] transition-transform duration-700 ease-out theme-text-strong" />
+        <div className="w-16 h-16 border-[1px] border-current rounded-xl absolute top-0 right-0 transform rotate-45 group-hover:rotate-90 group-hover:scale-110 transition-all duration-700 ease-out theme-text-strong" />
+      </div>
 
       {/* Content */}
-      <div className="relative z-10 flex flex-col h-full">
-        <h2 className="text-2xl font-extrabold text-white tracking-tight mb-4 group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-white group-hover:to-white/70 transition-all duration-300">
-          {title}
-        </h2>
+      <div className="relative z-10 flex flex-col h-full min-h-[200px]">
+        <div className="mb-4 mt-2">
+          <h2 className="text-2xl md:text-3xl font-extrabold theme-text-strong tracking-tight mb-3 transition-all duration-300">
+            {title}
+          </h2>
+          <div className="w-8 h-1 bg-current opacity-20 rounded-full group-hover:w-16 group-hover:opacity-60 transition-all duration-500 ease-out theme-text-strong" />
+        </div>
 
-        <p className="text-base text-slate-400 leading-relaxed mb-10 group-hover:text-slate-300 transition-colors duration-300">
+        <p className="text-base theme-text-muted leading-relaxed mb-10 group-hover:theme-text-strong transition-colors duration-300 max-w-[90%] font-light">
           {description}
         </p>
 
         {/* Bottom Action */}
-        <div className="flex items-center justify-between mt-auto pt-6 border-t border-white/[0.05]">
-          <span className="text-sm font-bold tracking-widest uppercase text-cyan-400/80 group-hover:text-cyan-400 transition-colors duration-300">
-            Explore Visualizer
+        <div className="flex items-center justify-between mt-auto pt-6 border-t theme-border group-hover:border-current group-hover:border-opacity-30 transition-colors duration-500 theme-text-muted">
+          <span className="text-sm font-bold tracking-widest uppercase theme-text-subtle group-hover:theme-text-strong transition-colors duration-300">
+            Explore
           </span>
 
-          <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-white/5 border border-white/10 text-cyan-400 group-hover:bg-cyan-500 group-hover:border-cyan-400 group-hover:text-white group-hover:rotate-[-45deg] transition-all duration-500 shadow-lg">
-            <ArrowRight className="w-5 h-5 group-hover:rotate-[45deg] transition-transform duration-500" />
+          <div className="flex items-center justify-center w-12 h-12 rounded-2xl theme-media-surface border theme-border group-hover:bg-zinc-950 group-hover:text-white dark:group-hover:bg-white dark:group-hover:text-zinc-950 group-hover:scale-110 transition-all duration-500 shadow-lg">
+            <MoveUpRight className="w-5 h-5 group-hover:scale-110 transition-transform duration-500" />
           </div>
         </div>
       </div>
-
-      {/* Bottom Border Accent */}
-      <div className="absolute bottom-0 left-0 w-0 h-[2px] bg-gradient-to-r from-transparent via-cyan-500 to-transparent group-hover:w-full transition-all duration-700 ease-in-out" />
     </MotionLink>
   )
 }
