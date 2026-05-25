@@ -6,7 +6,7 @@ import { useStepPlayback } from '../visualizer/useStepPlayback'
 import ComplexityCard from '../ComplexityCard'
 import Tooltip from '../Tooltip'
 import TestCaseManager from '../testCaseManager/TestCaseManager'
-
+import { useKeyboardShortcuts } from '../visualizer/useKeyboardShortcuts'
 import * as linear from '../../algorithms/searching/linearSearchSteps'
 import * as binary from '../../algorithms/searching/binarySearchSteps'
 
@@ -81,6 +81,7 @@ export default function Visualizer() {
   const [language, setLanguage] = useState(() => {
     return searchParams.get('lang') || 'javascript'
   })
+  const [showShortcuts, setShowShortcuts] = useState(false)
   const [isStepMode, setIsStepMode] = useState(false)
 
   const handleAlgorithmChange = (e) => {
@@ -134,6 +135,22 @@ export default function Visualizer() {
     clearPlayback()
     setBaseArray(createArray(algorithm))
   }
+  useKeyboardShortcuts({
+    onPlayPause: () => {
+      if (isPlaying) pausePlayback()
+      else if (hasSteps && !isComplete) playPlayback()
+    },
+    onStepForward: () => {
+      if (!isPlaying && !isComplete && hasSteps) stepForward()
+    },
+    onStepBackward: () => {
+      if (!isPlaying && currentStepIndex > 0) stepBackward()
+    },
+    onReset: handleReset,
+    onSpeedUp: () => setSpeed((s) => Math.min(3, +(s + 0.25).toFixed(2))),
+    onSlowDown: () => setSpeed((s) => Math.max(0.25, +(s - 0.25).toFixed(2))),
+    onHelp: () => setShowShortcuts((v) => !v),
+  })
 
   const handleLoadTestCase = (input) => {
     const storedCase = parseStoredSearchCase(input)
@@ -222,6 +239,49 @@ export default function Visualizer() {
         <div className="flex flex-col items-center">
           <div className="grid w-full gap-4 xl:grid-cols-[minmax(0,1.3fr)_minmax(340px,0.7fr)] overflow-hidden">
             <div className="flex min-w-0 min-h-0 flex-col gap-4">
+              {showShortcuts && (
+                <div className="rounded-2xl border border-cyan-500/30 bg-slate-900/95 p-4 shadow-xl">
+                  <div className="flex items-center justify-between mb-3">
+                    <p className="text-xs font-semibold uppercase tracking-[0.2em] text-cyan-400/80">
+                      Keyboard Shortcuts
+                    </p>
+                    <button
+                      onClick={() => setShowShortcuts(false)}
+                      className="text-slate-400 hover:text-white text-xs"
+                    >
+                      ✕ Close
+                    </button>
+                  </div>
+                  <table className="w-full text-sm text-slate-300">
+                    <tbody>
+                      {[
+                        ['Space', 'Play / Pause'],
+                        ['→ Right Arrow', 'Next Step'],
+                        ['← Left Arrow', 'Previous Step'],
+                        ['R', 'Reset Array'],
+                        ['+', 'Increase Speed'],
+                        ['-', 'Decrease Speed'],
+                        ['?', 'Toggle this modal'],
+                      ].map(([key, action]) => (
+                        <tr key={key} className="border-b border-slate-700/50">
+                          <td className="py-1.5 pr-4">
+                            <kbd className="rounded bg-slate-700 px-2 py-0.5 text-xs font-mono text-cyan-300">
+                              {key}
+                            </kbd>
+                          </td>
+                          <td className="py-1.5 text-slate-400">{action}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+              <button
+                onClick={() => setShowShortcuts((v) => !v)}
+                className="self-end text-xs text-slate-500 hover:text-cyan-400 transition"
+              >
+                ⌨️ Shortcuts (?)
+              </button>
               <div className="rounded-2xl border border-slate-700/80 bg-slate-900/55 p-3 sm:p-6 shadow-xl">
                 <div className="mb-3 flex items-center justify-between gap-3">
                   <h3 className="text-base font-semibold text-slate-200">
