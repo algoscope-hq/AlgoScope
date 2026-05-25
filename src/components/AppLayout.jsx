@@ -3,7 +3,6 @@ import { Navbar } from './Navbar'
 import Footer from './Footer'
 import { motion } from 'framer-motion'
 import SeoHead from './SeoHead'
-import ScrollToTopButton from './ScrollToTopButton'
 import Breadcrumbs from './Breadcrumbs'
 
 const Background = () => (
@@ -33,7 +32,6 @@ export default function AppLayout({ children, showBackground = true }) {
 
         <Footer />
       </div>
-      <ScrollToTopButton />
     </motion.div>
   )
 }
