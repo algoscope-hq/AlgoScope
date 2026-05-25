@@ -16,6 +16,8 @@ const ScrollToTopButton = () => {
       }
     }
 
+    toggleVisibility()
+
     // Listen for theme change toggles on the HTML element
     const observer = new MutationObserver(() => {
       setIsDark(document.documentElement.classList.contains('dark'))
@@ -26,7 +28,7 @@ const ScrollToTopButton = () => {
       attributeFilter: ['class'],
     })
 
-    window.addEventListener('scroll', toggleVisibility)
+    window.addEventListener('scroll', toggleVisibility, { passive: true })
     return () => {
       window.removeEventListener('scroll', toggleVisibility)
       observer.disconnect()
