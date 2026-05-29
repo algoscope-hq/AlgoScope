@@ -5,6 +5,91 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.9.0] - 2026-05-29
+
+### Added
+
+- implement native Floyd-Warshall for solo grid visualizer
+- integrate guess the algorithm challenge page into navigation, search, footer, and SEO
+- add MCQ quiz game
+- add empirical Big-O runtime benchmarking system (#386)
+- add responsive scroll-to-top button
+- refine grid comparison visualization and scoring
+- add grid comparison mode for shortest path algorithms
+- add custom array input for search visualizer (linear & binary)
+
+### Fixed
+
+- lint
+- restore string algorithms route and improve complexity layout
+- correct browser title on valid sub-routes
+- overlap between close button and sort dropdown
+- resolve formatting and division by zero when maxSize is 1
+- address remaining visualization nitpicks
+- address comparison mode review feedback
+- resolve footer link JSX syntax issue
+- make maintainer link styles consistent
+
+### Changed
+
+- standardize semantic theme variable syntax
+- replace hardcoded colors with semantic theme variables
+
+### 📂 Changed Files
+
+```
+- 📁 **.github/**
+  - 📁 **ISSUE_TEMPLATE/**
+    - ✏️ feature_request.yml
+- 📁 **src/**
+  - 📁 **algorithms/**
+    - 📁 **dp/**
+      - ➕ dpStepGenerators.js
+    - 📁 **sorting/**
+      - ✏️ mergeSortSteps.js
+  - 📁 **components/**
+    - 📁 **arraySearch/**
+      - ✏️ Visualizer.jsx
+    - 📁 **backtrackingAlgo/**
+      - ✏️ VisualizerPage.jsx
+    - 📁 **challenge/**
+      - ➕ ChallengePage.jsx
+      - ➕ ChallengeVisualizer.jsx
+    - 📁 **dataStructures/**
+      - ✏️ stackIV.jsx
+    - 📁 **dynamicProgramming/**
+      - ➕ DPVisualizer.jsx
+    - 📁 **MathTheory/**
+      - ✏️ MathSoloVisualizer.jsx
+    - 📁 **shortestPathAlgo/**
+      - ➕ GridComparisonMode.jsx
+      - ✏️ GridVisualizer.jsx
+      - ✏️ ShortestPathPage.jsx
+    - 📁 **sortingAlgo/**
+      - ➕ RecursiveTree.jsx
+      - ✏️ Visualizer.jsx
+    - 📁 **stringAlgo/**
+      - ✏️ VisualizerPage.jsx
+    - 📁 **visualizer/**
+      - ✏️ CodePanel.jsx
+    - ✏️ AppLayout.jsx
+    - ✏️ CodeEditor.jsx
+    - ✏️ ComplexityCard.jsx
+    - ✏️ Footer.jsx
+    - ✏️ Home.jsx
+    - ✏️ Navbar.jsx
+    - ✏️ PracticePage.jsx
+    - ➕ ProfilerGraph.jsx
+    - ➕ ScrollToTopButton.jsx
+    - ✏️ SearchBar.jsx
+    - ✏️ SeoHead.jsx
+  - ✏️ App.jsx
+  - ✏️ input.css
+- ✏️ CHANGELOG.md
+- ✏️ package-lock.json
+- ✏️ README.md
+```
+
 ## [1.8.0] - 2026-05-26
 
 ### Added
@@ -813,3 +898,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - ➕ vite.config.js
 - ➕ yarn.lock
 ```
+

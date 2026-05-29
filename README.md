@@ -163,31 +163,47 @@ Access the app at `http://localhost:8080`.
 
 AlgoScope uses a component-based architecture where each algorithm category has its own specialized visualizer:
 
-```text
-api/
-├── index.js               # Backend entry point (Express)
-└── vercel.json            # Vercel deployment configuration
-src/
-├── algorithms/
-│   ├── kadane/            # Kadane's Algorithm step generator
-│   ├── mooreVoting/       # Moore Voting Algorithm step generator
-│   ├── searching/         # Search and shortest-path step generators/source data
-│   └── sorting/           # Sorting algorithm step generators
-├── assets/                # Static images and icons
-├── components/
-│   ├── about/             # About page cards and sections
-│   ├── arraySearch/       # Linear and binary search visualizers
-│   ├── dataStructures/    # Stack, queue, and tree visualizers
-│   ├── kadaneAlgo/        # Kadane's Algorithm visualizers
-│   ├── mooreVotingAlgo/   # Moore Voting Algorithm visualizers
-│   ├── searchAlgo/        # Graph traversal visualizers and controls
-│   ├── shortestPathAlgo/  # Shortest-path visualizers and controls
-│   ├── sortingAlgo/       # Sorting visualizers
-│   └── visualizer/        # Shared code panel and playback helpers
-├── App.jsx                # Main routing and global state management
-├── App.css                # App-level styles
-├── input.css              # Tailwind entry styles
-└── main.jsx               # React entry point
+```
+AlgoScope/
+├── api/                                 # Backend server
+│   ├── index.js                         # Backend entry point (Express)
+│   └── vercel.json                      # Vercel deployment configuration
+├── src/
+│   ├── algorithms/
+│   │   ├── backtracking/                # Backtracking algorithm step generators
+│   │   ├── dp/                          # Dynamic programming step generators
+│   │   ├── kadane/                      # Kadane's Algorithm step generator
+│   │   ├── mathTheory/                  # Math theory sources and step generators
+│   │   ├── mooreVoting/                 # Moore Voting Algorithm step generator
+│   │   ├── searching/                   # Search and shortest-path step generators
+│   │   ├── sorting/                     # Sorting algorithm step generators
+│   │   └── stringAlgo/                  # String algorithm sources
+│   ├── assets/                          # Static images and icons
+│   ├── components/
+│   │   ├── MathTheory/                  # Math theory canvas visualizers
+│   │   ├── about/                       # About page cards and sections
+│   │   ├── arraySearch/                 # Linear and binary search visualizers
+│   │   ├── backtrackingAlgo/            # Backtracking visualizers (N-Queens, Sudoku, Hanoi)
+│   │   ├── challenge/                   # Challenge page and visualizer
+│   │   ├── dataStructures/              # Stack, queue, and tree visualizers
+│   │   ├── dynamicProgramming/          # Dynamic programming visualizer
+│   │   ├── hero/                        # Hero section and product preview
+│   │   ├── kadaneAlgo/                  # Kadane's Algorithm visualizers
+│   │   ├── mooreVotingAlgo/             # Moore Voting Algorithm visualizers
+│   │   ├── searchAlgo/                  # Graph traversal visualizers and controls
+│   │   ├── shared/                      # Shared UI components
+│   │   ├── shortestPathAlgo/            # Shortest-path visualizers and controls
+│   │   ├── sortingAlgo/                 # Sorting visualizers
+│   │   ├── stringAlgo/                  # String algorithm visualizers (KMP, Rabin-Karp, Z)
+│   │   ├── testCaseManager/             # Test case management UI
+│   │   └── visualizer/                  # Shared code panel and playback helpers
+│   ├── context/                         # Theme context and provider
+│   ├── data/                            # Static data (complexity maps, etc.)
+│   ├── lib/                             # Utility functions and shared logic
+│   ├── App.jsx                          # Main routing and global state management
+│   ├── App.css                          # App-level styles
+│   ├── input.css                        # Tailwind entry styles
+│   └── main.jsx                         # React entry point
 ```
 
 ### How It Works

@@ -167,12 +167,12 @@ export const Navbar = () => {
           </div>
 
           <div className="hidden md:flex items-center gap-6">
-            <ul 
+            <ul
               className="flex items-center gap-1 relative"
               onMouseLeave={() => setHoveredTab(null)}
             >
               {/* Explore Trigger */}
-              <li 
+              <li
                 className="relative group py-1.5"
                 onMouseEnter={() => setHoveredTab('explore')}
               >
@@ -236,7 +236,7 @@ export const Navbar = () => {
               </li>
 
               {/* Top Level Link: Practice */}
-              <li 
+              <li
                 className="relative py-1.5"
                 onMouseEnter={() => setHoveredTab('practice')}
               >
@@ -259,7 +259,7 @@ export const Navbar = () => {
               </li>
 
               {/* Top Level Link: Challenge */}
-              <li 
+              <li
                 className="relative py-1.5"
                 onMouseEnter={() => setHoveredTab('challenge')}
               >
