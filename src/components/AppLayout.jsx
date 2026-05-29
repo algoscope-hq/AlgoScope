@@ -1,4 +1,5 @@
 import React from 'react'
+import { useLocation } from 'react-router-dom'
 import { Navbar } from './Navbar'
 import Footer from './Footer'
 import { motion } from 'framer-motion'
@@ -13,6 +14,8 @@ const Background = () => (
 )
 
 export default function AppLayout({ children, showBackground = true }) {
+  const { pathname } = useLocation()
+
   return (
     <motion.div
       className="theme-app min-h-screen flex flex-col relative overflow-x-hidden"
@@ -29,7 +32,18 @@ export default function AppLayout({ children, showBackground = true }) {
 
         <Breadcrumbs />
 
-        <div className="flex-1">{children}</div>
+        <motion.div
+          key={pathname}
+          className="flex-1 flex flex-col"
+          initial={{ opacity: 0, y: 12, scale: 0.992 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
+          transition={{
+            duration: 0.6,
+            ease: [0.21, 1, 0.36, 1],
+          }}
+        >
+          {children}
+        </motion.div>
 
         <Footer />
         <ScrollToTopButton />

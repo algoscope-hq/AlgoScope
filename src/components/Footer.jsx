@@ -1,7 +1,88 @@
-import React from 'react'
+import React, { useRef, useState } from 'react'
 import { motion } from 'framer-motion'
 import { Link } from 'react-router-dom'
 import githubIcon from '../assets/github-mark-white.svg'
+
+const FooterBentoCard = ({ algo }) => {
+  const cardRef = useRef(null)
+  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 })
+  const [isHovering, setIsHovering] = useState(false)
+
+  const handleMouseMove = (e) => {
+    if (!cardRef.current) return
+    const rect = cardRef.current.getBoundingClientRect()
+    setMousePosition({
+      x: e.clientX - rect.left,
+      y: e.clientY - rect.top,
+    })
+  }
+
+  const badgeClasses = algo.color.split(' ').slice(1).join(' ')
+  const borderHoverClass = algo.color.split(' ')[0]
+
+  return (
+    <Link
+      ref={cardRef}
+      to={algo.path}
+      onMouseMove={handleMouseMove}
+      onMouseEnter={() => setIsHovering(true)}
+      onMouseLeave={() => setIsHovering(false)}
+      onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+      className={`group relative theme-media-surface border theme-border ${borderHoverClass} rounded-xl p-5 flex flex-col justify-between transition-all duration-500 overflow-hidden transform hover:-translate-y-0.5 hover:shadow-lg`}
+    >
+      {/* Dynamic Mouse Spotlight Background */}
+      <motion.div
+        className="absolute inset-0 z-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
+        style={{
+          background: isHovering
+            ? `radial-gradient(300px circle at ${mousePosition.x}px ${mousePosition.y}px, var(--theme-border-strong), transparent 45%)`
+            : 'transparent',
+        }}
+      />
+
+      {/* Subtle Inner Glow Border tracking mouse */}
+      <motion.div
+        className="absolute inset-0 z-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-xl pointer-events-none"
+        style={{
+          background: isHovering
+            ? `radial-gradient(200px circle at ${mousePosition.x}px ${mousePosition.y}px, var(--theme-border), transparent 45%)`
+            : 'transparent',
+          WebkitMask:
+            'linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)',
+          WebkitMaskComposite: 'xor',
+          maskComposite: 'exclude',
+          padding: '1px',
+        }}
+      />
+
+      {/* Background Dots Pattern (subtle) */}
+      <div className="absolute inset-0 z-0 opacity-[0.02] group-hover:opacity-[0.05] transition-all duration-700 bg-[radial-gradient(var(--theme-text-strong)_1px,transparent_1px)] [background-size:12px_12px] pointer-events-none" />
+
+      <div className="relative z-10 space-y-2">
+        <div className="flex justify-between items-start gap-2">
+          <h4 className="text-md font-semibold theme-text-muted group-hover:theme-text-strong transition-colors">
+            {algo.name} Module
+          </h4>
+          <span
+            className={`text-[10px] font-mono px-2 py-0.5 rounded-md border theme-border backdrop-blur-sm ${badgeClasses} tracking-wide font-medium shadow-sm transition-all duration-300 group-hover:scale-105`}
+          >
+            {algo.complexity}
+          </span>
+        </div>
+        <p className="text-xs theme-text-muted group-hover:theme-text-strong transition-colors font-light leading-relaxed opacity-70 group-hover:opacity-100">
+          {algo.desc}
+        </p>
+      </div>
+
+      <div className="relative z-10 mt-5 flex items-center justify-between text-[10px] uppercase tracking-wider theme-text-subtle group-hover:theme-text-strong font-semibold transition-colors">
+        <span>Launch Visualizer</span>
+        <span className="text-xs transform group-hover:translate-x-0.5 transition-transform duration-300">
+          &rarr;
+        </span>
+      </div>
+    </Link>
+  )
+}
 
 const Footer = () => {
   const algorithms = [
@@ -36,7 +117,7 @@ const Footer = () => {
     {
       name: 'Arrays',
       path: '/ldssearch',
-      desc: 'Kadane, Moore, sliding windows', // Fixed typo here
+      desc: 'Kadane, Moore, sliding windows',
       complexity: 'O(N)',
       color: 'hover:border-emerald-500/30 text-emerald-400 bg-emerald-500/5',
     },
@@ -86,7 +167,6 @@ const Footer = () => {
                 <h3 className="text-xl font-bold tracking-tight theme-text-strong logo-font">
                   AlgoScope
                 </h3>
-                {/* Fixed Gap Space here */}
                 <div className="flex items-center gap-2 mt-0.5">
                   <span className="relative flex h-1.5 w-1.5">
                     <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-75"></span>
@@ -132,7 +212,7 @@ const Footer = () => {
                   className="h-4 w-4"
                   xmlns="http://www.w3.org/2000/svg"
                 >
-                  <path d="M20.317 4.3698a19.7913 19.7913 0 00-4.8851-1.5152.0741.0741 0 00-.0785.0371c-.211.3753-.4447.8648-.6083 1.2495-1.8447-.2758-3.68-.2758-5.4876 0-.1636-.3933-.4058-.8742-.6177-1.2495a.077.077 0 00-.0785-.037 19.7363 19.7363 0 00-4.8852 1.515.0699.0699 0 00-.0321.0277C.5334 9.0458-.319 13.5799.0992 18.0578a.0824.0824 0 00.0312.0561c2.0528 1.5076 4.0413 2.4228 5.9929 3.0294a.0777.0777 0 00.0842-.0276c.4616-.6304.8731-1.2952 1.226-1.9942a.076.076 0 00-.0416-.1057 13.0276 13.0276 0 01-1.8713-.892.077.077 0 01-.0076-.1277c.1258-.0943.2517-.1923.3718-.2914a.0743.0743 0 01.0776-.0105c3.9278 1.7933 8.18 1.7933 12.0614 0a.0739.0739 0 01.0785.0095c.1202.099.246.1971.3728.2914a.077.077 0 01-.0066.1277 12.2986 12.2986 0 01-1.873.8914.0766.0766 0 00-.0407.1067c.3604.698.7719 1.3628 1.2259 1.9932a.076.076 0 00.0842.0286c1.961-.6067 3.9495-1.5219 6.0023-3.0294a.077.077 0 00.0313-.0552c.5004-5.177-.8382-9.6739-3.5485-13.6604a.061.061 0 00-.0312-.0286zM8.02 15.3312c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9555-2.4189 2.157-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.9555 2.419-2.1569 2.419zm7.9748 0c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9554-2.4189 2.1569-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.946 2.419-2.1568 2.419z" />
+                  <path d="M20.317 4.3698a19.7913 19.7913 0 00-4.8851-1.5152.0741.0741 0 00-.0785.0371c-.211.3753-.4447.8648-.6083 1.2495-1.8447-.2758-3.68-.2758-5.4876 0-.1636-.3933-.4058-.8742-.6177-1.2495a.077.077 0 00-.0785-.037 19.7363 19.7363 0 00-4.8852 1.515.0699.0699 0 00-.0321.0277C.5334 9.0458-.319 13.5799.0992 18.0578a.0824.0824 0 00.0312.0561c2.0528 1.5076 4.0413 2.4228 5.9929 3.0294a.0777.0777 0 00.0842-.0276c.4616-.6304.8731-1.2952 1.226-1.9942a.076.076 0 00-.0416-.1057 13.0276 13.0276 0 01-1.8713-.892.076.076 0 00-.0416-.1057 13.0276 13.0276 0 01-1.8713-.892.076.076 0 00-.0416-.1057 13.0276 13.0276 0 01-1.8713-.892.076.076 0 01-.0076-.1277c.1258-.0943.2517-.1923.3718-.2914a.0743.0743 0 01.0776-.0105c3.9278 1.7933 8.18 1.7933 12.0614 0a.0739.0739 0 01.0785.0095c.1202.099.246.1971.3728.2914a.077.077 0 01-.0066.1277 12.2986 12.2986 0 01-1.873.8914.0766.0766 0 00-.0407.1067c.3604.698.7719 1.3628 1.2259 1.9932a.076.076 0 00.0842.0286c1.961-.6067 3.9495-1.5219 6.0023-3.0294a.077.077 0 00.0313-.0552c.5004-5.177-.8382-9.6739-3.5485-13.6604a.061.061 0 00-.0312-.0286zM8.02 15.3312c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9555-2.4189 2.157-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.9555 2.419-2.1569 2.419zm7.9748 0c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9554-2.4189 2.1569-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.946 2.419-2.1568 2.419z" />
                 </svg>
               </motion.a>
             </div>
@@ -148,42 +228,9 @@ const Footer = () => {
 
         {/* Box 2: Interactive Bento Grid Hub */}
         <div className="lg:col-span-2 grid grid-cols-1 sm:grid-cols-2 gap-4">
-          {algorithms.map((algo, i) => {
-            const badgeClasses = algo.color.split(' ').slice(1).join(' ')
-            const borderHoverClass = algo.color.split(' ')[0]
-
-            return (
-              <Link
-                key={i}
-                to={algo.path}
-                onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-                className={`group relative theme-media-surface border theme-border ${borderHoverClass} rounded-xl p-5 flex flex-col justify-between transition-all duration-300 transform hover:-translate-y-0.5`}
-              >
-                <div className="space-y-2">
-                  <div className="flex justify-between items-start gap-2">
-                    <h4 className="text-md font-semibold theme-text-muted group-hover:theme-text-strong transition-colors">
-                      {algo.name} Module
-                    </h4>
-                    <span
-                      className={`text-[10px] font-mono px-2 py-0.5 rounded-md border theme-border backdrop-blur-sm ${badgeClasses} tracking-wide font-medium shadow-sm transition-all duration-300 group-hover:scale-105`}
-                    >
-                      {algo.complexity}
-                    </span>
-                  </div>
-                  <p className="text-xs theme-text-muted group-hover:theme-text-strong transition-colors font-light leading-relaxed opacity-70 group-hover:opacity-100">
-                    {algo.desc}
-                  </p>
-                </div>
-
-                <div className="mt-5 flex items-center justify-between text-[10px] uppercase tracking-wider theme-text-subtle group-hover:theme-text-strong font-semibold transition-colors">
-                  <span>Launch Visualizer</span>
-                  <span className="text-xs transform group-hover:translate-x-0.5 transition-transform duration-300">
-                    &rarr;
-                  </span>
-                </div>
-              </Link>
-            )
-          })}
+          {algorithms.map((algo, i) => (
+            <FooterBentoCard key={i} algo={algo} />
+          ))}
         </div>
       </div>
 
