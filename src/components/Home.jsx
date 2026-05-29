@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState, useMemo } from 'react'
 import AlgoCard from './AlgoCard'
 import SortingImg from '../assets/new-home-images/array.png'
 import SearchingImg from '../assets/new-home-images/traversal.png'
@@ -93,7 +93,25 @@ const ALGORITHMS = [
   },
 ]
 
+const sortOptions = [
+  { value: 'default', label: 'Default Order' },
+  { value: 'name-asc', label: 'Name (A-Z)' },
+  { value: 'name-desc', label: 'Name (Z-A)' },
+]
+
 export const Home = () => {
+  const [sortBy, setSortBy] = useState('default')
+
+  const sortedAlgorithms = useMemo(() => {
+    const list = [...ALGORITHMS]
+    if (sortBy === 'name-asc') {
+      list.sort((a, b) => a.title.localeCompare(b.title))
+    } else if (sortBy === 'name-desc') {
+      list.sort((a, b) => b.title.localeCompare(a.title))
+    }
+    return list
+  }, [sortBy])
+
   return (
     <div className="relative min-h-screen w-full bg-[#020617] text-white overflow-hidden selection:bg-cyan-500/30">
       {/* Background Grid & Glow */}
@@ -161,12 +179,26 @@ export const Home = () => {
 
         {/* Cards Grid */}
         <div id="explore" className="w-full max-w-7xl mx-auto mt-32 px-4">
-          <div className="flex items-center gap-4 mb-12">
+          <div className="flex items-center gap-4 mb-8">
             <div className="h-px flex-1 bg-gradient-to-r from-transparent via-slate-700 to-transparent"></div>
             <span className="text-slate-500 font-mono text-sm uppercase tracking-widest">
               Algorithms
             </span>
             <div className="h-px flex-1 bg-gradient-to-r from-transparent via-slate-700 to-transparent"></div>
+          </div>
+
+          <div className="flex items-center justify-end mb-4">
+            <select
+              value={sortBy}
+              onChange={(e) => setSortBy(e.target.value)}
+              className="px-3 py-1.5 text-xs font-mono bg-slate-800/60 border border-slate-700/60 text-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-500/30 focus:border-cyan-500/50 cursor-pointer"
+            >
+              {sortOptions.map((opt) => (
+                <option key={opt.value} value={opt.value}>
+                  {opt.label}
+                </option>
+              ))}
+            </select>
           </div>
 
           <motion.div
@@ -176,7 +208,7 @@ export const Home = () => {
             whileInView="visible"
             viewport={{ once: true, margin: '-100px' }}
           >
-            {ALGORITHMS.map((algo, index) => (
+            {sortedAlgorithms.map((algo, index) => (
               <AlgoCard
                 key={index}
                 title={algo.title}
