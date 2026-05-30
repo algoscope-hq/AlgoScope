@@ -1,3 +1,4 @@
+import { useEffect } from 'react'
 import React, { useMemo, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useSearchParams } from 'react-router-dom'
@@ -12,6 +13,9 @@ import { ComparisonMode } from './ComparisonMode'
 import { getBacktrackingSource } from '../../algorithms/backtracking/backtrackingSources'
 
 export default function VisualizerPage() {
+  useEffect(() => {
+    document.title = 'Backtracking | AlgoScope'
+  }, [])
   const [searchParams, setSearchParams] = useSearchParams()
   const activeTab = searchParams.get('mode') === 'compare' ? 'compare' : 'solo'
 

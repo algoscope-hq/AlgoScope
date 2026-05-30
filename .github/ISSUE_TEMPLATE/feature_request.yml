@@ -1,8 +1,7 @@
 name: Feature request
 description: Suggest an improvement or new capability for AlgoScope
 title: '[Feature]: '
-labels:
-  - enhancement
+labels: ['GSSoC']
 body:
   - type: markdown
     attributes:

@@ -2,6 +2,7 @@ import React from 'react'
 import { motion } from 'framer-motion'
 import { Link } from 'react-router-dom'
 import githubIcon from '../assets/github-mark-white.svg'
+import { APP_VERSION } from '../lib/version'
 
 const Footer = () => {
   const algorithms = [
@@ -39,6 +40,13 @@ const Footer = () => {
       desc: 'Kadane, Moore, sliding windows', // Fixed typo here
       complexity: 'O(N)',
       color: 'hover:border-emerald-500/30 text-emerald-400 bg-emerald-500/5',
+    },
+    {
+      name: 'Challenges',
+      path: '/challenge',
+      desc: 'Guess the running algorithm game',
+      complexity: 'Interactive',
+      color: 'hover:border-yellow-500/30 text-yellow-400 bg-yellow-500/5',
     },
   ]
 
@@ -181,17 +189,20 @@ const Footer = () => {
       </div>
 
       {/* Box 3: Minimalist Bottom Ribbon & Interactive Complexity Counter */}
-      <div className="mt-8 pt-6 border-t theme-border flex flex-col lg:flex-row justify-between items-center gap-6">
-        <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-4 text-xs theme-text-subtle w-full lg:w-auto justify-between lg:justify-start">
+      <div className="mt-10 flex flex-col items-center gap-5 border-t border-slate-800 pt-6">
+        <div className="flex flex-col items-center gap-2 text-center text-xs text-slate-400">
           <p>
             &copy; {new Date().getFullYear()}{' '}
             <span className="theme-text-muted font-medium">AlgoScope</span>{' '}
-            &bull; Open Source Sandbox
+            &bull; Open Source Sandbox{' '}
+            <span className="font-mono text-[10px] px-1.5 py-0.5 rounded bg-cyan-500/10 border border-cyan-500/20 text-cyan-400">
+              {APP_VERSION}
+            </span>
           </p>
           <div className="text-[11px] theme-text-subtle">
             Maintained by{' '}
             <a
-              className="theme-text-muted hover:theme-text-strong transition-colors"
+              className="font-semibold text-cyan-400 transition hover:text-cyan-300"
               href="https://github.com/Bimbok"
               target="_blank"
               rel="noreferrer"
@@ -200,9 +211,9 @@ const Footer = () => {
             </a>
             {' & '}
             <a
-              className="theme-text-muted hover:theme-text-strong transition-colors"
-              href="https://github.com/adityapaul26"
               target="_blank"
+              className="font-semibold text-cyan-400 transition hover:text-cyan-300"
+              href="https://github.com/adityapaul26"
               rel="noreferrer"
             >
               adityapaul26

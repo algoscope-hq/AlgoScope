@@ -77,6 +77,7 @@ export default function Visualizer() {
     if (urlTarget) return urlTarget
     return algorithm === 'binarySearch' ? 37 : 30
   })
+  const [customInput, setCustomInput] = useState('')
   const [speed, setSpeed] = useState(1)
   const [language, setLanguage] = useState(() => {
     return searchParams.get('lang') || 'javascript'
@@ -161,6 +162,26 @@ export default function Visualizer() {
     if (storedCase.target !== undefined) {
       setTarget(storedCase.target)
     }
+  }
+
+  const parseCustomArray = (value) => {
+    return value
+      .split(',')
+      .map((item) => item.trim())
+      .filter((item) => item !== '')
+      .map(Number)
+      .filter((num) => !Number.isNaN(num))
+  }
+
+  const handleSetArray = () => {
+    const parsed = parseCustomArray(customInput)
+    if (parsed.length === 0) return
+
+    const nextArray =
+      algorithm === 'binarySearch' ? [...parsed].sort((a, b) => a - b) : parsed
+
+    clearPlayback()
+    setBaseArray(nextArray)
   }
 
   const isRunning = isPlaying
@@ -463,6 +484,30 @@ export default function Visualizer() {
                         placeholder="Target Value"
                       />
                     </Tooltip>
+                  </div>
+
+                  <div>
+                    <p className="mb-2 text-xs font-semibold uppercase tracking-[0.2em] text-cyan-400/80">
+                      Custom Array
+                    </p>
+                    <div className="flex flex-col gap-3 sm:flex-row">
+                      <input
+                        type="text"
+                        value={customInput}
+                        onChange={(e) => setCustomInput(e.target.value)}
+                        disabled={isRunning}
+                        className="w-full bg-slate-900/80 text-white text-sm border border-slate-700 rounded-xl px-4 py-3 focus:outline-none focus:border-cyan-500 transition disabled:opacity-50"
+                        placeholder="1, 3, 5, 7, 9"
+                      />
+                      <button
+                        type="button"
+                        onClick={handleSetArray}
+                        disabled={isRunning || !customInput.trim()}
+                        className="w-full sm:w-auto whitespace-nowrap rounded-xl bg-cyan-600 px-5 py-3 text-sm font-bold text-white transition-all duration-300 hover:bg-cyan-500 disabled:cursor-not-allowed disabled:opacity-50"
+                      >
+                        Set Array
+                      </button>
+                    </div>
                   </div>
 
                   <div className="rounded-xl border border-slate-700/50 bg-slate-900/50 px-3 py-2">

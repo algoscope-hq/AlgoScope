@@ -58,6 +58,11 @@ const pageMetadata = {
     description:
       'Learn about AlgoScope, its mission, and the interactive features built to make algorithms easier to understand.',
   },
+  '/challenge': {
+    title: 'Guess the Algorithm Challenge | AlgoScope',
+    description:
+      'Test your algorithm recognition skills! Watch the visualization and guess which sorting algorithm is running in real-time.',
+  },
 }
 
 function setMeta(selector, attribute, value) {

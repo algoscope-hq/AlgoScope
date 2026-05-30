@@ -32,7 +32,7 @@ const ComplexityCard = ({ algorithm, compact = false }) => {
         className={`grid ${
           compact
             ? 'grid-cols-2 gap-3'
-            : 'grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4'
+            : 'grid-cols-[repeat(auto-fit,minmax(160px,1fr))] gap-4'
         }`}
       >
         {METRICS.map(([label, key]) => (
@@ -49,7 +49,7 @@ const ComplexityCard = ({ algorithm, compact = false }) => {
             >
               {label}
             </p>
-            <p className="break-words font-semibold leading-snug text-sm text-white">
+            <p className="whitespace-nowrap font-semibold leading-snug text-sm text-white">
               {current[key]}
             </p>
           </div>

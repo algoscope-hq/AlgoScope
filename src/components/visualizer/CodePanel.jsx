@@ -131,25 +131,19 @@ const CodePanel = memo(function CodePanel({
           </div>
         </div>
 
-        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex flex-col gap-3 overflow-hidden">
           {onLanguageChange ? (
             <select
               value={language}
               onChange={(event) => onLanguageChange(event.target.value)}
-              className="rounded-xl border border-slate-700 bg-slate-900 px-4 py-2 text-sm text-slate-100 transition focus:border-cyan-500 focus:outline-none"
+              className="h-10 w-[140px] rounded-xl border border-slate-700 bg-slate-900 px-3 text-sm text-slate-100 transition focus:border-cyan-500 focus:outline-none"
             >
               <option value="javascript">JavaScript</option>
-
               <option value="python">Python</option>
-
               <option value="cpp">C++</option>
-
               <option value="java">Java</option>
-
               <option value="c">C</option>
-
               <option value="go">Go</option>
-
               <option value="rust">Rust</option>
             </select>
           ) : (
@@ -158,46 +152,41 @@ const CodePanel = memo(function CodePanel({
             </div>
           )}
 
-          <div className="flex flex-col gap-3 sm:flex-row">
-            <select
-              value={theme}
-              onChange={(event) => setTheme(event.target.value)}
-              className="rounded-xl border border-slate-700 bg-slate-900 px-4 py-2 text-sm text-slate-100 transition focus:border-cyan-500 focus:outline-none"
-            >
-              <option value="vscDarkPlus">VSC Dark Plus</option>
+          <div className="overflow-x-auto">
+            <div className="flex min-w-max items-center gap-3 pb-1">
+              <select
+                value={theme}
+                onChange={(event) => setTheme(event.target.value)}
+                className="h-10 min-w-[140px] rounded-xl border border-slate-700 bg-slate-900 px-3 text-sm text-slate-100 transition focus:border-cyan-500 focus:outline-none"
+              >
+                <option value="vscDarkPlus">VSC Dark Plus</option>
+                <option value="oneDark">One Dark</option>
+                <option value="dracula">Dracula</option>
+                <option value="coldarkDark">Coldark Dark</option>
+                <option value="materialDark">Material Dark</option>
+              </select>
 
-              <option value="oneDark">One Dark</option>
+              <button
+                type="button"
+                onClick={handleDownload}
+                className="h-10 whitespace-nowrap rounded-xl border border-slate-700 bg-slate-900 px-3 text-sm font-medium text-slate-100 transition hover:border-cyan-500 hover:text-cyan-200"
+              >
+                Download
+              </button>
 
-              <option value="dracula">Dracula</option>
-
-              <option value="coldarkDark">Coldark Dark</option>
-
-              <option value="materialDark">Material Dark</option>
-            </select>
-
-            <button
-              type="button"
-              onClick={handleDownload}
-              className="rounded-xl border border-slate-700 bg-slate-900 px-4 py-2 text-sm font-medium text-slate-100 transition hover:border-cyan-500 hover:text-cyan-200"
-            >
-              Download
-            </button>
-
-            <button
-              type="button"
-              onClick={handleCopy}
-              className={`rounded-xl px-4 py-2 text-sm font-medium transition ${
-                copied
-                  ? 'bg-emerald-600 text-white'
-                  : 'border border-slate-700 bg-slate-900 text-slate-100 hover:border-cyan-500 hover:text-cyan-200'
-              }`}
-            >
-              {copied ? 'Copied' : 'Copy Code'}
-            </button>
+              <button
+                type="button"
+                onClick={handleCopy}
+                className={`h-10 whitespace-nowrap rounded-xl border border-slate-700 bg-slate-900 px-3 text-sm font-medium text-slate-100 transition hover:border-cyan-500 hover:text-cyan-200 ${
+                  copied ? 'bg-emerald-600 text-white border-emerald-600' : ''
+                }`}
+              >
+                {copied ? 'Copied' : 'Copy Code'}
+              </button>
+            </div>
           </div>
         </div>
       </div>
-
       <div
         ref={scrollContainerRef}
         className="max-h-[24rem] overflow-auto rounded-b-xl"

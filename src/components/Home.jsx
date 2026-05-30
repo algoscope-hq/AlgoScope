@@ -67,18 +67,26 @@ const ALGORITHMS = [
     link: '/math-theory',
   },
   {
+    title: 'String Algorithms',
+    description:
+      'Visualize KMP, Rabin-Karp, Z-Algorithm, and pattern matching techniques step-by-step.',
+    color: 'theme-card border-violet-500/30 hover:border-violet-400',
+    link: '/string-algorithms',
+  },
+  {
+    title: 'Dynamic Programming',
+    description:
+      'LCS, 0/1 Knapsack, Coin Change, and LIS — watch the DP table fill step by step.',
+    path: '/dynamic-programming', // or "to" depending on your card schema
+    color: 'theme-card border-rose-500/30 hover:border-rose-400',
+    link: '/dynamic-programming',
+  },
+  {
     title: 'Backtracking',
     description:
       'N-Queens, Sudoku Solver, and Tower of Hanoi with step-by-step recursion.',
     color: 'theme-card border-rose-500/30 hover:border-rose-400',
     link: '/backtracking',
-  },
-  {
-    title: 'String Algorithms',
-    description:
-      'KMP, Rabin-Karp, and Z-Algorithm — pattern matching visualized step by step.',
-    color: 'theme-card border-violet-500/30 hover:border-violet-400',
-    link: '/string-algorithms',
   },
 ]
 
@@ -113,6 +121,29 @@ export const Home = () => {
                 link={algo.link}
               />
             ))}
+          </motion.div>
+
+          <div className="mt-16 mb-12 flex items-center gap-4">
+            <div className="h-px flex-1 bg-gradient-to-r from-transparent via-current to-transparent opacity-20 theme-text-strong" />
+            <span className="font-mono text-sm uppercase tracking-[0.3em] theme-text-subtle">
+              Games & Challenges
+            </span>
+            <div className="h-px flex-1 bg-gradient-to-r from-transparent via-current to-transparent opacity-20 theme-text-strong" />
+          </div>
+
+          <motion.div
+            className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3"
+            variants={containerVariants}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, amount: 0.1 }}
+          >
+            <AlgoCard
+              title="Guess the Algorithm"
+              description="Test your algorithm recognition skills! Can you identify the sorting algorithm purely from its visual animation?"
+              color="theme-card border-yellow-500/30 hover:border-yellow-400"
+              link="/challenge"
+            />
           </motion.div>
         </div>
       </div>

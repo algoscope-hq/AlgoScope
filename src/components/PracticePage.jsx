@@ -1,5 +1,6 @@
-import React, { useState, useRef, useEffect } from 'react'
+import React, { useState, useRef, useEffect, useCallback } from 'react'
 import CodeEditor from './CodeEditor'
+import ProfilerGraph from './ProfilerGraph'
 import { motion } from 'framer-motion'
 
 const Terminal = React.forwardRef(function Terminal({ logs, onClear }, ref) {
@@ -71,7 +72,20 @@ const Terminal = React.forwardRef(function Terminal({ logs, onClear }, ref) {
   )
 })
 
-const runCodeInWorker = (userCode, inputVal) => {
+const terminateWorker = (ref) => {
+  if (ref && ref.current) {
+    if (typeof ref.current.cleanup === 'function') {
+      ref.current.cleanup()
+    }
+    ref.current = null
+  }
+}
+
+const runCodeInWorker = (userCode, inputVal, refSlot) => {
+  if (refSlot) {
+    terminateWorker(refSlot)
+  }
+
   return new Promise((resolve) => {
     const executionToken =
       typeof crypto !== 'undefined' && crypto.randomUUID
@@ -147,10 +161,28 @@ const runCodeInWorker = (userCode, inputVal) => {
     const workerURL = URL.createObjectURL(blob)
     const worker = new Worker(workerURL)
 
-    const timeout = setTimeout(() => {
+    let isCleanedUp = false
+    let timeout = null
+
+    const cleanup = (result) => {
+      if (isCleanedUp) return
+      isCleanedUp = true
+      if (timeout) {
+        clearTimeout(timeout)
+        timeout = null
+      }
       worker.terminate()
       URL.revokeObjectURL(workerURL)
-      resolve({
+      resolve(result || { status: 'cancelled', duration: 0, logs: [] })
+    }
+
+    if (refSlot) {
+      refSlot.current = { worker, cleanup }
+    }
+
+    timeout = setTimeout(() => {
+      if (isCleanedUp) return
+      cleanup({
         status: 'timeout',
         duration: 3000,
         logs: [
@@ -161,23 +193,25 @@ const runCodeInWorker = (userCode, inputVal) => {
           },
         ],
       })
+      if (refSlot && refSlot.current && refSlot.current.worker === worker) {
+        refSlot.current = null
+      }
     }, 3000)
 
     worker.onmessage = (e) => {
       if (e.data && e.data.__token === executionToken) {
-        clearTimeout(timeout)
-        worker.terminate()
-        URL.revokeObjectURL(workerURL)
+        if (isCleanedUp) return
         const { __token, ...safeData } = e.data
-        resolve(safeData)
+        cleanup(safeData)
+        if (refSlot && refSlot.current && refSlot.current.worker === worker) {
+          refSlot.current = null
+        }
       }
     }
 
     worker.onerror = (err) => {
-      clearTimeout(timeout)
-      worker.terminate()
-      URL.revokeObjectURL(workerURL)
-      resolve({
+      if (isCleanedUp) return
+      cleanup({
         status: 'error',
         error: err.message,
         duration: 0,
@@ -185,6 +219,9 @@ const runCodeInWorker = (userCode, inputVal) => {
           { type: 'error', content: `Syntax/Runtime Error: ${err.message}` },
         ],
       })
+      if (refSlot && refSlot.current && refSlot.current.worker === worker) {
+        refSlot.current = null
+      }
     }
 
     worker.postMessage({
@@ -242,12 +279,65 @@ const defaultTemplates = {
   },
 }
 
+const profilerDefaultCode = `// Empirical Big-O Profiler
+// The variable 'input' contains a generated dataset.
+// Write your algorithm below — it will be benchmarked
+// across multiple input sizes automatically.
+
+function bubbleSort(arr) {
+  const a = [...arr];
+  for (let i = 0; i < a.length; i++) {
+    for (let j = 0; j < a.length - i - 1; j++) {
+      if (a[j] > a[j + 1]) {
+        [a[j], a[j + 1]] = [a[j + 1], a[j]];
+      }
+    }
+  }
+  return a;
+}
+
+bubbleSort(input);
+`
+
+const datasetGenerators = {
+  random: (size) => {
+    const arr = []
+    for (let i = 0; i < size; i++) arr.push(Math.floor(Math.random() * size))
+    return arr
+  },
+  sorted: (size) => {
+    const arr = []
+    for (let i = 0; i < size; i++) arr.push(i)
+    return arr
+  },
+  reversed: (size) => {
+    const arr = []
+    for (let i = size - 1; i >= 0; i--) arr.push(i)
+    return arr
+  },
+}
+
 const PracticePage = () => {
   const consoleRef = useRef(null)
   const consoleRefA = useRef(null)
   const consoleRefB = useRef(null)
 
-  const [isCompareMode, setIsCompareMode] = useState(false)
+  const activeWorkerRef = useRef(null)
+  const activeWorkerRefA = useRef(null)
+  const activeWorkerRefB = useRef(null)
+  const activeProfilerWorkerRef = useRef(null)
+  const isMountedRef = useRef(true)
+  const profilerCancelledRef = useRef(false)
+
+  const [isExecuting, setIsExecuting] = useState(false)
+  const [isExecutingA, setIsExecutingA] = useState(false)
+  const [isExecutingB, setIsExecutingB] = useState(false)
+
+  // Tri-state execution mode: 'single' | 'compare' | 'profiler'
+  const [executionMode, setExecutionMode] = useState('single')
+  const isCompareMode = executionMode === 'compare'
+  const isProfilerMode = executionMode === 'profiler'
+
   const [codeA, setCodeA] = useState('')
   const [codeB, setCodeB] = useState('')
   const [logsA, setLogsA] = useState([])
@@ -255,6 +345,17 @@ const PracticePage = () => {
   const [sharedInput, setSharedInput] = useState('35')
   const [isComparing, setIsComparing] = useState(false)
   const [benchmarkResults, setBenchmarkResults] = useState(null)
+
+  // Profiler state
+  const [profilerCode, setProfilerCode] = useState(profilerDefaultCode)
+  const [profilerInputSizes, setProfilerInputSizes] = useState(
+    '100, 500, 1000, 2500, 5000'
+  )
+  const [profilerDatasetType, setProfilerDatasetType] = useState('random')
+  const [profilerData, setProfilerData] = useState([])
+  const [isProfilerRunning, setIsProfilerRunning] = useState(false)
+  const [profilerProgress, setProfilerProgress] = useState('')
+  const [profilerLogs, setProfilerLogs] = useState([])
 
   const [language, setLanguage] = useState('javascript')
   const [theme, setTheme] = useState(
@@ -297,19 +398,43 @@ const PracticePage = () => {
     { label: 'High Contrast', value: 'hc-black' },
   ]
 
-  const handleCompareModeChange = (mode) => {
-    setIsCompareMode(mode)
-    if (mode) {
+  const handleModeChange = (mode) => {
+    // Terminate all active workers across all modes
+    terminateWorker(activeWorkerRef)
+    terminateWorker(activeWorkerRefA)
+    terminateWorker(activeWorkerRefB)
+    terminateWorker(activeProfilerWorkerRef)
+    profilerCancelledRef.current = true
+    setIsExecuting(false)
+    setIsExecutingA(false)
+    setIsExecutingB(false)
+    setIsComparing(false)
+    setIsProfilerRunning(false)
+
+    setExecutionMode(mode)
+    if (mode === 'compare') {
       setCodeA(defaultTemplates[language]?.a || '')
       setCodeB(defaultTemplates[language]?.b || '')
     }
   }
 
+  useEffect(() => {
+    isMountedRef.current = true
+    return () => {
+      isMountedRef.current = false
+      profilerCancelledRef.current = true
+      terminateWorker(activeWorkerRef)
+      terminateWorker(activeWorkerRefA)
+      terminateWorker(activeWorkerRefB)
+      terminateWorker(activeProfilerWorkerRef)
+    }
+  }, [])
+
   const handleLanguageChange = (e) => {
     const selectedLang = languages.find((lang) => lang.value === e.target.value)
     setLanguage(selectedLang.value)
     setCode(selectedLang.default)
-    if (isCompareMode) {
+    if (executionMode === 'compare') {
       setCodeA(defaultTemplates[selectedLang.value]?.a || '')
       setCodeB(defaultTemplates[selectedLang.value]?.b || '')
     }
@@ -354,11 +479,22 @@ const PracticePage = () => {
   }
 
   const handleRunCode = async (userCode) => {
+    if (isExecuting || isExecutingA || isExecutingB || isComparing) {
+      return
+    }
+    setIsExecuting(true)
     setLogs((prev) => [
       ...prev,
       { type: 'info', content: 'Executing user code...' },
     ])
-    const result = await runCodeInWorker(userCode, undefined)
+    const result = await runCodeInWorker(userCode, undefined, activeWorkerRef)
+
+    if (!isMountedRef.current) return
+
+    if (result.status === 'cancelled') {
+      return
+    }
+
     setLogs((prev) => [...prev, ...result.logs])
     if (result.status === 'error') {
       setLogs((prev) => [
@@ -366,16 +502,28 @@ const PracticePage = () => {
         { type: 'error', content: `Runtime Error: ${result.error}` },
       ])
     }
+    setIsExecuting(false)
     scrollConsoleIntoView()
   }
 
   const handleRunCodeA = async (userCode) => {
+    if (isExecuting || isExecutingA || isExecutingB || isComparing) {
+      return
+    }
+    setIsExecutingA(true)
     setLogsA((prev) => [
       ...prev,
       { type: 'info', content: 'Executing Code A...' },
     ])
     const inputVal = parseSharedInput()
-    const result = await runCodeInWorker(userCode, inputVal)
+    const result = await runCodeInWorker(userCode, inputVal, activeWorkerRefA)
+
+    if (!isMountedRef.current) return
+
+    if (result.status === 'cancelled') {
+      return
+    }
+
     setLogsA((prev) => [...prev, ...result.logs])
     if (result.status === 'error') {
       setLogsA((prev) => [
@@ -383,15 +531,27 @@ const PracticePage = () => {
         { type: 'error', content: `Runtime Error: ${result.error}` },
       ])
     }
+    setIsExecutingA(false)
   }
 
   const handleRunCodeB = async (userCode) => {
+    if (isExecuting || isExecutingA || isExecutingB || isComparing) {
+      return
+    }
+    setIsExecutingB(true)
     setLogsB((prev) => [
       ...prev,
       { type: 'info', content: 'Executing Code B...' },
     ])
     const inputVal = parseSharedInput()
-    const result = await runCodeInWorker(userCode, inputVal)
+    const result = await runCodeInWorker(userCode, inputVal, activeWorkerRefB)
+
+    if (!isMountedRef.current) return
+
+    if (result.status === 'cancelled') {
+      return
+    }
+
     setLogsB((prev) => [...prev, ...result.logs])
     if (result.status === 'error') {
       setLogsB((prev) => [
@@ -399,9 +559,13 @@ const PracticePage = () => {
         { type: 'error', content: `Runtime Error: ${result.error}` },
       ])
     }
+    setIsExecutingB(false)
   }
 
   const handleCompareBenchmark = async () => {
+    if (isExecuting || isExecutingA || isExecutingB || isComparing) {
+      return
+    }
     setIsComparing(true)
     setBenchmarkResults(null)
     setLogsA((prev) => [
@@ -416,9 +580,16 @@ const PracticePage = () => {
     const inputVal = parseSharedInput()
 
     const [resA, resB] = await Promise.all([
-      runCodeInWorker(codeA, inputVal),
-      runCodeInWorker(codeB, inputVal),
+      runCodeInWorker(codeA, inputVal, activeWorkerRefA),
+      runCodeInWorker(codeB, inputVal, activeWorkerRefB),
     ])
+
+    if (!isMountedRef.current) return
+
+    if (resA.status === 'cancelled' || resB.status === 'cancelled') {
+      setIsComparing(false)
+      return
+    }
 
     setLogsA((prev) => [...prev, ...resA.logs])
     if (resA.status === 'error') {
@@ -447,6 +618,141 @@ const PracticePage = () => {
 
     setIsComparing(false)
   }
+
+  const handleRunProfiler = useCallback(
+    async (userCode) => {
+      if (
+        isExecuting ||
+        isExecutingA ||
+        isExecutingB ||
+        isComparing ||
+        isProfilerRunning
+      ) {
+        return
+      }
+
+      // Parse input sizes
+      const sizes = profilerInputSizes
+        .split(',')
+        .map((s) => parseInt(s.trim(), 10))
+        .filter((n) => !isNaN(n) && n > 0)
+        .sort((a, b) => a - b)
+
+      if (sizes.length === 0) {
+        setProfilerLogs((prev) => [
+          ...prev,
+          {
+            type: 'error',
+            content:
+              'No valid input sizes configured. Use comma-separated positive integers.',
+          },
+        ])
+        return
+      }
+
+      setIsProfilerRunning(true)
+      profilerCancelledRef.current = false
+      setProfilerData([])
+      setProfilerLogs([
+        {
+          type: 'info',
+          content: `Starting profiler: ${sizes.length} input sizes [${sizes.join(', ')}]`,
+        },
+      ])
+      setProfilerProgress(`0 / ${sizes.length}`)
+
+      const generator =
+        datasetGenerators[profilerDatasetType] || datasetGenerators.random
+      const collectedData = []
+
+      // Sequential execution — one size at a time for benchmark fairness
+      for (let i = 0; i < sizes.length; i++) {
+        if (profilerCancelledRef.current || !isMountedRef.current) {
+          setProfilerLogs((prev) => [
+            ...prev,
+            { type: 'error', content: 'Profiler run cancelled.' },
+          ])
+          break
+        }
+
+        const size = sizes[i]
+        setProfilerProgress(`${i + 1} / ${sizes.length} (N=${size})`)
+        setProfilerLogs((prev) => [
+          ...prev,
+          { type: 'info', content: `Benchmarking N=${size}...` },
+        ])
+
+        const inputData = generator(size)
+        const result = await runCodeInWorker(
+          userCode,
+          inputData,
+          activeProfilerWorkerRef
+        )
+
+        if (!isMountedRef.current || profilerCancelledRef.current) break
+        if (result.status === 'cancelled') break
+
+        if (result.status === 'success') {
+          const dataPoint = { size, duration: result.duration }
+          collectedData.push(dataPoint)
+          setProfilerData([...collectedData])
+          setProfilerLogs((prev) => [
+            ...prev,
+            {
+              type: 'info',
+              content: `  N=${size}: ${result.duration.toFixed(3)} ms`,
+            },
+          ])
+        } else if (result.status === 'timeout') {
+          setProfilerLogs((prev) => [
+            ...prev,
+            {
+              type: 'error',
+              content: `  N=${size}: Timeout (3s) — skipping larger sizes.`,
+            },
+          ])
+          // Stop profiling — larger sizes will also timeout
+          break
+        } else {
+          setProfilerLogs((prev) => [
+            ...prev,
+            { type: 'error', content: `  N=${size}: Error — ${result.error}` },
+          ])
+          break
+        }
+      }
+
+      if (isMountedRef.current) {
+        setIsProfilerRunning(false)
+        setProfilerProgress('')
+        if (collectedData.length > 0) {
+          setProfilerLogs((prev) => [
+            ...prev,
+            {
+              type: 'info',
+              content: `Profiling complete. ${collectedData.length} data points collected.`,
+            },
+          ])
+        }
+      }
+    },
+    [
+      profilerInputSizes,
+      profilerDatasetType,
+      isExecuting,
+      isExecutingA,
+      isExecutingB,
+      isComparing,
+      isProfilerRunning,
+    ]
+  )
+
+  const isAnyExecuting =
+    isExecuting ||
+    isExecutingA ||
+    isExecutingB ||
+    isComparing ||
+    isProfilerRunning
 
   return (
     <motion.div
@@ -551,9 +857,9 @@ const PracticePage = () => {
               <div className="flex items-center justify-between p-1 bg-slate-950/80 border border-slate-700 rounded-xl">
                 <button
                   type="button"
-                  onClick={() => handleCompareModeChange(false)}
+                  onClick={() => handleModeChange('single')}
                   className={`flex-1 text-center py-2 text-xs font-bold rounded-lg transition-all ${
-                    !isCompareMode
+                    executionMode === 'single'
                       ? 'bg-cyan-600 text-white shadow-[0_0_10px_rgba(6,182,212,0.3)]'
                       : 'text-slate-400 hover:text-white'
                   }`}
@@ -562,14 +868,25 @@ const PracticePage = () => {
                 </button>
                 <button
                   type="button"
-                  onClick={() => handleCompareModeChange(true)}
+                  onClick={() => handleModeChange('compare')}
                   className={`flex-1 text-center py-2 text-xs font-bold rounded-lg transition-all ${
-                    isCompareMode
+                    executionMode === 'compare'
                       ? 'bg-cyan-600 text-white shadow-[0_0_10px_rgba(6,182,212,0.3)]'
                       : 'text-slate-400 hover:text-white'
                   }`}
                 >
-                  Compare Mode
+                  Compare
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleModeChange('profiler')}
+                  className={`flex-1 text-center py-2 text-xs font-bold rounded-lg transition-all ${
+                    executionMode === 'profiler'
+                      ? 'bg-emerald-600 text-white shadow-[0_0_10px_rgba(16,185,129,0.3)]'
+                      : 'text-slate-400 hover:text-white'
+                  }`}
+                >
+                  Profiler
                 </button>
               </div>
             </div>
@@ -600,11 +917,21 @@ const PracticePage = () => {
 
                 <button
                   onClick={handleCompareBenchmark}
-                  disabled={isComparing || language !== 'javascript'}
+                  disabled={
+                    isComparing ||
+                    isExecuting ||
+                    isExecutingA ||
+                    isExecutingB ||
+                    language !== 'javascript'
+                  }
                   className={`w-full py-3.5 px-4 text-xs font-bold text-white rounded-xl active:scale-[0.98] transition-all transform hover:-translate-y-0.5 flex items-center justify-center gap-2 cursor-pointer ${
-                    language === 'javascript'
+                    language === 'javascript' &&
+                    !isExecuting &&
+                    !isExecutingA &&
+                    !isExecutingB &&
+                    !isComparing
                       ? 'bg-gradient-to-r from-cyan-600 to-purple-600 hover:from-cyan-500 hover:to-purple-500 hover:shadow-[0_0_20px_rgba(6,182,212,0.4)]'
-                      : 'bg-slate-800 text-slate-500 cursor-not-allowed opacity-50'
+                      : 'bg-slate-800 text-slate-500 cursor-not-allowed opacity-50 hover:transform-none hover:shadow-none'
                   }`}
                 >
                   {isComparing ? (
@@ -653,6 +980,61 @@ const PracticePage = () => {
               </div>
             )}
 
+            {/* Profiler Settings Card */}
+            {isProfilerMode && (
+              <div className="bg-slate-900/40 backdrop-blur-xl border border-white/10 p-6 rounded-[2rem] shadow-xl space-y-4">
+                <div>
+                  <label className="block text-xs font-bold uppercase tracking-widest text-emerald-400/80 mb-2">
+                    Input Sizes
+                  </label>
+                  <textarea
+                    value={profilerInputSizes}
+                    onChange={(e) => setProfilerInputSizes(e.target.value)}
+                    rows={2}
+                    placeholder="100, 500, 1000, 5000, 10000"
+                    disabled={isProfilerRunning}
+                    className="w-full bg-slate-950/80 border border-slate-700 rounded-xl px-4 py-3 font-mono text-xs text-white focus:outline-none focus:ring-2 focus:ring-emerald-500/50 transition-all custom-scrollbar disabled:opacity-50"
+                  />
+                  <p className="text-[10px] text-slate-500 mt-1">
+                    Comma-separated sizes. Your code runs once per size.
+                  </p>
+                </div>
+
+                <div>
+                  <label className="block text-xs font-bold uppercase tracking-widest text-emerald-400/80 mb-2">
+                    Dataset Type
+                  </label>
+                  <div className="relative">
+                    <select
+                      value={profilerDatasetType}
+                      onChange={(e) => setProfilerDatasetType(e.target.value)}
+                      disabled={isProfilerRunning}
+                      className="w-full bg-slate-950/80 border border-slate-700 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:ring-2 focus:ring-emerald-500/50 transition-all appearance-none cursor-pointer disabled:opacity-50"
+                    >
+                      <option value="random">Random Array</option>
+                      <option value="sorted">Sorted Array</option>
+                      <option value="reversed">Reverse Sorted Array</option>
+                    </select>
+                    <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-slate-500">
+                      <svg
+                        className="w-4 h-4"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M19 9l-7 7-7-7"
+                        />
+                      </svg>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
             {/* Guide Card */}
             <div className="bg-slate-900/40 backdrop-blur-xl border border-white/10 p-8 rounded-[2rem] shadow-xl">
               <h3 className="text-sm font-bold uppercase tracking-widest text-cyan-400/80 mb-6 flex items-center gap-2">
@@ -672,7 +1054,32 @@ const PracticePage = () => {
                 Guide
               </h3>
               <ul className="text-sm text-slate-300 space-y-6 font-light">
-                {isCompareMode ? (
+                {isProfilerMode ? (
+                  <>
+                    <li className="flex gap-3">
+                      <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 mt-1.5 shrink-0 shadow-[0_0_8px_rgba(16,185,129,0.6)]"></div>
+                      <span>
+                        Write an algorithm that processes the <code>input</code>{' '}
+                        array.
+                      </span>
+                    </li>
+                    <li className="flex gap-3">
+                      <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 mt-1.5 shrink-0 shadow-[0_0_8px_rgba(16,185,129,0.6)]"></div>
+                      <span>
+                        Configure input sizes and dataset type in the panel
+                        above.
+                      </span>
+                    </li>
+                    <li className="flex gap-3">
+                      <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 mt-1.5 shrink-0 shadow-[0_0_8px_rgba(16,185,129,0.6)]"></div>
+                      <span>
+                        Click &quot;Run Code&quot; to benchmark across all sizes
+                        and see the runtime graph with O(N), O(N log N), and
+                        O(N²) overlays.
+                      </span>
+                    </li>
+                  </>
+                ) : isCompareMode ? (
                   <>
                     <li className="flex gap-3">
                       <div className="w-1.5 h-1.5 rounded-full bg-cyan-500 mt-1.5 shrink-0 shadow-[0_0_8px_rgba(6,182,212,0.6)]"></div>
@@ -729,7 +1136,30 @@ const PracticePage = () => {
 
           {/* Editor Panel */}
           <div className="w-full min-w-0">
-            {!isCompareMode ? (
+            {isProfilerMode ? (
+              <div className="flex flex-col gap-8">
+                <CodeEditor
+                  language="javascript"
+                  theme={theme}
+                  defaultCode={profilerCode}
+                  onCodeChange={(newVal) => setProfilerCode(newVal)}
+                  onRun={handleRunProfiler}
+                  height="500px"
+                  isRunning={isProfilerRunning}
+                  isDisabled={isAnyExecuting && !isProfilerRunning}
+                  key="profiler"
+                />
+                <ProfilerGraph
+                  data={profilerData}
+                  isRunning={isProfilerRunning}
+                  progress={profilerProgress}
+                />
+                <Terminal
+                  logs={profilerLogs}
+                  onClear={() => setProfilerLogs([])}
+                />
+              </div>
+            ) : executionMode === 'single' ? (
               <>
                 <CodeEditor
                   language={language}
@@ -737,6 +1167,8 @@ const PracticePage = () => {
                   defaultCode={code}
                   onCodeChange={handleCodeChange}
                   onRun={handleRunCode}
+                  isRunning={isExecuting}
+                  isDisabled={isAnyExecuting && !isExecuting}
                   key={language}
                 />
                 <Terminal
@@ -765,6 +1197,8 @@ const PracticePage = () => {
                       onCodeChange={(newVal) => setCodeA(newVal)}
                       onRun={handleRunCodeA}
                       height="500px"
+                      isRunning={isExecutingA || isComparing}
+                      isDisabled={isExecuting || isExecutingB}
                       key={`${language}-A`}
                     />
                     <Terminal
@@ -791,6 +1225,8 @@ const PracticePage = () => {
                       onCodeChange={(newVal) => setCodeB(newVal)}
                       onRun={handleRunCodeB}
                       height="500px"
+                      isRunning={isExecutingB || isComparing}
+                      isDisabled={isExecuting || isExecutingA}
                       key={`${language}-B`}
                     />
                     <Terminal

@@ -293,13 +293,48 @@ export function generateMergeSortSteps(inputArray) {
   const arr = [...inputArray]
   const steps = []
   const n = arr.length
+  let nodeId = 0
+  let recursionTree = []
 
-  const performMergeSort = (l, r) => {
+  const snapshotTree = () =>
+    recursionTree
+      .filter((node) => node.status !== 'hidden')
+      .map((node) => ({
+        ...node,
+      }))
+  const performMergeSort = (l, r, depth = 0, parentId = null) => {
+    const currentNode = {
+      id: nodeId++,
+      label: `mergeSort(${l}, ${r})`,
+      type: 'divide',
+      l,
+      r,
+      depth,
+      parentId,
+      status: 'active',
+    }
+
+    recursionTree.push(currentNode)
+    steps.push(
+      createStep({
+        lineKey: 'recursion',
+        type: 'divide',
+        array: arr,
+        recursionTree: snapshotTree(),
+        activeNode: currentNode.id,
+        indices: [l, r],
+        message: `Dividing range [${l}, ${r}]`,
+        variables: { l, r },
+        duration: 500,
+      })
+    )
     steps.push(
       createStep({
         lineKey: 'recursion',
         type: 'outer-loop',
         array: arr,
+        recursionTree: snapshotTree(),
+        activeNode: currentNode.id,
         indices: [l, r],
         message: `Merge Sort on range [${l}, ${r}].`,
         variables: { l, r },
@@ -309,18 +344,78 @@ export function generateMergeSortSteps(inputArray) {
 
     if (l < r) {
       const m = Math.floor((l + r) / 2)
-      performMergeSort(l, m)
-      performMergeSort(m + 1, r)
-      performMerge(l, m, r)
+      performMergeSort(l, m, depth + 1, currentNode.id)
+      performMergeSort(m + 1, r, depth + 1, currentNode.id)
+
+      const mergeNode = {
+        id: nodeId++,
+        label: `merge(${l}, ${r})`,
+        type: 'merge',
+        l,
+        r,
+        depth,
+        parentId: currentNode.id,
+        status: 'active',
+      }
+
+      recursionTree.push(mergeNode)
+
+      steps.push(
+        createStep({
+          lineKey: 'mergeCall',
+          type: 'merge-phase',
+          array: arr,
+          recursionTree: snapshotTree(),
+          activeNode: mergeNode?.id,
+          indices: [l, r],
+          message: `Merging [${l}, ${m}] and [${m + 1}, ${r}]`,
+          variables: { l, m, r },
+          duration: 600,
+        })
+      )
+      performMerge(l, m, r, mergeNode)
+      currentNode.status = 'completed'
+
+      steps.push(
+        createStep({
+          lineKey: 'recursion',
+          type: 'divide-complete',
+          array: arr,
+          recursionTree: snapshotTree(),
+          activeNode: currentNode.id,
+          indices: [l, r],
+          message: `Completed mergeSort(${l}, ${r})`,
+          variables: { l, r },
+          duration: 400,
+        })
+      )
+    } else {
+      currentNode.status = 'completed'
+
+      steps.push(
+        createStep({
+          lineKey: 'recursion',
+          type: 'base-case',
+          array: arr,
+          recursionTree: snapshotTree(),
+          activeNode: currentNode.id,
+          indices: [l],
+          message: `Base case reached at index ${l}`,
+          variables: { l, r },
+          duration: 300,
+        })
+      )
     }
   }
 
-  const performMerge = (l, m, r) => {
+  const performMerge = (l, m, r, mergeNode) => {
     steps.push(
       createStep({
         lineKey: 'mergeCall',
         type: 'merge-start',
         array: arr,
+        recursionTree: snapshotTree(),
+        activeNode: mergeNode?.id,
         indices: [l, r],
         message: `Merging subarrays [${l}, ${m}] and [${m + 1}, ${r}].`,
         variables: { l, m, r },
@@ -336,6 +431,8 @@ export function generateMergeSortSteps(inputArray) {
         lineKey: 'setupSubarrays',
         type: 'setup',
         array: arr,
+        recursionTree: snapshotTree(),
+        activeNode: mergeNode?.id,
         indices: [l, r],
         message: `Copied subarrays into temporary storage.`,
         variables: { l, m, r, L, R },
@@ -353,6 +450,8 @@ export function generateMergeSortSteps(inputArray) {
           lineKey: 'compare',
           type: 'compare',
           array: arr,
+          recursionTree: snapshotTree(),
+          activeNode: mergeNode?.id,
           indices: [k, l + i, m + 1 + j],
           message: `Compare L[${i}] (${L[i]}) and R[${j}] (${R[j]}).`,
           variables: { l, m, r, i, j, k, leftVal: L[i], rightVal: R[j] },
@@ -373,6 +472,8 @@ export function generateMergeSortSteps(inputArray) {
           lineKey: 'overwrite',
           type: 'insert',
           array: arr,
+          recursionTree: snapshotTree(),
+          activeNode: mergeNode?.id,
           indices: [k],
           message: `Overwrite index ${k} with ${arr[k]}.`,
           variables: { l, m, r, i, j, k },
@@ -389,6 +490,8 @@ export function generateMergeSortSteps(inputArray) {
           lineKey: 'overwrite',
           type: 'insert',
           array: arr,
+          recursionTree: snapshotTree(),
+          activeNode: mergeNode?.id,
           indices: [k],
           message: `Copy remaining element ${L[i]} from left subarray.`,
           variables: { l, m, r, i, j, k },
@@ -406,6 +509,8 @@ export function generateMergeSortSteps(inputArray) {
           lineKey: 'overwrite',
           type: 'insert',
           array: arr,
+          recursionTree: snapshotTree(),
+          activeNode: mergeNode?.id,
           indices: [k],
           message: `Copy remaining element ${R[j]} from right subarray.`,
           variables: { l, m, r, i, j, k },
@@ -415,6 +520,21 @@ export function generateMergeSortSteps(inputArray) {
       j++
       k++
     }
+    mergeNode.status = 'completed'
+
+    steps.push(
+      createStep({
+        lineKey: 'mergeCall',
+        type: 'merge-complete',
+        array: arr,
+        recursionTree: snapshotTree(),
+        activeNode: mergeNode?.id,
+        indices: [l, r],
+        message: `Merge completed for [${l}, ${r}]`,
+        variables: { l, m, r },
+        duration: 500,
+      })
+    )
   }
 
   steps.push(
@@ -435,6 +555,8 @@ export function generateMergeSortSteps(inputArray) {
       lineKey: 'complete',
       type: 'complete',
       array: arr,
+      recursionTree: snapshotTree(),
+      activeNode: null,
       sortedIndices: Array.from({ length: n }, (_, index) => index),
       message: 'Merge Sort is complete.',
       variables: { n },

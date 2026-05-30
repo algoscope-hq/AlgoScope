@@ -649,3 +649,205 @@ export const getFibonacciSource = (language) =>
 
 export const resolveFibonacciLine = (language, lineKey) =>
   (fibonacciSources[language] ?? fibonacciSources.javascript).lineMap?.[lineKey]
+
+// FAST FOURIER TRANSFORM
+
+export const fftSources = {
+  javascript: {
+    code: `function fft(signal) {
+  const n = signal.length;
+  if (n <= 1) return signal;
+
+  // Bit-reverse permutation
+  const out = bitReverse(signal);
+
+  // Cooley-Tukey butterfly stages
+  for (let stage = 1; stage <= Math.log2(n); stage++) {
+    const half = 1 << (stage - 1);
+    const full = 1 << stage;
+
+    for (let k = 0; k < n; k += full) {
+      for (let j = 0; j < half; j++) {
+        const angle = -2 * Math.PI * j / full;
+        const tw = { re: Math.cos(angle), im: Math.sin(angle) };
+
+        // Butterfly operation
+        const top = out[k + j];
+        const bot = out[k + j + half];
+        const t = complexMul(tw, bot);
+
+        out[k + j]        = complexAdd(top, t);
+        out[k + j + half] = complexSub(top, t);
+      }
+    }
+  }
+  return out;
+}
+
+console.log(fft([1, 2, 3, 4]));`,
+    lineMap: {
+      start: 1,
+      bitReverse: 5,
+      stageLoop: 8,
+      butterfly: 16,
+      butterflyResult: 19,
+      result: 24,
+    },
+  },
+  python: {
+    code: `import cmath
+import math
+
+def fft(signal):
+    n = len(signal)
+    if n <= 1:
+        return signal
+
+    # Bit-reverse permutation
+    out = bit_reverse(signal)
+
+    # Cooley-Tukey butterfly stages
+    stage = 1
+    while stage <= int(math.log2(n)):
+        half = 1 << (stage - 1)
+        full = 1 << stage
+
+        for k in range(0, n, full):
+            for j in range(half):
+                angle = -2 * math.pi * j / full
+                tw = complex(math.cos(angle), math.sin(angle))
+
+                # Butterfly operation
+                top = out[k + j]
+                bot = out[k + j + half]
+                t = tw * bot
+
+                out[k + j]         = top + t
+                out[k + j + half]  = top - t
+
+        stage += 1
+
+    return out
+
+print(fft([1, 2, 3, 4]))`,
+    lineMap: {
+      start: 4,
+      bitReverse: 9,
+      stageLoop: 12,
+      butterfly: 20,
+      butterflyResult: 25,
+      result: 30,
+    },
+  },
+  cpp: {
+    code: `#include <iostream>
+#include <vector>
+#include <complex>
+#include <cmath>
+using namespace std;
+
+typedef complex<double> cd;
+const double PI = acos(-1);
+
+void fft(vector<cd>& a) {
+    int n = a.size();
+
+    // Bit-reverse permutation
+    for (int i = 1, j = 0; i < n; i++) {
+        int bit = n >> 1;
+        for (; j & bit; bit >>= 1) j ^= bit;
+        j ^= bit;
+        if (i < j) swap(a[i], a[j]);
+    }
+
+    // Cooley-Tukey butterfly stages
+    for (int stage = 2; stage <= n; stage <<= 1) {
+        cd w(cos(2*PI/stage), -sin(2*PI/stage));
+        for (int k = 0; k < n; k += stage) {
+            cd wn(1);
+            for (int j = 0; j < stage/2; j++) {
+                // Butterfly operation
+                cd top = a[k + j];
+                cd bot = wn * a[k + j + stage/2];
+                a[k + j]             = top + bot;
+                a[k + j + stage/2]   = top - bot;
+                wn *= w;
+            }
+        }
+    }
+}
+
+int main() {
+    vector<cd> s = {1, 2, 3, 4};
+    fft(s);
+    for (auto& x : s) cout << x << " ";
+}`,
+    lineMap: {
+      start: 10,
+      bitReverse: 13,
+      stageLoop: 21,
+      butterfly: 26,
+      butterflyResult: 29,
+      result: 37,
+    },
+  },
+  java: {
+    code: `public class FFT {
+    static final double PI = Math.PI;
+
+    static void fft(double[] re, double[] im) {
+        int n = re.length;
+
+        // Bit-reverse permutation
+        for (int i = 1, j = 0; i < n; i++) {
+            int bit = n >> 1;
+            for (; (j & bit) != 0; bit >>= 1) j ^= bit;
+            j ^= bit;
+            if (i < j) {
+                double tmp = re[i]; re[i] = re[j]; re[j] = tmp;
+                tmp = im[i]; im[i] = im[j]; im[j] = tmp;
+            }
+        }
+
+        // Cooley-Tukey butterfly stages
+        for (int stage = 2; stage <= n; stage <<= 1) {
+            double ang = 2 * PI / stage;
+            double wRe = Math.cos(ang), wIm = -Math.sin(ang);
+            for (int k = 0; k < n; k += stage) {
+                double curRe = 1, curIm = 0;
+                for (int j = 0; j < stage / 2; j++) {
+                    // Butterfly operation
+                    int top = k + j, bot = k + j + stage / 2;
+                    double tRe = curRe*re[bot] - curIm*im[bot];
+                    double tIm = curRe*im[bot] + curIm*re[bot];
+                    re[bot] = re[top] - tRe;  im[bot] = im[top] - tIm;
+                    re[top] = re[top] + tRe;  im[top] = im[top] + tIm;
+                    double nRe = curRe*wRe - curIm*wIm;
+                    curIm = curRe*wIm + curIm*wRe;
+                    curRe = nRe;
+                }
+            }
+        }
+    }
+
+    public static void main(String[] args) {
+        double[] re = {1,2,3,4}, im = {0,0,0,0};
+        fft(re, im);
+    }
+}`,
+    lineMap: {
+      start: 4,
+      bitReverse: 7,
+      stageLoop: 18,
+      butterfly: 25,
+      butterflyResult: 29,
+      result: 40,
+    },
+  },
+}
+
+export const getFFTSource = (language) =>
+  fftSources[language]?.code ?? fftSources.javascript.code
+
+export const resolveFFTLine = (language, lineKey) =>
+  (fftSources[language] ?? fftSources.javascript).lineMap?.[lineKey]

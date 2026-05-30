@@ -6,6 +6,7 @@ import {
   SignInButton,
   UserButton,
 } from '@clerk/clerk-react'
+import { X } from 'lucide-react'
 
 const HAS_CLERK = Boolean(import.meta.env.VITE_CLERK_PUBLISHABLE_KEY)
 import { motion, AnimatePresence } from 'framer-motion'
@@ -34,31 +35,6 @@ const middleVariants = {
 const bottomVariants = {
   closed: { rotate: 0, y: 0 },
   open: { rotate: -45, y: -6 },
-}
-
-const menuVariants = {
-  closed: {
-    opacity: 0,
-    y: -10,
-    transition: {
-      duration: 0.2,
-    },
-  },
-  open: {
-    opacity: 1,
-    y: 0,
-    transition: {
-      type: 'spring',
-      stiffness: 260,
-      damping: 20,
-      staggerChildren: 0.05,
-    },
-  },
-}
-
-const menuItemVariants = {
-  closed: { opacity: 0, y: -10 },
-  open: { opacity: 1, y: 0 },
 }
 
 const Line = ({ variants }) => (
@@ -130,10 +106,12 @@ const algorithmLinks = [
   { name: 'String Algorithms', href: '/string-algorithms' },
   { name: 'Backtracking', href: '/backtracking' },
   { name: 'Practice Sandbox', href: '/practice' },
+  { name: 'Guess the Algorithm', href: '/challenge' },
 ]
 
 export const Navbar = () => {
   const [open, setOpen] = useState(false)
+  const [hoveredTab, setHoveredTab] = useState(null)
 
   const { pathname } = useLocation()
 
@@ -151,7 +129,6 @@ export const Navbar = () => {
     const current = algorithmLinks.find((link) => link.href === pathname)?.name
 
     if (current) {
-      // Use setTimeout to avoid synchronous setState in effect body (cascading renders)
       const timer = setTimeout(() => {
         setHistory((prev) => {
           if (prev[0] === current) return prev
@@ -168,9 +145,9 @@ export const Navbar = () => {
   }, [history])
 
   return (
-    <header className="theme-navbar sticky top-0 z-50 w-full border-b backdrop-blur rounded-xl shadow-2xl">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="flex h-16 items-center justify-between relative">
+    <header className="theme-navbar sticky top-4 z-50 max-w-7xl mx-auto backdrop-blur-xl rounded-2xl px-6 py-2 w-full transition-all duration-500 shadow-lg hover:border-slate-400/50 dark:!bg-slate-950/70 dark:!border dark:!border-slate-800/80 dark:hover:!border-indigo-500/30 dark:!shadow-[0_0_30px_rgba(99,102,241,0.05)] dark:hover:!shadow-[0_0_40px_rgba(99,102,241,0.15)]">
+      <div className="w-full">
+        <div className="flex h-14 items-center justify-between relative">
           <Link
             to="/"
             className="flex flex-row text-xl font-semibold tracking-tight group"
@@ -179,39 +156,56 @@ export const Navbar = () => {
               <img src={logo} alt="AlgoScope Logo" className="w-8 h-8" />
             </div>
 
-            <span className="mt-1 text-2xl theme-text-strong font-bold tracking-tighter">
+            <span className="mt-1 text-2xl theme-text-strong font-bold tracking-tighter logo-font">
               AlgoScope
             </span>
           </Link>
 
           {/* Desktop Search */}
-          <div className="hidden md:flex flex-1 justify-center max-w-xs mx-4 lg:absolute lg:inset-x-0 lg:mx-auto lg:w-fit lg:max-w-none z-10">
+          <div className="hidden md:flex flex-1 justify-center max-w-xs mx-4 z-10">
             <SearchBar />
           </div>
 
           <div className="hidden md:flex items-center gap-6">
-            <ul className="flex items-center gap-1">
-              <li className="relative group">
-                <button className="rounded-lg px-4 py-2 text-sm font-medium text-slate-400 hover:text-white hover:bg-white/5 transition-all duration-200">
+            <ul
+              className="flex items-center gap-1 relative"
+              onMouseLeave={() => setHoveredTab(null)}
+            >
+              {/* Explore Trigger */}
+              <li
+                className="relative group py-1.5"
+                onMouseEnter={() => setHoveredTab('explore')}
+              >
+                <button className="relative text-sm font-medium text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 px-4 py-1.5 rounded-lg transition-all duration-300 z-10 cursor-pointer">
                   Explore
                 </button>
+                {hoveredTab === 'explore' && (
+                  <motion.div
+                    layoutId="nav-hover-pill"
+                    className="absolute inset-0 bg-slate-200/50 dark:bg-slate-900/60 border border-slate-300/30 dark:border-slate-800/50 rounded-lg -z-0"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ type: 'spring', stiffness: 350, damping: 28 }}
+                  />
+                )}
 
-                <div className="absolute left-0 top-12 py-2 invisible opacity-0 translate-y-2 min-w-[240px] rounded-xl border border-white/10 bg-slate-900/95 p-2 shadow-2xl backdrop-blur-xl transition-all duration-200 group-hover:visible group-hover:opacity-100 group-hover:translate-y-0 z-50">
+                <div className="absolute left-0 top-full mt-3 py-2 w-64 rounded-2xl border border-slate-200/80 dark:border-slate-800/80 bg-white dark:bg-slate-950 p-2 shadow-2xl backdrop-blur-2xl invisible opacity-0 translate-y-2 group-hover:visible group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300 z-50">
                   {algorithmLinks.map((link) => (
                     <Link
                       key={link.name}
                       to={link.href}
-                      className={`block rounded-lg px-4 py-2 text-sm transition-all ${
+                      className={`block rounded-lg px-4 py-2 text-sm transition-all duration-200 border-l-2 ${
                         pathname === link.href
-                          ? 'bg-indigo-500/20 text-indigo-300'
-                          : 'text-slate-300 hover:bg-white/5 hover:text-white'
+                          ? 'bg-indigo-50/80 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-300 border-indigo-600 dark:border-indigo-500 font-medium'
+                          : 'text-slate-600 dark:text-slate-400 border-transparent hover:bg-slate-100 dark:hover:bg-slate-900 hover:text-slate-900 dark:hover:text-slate-200 hover:border-slate-300 dark:hover:border-slate-700'
                       }`}
                     >
                       {link.name}
                     </Link>
                   ))}
 
-                  <div className="my-2 border-t border-white/10" />
+                  <div className="my-2 border-t border-slate-200 dark:border-slate-800/80" />
 
                   <p className="px-4 py-2 text-xs font-semibold uppercase tracking-widest text-slate-500">
                     Recent
@@ -231,7 +225,7 @@ export const Navbar = () => {
                         <Link
                           key={item}
                           to={matched?.href || '/'}
-                          className="block rounded-lg px-4 py-2 text-sm text-slate-300 hover:bg-white/5 hover:text-white transition-all"
+                          className="block rounded-lg px-4 py-2 text-sm transition-all duration-200 border-l-2 border-transparent text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-900 hover:text-slate-900 dark:hover:text-slate-200 hover:border-slate-300 dark:hover:border-slate-700"
                         >
                           {item}
                         </Link>
@@ -239,6 +233,52 @@ export const Navbar = () => {
                     })
                   )}
                 </div>
+              </li>
+
+              {/* Top Level Link: Practice */}
+              <li
+                className="relative py-1.5"
+                onMouseEnter={() => setHoveredTab('practice')}
+              >
+                <Link
+                  to="/practice"
+                  className="relative text-sm font-medium text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 px-4 py-1.5 rounded-lg transition-all duration-300 z-10"
+                >
+                  Practice
+                </Link>
+                {hoveredTab === 'practice' && (
+                  <motion.div
+                    layoutId="nav-hover-pill"
+                    className="absolute inset-0 bg-slate-200/50 dark:bg-slate-900/60 border border-slate-300/30 dark:border-slate-800/50 rounded-lg -z-0"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ type: 'spring', stiffness: 350, damping: 28 }}
+                  />
+                )}
+              </li>
+
+              {/* Top Level Link: Challenge */}
+              <li
+                className="relative py-1.5"
+                onMouseEnter={() => setHoveredTab('challenge')}
+              >
+                <Link
+                  to="/challenge"
+                  className="relative text-sm font-medium text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 px-4 py-1.5 rounded-lg transition-all duration-300 z-10"
+                >
+                  Challenge
+                </Link>
+                {hoveredTab === 'challenge' && (
+                  <motion.div
+                    layoutId="nav-hover-pill"
+                    className="absolute inset-0 bg-slate-200/50 dark:bg-slate-900/60 border border-slate-300/30 dark:border-slate-800/50 rounded-lg -z-0"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ type: 'spring', stiffness: 350, damping: 28 }}
+                  />
+                )}
               </li>
             </ul>
 
@@ -248,25 +288,24 @@ export const Navbar = () => {
               href="https://github.com/algoscope-hq/AlgoScope"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center rounded-xl bg-white px-5 py-2 text-sm font-bold text-black shadow-lg hover:bg-slate-200 transition-all duration-200 active:scale-95"
+              className="flex items-center gap-2 border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/40 hover:bg-slate-100 dark:hover:bg-slate-800/80 text-slate-700 dark:text-slate-200 rounded-xl px-4 py-1.5 text-sm font-medium transition-all duration-300 shadow-md active:scale-95"
             >
               <img
                 src={githubIcon}
                 alt="Github Repository Link"
-                className="w-7 h-5 pr-2 invert"
+                className="w-5 h-5 dark:invert-0 invert"
               />
 
               <span>Github</span>
             </a>
 
-            <div className="flex items-center gap-4 border-l border-white/10 pl-6">
+            <div className="flex items-center gap-4 border-l border-slate-200 dark:border-slate-800/80 pl-6">
               {HAS_CLERK ? (
                 <>
                   <SignedOut>
                     <SignInButton mode="modal">
-                      <button className="relative group overflow-hidden rounded-xl bg-slate-900 px-6 py-2 text-sm font-bold text-white transition-all duration-300 active:scale-95">
+                      <button className="theme-button-primary relative group overflow-hidden rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/40 hover:bg-slate-100 dark:hover:bg-slate-800/80 text-slate-700 dark:text-slate-200 px-6 py-2 text-sm font-bold transition-all duration-300 shadow-md active:scale-95">
                         <span className="relative z-10">Sign In</span>
-
                         <div className="absolute inset-0 bg-gradient-to-r from-indigo-600/20 to-purple-600/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                       </button>
                     </SignInButton>
@@ -288,7 +327,7 @@ export const Navbar = () => {
                   <button
                     title="Auth not configured"
                     disabled
-                    className="relative group overflow-hidden rounded-xl bg-slate-900 px-6 py-2 text-sm font-bold text-white transition-all duration-300 opacity-50 cursor-not-allowed"
+                    className="theme-button-primary relative group overflow-hidden rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/40 text-slate-700 dark:text-slate-200 px-6 py-2 text-sm font-bold transition-all duration-300 shadow-md opacity-50 cursor-not-allowed"
                   >
                     Sign In
                   </button>
@@ -319,7 +358,7 @@ export const Navbar = () => {
               aria-expanded={open}
               onClick={() => setOpen((o) => !o)}
               animate={open ? 'open' : 'closed'}
-              className="inline-flex flex-col items-center justify-center gap-1 rounded-lg p-2 text-slate-300 hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-white/20 transition-colors"
+              className="inline-flex flex-col items-center justify-center gap-1 rounded-lg p-2 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 transition-colors"
             >
               <Line variants={topVariants} />
               <Line variants={middleVariants} />
@@ -329,51 +368,88 @@ export const Navbar = () => {
         </div>
       </div>
 
-      {/* Mobile Menu */}
+      {/* Mobile Menu Drawer */}
       <AnimatePresence>
         {open && (
-          <motion.div
-            key="mobile-menu"
-            className="theme-mobile-menu md:hidden border-t backdrop-blur-xl shadow-2xl rounded-b-2xl overflow-hidden"
-            variants={menuVariants}
-            initial="closed"
-            animate="open"
-            exit="closed"
-          >
-            <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-6">
-              <div className="mb-6 lg:hidden">
-                <SearchBar />
+          <>
+            {/* Backdrop Blur Overlay */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setOpen(false)}
+              className="fixed inset-0 bg-black/60 backdrop-blur-md z-40 md:hidden"
+            />
+            {/* Slide-out Drawer Panel */}
+            <motion.div
+              key="mobile-drawer"
+              initial={{ x: '100%' }}
+              animate={{ x: 0 }}
+              exit={{ x: '100%' }}
+              transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+              className="fixed top-0 right-0 bottom-0 w-80 max-w-[85vw] bg-white dark:bg-slate-950 border-l border-slate-200 dark:border-slate-800/80 p-6 shadow-2xl backdrop-blur-2xl z-50 md:hidden flex flex-col"
+            >
+              {/* Drawer Header */}
+              <div className="flex items-center justify-between mb-6 pb-4 border-b border-slate-200 dark:border-slate-800/80">
+                <Link
+                  to="/"
+                  onClick={() => setOpen(false)}
+                  className="flex items-center gap-2"
+                >
+                  <img src={logo} alt="AlgoScope Logo" className="w-8 h-8" />
+                  <span className="text-xl font-bold tracking-tighter text-slate-900 dark:text-white logo-font">
+                    AlgoScope
+                  </span>
+                </Link>
+                <button
+                  type="button"
+                  onClick={() => setOpen(false)}
+                  className="p-1 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-900 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors"
+                >
+                  <X className="w-6 h-6" />
+                </button>
               </div>
 
-              <ul className="space-y-2">
-                {algorithmLinks.map((link) => (
-                  <motion.li key={link.name} variants={menuItemVariants}>
-                    <Link
-                      to={link.href}
-                      onClick={() => setOpen(false)}
-                      className={`block rounded-xl px-4 py-3 text-base font-medium transition-all ${
-                        pathname === link.href
-                          ? 'bg-indigo-500/20 text-indigo-300 ring-1 ring-indigo-500/40 font-semibold'
-                          : 'text-slate-400 hover:text-white hover:bg-white/5'
-                      }`}
-                    >
-                      {link.name}
-                    </Link>
-                  </motion.li>
-                ))}
-              </ul>
+              {/* Drawer Body - Scrollable */}
+              <div className="flex-grow overflow-y-auto space-y-6 pr-2">
+                {/* Search */}
+                <div className="w-full">
+                  <SearchBar />
+                </div>
 
-              <motion.div
-                variants={menuItemVariants}
-                className="mt-6 flex flex-col gap-3"
-              >
+                {/* Nav list */}
+                <div>
+                  <h3 className="text-xs font-semibold uppercase tracking-widest text-slate-500 mb-3 px-2">
+                    Explore Algorithms
+                  </h3>
+                  <ul className="space-y-1">
+                    {algorithmLinks.map((link) => (
+                      <li key={link.name}>
+                        <Link
+                          to={link.href}
+                          onClick={() => setOpen(false)}
+                          className={`block rounded-lg px-4 py-2.5 text-sm transition-all duration-200 border-l-2 ${
+                            pathname === link.href
+                              ? 'bg-indigo-50/80 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-300 border-indigo-600 dark:border-indigo-500 font-semibold'
+                              : 'text-slate-600 dark:text-slate-400 border-transparent hover:bg-slate-100 dark:hover:bg-slate-900 hover:text-slate-900 dark:hover:text-slate-200 hover:border-slate-300 dark:hover:border-slate-700'
+                          }`}
+                        >
+                          {link.name}
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+
+              {/* Drawer Footer */}
+              <div className="mt-6 pt-4 border-t border-slate-200 dark:border-slate-800/80 space-y-3">
                 {HAS_CLERK ? (
                   <SignedOut>
                     <SignInButton mode="modal">
-                      <button className="w-full relative group overflow-hidden rounded-xl bg-slate-900 border border-white/10 px-4 py-3 text-base font-bold text-white transition-all duration-300 active:scale-[0.98]">
+                      <button className="w-full relative group overflow-hidden rounded-xl bg-indigo-600 px-4 py-2.5 text-sm font-semibold text-white transition-all duration-300 active:scale-[0.98]">
                         <span className="relative z-10">Sign In</span>
-
-                        <div className="absolute inset-0 bg-gradient-to-r from-indigo-600/10 to-purple-600/10" />
+                        <div className="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                       </button>
                     </SignInButton>
                   </SignedOut>
@@ -381,7 +457,7 @@ export const Navbar = () => {
                   <button
                     title="Auth not configured"
                     disabled
-                    className="w-full relative group overflow-hidden rounded-xl bg-slate-900 border border-white/10 px-4 py-3 text-base font-bold text-white transition-all duration-300 opacity-50 cursor-not-allowed"
+                    className="w-full rounded-xl bg-slate-100 dark:bg-slate-900 px-4 py-2.5 text-sm font-semibold text-slate-500 border border-slate-200 dark:border-slate-800 transition-all duration-300 opacity-50 cursor-not-allowed"
                   >
                     Sign In
                   </button>
@@ -392,13 +468,18 @@ export const Navbar = () => {
                   target="_blank"
                   rel="noopener noreferrer"
                   onClick={() => setOpen(false)}
-                  className="block w-full text-center rounded-xl bg-white/5 border border-white/10 px-4 py-3 text-base font-bold text-white shadow-lg hover:bg-white/10 transition-all active:scale-95"
+                  className="flex items-center justify-center gap-2 w-full rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 px-4 py-2.5 text-sm font-semibold text-slate-700 dark:text-slate-200 transition-all duration-300 shadow-md active:scale-95"
                 >
-                  Github
+                  <img
+                    src={githubIcon}
+                    alt="Github Repository Link"
+                    className="w-5 h-5 dark:invert-0 invert"
+                  />
+                  <span>Github</span>
                 </a>
-              </motion.div>
-            </div>
-          </motion.div>
+              </div>
+            </motion.div>
+          </>
         )}
       </AnimatePresence>
     </header>

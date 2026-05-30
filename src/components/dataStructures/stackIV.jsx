@@ -10,24 +10,37 @@ const MODES = {
 }
 
 const SLEEP_MS = 800
+const MAX_STACK_CAPACITY = 20
 
 export default function StackIV({ onStepChange }) {
   const [stack, setStack] = useState([])
   const [mode, setMode] = useState(MODES.STANDARD)
   const [inputValue, setInputValue] = useState('')
+  const [sizeInput, setSizeInput] = useState('')
+  const [stackCapacity, setStackCapacity] = useState(null)
+  const [hasStackStarted, setHasStackStarted] = useState(false)
   const [consoleOutput, setConsoleOutput] = useState('')
   const [isRunning, setIsRunning] = useState(false)
   const containerRef = useRef(null)
 
   const stackRef = useRef([])
+  const hasStackSize = stackCapacity !== null
+  const emptySlots = hasStackSize
+    ? Math.max(stackCapacity - stack.length, 0)
+    : 0
+  const isStackFull = hasStackSize && stack.length >= stackCapacity
+  const isStackLocked = hasStackStarted
 
   const handleModeChange = (newMode) => {
     setMode(newMode)
     setStack([])
     stackRef.current = []
     setInputValue('')
+    setSizeInput('')
+    setStackCapacity(null)
     setConsoleOutput('')
     setIsRunning(false)
+    setHasStackStarted(false)
     if (onStepChange) onStepChange(null)
   }
 
@@ -36,6 +49,36 @@ export default function StackIV({ onStepChange }) {
   }, [mode, onStepChange])
 
   const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms))
+
+  const handleSizeInputChange = (event) => {
+    const nextSize = event.target.value
+    setSizeInput(nextSize)
+
+    if (!hasStackStarted) return
+
+    setConsoleOutput('Stack size is locked after the first push.')
+  }
+
+  const handleSetStackSize = () => {
+    if (hasStackStarted) {
+      setConsoleOutput('Stack size is locked after the first push.')
+      return
+    }
+
+    const nextCapacity = Number(sizeInput)
+
+    if (
+      !Number.isInteger(nextCapacity) ||
+      nextCapacity <= 0 ||
+      nextCapacity > MAX_STACK_CAPACITY
+    ) {
+      setConsoleOutput(`Invalid stack size. Enter 1 to ${MAX_STACK_CAPACITY}.`)
+      return
+    }
+
+    setStackCapacity(nextCapacity)
+    setConsoleOutput(`Stack size set to ${nextCapacity}. Start pushing values.`)
+  }
 
   const runAnimation = (el, params) => {
     return new Promise((resolve) => {
@@ -47,13 +90,22 @@ export default function StackIV({ onStepChange }) {
   }
 
   const pushItem = async (val) => {
-    if (stackRef.current.length >= 8) {
-      setConsoleOutput((prev) => prev + '\nStack Overflow!')
+    if (!hasStackSize) {
+      setConsoleOutput('Enter stack size first.')
+      return false
+    }
+
+    if (stackRef.current.length >= stackCapacity) {
+      setConsoleOutput((prev) => {
+        const message = `Stack Overflow! Capacity ${stackCapacity}/${stackCapacity} reached.`
+        return prev ? `${prev}\n${message}` : message
+      })
       return false
     }
 
     const newItem = { id: Date.now() + Math.random(), value: val }
     stackRef.current.push(newItem)
+    setHasStackStarted(true)
     setStack((prev) => [...prev, newItem])
 
     await sleep(50)
@@ -126,7 +178,14 @@ export default function StackIV({ onStepChange }) {
     if (onStepChange) onStepChange(1)
     for (const char of inputValue.split('')) {
       if (onStepChange) onStepChange(6)
-      await pushItem(char)
+      const pushed = await pushItem(char)
+      if (!pushed) {
+        setConsoleOutput(`Error: stack overflow pushing '${char}'.`)
+        await sleep(SLEEP_MS / 2)
+        setIsRunning(false)
+        if (onStepChange) onStepChange(null)
+        return
+      }
       await sleep(SLEEP_MS / 2)
     }
 
@@ -155,11 +214,18 @@ export default function StackIV({ onStepChange }) {
     const openMap = { '(': ')', '{': '}', '[': ']' }
     const closeMap = { ')': '(', '}': '{', ']': '[' }
     let isValid = true
+    let overflowMessage = ''
 
     for (const char of inputValue.split('')) {
       if (openMap[char]) {
         if (onStepChange) onStepChange(6)
-        await pushItem(char)
+        const pushed = await pushItem(char)
+        if (!pushed) {
+          overflowMessage = `Error: stack overflow pushing '${char}'.`
+          setConsoleOutput(overflowMessage)
+          isValid = false
+          break
+        }
         setConsoleOutput(`Found opener '${char}'. Pushed.`)
       } else if (closeMap[char]) {
         if (onStepChange) onStepChange(10)
@@ -178,7 +244,9 @@ export default function StackIV({ onStepChange }) {
       await sleep(SLEEP_MS)
     }
 
-    if (isValid && stackRef.current.length === 0) {
+    if (overflowMessage) {
+      setConsoleOutput(`${overflowMessage}\nResult: UNBALANCED ❌`)
+    } else if (isValid && stackRef.current.length === 0) {
       setConsoleOutput('Result: BALANCED ✅')
     } else if (isValid && stackRef.current.length > 0) {
       setConsoleOutput('Result: UNBALANCED (Stack not empty) ❌')
@@ -201,7 +269,13 @@ export default function StackIV({ onStepChange }) {
       if (!isNaN(token)) {
         setConsoleOutput(`Pushing number: ${token}`)
         if (onStepChange) onStepChange(6)
-        await pushItem(Number(token))
+        const pushed = await pushItem(Number(token))
+        if (!pushed) {
+          setConsoleOutput(`Error: stack overflow pushing number ${token}.`)
+          setIsRunning(false)
+          if (onStepChange) onStepChange(null)
+          return
+        }
       } else {
         setConsoleOutput(`Operator '${token}' found. Popping 2 operands...`)
         if (onStepChange) onStepChange(10)
@@ -236,7 +310,13 @@ export default function StackIV({ onStepChange }) {
         setConsoleOutput(`${val1} ${token} ${val2} = ${res}. Pushing result.`)
         await sleep(SLEEP_MS)
         if (onStepChange) onStepChange(6)
-        await pushItem(res)
+        const pushed = await pushItem(res)
+        if (!pushed) {
+          setConsoleOutput(`Error: stack overflow pushing result ${res}.`)
+          setIsRunning(false)
+          if (onStepChange) onStepChange(null)
+          return
+        }
       }
       await sleep(SLEEP_MS)
     }
@@ -246,7 +326,15 @@ export default function StackIV({ onStepChange }) {
     if (stackRef.current.length === 0) {
       setConsoleOutput(`Final Result: ${finalResult} 🎉`)
       if (onStepChange) onStepChange(6)
-      await pushItem(finalResult)
+      const pushed = await pushItem(finalResult)
+      if (!pushed) {
+        setConsoleOutput(
+          `Error: stack overflow restoring final result ${finalResult}.`
+        )
+        setIsRunning(false)
+        if (onStepChange) onStepChange(null)
+        return
+      }
     } else {
       setConsoleOutput('Error: Stack not empty after evaluation.')
     }
@@ -271,7 +359,7 @@ export default function StackIV({ onStepChange }) {
             <button
               onClick={handleBrowserVisit}
               className="px-6 py-2 bg-green-600 hover:bg-green-500 text-white font-bold rounded-lg shadow-lg"
-              disabled={isRunning}
+              disabled={isRunning || !hasStackSize}
             >
               Visit
             </button>
@@ -298,7 +386,7 @@ export default function StackIV({ onStepChange }) {
             <button
               onClick={runReversal}
               className="px-6 py-2 bg-purple-600 hover:bg-purple-500 text-white font-bold rounded-lg shadow-lg"
-              disabled={isRunning}
+              disabled={isRunning || !hasStackSize}
             >
               Reverse String
             </button>
@@ -318,7 +406,7 @@ export default function StackIV({ onStepChange }) {
             <button
               onClick={runParentheses}
               className="px-6 py-2 bg-yellow-600 hover:bg-yellow-500 text-white font-bold rounded-lg shadow-lg"
-              disabled={isRunning}
+              disabled={isRunning || !hasStackSize}
             >
               Check Balance
             </button>
@@ -338,7 +426,7 @@ export default function StackIV({ onStepChange }) {
             <button
               onClick={runPostfix}
               className="px-6 py-2 bg-pink-600 hover:bg-pink-500 text-white font-bold rounded-lg shadow-lg"
-              disabled={isRunning}
+              disabled={isRunning || !hasStackSize}
             >
               Evaluate
             </button>
@@ -359,7 +447,7 @@ export default function StackIV({ onStepChange }) {
             <button
               onClick={handleStandardPush}
               className="px-6 py-2 bg-cyan-600 hover:bg-cyan-500 text-white font-bold rounded-lg shadow-lg"
-              disabled={isRunning}
+              disabled={isRunning || !hasStackSize}
             >
               Push
             </button>
@@ -395,6 +483,45 @@ export default function StackIV({ onStepChange }) {
         </select>
       </div>
 
+      <div className="mb-5 w-full max-w-2xl flex flex-wrap items-center justify-center gap-4 bg-slate-900/40 p-4 rounded-xl border border-slate-700/70">
+        <label
+          htmlFor="stack-capacity"
+          className="text-slate-300 font-bold text-sm"
+        >
+          Stack Size
+        </label>
+        <input
+          id="stack-capacity"
+          type="number"
+          min={1}
+          max={MAX_STACK_CAPACITY}
+          value={sizeInput}
+          onChange={handleSizeInputChange}
+          onKeyDown={(e) => e.key === 'Enter' && handleSetStackSize()}
+          placeholder={`Max ${MAX_STACK_CAPACITY}`}
+          className="bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-cyan-300 font-mono outline-none w-28 text-center"
+          disabled={isRunning || isStackLocked}
+        />
+        <button
+          onClick={handleSetStackSize}
+          className="px-5 py-2 bg-cyan-600 hover:bg-cyan-500 text-white font-bold rounded-lg shadow-lg disabled:cursor-not-allowed disabled:opacity-50"
+          disabled={isRunning || isStackLocked || !sizeInput}
+        >
+          Set Size
+        </button>
+        <div
+          className={`px-3 py-2 rounded-lg border font-mono text-xs ${
+            isStackFull
+              ? 'bg-red-950/70 border-red-500/70 text-red-300'
+              : 'bg-cyan-950/40 border-cyan-700/50 text-cyan-300'
+          }`}
+        >
+          {hasStackSize
+            ? `${stack.length}/${stackCapacity} used`
+            : 'size not set'}
+        </div>
+      </div>
+
       <div className="flex flex-wrap gap-4 mb-4 justify-center z-10 min-h-[50px]">
         {renderControls()}
       </div>
@@ -411,7 +538,30 @@ export default function StackIV({ onStepChange }) {
         className="flex-1 flex items-end justify-center pb-10 w-full"
         ref={containerRef}
       >
-        <div className="relative w-48 min-h-[400px] border-b-4 border-l-4 border-r-4 border-slate-600 rounded-b-xl bg-slate-900/30 backdrop-blur-sm flex flex-col-reverse items-center p-2 gap-2 transition-all duration-500">
+        <div
+          className={`relative w-48 border-b-4 border-l-4 border-r-4 rounded-b-xl bg-slate-900/30 backdrop-blur-sm flex flex-col-reverse items-center p-2 gap-2 transition-all duration-500 ${
+            isStackFull
+              ? 'border-red-500 shadow-[0_0_28px_rgba(239,68,68,0.22)]'
+              : 'border-slate-600'
+          }`}
+          style={{ minHeight: `${(stackCapacity || 5) * 56 + 32}px` }}
+        >
+          <div
+            className={`absolute -top-8 left-1/2 -translate-x-1/2 font-mono text-xs uppercase tracking-widest whitespace-nowrap ${
+              isStackFull ? 'text-red-300' : 'text-slate-500'
+            }`}
+          >
+            {!hasStackSize
+              ? 'Enter stack size first'
+              : isStackFull
+                ? 'Overflow boundary reached'
+                : 'Overflow boundary'}
+          </div>
+          <div
+            className={`absolute -top-1 left-0 h-1 w-full ${
+              isStackFull ? 'bg-red-400' : 'bg-slate-500/70'
+            }`}
+          />
           <div className="absolute -bottom-10 text-slate-500 font-mono text-sm uppercase tracking-widest text-center w-full">
             {mode === MODES.BROWSER ? 'History (LIFO)' : 'Stack Memory'}
           </div>
@@ -454,6 +604,15 @@ export default function StackIV({ onStepChange }) {
                   </div>
                 </div>
               )}
+            </div>
+          ))}
+
+          {Array.from({ length: emptySlots }).map((_, index) => (
+            <div
+              key={`empty-slot-${index}`}
+              className="w-full h-12 rounded-md border border-dashed border-slate-700/80 bg-slate-950/20 flex items-center justify-center text-[10px] font-mono text-slate-600"
+            >
+              empty
             </div>
           ))}
         </div>

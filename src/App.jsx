@@ -1,6 +1,7 @@
 import React, { lazy, Suspense } from 'react'
 import { createBrowserRouter, RouterProvider, Navigate } from 'react-router-dom'
 import { SignedIn, SignedOut, RedirectToSignIn } from '@clerk/clerk-react'
+// import DPVisualizer from "./components/dynamicProgramming/DPVisualizer";
 
 const HAS_CLERK = Boolean(import.meta.env.VITE_CLERK_PUBLISHABLE_KEY)
 import AppLayout from './components/AppLayout'
@@ -52,9 +53,13 @@ const StringAlgoVisualizerPage = lazy(
   () => import('./components/stringAlgo/VisualizerPage')
 )
 
+const DPVisualizerPage = lazy(
+  () => import('./components/dynamicProgramming/DPVisualizer')
+)
 const PracticePage = lazy(() => import('./components/PracticePage'))
 const AboutAlgoScope = lazy(() => import('./components/about/About'))
 const NotFound = lazy(() => import('./components/PageNotFound'))
+const ChallengePage = lazy(() => import('./components/challenge/ChallengePage'))
 
 // Simple fallback for Suspense
 const PageLoader = () => (
@@ -196,6 +201,26 @@ function App() {
         <Suspense fallback={<PageLoader />}>
           <AppLayout>
             <BacktrackingVisualizerPage />
+          </AppLayout>
+        </Suspense>
+      ),
+    },
+    {
+      path: '/dynamic-programming',
+      element: (
+        <Suspense fallback={<PageLoader />}>
+          <AppLayout>
+            <DPVisualizerPage />
+          </AppLayout>
+        </Suspense>
+      ),
+    },
+    {
+      path: '/challenge',
+      element: (
+        <Suspense fallback={<PageLoader />}>
+          <AppLayout>
+            <ChallengePage />
           </AppLayout>
         </Suspense>
       ),

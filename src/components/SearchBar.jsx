@@ -211,6 +211,54 @@ const ALGORITHMS = [
     category: 'Math',
     route: '/math-theory',
   },
+  {
+    id: 'gcd',
+    name: 'Euclidean GCD',
+    category: 'Math Theory',
+    route: '/math-theory?algo=gcd',
+    keywords: ['gcd', 'greatest common divisor', 'euclidean algorithm', 'math'],
+  },
+  {
+    id: 'fastExpo',
+    name: 'Fast Exponentiation',
+    category: 'Math Theory',
+    route: '/math-theory?algo=expo',
+    keywords: [
+      'binary exponentiation',
+      'exponentiation by squaring',
+      'power',
+      'math',
+    ],
+  },
+  {
+    id: 'bitManip',
+    name: 'Bit Manipulation',
+    category: 'Math Theory',
+    route: '/math-theory?algo=bits',
+    keywords: ['bits', 'and', 'or', 'xor', 'shift', 'binary', 'math'],
+  },
+  {
+    id: 'sieve',
+    name: 'Sieve of Eratosthenes',
+    category: 'Math Theory',
+    route: '/math-theory?algo=sieve',
+    keywords: ['sieve', 'prime numbers', 'primes', 'eratosthenes', 'math'],
+  },
+  {
+    id: 'fibonacci',
+    name: 'Fibonacci Sequence',
+    category: 'Math Theory',
+    route: '/math-theory?algo=fibonacci',
+    keywords: ['fibonacci', 'recursion', 'sequence', 'math'],
+  },
+  // Games & Challenges
+  {
+    id: 'challenge',
+    name: 'Guess the Algorithm (Challenge)',
+    category: 'Games',
+    route: '/challenge',
+    keywords: ['game', 'challenge', 'guess the algorithm', 'quiz', 'play'],
+  },
 ]
 
 const SearchBar = () => {
@@ -236,8 +284,10 @@ const SearchBar = () => {
   const fuse = useMemo(() => {
     return new Fuse(ALGORITHMS, {
       keys: ['name', 'category', 'keywords'],
-      threshold: 0.4,
+      threshold: 0.3,
       includeMatches: true,
+      includeScore: true,
+      minMatchCharLength: 2,
     })
   }, [])
 
@@ -250,8 +300,16 @@ const SearchBar = () => {
       return
     }
 
-    const searchResults = fuse.search(val)
+    const searchResults = fuse.search(val).filter((result) => {
+      const searchText = val.toLowerCase()
 
+      return (
+        result.item.name.toLowerCase().includes(searchText) ||
+        result.item.keywords?.some((keyword) =>
+          keyword.toLowerCase().includes(searchText)
+        )
+      )
+    })
     const sortedResults = [...searchResults].sort((a, b) => {
       if (sortBy === 'name') {
         return a.item.name.localeCompare(b.item.name)
@@ -400,9 +458,9 @@ const SearchBar = () => {
                   className="w-full bg-transparent text-slate-200 text-lg block pl-12 pr-24 py-2 outline-none"
                   placeholder="Search algorithms..."
                 />
-                {/* Sort Dropdown */}
-                {results.length > 0 && (
-                  <div className="absolute right-4 top-1/2 -translate-y-1/2 flex items-center gap-2">
+                <div className="absolute right-4 top-1/2 -translate-y-1/2 flex items-center gap-3">
+                  {/* Sort Dropdown */}
+                  {results.length > 0 && (
                     <select
                       value={sortBy}
                       onChange={(e) => {
@@ -429,28 +487,29 @@ const SearchBar = () => {
                       <option value="name">Name</option>
                       <option value="category">Category</option>
                     </select>
-                  </div>
-                )}
-                {/* Close Button */}
-                <button
-                  onClick={handleCloseModal}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 p-1.5 rounded-lg text-slate-500 hover:text-white hover:bg-white/10 transition-all duration-200"
-                  aria-label="Close search"
-                >
-                  <svg
-                    className="w-5 h-5"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
+                  )}
+
+                  {/* Close Button */}
+                  <button
+                    onClick={handleCloseModal}
+                    className="p-1.5 rounded-lg text-slate-500 hover:text-white hover:bg-white/10 transition-all duration-200"
+                    aria-label="Close search"
                   >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M6 18L18 6M6 6l12 12"
-                    />
-                  </svg>
-                </button>
+                    <svg
+                      className="w-5 h-5"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M6 18L18 6M6 6l12 12"
+                      />
+                    </svg>
+                  </button>
+                </div>
               </div>
 
               {/* Results */}

@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useSearchParams } from 'react-router-dom'
 import SpeedSlider from '../SpeedSlider'
@@ -132,6 +132,9 @@ function SoloMode() {
 
 // ─── Page root with Solo / Compare tabs ───────────────────────────────────────
 export default function VisualizerPage() {
+  useEffect(() => {
+    document.title = 'String Algorithms | AlgoScope'
+  }, [])
   const [searchParams, setSearchParams] = useSearchParams()
   const activeTab = searchParams.get('mode') === 'compare' ? 'compare' : 'solo'
 
