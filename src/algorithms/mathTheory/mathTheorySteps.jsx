@@ -1,4 +1,4 @@
-import { createStep } from '../../lib/utils'
+import { createStep, formatComplex } from '../../lib/utils'
 
 // ─────────────────────────────────────────────
 // EUCLIDEAN GCD  (Euclidean modulo vs naive subtraction)
@@ -591,6 +591,287 @@ export function generateFibonacciSteps(n) {
       activePath: null,
       spiralCount: maxNResolved,
       duration: 1000,
+    })
+  )
+
+  return steps
+}
+
+// FAST FOURIER TRANSFORM  (Cooley-Tukey DFT vs FFT)
+
+//helpers
+
+function toPolar(re, im) {
+  const mag = Math.sqrt(re * re + im * im)
+  const phase = Math.atan2(im, re)
+  return { mag: +mag.toFixed(3), phase: +phase.toFixed(3) }
+}
+
+// Bit-reverse permutation
+function bitReverse(arr) {
+  const n = arr.length
+  const bits = Math.log2(n)
+  const out = new Array(n)
+  for (let i = 0; i < n; i++) {
+    let rev = 0
+    let tmp = i
+    for (let b = 0; b < bits; b++) {
+      rev = (rev << 1) | (tmp & 1)
+      tmp >>= 1
+    }
+    out[rev] = arr[i]
+  }
+  return out
+}
+
+// Signal generator for FFT presets
+export function generateSignal(n, type) {
+  switch (type) {
+    case 'sine':
+      return Array.from(
+        { length: n },
+        (_, i) => +Math.sin((2 * Math.PI * i) / n).toFixed(4)
+      )
+    case 'cosine':
+      return Array.from(
+        { length: n },
+        (_, i) => +Math.cos((2 * Math.PI * i) / n).toFixed(4)
+      )
+    case 'impulse':
+      return Array.from({ length: n }, (_, i) => (i === 0 ? 1 : 0))
+    case 'square':
+      return Array.from({ length: n }, (_, i) => (i < n / 2 ? 1 : -1))
+    case 'ramp':
+      return Array.from({ length: n }, (_, i) => i + 1)
+    case 'noise':
+      return Array.from(
+        { length: n },
+        () => +(Math.random() * 2 - 1).toFixed(4)
+      )
+    default:
+      return Array.from({ length: n }, (_, i) => i + 1)
+  }
+}
+
+// generateFFTSteps
+// input: number[]  (real-valued signal, length must be power of 2, 4–16)
+
+export function generateFFTSteps(inputSignal) {
+  const steps = []
+  const n = inputSignal.length
+
+  // Clamp / pad to nearest power of 2 between 4 and 16
+  const validN = [4, 8, 16].find((p) => p >= n) ?? 16
+  const signal = [...inputSignal]
+  while (signal.length < validN) signal.push(0)
+  const finalSignal = signal.slice(0, validN)
+
+  const totalStages = Math.log2(validN)
+  const naiveTotalOps = validN * validN
+  let fftOps = 0
+
+  // Build initial node array (complex: im = 0 for real input)
+  const makeNodes = (arr, state = 'idle') =>
+    arr.map((v, i) => ({
+      index: i,
+      re: +(typeof v === 'object' ? v.re : v).toFixed(3),
+      im: +(typeof v === 'object' ? v.im : 0).toFixed(3),
+      state,
+    }))
+
+  // ── Step 0: start ─────────────────────────
+  steps.push(
+    createStep({
+      lineKey: 'start',
+      type: 'start',
+      stage: 0,
+      nodes: makeNodes(finalSignal, 'idle'),
+      butterflies: [],
+      naiveOps: naiveTotalOps,
+      fftOps: 0,
+      message: `Input signal x[n] of length ${validN}. DFT naively needs ${naiveTotalOps} ops. FFT will use only ${validN * totalStages} ops.`,
+      variables: {
+        n: validN,
+        stage: 0,
+        totalStages,
+        naiveOps: naiveTotalOps,
+        fftOps: 0,
+      },
+      duration: 1000,
+    })
+  )
+
+  // ── Step 1: bit-reverse permutation ──────
+  const permuted = bitReverse(finalSignal)
+  steps.push(
+    createStep({
+      lineKey: 'bitReverse',
+      type: 'compare',
+      stage: 0,
+      nodes: makeNodes(permuted, 'active'),
+      butterflies: [],
+      naiveOps: naiveTotalOps,
+      fftOps,
+      message: `Bit-reverse permutation: reorder indices so recursive halves are contiguous. x = [${permuted.join(', ')}]`,
+      variables: {
+        n: validN,
+        stage: 0,
+        totalStages,
+        naiveOps: naiveTotalOps,
+        fftOps,
+      },
+      duration: 900,
+    })
+  )
+
+  // Working buffer of complex numbers
+  let buf = permuted.map((v) => ({ re: v, im: 0 }))
+
+  // ── Steps 2+: butterfly stages ───────────
+  for (let s = 1; s <= totalStages; s++) {
+    const half = 1 << (s - 1) // half = 2^(s-1)
+    const full = 1 << s // full = 2^s
+
+    // Announce stage
+    steps.push(
+      createStep({
+        lineKey: 'stageLoop',
+        type: 'compare',
+        stage: s,
+        nodes: makeNodes(buf, 'idle'),
+        butterflies: [],
+        naiveOps: naiveTotalOps,
+        fftOps,
+        message: `Stage ${s} of ${totalStages}: merge ${validN / full} group(s) of size ${full} using ${half}-point twiddle factors.`,
+        variables: {
+          n: validN,
+          stage: s,
+          totalStages,
+          naiveOps: naiveTotalOps,
+          fftOps,
+        },
+        duration: 800,
+      })
+    )
+
+    // Process each group
+    for (let k = 0; k < validN; k += full) {
+      for (let j = 0; j < half; j++) {
+        const topIdx = k + j
+        const botIdx = k + j + half
+
+        // Twiddle factor: W = e^(-2πi·j/full) = cos(…) - i·sin(…)
+        const angle = (-2 * Math.PI * j) / full
+        const twRe = Math.cos(angle)
+        const twIm = Math.sin(angle)
+
+        // Show which butterfly is being computed
+        const nodesSnapshot = makeNodes(buf, 'idle')
+        nodesSnapshot[topIdx] = { ...nodesSnapshot[topIdx], state: 'active' }
+        nodesSnapshot[botIdx] = { ...nodesSnapshot[botIdx], state: 'computing' }
+
+        steps.push(
+          createStep({
+            lineKey: 'butterfly',
+            type: 'compare',
+            stage: s,
+            nodes: nodesSnapshot,
+            butterflies: [
+              {
+                top: topIdx,
+                bot: botIdx,
+                twiddleRe: +twRe.toFixed(3),
+                twiddleIm: +twIm.toFixed(3),
+              },
+            ],
+            naiveOps: naiveTotalOps,
+            fftOps,
+            message: `Butterfly (${topIdx}, ${botIdx}): W = ${formatComplex(twRe, twIm)} · X[${botIdx}]`,
+            variables: {
+              n: validN,
+              stage: s,
+              topIdx,
+              botIdx,
+              totalStages,
+              naiveOps: naiveTotalOps,
+              fftOps,
+            },
+            duration: 700,
+          })
+        )
+
+        // Apply butterfly
+        const tRe = twRe * buf[botIdx].re - twIm * buf[botIdx].im
+        const tIm = twRe * buf[botIdx].im + twIm * buf[botIdx].re
+
+        const newTopRe = buf[topIdx].re + tRe
+        const newTopIm = buf[topIdx].im + tIm
+        const newBotRe = buf[topIdx].re - tRe
+        const newBotIm = buf[topIdx].im - tIm
+
+        buf[topIdx] = { re: newTopRe, im: newTopIm }
+        buf[botIdx] = { re: newBotRe, im: newBotIm }
+        fftOps += 2
+
+        // Show result of butterfly
+        const afterNodes = makeNodes(buf, 'idle')
+        afterNodes[topIdx] = { ...afterNodes[topIdx], state: 'done' }
+        afterNodes[botIdx] = { ...afterNodes[botIdx], state: 'done' }
+
+        steps.push(
+          createStep({
+            lineKey: 'butterflyResult',
+            type: 'swap',
+            stage: s,
+            nodes: afterNodes,
+            butterflies: [],
+            naiveOps: naiveTotalOps,
+            fftOps,
+            message: `X[${topIdx}] = ${formatComplex(newTopRe, newTopIm)},  X[${botIdx}] = ${formatComplex(newBotRe, newBotIm)}`,
+            variables: {
+              n: validN,
+              stage: s,
+              topIdx,
+              botIdx,
+              totalStages,
+              naiveOps: naiveTotalOps,
+              fftOps,
+            },
+            duration: 650,
+          })
+        )
+      }
+    }
+  }
+
+  // ── Final step ────────────────────────────
+  const output = buf.map((c, i) => ({
+    index: i,
+    ...toPolar(c.re, c.im),
+    re: +c.re.toFixed(2),
+    im: +c.im.toFixed(2),
+    state: 'done',
+  }))
+
+  steps.push(
+    createStep({
+      lineKey: 'result',
+      type: 'complete',
+      stage: totalStages,
+      nodes: output,
+      butterflies: [],
+      naiveOps: naiveTotalOps,
+      fftOps,
+      message: `FFT complete! ${fftOps} ops vs ${naiveTotalOps} for naive DFT. Speedup: ${(naiveTotalOps / fftOps).toFixed(1)}×`,
+      variables: {
+        n: validN,
+        stage: totalStages,
+        totalStages,
+        naiveOps: naiveTotalOps,
+        fftOps,
+        speedup: +(naiveTotalOps / fftOps).toFixed(1),
+      },
+      duration: 1200,
     })
   )
 

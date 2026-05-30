@@ -38,7 +38,8 @@ function safeText(value) {
   return typeof value === 'string' ? value : value == null ? '' : String(value)
 }
 
-function buildTestCaseEntry({
+export function buildTestCaseEntry({
+  id,
   name,
   algorithm,
   input,
@@ -50,7 +51,7 @@ function buildTestCaseEntry({
   const now = new Date().toISOString()
 
   return {
-    id: `tc_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`,
+    id: id || `tc_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`,
     name: safeText(name).trim(),
     algorithm: safeText(algorithm).trim(),
     input: safeText(input),
@@ -206,6 +207,7 @@ export async function importTestCases(file) {
           if (!tc || typeof tc !== 'object') return
 
           const entry = buildTestCaseEntry({
+            id: tc.id,
             name: tc.name,
             algorithm: tc.algorithm,
             input: tc.input,

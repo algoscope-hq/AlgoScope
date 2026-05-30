@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react'
+import { useSearchParams } from 'react-router-dom'
 import SpeedSlider from '../SpeedSlider'
 import ComplexityCard from '../ComplexityCard'
 import CodePanel from '../visualizer/CodePanel'
@@ -9,12 +10,15 @@ import { CanvasFastExpo } from './CanvasFastExpo.jsx'
 import { CanvasBitManip } from './CanvasBitManip.jsx'
 import { CanvasSieve } from './CanvasSieve.jsx'
 import { CanvasFibonacci } from './CanvasFibonacci.jsx'
+import { CanvasFFT } from './CanvasFFT'
 import {
   generateEuclideanGCDSteps,
   generateFastExpoSteps,
   generateBitOpSteps,
   generateSieveSteps,
   generateFibonacciSteps,
+  generateFFTSteps,
+  generateSignal,
 } from '../../algorithms/mathTheory/mathTheorySteps'
 import {
   getGCDSource,
@@ -22,11 +26,13 @@ import {
   getBitManipSource,
   getSieveSource,
   getFibonacciSource,
+  getFFTSource,
   resolveGCDLine,
   resolveFastExpoLine,
   resolveBitManipLine,
   resolveSieveLine,
   resolveFibonacciLine,
+  resolveFFTLine,
 } from '../../algorithms/mathTheory/mathTheorySources'
 
 const ALGO_TABS = [
@@ -35,13 +41,27 @@ const ALGO_TABS = [
   { key: 'bits', label: 'Bit Manipulation', complexityKey: 'bitmanip' },
   { key: 'sieve', label: 'Sieve of Eratosthenes', complexityKey: 'sieve' },
   { key: 'fibonacci', label: 'Fibonacci Sequence', complexityKey: 'fibonacci' },
+  { key: 'fft', label: 'Fast Fourier Transform', complexityKey: 'fft' },
 ]
 
+const DEFAULT_ALGO_KEY = 'gcd'
+const VALID_ALGO_KEYS = new Set(ALGO_TABS.map((tab) => tab.key))
+
 export const MathSoloVisualizer = () => {
+  const [searchParams, setSearchParams] = useSearchParams()
+
   useEffect(() => {
     document.title = 'Math Theory | AlgoScope'
   }, [])
-  const [algo, setAlgo] = useState('gcd')
+
+  const algoFromUrl = searchParams.get('algo')
+  const nextAlgo =
+    algoFromUrl && VALID_ALGO_KEYS.has(algoFromUrl)
+      ? algoFromUrl
+      : DEFAULT_ALGO_KEY
+
+  const [algo, setAlgo] = useState(nextAlgo)
+  const [prevAlgo, setPrevAlgo] = useState(nextAlgo)
   const [speed, setSpeed] = useState(1)
   const [language, setLanguage] = useState('javascript')
 
@@ -65,6 +85,10 @@ export const MathSoloVisualizer = () => {
   const [fibLimit, setFibLimit] = useState(6)
   const [isStepMode, setIsStepMode] = useState(false)
 
+  // FFT state
+  const [fftN, setFftN] = useState(8)
+  const [fftType, setFftType] = useState('ramp')
+
   const {
     currentStep,
     currentStepIndex,
@@ -79,6 +103,21 @@ export const MathSoloVisualizer = () => {
     stepForward,
     stepBackward,
   } = useStepPlayback({ speed })
+
+  if (nextAlgo !== prevAlgo) {
+    setAlgo(nextAlgo)
+    setPrevAlgo(nextAlgo)
+    clear()
+  }
+
+  const handleAlgoChange = (nextAlgo) => {
+    setAlgo(nextAlgo)
+    clear()
+
+    const nextParams = new URLSearchParams(searchParams)
+    nextParams.set('algo', nextAlgo)
+    setSearchParams(nextParams)
+  }
 
   const handleVisualize = () => {
     clear()
@@ -98,6 +137,9 @@ export const MathSoloVisualizer = () => {
       loadSteps(generateFibonacciSteps(Number(fibLimit)), {
         autoPlay: !isStepMode,
       })
+    } else if (algo === 'fft') {
+      const signal = generateSignal(fftN, fftType)
+      loadSteps(generateFFTSteps(signal), { autoPlay: !isStepMode })
     } else {
       loadSteps(generateBitOpSteps(Number(bitA), Number(bitB), bitOp), {
         autoPlay: !isStepMode,
@@ -114,6 +156,7 @@ export const MathSoloVisualizer = () => {
     if (algo === 'expo') return getFastExpoSource(language)
     if (algo === 'sieve') return getSieveSource(language)
     if (algo === 'fibonacci') return getFibonacciSource(language)
+    if (algo === 'fft') return getFFTSource(language)
     return getBitManipSource(language)
   }, [algo, language])
 
@@ -125,6 +168,7 @@ export const MathSoloVisualizer = () => {
     if (algo === 'sieve') return resolveSieveLine(language, currentStep.lineKey)
     if (algo === 'fibonacci')
       return resolveFibonacciLine(language, currentStep.lineKey)
+    if (algo === 'fft') return resolveFFTLine(language, currentStep.lineKey)
     if (algo === 'bits')
       return resolveBitManipLine(language, currentStep.lineKey)
     return undefined
@@ -150,10 +194,7 @@ export const MathSoloVisualizer = () => {
           {ALGO_TABS.map((t) => (
             <button
               key={t.key}
-              onClick={() => {
-                setAlgo(t.key)
-                clear()
-              }}
+              onClick={() => handleAlgoChange(t.key)}
               className={`w-full text-left px-3 py-2.5 rounded-xl text-sm font-semibold transition-all duration-200
                 ${
                   algo === t.key
@@ -375,6 +416,65 @@ export const MathSoloVisualizer = () => {
           </div>
         )}
 
+        {algo === 'fft' && (
+          <div className="space-y-3">
+            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-400">
+              Inputs
+            </p>
+            <div>
+              <label className="text-xs text-slate-500 mb-1 block">
+                N (signal length)
+              </label>
+              <select
+                value={fftN}
+                onChange={(e) => {
+                  setFftN(Number(e.target.value))
+                  clear()
+                }}
+                className="w-full rounded-xl border border-slate-700 bg-slate-800 px-4 py-2.5 text-white outline-none focus:border-cyan-500 text-sm"
+              >
+                <option value={4}>4</option>
+                <option value={8}>8</option>
+                <option value={16}>16</option>
+              </select>
+            </div>
+            <div>
+              <label className="text-xs text-slate-500 mb-1 block">
+                Signal type
+              </label>
+              <select
+                value={fftType}
+                onChange={(e) => {
+                  setFftType(e.target.value)
+                  clear()
+                }}
+                className="w-full rounded-xl border border-slate-700 bg-slate-800 px-4 py-2.5 text-white outline-none focus:border-cyan-500 text-sm"
+              >
+                {['ramp', 'sine', 'cosine', 'impulse', 'square', 'noise'].map(
+                  (t) => (
+                    <option key={t} value={t}>
+                      {t}
+                    </option>
+                  )
+                )}
+              </select>
+              <p className="text-[10px] text-slate-600 mt-1">
+                {fftType === 'sine' &&
+                  'One cycle of sin(2πi/N) — two spectrum spikes'}
+                {fftType === 'cosine' &&
+                  'One cycle of cos(2πi/N) — symmetric spikes'}
+                {fftType === 'impulse' &&
+                  'x[0]=1, rest 0 — flat magnitude spectrum'}
+                {fftType === 'square' &&
+                  'First half +1, second half −1 — odd harmonics'}
+                {fftType === 'ramp' &&
+                  'x[n] = n+1 — linearly increasing signal'}
+                {fftType === 'noise' && 'Random values — broad noisy spectrum'}
+              </p>
+            </div>
+          </div>
+        )}
+
         <div className="space-y-3 pt-2 pb-2 border-t border-white/10">
           <div>
             <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-400 mb-2">
@@ -517,6 +617,9 @@ export const MathSoloVisualizer = () => {
             currentStep={currentStep}
             inputLimit={Number(fibLimit)}
           />
+        )}
+        {algo === 'fft' && (
+          <CanvasFFT currentStep={currentStep} fftN={fftN} fftType={fftType} />
         )}
 
         <CodePanel

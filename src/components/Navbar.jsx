@@ -304,9 +304,8 @@ export const Navbar = () => {
                 <>
                   <SignedOut>
                     <SignInButton mode="modal">
-                      <button className="theme-button-primary relative group overflow-hidden rounded-xl bg-slate-900 px-6 py-2 text-sm font-bold transition-all duration-300 active:scale-95">
+                      <button className="theme-button-primary relative group overflow-hidden rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/40 hover:bg-slate-100 dark:hover:bg-slate-800/80 text-slate-700 dark:text-slate-200 px-6 py-2 text-sm font-bold transition-all duration-300 shadow-md active:scale-95">
                         <span className="relative z-10">Sign In</span>
-
                         <div className="absolute inset-0 bg-gradient-to-r from-indigo-600/20 to-purple-600/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                       </button>
                     </SignInButton>
@@ -328,7 +327,7 @@ export const Navbar = () => {
                   <button
                     title="Auth not configured"
                     disabled
-                    className="theme-button-primary relative group overflow-hidden rounded-xl px-6 py-2 text-sm font-bold transition-all duration-300 opacity-50 cursor-not-allowed"
+                    className="theme-button-primary relative group overflow-hidden rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/40 text-slate-700 dark:text-slate-200 px-6 py-2 text-sm font-bold transition-all duration-300 shadow-md opacity-50 cursor-not-allowed"
                   >
                     Sign In
                   </button>

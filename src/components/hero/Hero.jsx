@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion'
 import { ArrowRight } from 'lucide-react'
 import { HeroProductPreview } from './HeroProductPreview'
+import { APP_VERSION } from '../../lib/version'
 
 const ease = [0.22, 1, 0.36, 1]
 
@@ -46,7 +47,7 @@ export function Hero() {
                   animate={{ opacity: [0.65, 1, 0.65] }}
                   transition={{ duration: 2.2, repeat: Infinity }}
                 />
-                v1.5 · open source
+                {APP_VERSION} · open source
               </span>
             </motion.div>
 

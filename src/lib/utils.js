@@ -107,3 +107,12 @@ export const swap = (arr, i, j) => {
   arr[i] = arr[j]
   arr[j] = temp
 }
+
+export function formatComplex(re, im) {
+  if (re === undefined) return '—'
+  const r = +re.toFixed(2)
+  const i = +im.toFixed(2)
+  if (i === 0) return `${r}`
+  if (i < 0) return `${r} − ${Math.abs(i)}i`
+  return `${r} + ${i}i`
+}

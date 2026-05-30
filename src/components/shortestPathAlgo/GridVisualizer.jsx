@@ -328,6 +328,15 @@ const GridVisualizer = ({ algorithm, runKey, speed }) => {
     setVisitedCount(0)
   }
 
+  const resetAll = () => {
+    clearTimers()
+    setRunning(false)
+    setGrid(createGrid())
+    setPathCost(0)
+    setVisitedCount(0)
+    setDrawMode('wall')
+  }
+
   const handleMouseInteraction = (row, col) => {
     if (running) return
     setGrid((prev) => {
@@ -501,6 +510,13 @@ const GridVisualizer = ({ algorithm, runKey, speed }) => {
           className="px-4 py-2 bg-[var(--theme-surface-strong)] rounded-lg text-(--theme-text-strong) font-semibold text-sm"
         >
           Clear Path
+        </button>
+        <button
+          aria-label="Reset All"
+          onClick={resetAll}
+          className="px-4 py-2 bg-[var(--theme-surface-strong)] rounded-lg text-(--theme-text-strong) font-semibold text-sm"
+        >
+          Reset All
         </button>
       </div>
 

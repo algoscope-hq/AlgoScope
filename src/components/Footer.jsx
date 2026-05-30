@@ -2,6 +2,7 @@ import React, { useRef, useState } from 'react'
 import { motion } from 'framer-motion'
 import { Link } from 'react-router-dom'
 import githubIcon from '../assets/github-mark-white.svg'
+import { APP_VERSION } from '../lib/version'
 
 const FooterBentoCard = ({ algo }) => {
   const cardRef = useRef(null)
@@ -240,7 +241,10 @@ const Footer = () => {
           <p>
             &copy; {new Date().getFullYear()}{' '}
             <span className="theme-text-muted font-medium">AlgoScope</span>{' '}
-            &bull; Open Source Sandbox
+            &bull; Open Source Sandbox{' '}
+            <span className="font-mono text-[10px] px-1.5 py-0.5 rounded bg-cyan-500/10 border border-cyan-500/20 text-cyan-400">
+              {APP_VERSION}
+            </span>
           </p>
           <div className="text-[11px] theme-text-subtle">
             Maintained by{' '}
