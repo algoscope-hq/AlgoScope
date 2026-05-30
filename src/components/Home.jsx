@@ -18,59 +18,59 @@ const ALGORITHMS = [
   {
     title: 'Sorting',
     description: 'Visualizing Bubble, Merge, Quick, Heap, and Shell Sort.',
-    color: 'theme-card border-blue-500/30 hover:border-blue-400',
+    color: 'theme-card border-blue-500/20 hover:border-blue-400/25',
     link: '/sort',
   },
   {
     title: 'Searching',
     description: 'Explore BFS, DFS, and other traversal methods.',
-    color: 'theme-card border-cyan-500/30 hover:border-cyan-400',
+    color: 'theme-card border-cyan-500/20 hover:border-cyan-400/25',
     link: '/search',
   },
   {
     title: 'Graph Algorithms',
     description: 'Dijkstra, Floyd-Warshall, and Topological Sort.',
-    color: 'theme-card border-purple-500/30 hover:border-purple-400',
+    color: 'theme-card border-slate-200/80 hover:border-slate-300/90',
     link: '/spath',
   },
   {
     title: 'Array Search',
     description: 'Linear and Binary search visualization.',
-    color: 'theme-card border-orange-500/30 hover:border-orange-400',
+    color: 'theme-card border-orange-500/20 hover:border-orange-400/25',
     link: '/ldssearch',
   },
   {
     title: 'Abstract Data Types',
     description:
       'Stacks, Queues, Binary Trees, Binary Heaps, and Priority Queues.',
-    color: 'theme-card border-emerald-500/30 hover:border-emerald-400',
+    color: 'theme-card border-emerald-500/20 hover:border-emerald-400/25',
     link: '/adt',
   },
   {
     title: 'Kadane Algorithm',
     description: 'Visualize Maximum Subarray Sum using Kadane’s Algorithm.',
-    color: 'theme-card border-pink-500/30 hover:border-pink-400',
+    color: 'theme-card border-pink-500/20 hover:border-pink-400/25',
     link: '/kadane',
   },
   {
     title: "Moore's Voting Algorithm",
     description:
       "Visualize the Moore's Voting Algorithm for finding the majority element.",
-    color: 'theme-card border-green-500/30 hover:border-green-400',
+    color: 'theme-card border-green-500/20 hover:border-green-400/25',
     link: '/moore-voting',
   },
   {
     title: 'Math Theory',
     description:
       'Visualize GCD, Fast Exponentiation, and Bit Manipulation step-by-step.',
-    color: 'theme-card border-indigo-500/30 hover:border-indigo-400',
+    color: 'theme-card border-indigo-500/20 hover:border-indigo-400/25',
     link: '/math-theory',
   },
   {
     title: 'String Algorithms',
     description:
       'Visualize KMP, Rabin-Karp, Z-Algorithm, and pattern matching techniques step-by-step.',
-    color: 'theme-card border-violet-500/30 hover:border-violet-400',
+    color: 'theme-card border-slate-200/80 hover:border-slate-300/90',
     link: '/string-algorithms',
   },
   {
@@ -78,14 +78,14 @@ const ALGORITHMS = [
     description:
       'LCS, 0/1 Knapsack, Coin Change, and LIS — watch the DP table fill step by step.',
     path: '/dynamic-programming', // or "to" depending on your card schema
-    color: 'theme-card border-rose-500/30 hover:border-rose-400',
+    color: 'theme-card border-rose-500/20 hover:border-rose-400/25',
     link: '/dynamic-programming',
   },
   {
     title: 'Backtracking',
     description:
       'N-Queens, Sudoku Solver, and Tower of Hanoi with step-by-step recursion.',
-    color: 'theme-card border-rose-500/30 hover:border-rose-400',
+    color: 'theme-card border-rose-500/20 hover:border-rose-400/25',
     link: '/backtracking',
   },
 ]
@@ -141,7 +141,7 @@ export const Home = () => {
             <AlgoCard
               title="Guess the Algorithm"
               description="Test your algorithm recognition skills! Can you identify the sorting algorithm purely from its visual animation?"
-              color="theme-card border-yellow-500/30 hover:border-yellow-400"
+              color="theme-card border-yellow-500/20 hover:border-yellow-400/25"
               link="/challenge"
             />
           </motion.div>

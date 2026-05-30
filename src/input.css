@@ -3,7 +3,7 @@
 @import '@clerk/ui/themes/shadcn.css';
 
 :root {
-  --clerk-primary: #8b5cf6;
+  --clerk-primary: #2563EB;
   --clerk-text: #ffffff;
   --clerk-text-secondary: #a1a1aa;
   --clerk-bg: #0f0f0f;
@@ -14,16 +14,16 @@
   --clerk-input-placeholder: #71717a;
   --clerk-card-bg: radial-gradient(
     circle at center,
-    rgba(125, 211, 252, 0.15) 0%,
+    rgba(37, 99, 235, 0.12) 0%,
     rgba(30, 41, 59, 0.6) 40%,
     #020617 80%
   );
-  --clerk-card-shadow: 0 0 40px rgba(56, 189, 248, 0.1);
+  --clerk-card-shadow: 0 0 40px rgba(37, 99, 235, 0.12);
   --clerk-footer-bg: transparent;
   --clerk-footer-bg-solid: #09090b;
   --clerk-hover-bg: #111827;
-  --clerk-button-bg: linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%);
-  --clerk-button-hover: linear-gradient(135deg, #7c3aed 0%, #5b21b6 100%);
+  --clerk-button-bg: linear-gradient(135deg, #2563EB 0%, #1D4ED8 100%);
+  --clerk-button-hover: linear-gradient(135deg, #1D4ED8 0%, #2563EB 100%);
   --clerk-social-bg: rgba(255, 255, 255, 0.9);
   --clerk-social-hover: #ffffff;
   --clerk-font-family: 'JetBrains Mono', monospace;
@@ -32,48 +32,68 @@
 /* Light theme overrides */
 [data-theme='light'],
 .light {
-  --clerk-primary: #7c3aed;
-  --clerk-text: #1c1917;
-  --clerk-text-secondary: #44403c;
-  --clerk-bg: #d6d3d1;
-  --clerk-border: #a8a29e;
-  --clerk-input-bg: #e7e5e4;
-  --clerk-input-border: #78716c;
-  --clerk-input-text: #1c1917;
-  --clerk-input-placeholder: #57534e;
-  --clerk-card-bg: #e7e5e4;
+  --primary: #2563EB;
+  --primary-hover: #1D4ED8;
+  --primary-muted: #DBEAFE;
+  --accent: #0EA5E9;
+  --surface: #FFFFFF;
+  --surface-secondary: #F8FAFC;
+  --border: #E2E8F0;
+  --text-primary: #0F172A;
+  --text-secondary: #475569;
+
+  --clerk-primary: #2563EB;
+  --clerk-text: #0f172a;
+  --clerk-text-secondary: #475569;
+  --clerk-bg: #F8FAFC;
+  --clerk-border: #E2E8F0;
+  --clerk-input-bg: #FFFFFF;
+  --clerk-input-border: #E2E8F0;
+  --clerk-input-text: #0f172a;
+  --clerk-input-placeholder: #94a3b8;
+  --clerk-card-bg: #FFFFFF;
   --clerk-card-shadow:
-    0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.025);
+    0 10px 15px -3px rgba(15, 23, 42, 0.06), 0 4px 6px -2px rgba(15, 23, 42, 0.03);
   --clerk-footer-bg: transparent;
-  --clerk-footer-bg-solid: #d6d3d1;
-  --clerk-hover-bg: #d6d3d1;
-  --clerk-button-bg: linear-gradient(135deg, #7c3aed 0%, #4f46e5 100%);
-  --clerk-button-hover: linear-gradient(135deg, #6d28d9 0%, #4338ca 100%);
-  --clerk-social-bg: #e7e5e4;
-  --clerk-social-hover: #d6d3d1;
+  --clerk-footer-bg-solid: #F8FAFC;
+  --clerk-hover-bg: #F8FAFC;
+  --clerk-button-bg: linear-gradient(135deg, #2563EB 0%, #1D4ED8 100%);
+  --clerk-button-hover: linear-gradient(135deg, #1D4ED8 0%, #2563EB 100%);
+  --clerk-social-bg: #FFFFFF;
+  --clerk-social-hover: #F8FAFC;
 }
 
 @media (prefers-color-scheme: light) {
   :root:not([data-theme='dark']) {
-    --clerk-primary: #7c3aed;
-    --clerk-text: #1c1917;
-    --clerk-text-secondary: #44403c;
-    --clerk-bg: #d6d3d1;
-    --clerk-border: #a8a29e;
-    --clerk-input-bg: #e7e5e4;
-    --clerk-input-border: #78716c;
-    --clerk-input-text: #1c1917;
-    --clerk-input-placeholder: #57534e;
-    --clerk-card-bg: #e7e5e4;
+    --primary: #2563EB;
+    --primary-hover: #1D4ED8;
+    --primary-muted: #DBEAFE;
+    --accent: #0EA5E9;
+    --surface: #FFFFFF;
+    --surface-secondary: #F8FAFC;
+    --border: #E2E8F0;
+    --text-primary: #0F172A;
+    --text-secondary: #475569;
+
+    --clerk-primary: #2563EB;
+    --clerk-text: #0f172a;
+    --clerk-text-secondary: #475569;
+    --clerk-bg: #F8FAFC;
+    --clerk-border: #E2E8F0;
+    --clerk-input-bg: #FFFFFF;
+    --clerk-input-border: #E2E8F0;
+    --clerk-input-text: #0f172a;
+    --clerk-input-placeholder: #94a3b8;
+    --clerk-card-bg: #FFFFFF;
     --clerk-card-shadow:
-      0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.025);
+      0 10px 15px -3px rgba(15, 23, 42, 0.06), 0 4px 6px -2px rgba(15, 23, 42, 0.03);
     --clerk-footer-bg: transparent;
-    --clerk-footer-bg-solid: #d6d3d1;
-    --clerk-hover-bg: #d6d3d1;
-    --clerk-button-bg: linear-gradient(135deg, #7c3aed 0%, #4f46e5 100%);
-    --clerk-button-hover: linear-gradient(135deg, #6d28d9 0%, #4338ca 100%);
-    --clerk-social-bg: #e7e5e4;
-    --clerk-social-hover: #d6d3d1;
+    --clerk-footer-bg-solid: #F8FAFC;
+    --clerk-hover-bg: #F8FAFC;
+    --clerk-button-bg: linear-gradient(135deg, #2563EB 0%, #1D4ED8 100%);
+    --clerk-button-hover: linear-gradient(135deg, #1D4ED8 0%, #2563EB 100%);
+    --clerk-social-bg: #FFFFFF;
+    --clerk-social-hover: #F8FAFC;
   }
 }
 
@@ -93,7 +113,11 @@
     --theme-grid-line: rgba(30, 41, 59, 1);
     --theme-shadow: 0 24px 80px rgba(2, 6, 23, 0.45);
     --theme-glow-cyan: rgba(6, 182, 212, 0.2);
-    --theme-glow-purple: rgba(168, 85, 247, 0.1);
+    --theme-glow-purple: rgba(14, 165, 233, 0.08);
+
+    --theme-scrollbar-thumb: #2563EB;
+    --theme-scrollbar-track: #0f172a;
+    --theme-focus-ring: rgba(37, 99, 235, 0.16);
 
     --theme-button-primary: #ffffff;
     --theme-button-primary-hover: #f1f5f9;
@@ -105,28 +129,40 @@
   }
 
   :root[data-theme='light'] {
-    --theme-bg: #d6d3d1;
-    --theme-bg-soft: rgba(214, 211, 209, 0.85);
-    --theme-surface: #e7e5e4;
-    --theme-surface-strong: #f5f5f4;
-    --theme-surface-muted: rgba(168, 162, 158, 0.8);
-    --theme-border: rgba(41, 37, 36, 0.2);
-    --theme-border-strong: rgba(68, 64, 60, 0.5);
-    --theme-text: #292524;
-    --theme-text-strong: #1c1917;
-    --theme-text-muted: #44403c;
-    --theme-text-subtle: #57534e;
-    --theme-grid-line: rgba(120, 113, 108, 0.2);
-    --theme-shadow: 0 24px 70px rgba(41, 37, 36, 0.12);
-    --theme-glow-cyan: rgba(14, 165, 233, 0.08);
-    --theme-glow-purple: rgba(124, 58, 237, 0.04);
+    --primary: #2563EB;
+    --primary-hover: #1D4ED8;
+    --primary-muted: #DBEAFE;
+    --accent: #0EA5E9;
+    --surface: #FFFFFF;
+    --surface-secondary: #F8FAFC;
+    --border: #E2E8F0;
+    --text-primary: #0F172A;
+    --text-secondary: #475569;
 
-    --theme-button-primary: #1c1917;
-    --theme-button-primary-hover: #000000;
+    --theme-bg: var(--surface-secondary);
+    --theme-bg-soft: #F8FAFC;
+    --theme-surface: var(--surface);
+    --theme-surface-strong: #FFFFFF;
+    --theme-surface-muted: #F1F5F9;
+    --theme-border: #E2E8F0;
+    --theme-border-strong: rgba(226, 232, 240, 0.9);
+    --theme-text: var(--text-secondary);
+    --theme-text-strong: var(--text-primary);
+    --theme-text-muted: #64748b;
+    --theme-text-subtle: #64748b;
+    --theme-grid-line: rgba(226, 232, 240, 0.8);
+    --theme-shadow: 0 20px 60px rgba(15, 23, 42, 0.08);
+    --theme-glow-cyan: rgba(14, 165, 233, 0.08);
+    --theme-glow-purple: rgba(14, 165, 233, 0.08);
+
+    --theme-scrollbar-track: #F8FAFC;
+
+    --theme-button-primary: #0F172A;
+    --theme-button-primary-hover: #111827;
     --theme-button-primary-text: #ffffff;
-    --theme-button-secondary: #8b5cf6;
-    --theme-button-secondary-hover: #7c3aed;
-    --theme-button-secondary-text: #ffffff;
+    --theme-button-secondary: rgba(37, 99, 235, 0.08);
+    --theme-button-secondary-hover: rgba(37, 99, 235, 0.14);
+    --theme-button-secondary-text: #0F172A;
     --theme-button-secondary-border: transparent;
   }
 
@@ -184,6 +220,7 @@
 
   .theme-card {
     background: var(--theme-surface);
+    border: 1px solid var(--theme-border);
     box-shadow: var(--theme-shadow);
   }
 
@@ -322,7 +359,7 @@
 /* Custom scrollbar - Issue #170 */
 * {
   scrollbar-width: thin;
-  scrollbar-color: #8b5cf6 #0f172a;
+  scrollbar-color: var(--theme-scrollbar-thumb) var(--theme-scrollbar-track);
 }
 
 *::-webkit-scrollbar {
@@ -331,56 +368,56 @@
 }
 
 *::-webkit-scrollbar-track {
-  background: #0f172a;
+  background: var(--theme-scrollbar-track);
 }
 
 *::-webkit-scrollbar-thumb {
-  background-color: #8b5cf6;
+  background-color: var(--theme-scrollbar-thumb);
   border-radius: 3px;
 }
 
 *::-webkit-scrollbar-thumb:hover {
-  background-color: #7c3aed;
+  background-color: #1D4ED8;
 }
 
 /* Clerk UserProfile - photo upload button color */
 .cl-avatarImageActionsUpload {
-  color: #8b5cf6 !important; /* Purple to match  theme */
+  color: #2563EB !important; /* Blue to match theme */
 }
 .cl-avatarImageActionsUpload:hover {
-  color: #7c3aed !important; /* Slightly darker on hover */
+  color: #1D4ED8 !important; /* Slightly darker blue on hover */
 }
 
 /* Clerk UserProfile - Primary badge color (next to email only) */
 .cl-profileSection__emailAddresses .cl-badge {
-  color: #a78bfa !important; /* Light purple for readability */
-  border-color: #7c3aed !important; /* Purple border */
+  color: #1D4ED8 !important; /* Blue for readability */
+  border-color: #2563EB !important; /* Blue border */
   background: rgba(
-    139,
-    92,
-    246,
+    37,
+    99,
+    235,
     0.15
-  ) !important; /* Subtle purple background */
+  ) !important; /* Subtle blue background */
 }
 
 /* Clerk UserProfile - "This device" badge color (Security page only) */
 .cl-profileSection__activeDevices .cl-badge {
-  color: #a78bfa !important; /* Light purple for readability */
-  border-color: #7c3aed !important; /* Purple border */
+  color: #1D4ED8 !important; /* Blue for readability */
+  border-color: #2563EB !important; /* Blue border */
   background: rgba(
-    139,
-    92,
-    246,
+    37,
+    99,
+    235,
     0.15
-  ) !important; /* Subtle purple background */
+  ) !important; /* Subtle blue background */
 }
 
 /* Clerk UserProfile - three dots menu button visibility in dark mode */
 .cl-profileSection__emailAddresses .cl-menuButton,
 .cl-profileSection__connectedAccounts .cl-menuButton {
-  color: #8b5cf6 !important; /* Purple to match theme */
+  color: #2563EB !important; /* Blue to match theme */
 }
 .cl-profileSection__emailAddresses .cl-menuButton:hover,
 .cl-profileSection__connectedAccounts .cl-menuButton:hover {
-  color: #a78bfa !important; /* Lighter purple on hover */
+  color: #1D4ED8 !important; /* Lighter blue on hover */
 }
