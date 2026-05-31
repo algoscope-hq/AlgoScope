@@ -39,10 +39,11 @@ export default function TestCaseManager({
 
   const load = useCallback(async () => {
     const data = await fetchCases()
+    const currentAlgoCases = data.filter((tc) => tc.algorithm === algorithm)
 
     if (
       !search &&
-      data.length === 0 &&
+      currentAlgoCases.length === 0 &&
       sampleCases.length > 0 &&
       !hasSeededSamples.current
     ) {
@@ -56,7 +57,7 @@ export default function TestCaseManager({
     }
 
     setTestCases(data)
-  }, [fetchCases, sampleCases, search])
+  }, [fetchCases, sampleCases, search, algorithm])
 
   useEffect(() => {
     if (!isOpen) return
