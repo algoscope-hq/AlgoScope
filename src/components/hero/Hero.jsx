@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion'
-import { ArrowRight } from 'lucide-react'
+import { ArrowRight, LayoutGrid, Globe, Code2, Unlock } from 'lucide-react'
 import { HeroProductPreview } from './HeroProductPreview'
 import { APP_VERSION } from '../../lib/version'
 
@@ -110,12 +110,15 @@ export function Hero() {
 
             <motion.div
               variants={item}
-              className="mt-7 flex flex-wrap items-center justify-center gap-x-4 gap-y-2 border-t theme-border pt-5 text-[10px] theme-text-muted sm:mt-8 sm:justify-start sm:gap-x-5 sm:pt-6 sm:text-[11px]"
+              className="mt-7 flex flex-wrap items-center justify-center gap-x-2 gap-y-2 border-t theme-border pt-5 text-[10px] theme-text-muted sm:mt-8 sm:justify-start sm:gap-x-3 sm:pt-6 sm:text-[11px]"
             >
-              <Meta n="9+" t="visualizers" />
-              <span>Runs in browser</span>
-              <span>Open source</span>
-              <span>Free to use</span>
+              <Meta
+                t="9+ visualizers"
+                icon={<LayoutGrid className="size-3" />}
+              />
+              <Meta t="Runs in browser" icon={<Globe className="size-3" />} />
+              <Meta t="Open source" icon={<Code2 className="size-3" />} />
+              <Meta t="Free to use" icon={<Unlock className="size-3" />} />
             </motion.div>
           </motion.div>
 
@@ -137,12 +140,10 @@ export function Hero() {
   )
 }
 
-function Meta({ n, t }) {
+function Meta({ t, icon }) {
   return (
-    <span className="inline-flex items-baseline gap-1.5">
-      <span className="logo-font font-semibold tabular-nums text-zinc-400">
-        {n}
-      </span>
+    <span className="inline-flex items-center gap-1.5 bg-white/5 px-2 py-0.5 rounded-md">
+      {icon && <span className="opacity-50">{icon}</span>}
       <span>{t}</span>
     </span>
   )
