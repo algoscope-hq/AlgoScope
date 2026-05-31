@@ -211,6 +211,46 @@ const ALGORITHMS = [
     category: 'Math',
     route: '/math-theory',
   },
+  {
+    id: 'gcd',
+    name: 'Euclidean GCD',
+    category: 'Math Theory',
+    route: '/math-theory?algo=gcd',
+    keywords: ['gcd', 'greatest common divisor', 'euclidean algorithm', 'math'],
+  },
+  {
+    id: 'fastExpo',
+    name: 'Fast Exponentiation',
+    category: 'Math Theory',
+    route: '/math-theory?algo=expo',
+    keywords: [
+      'binary exponentiation',
+      'exponentiation by squaring',
+      'power',
+      'math',
+    ],
+  },
+  {
+    id: 'bitManip',
+    name: 'Bit Manipulation',
+    category: 'Math Theory',
+    route: '/math-theory?algo=bits',
+    keywords: ['bits', 'and', 'or', 'xor', 'shift', 'binary', 'math'],
+  },
+  {
+    id: 'sieve',
+    name: 'Sieve of Eratosthenes',
+    category: 'Math Theory',
+    route: '/math-theory?algo=sieve',
+    keywords: ['sieve', 'prime numbers', 'primes', 'eratosthenes', 'math'],
+  },
+  {
+    id: 'fibonacci',
+    name: 'Fibonacci Sequence',
+    category: 'Math Theory',
+    route: '/math-theory?algo=fibonacci',
+    keywords: ['fibonacci', 'recursion', 'sequence', 'math'],
+  },
   // Games & Challenges
   {
     id: 'challenge',
@@ -244,8 +284,10 @@ const SearchBar = () => {
   const fuse = useMemo(() => {
     return new Fuse(ALGORITHMS, {
       keys: ['name', 'category', 'keywords'],
-      threshold: 0.4,
+      threshold: 0.3,
       includeMatches: true,
+      includeScore: true,
+      minMatchCharLength: 2,
     })
   }, [])
 
@@ -258,8 +300,16 @@ const SearchBar = () => {
       return
     }
 
-    const searchResults = fuse.search(val)
+    const searchResults = fuse.search(val).filter((result) => {
+      const searchText = val.toLowerCase()
 
+      return (
+        result.item.name.toLowerCase().includes(searchText) ||
+        result.item.keywords?.some((keyword) =>
+          keyword.toLowerCase().includes(searchText)
+        )
+      )
+    })
     const sortedResults = [...searchResults].sort((a, b) => {
       if (sortBy === 'name') {
         return a.item.name.localeCompare(b.item.name)

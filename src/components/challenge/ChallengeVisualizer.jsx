@@ -144,6 +144,7 @@ export default function ChallengeVisualizer() {
   const [correct, setCorrect] = useState(0)
   const [selectedIndex, setSelectedIndex] = useState(null)
   const [isAnswered, setIsAnswered] = useState(false)
+  const [showResults, setShowResults] = useState(false)
 
   const current = questions[index]
 
@@ -183,9 +184,14 @@ export default function ChallengeVisualizer() {
     setIndex((i) => i + 1)
     setSelectedIndex(null)
     setIsAnswered(false)
+    setShowResults(false)
   }
 
-  const isComplete = index >= questions.length - 1 && isAnswered
+  const finishQuiz = () => {
+    setShowResults(true)
+  }
+
+  const isComplete = index >= questions.length - 1 && showResults
 
   if (isComplete) {
     return (
@@ -375,18 +381,23 @@ export default function ChallengeVisualizer() {
                 </div>
 
                 <div className="flex flex-col sm:flex-row gap-3 sm:justify-end">
-                  <button
-                    type="button"
-                    onClick={goNext}
-                    disabled={index >= questions.length - 1}
-                    className={`px-5 py-3 rounded-xl text-sm font-bold border transition-all ${
-                      index < questions.length - 1
-                        ? 'bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white border-cyan-400/30 shadow-[0_0_20px_rgba(6,182,212,0.35)]'
-                        : 'bg-slate-800 text-slate-600 border-slate-700 cursor-not-allowed'
-                    }`}
-                  >
-                    Next Question
-                  </button>
+                  {index < questions.length - 1 ? (
+                    <button
+                      type="button"
+                      onClick={goNext}
+                      className="px-5 py-3 rounded-xl text-sm font-bold border transition-all bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white border-cyan-400/30 shadow-[0_0_20px_rgba(6,182,212,0.35)]"
+                    >
+                      Next Question
+                    </button>
+                  ) : (
+                    <button
+                      type="button"
+                      onClick={finishQuiz}
+                      className="px-5 py-3 rounded-xl text-sm font-bold border transition-all bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-500 hover:to-emerald-500 text-white border-green-400/30 shadow-[0_0_20px_rgba(34,197,94,0.35)]"
+                    >
+                      See Results
+                    </button>
+                  )}
                 </div>
               </motion.div>
             )}

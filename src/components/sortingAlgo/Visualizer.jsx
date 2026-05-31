@@ -36,12 +36,6 @@ const RANDOM_MIN = 50
 const RANDOM_MAX = 250
 const MAX_CUSTOM_INPUT_SIZE = 100
 
-const createRandomArray = () =>
-  Array.from(
-    { length: DEFAULT_ARRAY_SIZE },
-    () => Math.floor(Math.random() * (RANDOM_MAX - RANDOM_MIN)) + RANDOM_MIN
-  )
-
 const parseStoredArray = (value) =>
   value
     .split(/[,\s]+/)
@@ -210,10 +204,13 @@ export default function Visualizer() {
       }
     }
   }
-
+  const INITIAL_ARRAY = [50, 120, 70, 30, 200, 90, 160]
   const handleReset = () => {
     clearPlayback()
-    setBaseArray(createRandomArray())
+    setBaseArray(INITIAL_ARRAY)
+    setCustomInput('')
+    setInputError('')
+    setIsStepMode(false)
   }
 
   const handleApplyCustomArray = () => {
@@ -620,7 +617,7 @@ export default function Visualizer() {
                         disabled={isRunning}
                         className="w-full text-sm font-bold rounded-xl bg-slate-700 px-6 py-3 text-white transition-all duration-300 hover:-translate-y-0.5 hover:bg-slate-600 hover:shadow-lg disabled:cursor-not-allowed disabled:opacity-50"
                       >
-                        Generate New Array
+                        Reset
                       </button>
                     </Tooltip>
                   </div>

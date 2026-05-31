@@ -2,6 +2,7 @@ import React from 'react'
 import AuthorCard from './AuthorCard'
 import FeatureCard from './FeatureCard'
 import { motion } from 'framer-motion'
+import { APP_VERSION } from '../../lib/version'
 
 export default function AboutAlgoScope() {
   const aditya = 'https://github.com/adityapaul26.png'
@@ -170,7 +171,7 @@ export default function AboutAlgoScope() {
               technologies with academic rigor, we&apos;ve created a sandbox
               where complexity becomes clarity.
             </p>{' '}
-            <div className="pt-4 grid grid-cols-2 md:grid-cols-3 gap-6 border-t border-white/5">
+            <div className="pt-4 grid grid-cols-2 md:grid-cols-4 gap-6 border-t border-white/5">
               <div>
                 <p className="text-2xl font-bold text-white">10+</p>
                 <p className="text-sm text-slate-500 uppercase tracking-widest">
@@ -187,6 +188,14 @@ export default function AboutAlgoScope() {
                 <p className="text-2xl font-bold text-white">100%</p>
                 <p className="text-sm text-slate-500 uppercase tracking-widest">
                   Interactive
+                </p>
+              </div>
+              <div>
+                <p className="text-2xl font-bold text-cyan-400 font-mono">
+                  {APP_VERSION}
+                </p>
+                <p className="text-sm text-slate-500 uppercase tracking-widest">
+                  Version
                 </p>
               </div>
             </div>
