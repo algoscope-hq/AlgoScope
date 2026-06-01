@@ -155,6 +155,11 @@ const CodeEditor = ({
           <button
             onClick={() => isJavaScript && onRun && onRun(value)}
             disabled={!isJavaScript || isRunning || isDisabled}
+            title={
+              !isJavaScript
+                ? 'Code execution is currently only supported for JavaScript'
+                : ''
+            }
             className={`px-6 py-2 text-sm font-bold text-white transition-all duration-300 rounded-xl active:scale-95 transform hover:-translate-y-0.5 ${
               isJavaScript && !isRunning && !isDisabled
                 ? 'bg-cyan-600 hover:bg-cyan-500 hover:shadow-[0_0_15px_rgba(6,182,212,0.4)]'

@@ -278,6 +278,9 @@ const SearchBar = () => {
   })
 
   const inputRef = useRef(null)
+  const triggerRef = useRef(null)
+  const modalRef = useRef(null)
+  const previousFocusRef = useRef(null)
   const navigate = useNavigate()
 
   // Initialize Fuse.js
@@ -323,21 +326,36 @@ const SearchBar = () => {
     setSelectedIndex(0)
   }
 
-  const handleSelect = React.useCallback(
-    (route) => {
-      navigate(route)
-      setQuery('')
-      setResults([])
-      setIsModalOpen(false)
-    },
-    [navigate]
-  )
+  const openModal = React.useCallback(() => {
+    previousFocusRef.current = document.activeElement
+    setIsModalOpen(true)
+  }, [])
 
-  const handleCloseModal = () => {
+  const handleCloseModal = React.useCallback(() => {
     setIsModalOpen(false)
     setQuery('')
     setResults([])
-  }
+
+    window.setTimeout(() => {
+      const previousFocus = previousFocusRef.current
+
+      if (previousFocus && document.contains(previousFocus)) {
+        previousFocus.focus()
+      } else {
+        triggerRef.current?.focus()
+      }
+
+      previousFocusRef.current = null
+    }, 0)
+  }, [])
+
+  const handleSelect = React.useCallback(
+    (route) => {
+      navigate(route)
+      handleCloseModal()
+    },
+    [handleCloseModal, navigate]
+  )
 
   // Handle Keyboard Shortcuts
   useEffect(() => {
@@ -345,10 +363,40 @@ const SearchBar = () => {
       // Ctrl+K to open
       if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
         e.preventDefault()
-        setIsModalOpen(true)
+        openModal()
       }
 
       if (!isModalOpen) return
+
+      if (e.key === 'Tab') {
+        const focusableElements = modalRef.current?.querySelectorAll(
+          'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+        )
+        const focusable = Array.from(focusableElements ?? []).filter(
+          (element) =>
+            !element.disabled &&
+            element.getAttribute('aria-hidden') !== 'true' &&
+            element.offsetParent !== null
+        )
+
+        if (focusable.length === 0) {
+          e.preventDefault()
+          return
+        }
+
+        const firstElement = focusable[0]
+        const lastElement = focusable[focusable.length - 1]
+
+        if (e.shiftKey && document.activeElement === firstElement) {
+          e.preventDefault()
+          lastElement.focus()
+        } else if (!e.shiftKey && document.activeElement === lastElement) {
+          e.preventDefault()
+          firstElement.focus()
+        }
+
+        return
+      }
 
       // Modal Navigation
       if (e.key === 'ArrowDown') {
@@ -371,7 +419,14 @@ const SearchBar = () => {
 
     window.addEventListener('keydown', handleKeyDown)
     return () => window.removeEventListener('keydown', handleKeyDown)
-  }, [isModalOpen, results, selectedIndex, handleSelect])
+  }, [
+    handleCloseModal,
+    handleSelect,
+    isModalOpen,
+    openModal,
+    results,
+    selectedIndex,
+  ])
 
   // Focus input when modal opens
   useEffect(() => {
@@ -388,8 +443,11 @@ const SearchBar = () => {
     <>
       {/* Search Trigger Button */}
       <button
-        onClick={() => setIsModalOpen(true)}
+        ref={triggerRef}
+        onClick={openModal}
         className="flex items-center gap-2 px-3 py-1.5 bg-slate-900/40 border border-white/10 hover:border-cyan-500/50 rounded-xl text-slate-400 hover:text-cyan-400 transition-all group w-full lg:w-48"
+        aria-haspopup="dialog"
+        aria-expanded={isModalOpen}
         aria-label="Search algorithms"
       >
         <svg
@@ -429,12 +487,19 @@ const SearchBar = () => {
 
             {/* Modal Content */}
             <motion.div
+              ref={modalRef}
+              role="dialog"
+              aria-modal="true"
+              aria-labelledby="search-dialog-title"
               initial={{ opacity: 0, scale: 0.95, y: -20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: -20 }}
               className="relative w-full max-w-2xl bg-slate-900 border border-slate-700 rounded-2xl shadow-2xl overflow-hidden"
             >
               <div className="relative group p-4 border-b border-slate-800">
+                <h2 id="search-dialog-title" className="sr-only">
+                  Search algorithms
+                </h2>
                 <div className="absolute inset-y-0 left-7 flex items-center pointer-events-none">
                   <svg
                     className="w-5 h-5 text-slate-400 group-focus-within:text-cyan-400 transition-colors"

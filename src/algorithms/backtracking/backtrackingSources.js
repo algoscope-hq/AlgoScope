@@ -598,6 +598,168 @@ func solve(board [][]byte) bool {
 }`,
     },
   },
+  graphcoloring: {
+    javascript: {
+      code: `function graphColoring(graph, k) {
+  const n = graph.length
+  const colors = Array(n).fill(0)
+
+  function isSafe(node, color) {
+    for (let neighbor = 0; neighbor < n; neighbor++)
+      if (graph[node][neighbor] && colors[neighbor] === color)
+        return false
+    return true
+  }
+
+  function solve(node) {
+    if (node === n) return true
+    for (let color = 1; color <= k; color++) {
+      if (isSafe(node, color)) {
+        colors[node] = color
+        if (solve(node + 1)) return true
+        colors[node] = 0  // backtrack
+      }
+    }
+    return false
+  }
+
+  return solve(0) ? colors : null
+}`,
+    },
+    python: {
+      code: `def graph_coloring(graph, k):
+    n = len(graph)
+    colors = [0] * n
+
+    def is_safe(node, color):
+        for neighbor in range(n):
+            if graph[node][neighbor] and colors[neighbor] == color:
+                return False
+        return True
+
+    def solve(node):
+        if node == n:
+            return True
+        for color in range(1, k + 1):
+            if is_safe(node, color):
+                colors[node] = color
+                if solve(node + 1):
+                    return True
+                colors[node] = 0  # backtrack
+        return False
+
+    return colors if solve(0) else None`,
+    },
+    cpp: {
+      code: `#include <vector>
+using namespace std;
+
+bool isSafe(vector<vector<int>>& g, vector<int>& colors, int node, int color) {
+    for (int i = 0; i < g.size(); i++)
+        if (g[node][i] && colors[i] == color) return false;
+    return true;
+}
+
+bool solve(vector<vector<int>>& g, vector<int>& colors, int node, int k) {
+    if (node == g.size()) return true;
+    for (int color = 1; color <= k; color++) {
+        if (isSafe(g, colors, node, color)) {
+            colors[node] = color;
+            if (solve(g, colors, node + 1, k)) return true;
+            colors[node] = 0;  // backtrack
+        }
+    }
+    return false;
+}`,
+    },
+    java: {
+      code: `public class GraphColoring {
+    static boolean isSafe(int[][] g, int[] colors, int node, int color) {
+        for (int i = 0; i < g.length; i++)
+            if (g[node][i] == 1 && colors[i] == color) return false;
+        return true;
+    }
+
+    static boolean solve(int[][] g, int[] colors, int node, int k) {
+        if (node == g.length) return true;
+        for (int color = 1; color <= k; color++) {
+            if (isSafe(g, colors, node, color)) {
+                colors[node] = color;
+                if (solve(g, colors, node + 1, k)) return true;
+                colors[node] = 0;  // backtrack
+            }
+        }
+        return false;
+    }
+}`,
+    },
+    c: {
+      code: `#include <string.h>
+#define MAXN 10
+int graph[MAXN][MAXN], colors[MAXN], N, K;
+
+int isSafe(int node, int color) {
+    for (int i = 0; i < N; i++)
+        if (graph[node][i] && colors[i] == color) return 0;
+    return 1;
+}
+
+int solve(int node) {
+    if (node == N) return 1;
+    for (int color = 1; color <= K; color++) {
+        if (isSafe(node, color)) {
+            colors[node] = color;
+            if (solve(node + 1)) return 1;
+            colors[node] = 0;  // backtrack
+        }
+    }
+    return 0;
+}`,
+    },
+    rust: {
+      code: `fn is_safe(graph: &[Vec<usize>], colors: &[usize], node: usize, color: usize) -> bool {
+                for (i, &connected) in graph[node].iter().enumerate() {
+                    if connected == 1 && colors[i] == color { return false; }
+                }
+                true
+            }
+}
+
+fn solve(graph: &[Vec<usize>], colors: &mut Vec<usize>, node: usize, k: usize) -> bool {
+    if node == graph.len() { return true; }
+    for color in 1..=k {
+        if is_safe(graph, colors, node, color) {
+            colors[node] = color;
+            if solve(graph, colors, node + 1, k) { return true; }
+            colors[node] = 0;  // backtrack
+        }
+    }
+    false
+}`,
+    },
+    go: {
+      code: `package main
+
+func isSafe(graph [][]int, colors []int, node, color int) bool {
+    for i, connected := range graph[node] {
+        if connected == 1 && colors[i] == color { return false }
+    }
+    return true
+}
+
+func solve(graph [][]int, colors []int, node, k int) bool {
+    if node == len(graph) { return true }
+    for color := 1; color <= k; color++ {
+        if isSafe(graph, colors, node, color) {
+            colors[node] = color
+            if solve(graph, colors, node+1, k) { return true }
+            colors[node] = 0  // backtrack
+        }
+    }
+    return false
+}`,
+    },
+  },
 }
 
 export const getBacktrackingSource = (algo, language) =>

@@ -8,6 +8,7 @@ import CodePanel from '../visualizer/CodePanel'
 import { CanvasNQueens } from './CanvasNQueens'
 import { CanvasSudoku } from './CanvasSudoku'
 import { CanvasTowerOfHanoi } from './CanvasTowerOfHanoi'
+import { CanvasGraphColoring } from './CanvasGraphColoring'
 import { MenuSetAlgoBacktracking } from './MenuSetAlgoBacktracking'
 import { ComparisonMode } from './ComparisonMode'
 import { getBacktrackingSource } from '../../algorithms/backtracking/backtrackingSources'
@@ -142,6 +143,8 @@ function SoloMode() {
   const [speed, setSpeed] = useState(1)
   const [language, setLanguage] = useState('javascript')
   const [trigger, setTrigger] = useState(0)
+  const [colorK, setColorK] = useState(3)
+  const [preset, setPreset] = useState('Petersen-like')
 
   const handleVisualize = () => setTrigger((t) => t + 1)
   const handleReset = () => setTrigger(0)
@@ -157,7 +160,13 @@ function SoloMode() {
   )
 
   const complexityKey =
-    algo === 'nqueens' ? 'nqueens' : algo === 'hanoi' ? 'hanoi' : 'sudoku'
+    algo === 'nqueens'
+      ? 'nqueens'
+      : algo === 'hanoi'
+        ? 'hanoi'
+        : algo === 'graphcoloring'
+          ? 'graphcoloring'
+          : 'sudoku'
 
   return (
     <div className="flex flex-col lg:flex-row p-4 sm:p-6 gap-6">
@@ -176,11 +185,13 @@ function SoloMode() {
           setDiskCount={setDiskCount}
           onVisualize={handleVisualize}
           onReset={handleReset}
+          colorK={colorK}
+          setColorK={setColorK}
+          preset={preset}
+          setPreset={setPreset}
+          speed={speed}
+          setSpeed={setSpeed}
         />
-
-        <div className="mt-6">
-          <SpeedSlider value={speed} onChange={(e, v) => setSpeed(v)} />
-        </div>
 
         <div className="pt-4 border-t border-white/5">
           <p className="mb-3 text-xs font-semibold uppercase tracking-[0.2em] text-cyan-400/80">
@@ -215,6 +226,13 @@ function SoloMode() {
             speed={speed}
             trigger={trigger}
           />
+        ) : algo === 'graphcoloring' ? (
+          <CanvasGraphColoring
+            speed={speed}
+            trigger={trigger}
+            colorK={colorK}
+            preset={preset}
+          />
         ) : (
           <CanvasSudoku speed={speed} trigger={trigger} />
         )}
@@ -225,7 +243,9 @@ function SoloMode() {
               ? 'N-Queens Implementation'
               : algo === 'hanoi'
                 ? 'Tower of Hanoi Implementation'
-                : 'Sudoku Solver Implementation'
+                : algo === 'graphcoloring'
+                  ? 'Graph Coloring Implementation'
+                  : 'Sudoku Solver Implementation'
           }
           code={currentSource}
           language={language}

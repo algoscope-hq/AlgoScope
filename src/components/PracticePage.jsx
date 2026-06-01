@@ -49,8 +49,8 @@ const Terminal = React.forwardRef(function Terminal({ logs, onClear }, ref) {
       >
         {logs.length === 0 ? (
           <p className="text-slate-600 italic text-xs">
-            No output yet. Click &quot;Run Code&quot; to execute your
-            JavaScript.
+            No output yet. Select JavaScript and click &quot;Run Code&quot; to
+            execute (Python, Java, C++ execution coming soon).
           </p>
         ) : (
           logs.map((log, i) => (

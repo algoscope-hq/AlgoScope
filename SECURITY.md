@@ -51,4 +51,3 @@ We follow a **responsible disclosure** policy:
 - https://docs.github.com/en/code-security/security-advisories
 - https://owasp.org/www-community/Vulnerability_Disclosure_Cheat_Sheet
 - https://docs.github.com/en/code-security/getting-started/adding-a-security-policy-to-your-repository
-
