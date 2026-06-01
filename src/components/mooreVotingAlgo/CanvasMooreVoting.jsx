@@ -8,11 +8,22 @@ export const CanvasMooreVoting = ({ numbers, speed }) => {
   const [status, setStatus] = useState('Enter array and start visualization.')
 
   useEffect(() => {
+    const initTimer = setTimeout(() => {
+      setActiveIndex(-1)
+      setCandidate(null)
+      setCount(0)
+      setStatus(
+        numbers.length
+          ? 'Starting visualization...'
+          : 'Enter array and start visualization.'
+      )
+    }, 0)
+
     if (!numbers.length) {
-      return
+      return () => clearTimeout(initTimer)
     }
 
-    let timers = []
+    let timers = [initTimer]
     let currentCandidate = null
     let currentCount = 0
 

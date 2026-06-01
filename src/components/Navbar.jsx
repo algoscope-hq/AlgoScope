@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import {
   SignedIn,
@@ -112,8 +112,11 @@ const algorithmLinks = [
 export const Navbar = () => {
   const [open, setOpen] = useState(false)
   const [hoveredTab, setHoveredTab] = useState(null)
+  const [exploreOpen, setExploreOpen] = useState(false)
+  const exploreButtonRef = useRef(null)
 
   const { pathname } = useLocation()
+  const isExploreMenuOpen = hoveredTab === 'explore' || exploreOpen
 
   const [history, setHistory] = useState(() => {
     try {
@@ -143,6 +146,29 @@ export const Navbar = () => {
   useEffect(() => {
     localStorage.setItem('algo-history', JSON.stringify(history))
   }, [history])
+
+  const closeExploreMenu = () => {
+    setExploreOpen(false)
+    setHoveredTab((current) => (current === 'explore' ? null : current))
+  }
+
+  const handleExploreKeyDown = (event) => {
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault()
+      setExploreOpen((current) => !current)
+      setHoveredTab('explore')
+    } else if (event.key === 'Escape') {
+      event.preventDefault()
+      closeExploreMenu()
+      exploreButtonRef.current?.focus()
+    }
+  }
+
+  const handleExploreBlur = (event) => {
+    if (!event.currentTarget.contains(event.relatedTarget)) {
+      closeExploreMenu()
+    }
+  }
 
   return (
     <header className="theme-navbar sticky top-4 z-50 max-w-7xl mx-auto backdrop-blur-xl rounded-2xl px-6 py-2 w-full transition-all duration-500 shadow-lg hover:border-slate-400/50 dark:!bg-slate-950/70 dark:!border dark:!border-slate-800/80 dark:hover:!border-indigo-500/30 dark:!shadow-[0_0_30px_rgba(99,102,241,0.05)] dark:hover:!shadow-[0_0_40px_rgba(99,102,241,0.15)]">
@@ -175,11 +201,31 @@ export const Navbar = () => {
               <li
                 className="relative group py-1.5"
                 onMouseEnter={() => setHoveredTab('explore')}
+                onBlur={handleExploreBlur}
+                onKeyDown={(event) => {
+                  if (event.key === 'Escape') {
+                    event.preventDefault()
+                    closeExploreMenu()
+                    exploreButtonRef.current?.focus()
+                  }
+                }}
               >
-                <button className="relative text-sm font-medium text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 px-4 py-1.5 rounded-lg transition-all duration-300 z-10 cursor-pointer">
+                <button
+                  ref={exploreButtonRef}
+                  type="button"
+                  aria-haspopup="menu"
+                  aria-expanded={isExploreMenuOpen}
+                  aria-controls="desktop-explore-menu"
+                  onClick={() => {
+                    setExploreOpen((current) => !current)
+                    setHoveredTab('explore')
+                  }}
+                  onKeyDown={handleExploreKeyDown}
+                  className="relative text-sm font-medium text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 px-4 py-1.5 rounded-lg transition-all duration-300 z-10 cursor-pointer"
+                >
                   Explore
                 </button>
-                {hoveredTab === 'explore' && (
+                {isExploreMenuOpen && (
                   <motion.div
                     layoutId="nav-hover-pill"
                     className="absolute inset-0 bg-slate-200/50 dark:bg-slate-900/60 border border-slate-300/30 dark:border-slate-800/50 rounded-lg -z-0"
@@ -190,11 +236,21 @@ export const Navbar = () => {
                   />
                 )}
 
-                <div className="absolute left-0 top-full mt-3 py-2 w-64 rounded-2xl border border-slate-200/80 dark:border-slate-800/80 bg-white dark:bg-slate-950 p-2 shadow-2xl backdrop-blur-2xl invisible opacity-0 translate-y-2 group-hover:visible group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300 z-50">
+                <div
+                  id="desktop-explore-menu"
+                  role="menu"
+                  className={`absolute left-0 top-full mt-3 py-2 w-64 rounded-2xl border border-slate-200/80 dark:border-slate-800/80 bg-white dark:bg-slate-950 p-2 shadow-2xl backdrop-blur-2xl transition-all duration-300 z-50 ${
+                    isExploreMenuOpen
+                      ? 'visible opacity-100 translate-y-0'
+                      : 'invisible opacity-0 translate-y-2'
+                  }`}
+                >
                   {algorithmLinks.map((link) => (
                     <Link
                       key={link.name}
                       to={link.href}
+                      role="menuitem"
+                      onClick={closeExploreMenu}
                       className={`block rounded-lg px-4 py-2 text-sm transition-all duration-200 border-l-2 ${
                         pathname === link.href
                           ? 'bg-indigo-50/80 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-300 border-indigo-600 dark:border-indigo-500 font-medium'
@@ -225,6 +281,8 @@ export const Navbar = () => {
                         <Link
                           key={item}
                           to={matched?.href || '/'}
+                          role="menuitem"
+                          onClick={closeExploreMenu}
                           className="block rounded-lg px-4 py-2 text-sm transition-all duration-200 border-l-2 border-transparent text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-900 hover:text-slate-900 dark:hover:text-slate-200 hover:border-slate-300 dark:hover:border-slate-700"
                         >
                           {item}
@@ -242,7 +300,11 @@ export const Navbar = () => {
               >
                 <Link
                   to="/practice"
-                  className="relative text-sm font-medium text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 px-4 py-1.5 rounded-lg transition-all duration-300 z-10"
+                  className={`relative text-sm font-medium px-4 py-1.5 rounded-lg transition-all duration-300 z-10 ${
+                    pathname === '/practice'
+                      ? 'text-indigo-600 dark:text-indigo-300 font-semibold'
+                      : 'text-slate-400 hover:text-slate-900 dark:hover:text-slate-100'
+                  }`}
                 >
                   Practice
                 </Link>
@@ -265,7 +327,11 @@ export const Navbar = () => {
               >
                 <Link
                   to="/challenge"
-                  className="relative text-sm font-medium text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 px-4 py-1.5 rounded-lg transition-all duration-300 z-10"
+                  className={`relative text-sm font-medium px-4 py-1.5 rounded-lg transition-all duration-300 z-10 ${
+                    pathname === '/challenge'
+                      ? 'text-indigo-600 dark:text-indigo-300 font-semibold'
+                      : 'text-slate-400 hover:text-slate-900 dark:hover:text-slate-100'
+                  }`}
                 >
                   Challenge
                 </Link>
