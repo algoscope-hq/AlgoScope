@@ -198,7 +198,7 @@ const ALGORITHMS = [
     name: 'Abstract Data Types',
     category: 'Data Structures',
     route: '/adt',
-  }, 
+  },
   {
     id: 'stack',
     name: 'Stack',
@@ -222,13 +222,13 @@ const ALGORITHMS = [
     name: 'Binary Heap',
     category: 'Data Structures',
     route: '/adt?type=heap',
-  }, 
+  },
   {
     id: 'priority-queue',
     name: 'Priority Queue',
     category: 'Data Structures',
     route: '/adt?type=priority-queue',
-  },  
+  },
   // General
   {
     id: 'about',
