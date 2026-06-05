@@ -53,13 +53,13 @@
   "main": "eslint.config.js",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Yuvraj-Sarathe/AlgoScope.git"
+    "url": "git+https://github.com/algoscope-hq/AlgoScope.git"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/Yuvraj-Sarathe/AlgoScope/issues"
+    "url": "https://github.com/algoscope-hq/AlgoScope/issues"
   },
-  "homepage": "https://github.com/Yuvraj-Sarathe/AlgoScope#readme"
+  "homepage": "https://github.com/algoscope-hq/AlgoScope#readme"
 }

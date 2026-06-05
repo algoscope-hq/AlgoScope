@@ -73,6 +73,9 @@ const StringAlgoVisualizerPage = lazy(
 const DPVisualizerPage = lazy(
   () => import('./components/dynamicProgramming/DPVisualizer')
 )
+const DPOptimizationJourneyPage = lazy(
+  () => import('./components/dynamicProgramming/DPOptimizationJourney') // Path to your main component
+)
 const PracticePage = lazy(() => import('./components/PracticePage'))
 const AboutAlgoScope = lazy(() => import('./components/about/About'))
 const NotFound = lazy(() => import('./components/PageNotFound'))
@@ -284,6 +287,17 @@ const router = createBrowserRouter([
       </Suspense>
     ),
   },
+  {
+    path: '/dp-journey',
+    element: (
+      <Suspense fallback={<PageLoader />}>
+        <AppLayout>
+          <DPOptimizationJourneyPage />
+        </AppLayout>
+      </Suspense>
+    ),
+  },
+
   {
     path: '/challenge',
     element: (

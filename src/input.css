@@ -106,16 +106,16 @@
 
   :root[data-theme='light'] {
     --theme-bg: #d6d3d1;
-    --theme-bg-soft: rgba(214, 211, 209, 0.85);
-    --theme-surface: #e7e5e4;
-    --theme-surface-strong: #f5f5f4;
-    --theme-surface-muted: rgba(168, 162, 158, 0.8);
-    --theme-border: rgba(41, 37, 36, 0.2);
-    --theme-border-strong: rgba(68, 64, 60, 0.5);
-    --theme-text: #292524;
-    --theme-text-strong: #1c1917;
-    --theme-text-muted: #44403c;
-    --theme-text-subtle: #57534e;
+    --theme-bg-soft: rgba(214, 211, 209, 0.95);
+    --theme-surface: #ffffff;
+    --theme-surface-strong: #f8f8f7;
+    --theme-surface-muted: rgba(168, 162, 158, 0.9);
+    --theme-border: rgba(17, 17, 17, 0.08);
+    --theme-border-strong: rgba(17, 17, 17, 0.18);
+    --theme-text: #1b1b1b;
+    --theme-text-strong: #000000; /* Force module headings to pure black in Light Mode */
+    --theme-text-muted: #111111; /* Darker description text */
+    --theme-text-subtle: #4b4b4b;
     --theme-grid-line: rgba(120, 113, 108, 0.2);
     --theme-shadow: 0 24px 70px rgba(41, 37, 36, 0.12);
     --theme-glow-cyan: rgba(14, 165, 233, 0.08);

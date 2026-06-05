@@ -7,6 +7,7 @@ import ComplexityCard from '../ComplexityCard'
 import Tooltip from '../Tooltip'
 import TestCaseManager from '../testCaseManager/TestCaseManager'
 import RecursiveTree from './RecursiveTree.jsx'
+import { useKeyboardShortcuts } from '../visualizer/useKeyboardShortcuts'
 
 import * as bubble from '../../algorithms/sorting/bubbleSortSteps'
 import * as selection from '../../algorithms/sorting/selectionSortSteps'
@@ -212,6 +213,22 @@ export default function Visualizer() {
     setInputError('')
     setIsStepMode(false)
   }
+
+  useKeyboardShortcuts({
+    onPlayPause: () => {
+      if (isPlaying) pausePlayback()
+      else if (hasSteps && !isComplete) playPlayback()
+    },
+    onStepForward: () => {
+      if (!isPlaying && !isComplete && hasSteps) stepForward()
+    },
+    onStepBackward: () => {
+      if (!isPlaying && currentStepIndex > 0) stepBackward()
+    },
+    onReset: handleReset,
+    onSpeedUp: () => setSpeed((s) => Math.min(3, +(s + 0.25).toFixed(2))),
+    onSlowDown: () => setSpeed((s) => Math.max(0.25, +(s - 0.25).toFixed(2))),
+  })
 
   const handleApplyCustomArray = () => {
     setInputError('')
