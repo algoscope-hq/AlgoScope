@@ -544,7 +544,13 @@ export const Navbar = () => {
                   <button
                     title="Auth not configured"
                     disabled
-                    className="flex items-center justify-center gap-2 w-full rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 px-4 py-2.5 text-sm font-semibold text-slate-700 dark:text-slate-200 transition-all duration-300 shadow-md active:scale-95"
+                  <button
+                    title="Auth not configured"
+                    disabled
+                    className="flex items-center justify-center gap-2 w-full rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 px-4 py-2.5 text-sm font-semibold text-slate-700 dark:text-slate-200 opacity-50 cursor-not-allowed"
+                  >
+                    Sign In
+                  </button>
                   >
                     Sign In
                   </button>
