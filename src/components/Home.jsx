@@ -78,7 +78,7 @@ const ALGORITHMS = [
     title: 'Dynamic Programming',
     description:
       'LCS, 0/1 Knapsack, Coin Change, and LIS — watch the DP table fill step by step.',
-    path: '/dynamic-programming', // or "to" depending on your card schema
+    path: '/dynamic-programming',
     color: 'theme-card border-rose-500/30 hover:border-rose-400',
     link: '/dynamic-programming',
   },
@@ -102,6 +102,28 @@ const ALGORITHMS = [
       'Explore AVL, Trie, and Segment Tree visualizations in one place.',
     color: 'theme-card border-indigo-500/30 hover:border-indigo-400',
     link: '/advanced-trees',
+  },
+]
+
+const OPERATING_SYSTEMS = [
+  {
+    title: 'CPU Scheduling',
+    description: 'Visualize FCFS, SJF, Round Robin, and Priority Scheduling.',
+    color: 'theme-card border-cyan-500/30 hover:border-cyan-400',
+    link: '/operating-systems',
+  },
+  {
+    title: 'Page Replacement',
+    description: 'Explore FIFO, LRU, and Optimal page replacement algorithms.',
+    color: 'theme-card border-purple-500/30 hover:border-purple-400',
+    link: '/operating-systems',
+  },
+  {
+    title: 'Disk Scheduling',
+    description:
+      'Understand SCAN, C-SCAN, SSTF and disk head movement strategies.',
+    color: 'theme-card border-emerald-500/30 hover:border-emerald-400',
+    link: '/operating-systems',
   },
 ]
 
@@ -134,6 +156,32 @@ export const Home = () => {
                 description={algo.description}
                 color={algo.color}
                 link={algo.link}
+              />
+            ))}
+          </motion.div>
+
+          <div className="mt-16 mb-12 flex items-center gap-4">
+            <div className="h-px flex-1 bg-gradient-to-r from-transparent via-current to-transparent opacity-20 theme-text-strong" />
+            <span className="font-mono text-sm uppercase tracking-[0.3em] theme-text-subtle">
+              Operating Systems
+            </span>
+            <div className="h-px flex-1 bg-gradient-to-r from-transparent via-current to-transparent opacity-20 theme-text-strong" />
+          </div>
+
+          <motion.div
+            className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3"
+            variants={containerVariants}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, amount: 0.1 }}
+          >
+            {OPERATING_SYSTEMS.map((os, index) => (
+              <AlgoCard
+                key={index}
+                title={os.title}
+                description={os.description}
+                color={os.color}
+                link={os.link}
               />
             ))}
           </motion.div>
