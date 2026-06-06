@@ -218,6 +218,13 @@ const ALGORITHMS = [
     route: '/adt?type=tree',
   },
   {
+    id: 'dsu',
+    name: 'Disjoint Set Union',
+    category: 'Data Structures',
+    route: '/adt?type=dsu',
+    keywords: ['dsu', 'disjoint set', 'union find'],
+  },
+  {
     id: 'bheap',
     name: 'Binary Heap',
     category: 'Data Structures',
@@ -321,6 +328,21 @@ const ALGORITHMS = [
     category: 'Dynamic Programming',
     route: '/dynamic-programming',
     keywords: ['lcs', 'knapsack', 'Coin Change', 'LIS'],
+  },
+  {
+    id: 'dynamic-prog-journey',
+    name: 'DP Journey',
+    category: 'Dynamic Programming',
+    route: '/dp-journey',
+    keywords: [
+      'dp-journey',
+      'dpjourney',
+      'dp optimization',
+      'dynamic programming optimization',
+      'Coin Change',
+      'Fibonacci',
+      'Climbing Stairs',
+    ],
   },
 ]
 
