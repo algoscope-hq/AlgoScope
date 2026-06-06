@@ -55,9 +55,8 @@ const ThemeToggleButton = ({ compact = false, ...props }) => {
       onClick={toggleTheme}
       aria-label={label}
       title={label}
-      className={`theme-toggle inline-flex items-center justify-center rounded-xl border transition-all duration-300 active:scale-95 focus:outline-none focus:ring-2 focus:ring-cyan-400/40 ${
-        compact ? 'h-10 w-10' : 'h-10 w-10 md:h-10 md:w-10'
-      }`}
+      className={`theme-toggle inline-flex items-center justify-center rounded-xl border transition-all duration-300 active:scale-95 focus:outline-none focus:ring-2 focus:ring-cyan-400/40 ${compact ? 'h-10 w-10' : 'h-10 w-10 md:h-10 md:w-10'
+        }`}
       {...props}
     >
       {isDark ? (
@@ -130,6 +129,18 @@ export const Navbar = () => {
       return []
     }
   })
+
+  useEffect(() => {
+    if (open) {
+      document.body.style.overflow = 'hidden'
+    } else {
+      document.body.style.overflow = ''
+    }
+
+    return () => {
+      document.body.style.overflow = ''
+    }
+  }, [open])
 
   useEffect(() => {
     const current = algorithmLinks.find((link) => link.href === pathname)?.name
@@ -247,11 +258,10 @@ export const Navbar = () => {
                 <div
                   id="desktop-explore-menu"
                   role="menu"
-                  className={`absolute left-0 top-full mt-3 py-2 w-64 rounded-2xl border border-slate-200/80 dark:border-slate-800/80 bg-white dark:bg-slate-950 p-2 shadow-2xl backdrop-blur-2xl transition-all duration-300 z-50 ${
-                    isExploreMenuOpen
-                      ? 'visible opacity-100 translate-y-0'
-                      : 'invisible opacity-0 translate-y-2'
-                  }`}
+                  className={`absolute left-0 top-full mt-3 py-2 w-64 rounded-2xl border border-slate-200/80 dark:border-slate-800/80 bg-white dark:bg-slate-950 p-2 shadow-2xl backdrop-blur-2xl transition-all duration-300 z-50 ${isExploreMenuOpen
+                    ? 'visible opacity-100 translate-y-0'
+                    : 'invisible opacity-0 translate-y-2'
+                    }`}
                 >
                   {algorithmLinks.map((link) => (
                     <Link
@@ -259,11 +269,10 @@ export const Navbar = () => {
                       to={link.href}
                       role="menuitem"
                       onClick={closeExploreMenu}
-                      className={`block rounded-lg px-4 py-2 text-sm transition-all duration-200 border-l-2 ${
-                        pathname === link.href
-                          ? 'bg-indigo-50/80 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-300 border-indigo-600 dark:border-indigo-500 font-medium'
-                          : 'text-slate-600 dark:text-slate-400 border-transparent hover:bg-slate-100 dark:hover:bg-slate-900 hover:text-slate-900 dark:hover:text-slate-200 hover:border-slate-300 dark:hover:border-slate-700'
-                      }`}
+                      className={`block rounded-lg px-4 py-2 text-sm transition-all duration-200 border-l-2 ${pathname === link.href
+                        ? 'bg-indigo-50/80 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-300 border-indigo-600 dark:border-indigo-500 font-medium'
+                        : 'text-slate-600 dark:text-slate-400 border-transparent hover:bg-slate-100 dark:hover:bg-slate-900 hover:text-slate-900 dark:hover:text-slate-200 hover:border-slate-300 dark:hover:border-slate-700'
+                        }`}
                     >
                       {link.name}
                     </Link>
@@ -309,11 +318,10 @@ export const Navbar = () => {
                 <Link
                   to="/practice"
                   data-tour="practice-nav"
-                  className={`relative text-sm font-medium px-4 py-1.5 rounded-lg transition-all duration-300 z-10 ${
-                    pathname === '/practice'
-                      ? 'text-indigo-600 dark:text-indigo-300 font-semibold'
-                      : 'text-slate-400 hover:text-slate-900 dark:hover:text-slate-100'
-                  }`}
+                  className={`relative text-sm font-medium px-4 py-1.5 rounded-lg transition-all duration-300 z-10 ${pathname === '/practice'
+                    ? 'text-indigo-600 dark:text-indigo-300 font-semibold'
+                    : 'text-slate-400 hover:text-slate-900 dark:hover:text-slate-100'
+                    }`}
                 >
                   Practice
                 </Link>
@@ -337,11 +345,10 @@ export const Navbar = () => {
                 <Link
                   to="/challenge"
                   data-tour="challenge-nav"
-                  className={`relative text-sm font-medium px-4 py-1.5 rounded-lg transition-all duration-300 z-10 ${
-                    pathname === '/challenge'
-                      ? 'text-indigo-600 dark:text-indigo-300 font-semibold'
-                      : 'text-slate-400 hover:text-slate-900 dark:hover:text-slate-100'
-                  }`}
+                  className={`relative text-sm font-medium px-4 py-1.5 rounded-lg transition-all duration-300 z-10 ${pathname === '/challenge'
+                    ? 'text-indigo-600 dark:text-indigo-300 font-semibold'
+                    : 'text-slate-400 hover:text-slate-900 dark:hover:text-slate-100'
+                    }`}
                 >
                   Challenge
                 </Link>
@@ -468,7 +475,7 @@ export const Navbar = () => {
               animate={{ x: 0 }}
               exit={{ x: '100%' }}
               transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-              className="fixed top-0 right-0 bottom-0 w-80 max-w-[85vw] bg-white dark:bg-slate-950 border-l border-slate-200 dark:border-slate-800/80 p-6 shadow-2xl backdrop-blur-2xl z-50 md:hidden flex flex-col"
+              className="fixed top-0 right-0 bottom-0 w-80 max-w-[85vw] bg-white dark:!bg-[#020617] border-l border-slate-200 dark:border-slate-800 p-6 shadow-2xl z-50 md:hidden flex flex-col"
             >
               {/* Drawer Header */}
               <div className="flex items-center justify-between mb-6 pb-4 border-b border-slate-200 dark:border-slate-800/80">
@@ -509,11 +516,10 @@ export const Navbar = () => {
                         <Link
                           to={link.href}
                           onClick={() => setOpen(false)}
-                          className={`block rounded-lg px-4 py-2.5 text-sm transition-all duration-200 border-l-2 ${
-                            pathname === link.href
-                              ? 'bg-indigo-50/80 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-300 border-indigo-600 dark:border-indigo-500 font-semibold'
-                              : 'text-slate-600 dark:text-slate-400 border-transparent hover:bg-slate-100 dark:hover:bg-slate-900 hover:text-slate-900 dark:hover:text-slate-200 hover:border-slate-300 dark:hover:border-slate-700'
-                          }`}
+                          className={`block rounded-lg px-4 py-2.5 text-sm transition-all duration-200 border-l-2 ${pathname === link.href
+                            ? 'bg-indigo-50/80 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-300 border-indigo-600 dark:border-indigo-500 font-semibold'
+                            : 'text-slate-600 dark:text-slate-400 border-transparent hover:bg-slate-100 dark:hover:bg-slate-900 hover:text-slate-900 dark:hover:text-slate-200 hover:border-slate-300 dark:hover:border-slate-700'
+                            }`}
                         >
                           {link.name}
                         </Link>
@@ -538,7 +544,7 @@ export const Navbar = () => {
                   <button
                     title="Auth not configured"
                     disabled
-                    className="w-full rounded-xl bg-slate-100 dark:bg-slate-900 px-4 py-2.5 text-sm font-semibold text-slate-500 border border-slate-200 dark:border-slate-800 transition-all duration-300 opacity-50 cursor-not-allowed"
+                    className="flex items-center justify-center gap-2 w-full rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 px-4 py-2.5 text-sm font-semibold text-slate-700 dark:text-slate-200 transition-all duration-300 shadow-md active:scale-95"
                   >
                     Sign In
                   </button>
