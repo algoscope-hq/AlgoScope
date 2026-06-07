@@ -95,20 +95,40 @@ const ThemeToggleButton = ({ compact = false, ...props }) => {
 }
 
 const algorithmLinks = [
-  { name: 'Search', href: '/search' },
-  { name: 'Shortest Path', href: '/spath' },
-  { name: 'Sort', href: '/sort' },
-  { name: 'Abstract Data Types', href: '/adt' },
-  { name: 'Array Search', href: '/ldssearch' },
-  { name: "Kadane's Algorithm", href: '/kadane' },
-  { name: "Moore's Voting Algorithm", href: '/moore-voting' },
-  { name: 'Math Theory', href: '/math-theory' },
-  { name: 'String Algorithms', href: '/string-algorithms' },
-  { name: 'Backtracking', href: '/backtracking' },
-  { name: 'Dynamic Programming', href: '/dynamic-programming' },
-  { name: 'Practice Sandbox', href: '/practice' },
-  { name: 'Guess the Algorithm', href: '/challenge' },
-  { name: 'DP Optimization Journey', href: '/dp-journey' },
+  { name: 'Search', href: '/search', difficulty: 'Beginner' },
+  { name: 'Sort', href: '/sort', difficulty: 'Beginner' },
+  { name: 'Array Search', href: '/ldssearch', difficulty: 'Beginner' },
+  { name: 'Shortest Path', href: '/spath', difficulty: 'Intermediate' },
+  { name: 'Abstract Data Types', href: '/adt', difficulty: 'Intermediate' },
+  { name: "Kadane's Algorithm", href: '/kadane', difficulty: 'Intermediate' },
+  {
+    name: "Moore's Voting Algorithm",
+    href: '/moore-voting',
+    difficulty: 'Intermediate',
+  },
+  { name: 'Math Theory', href: '/math-theory', difficulty: 'Intermediate' },
+  {
+    name: 'String Algorithms',
+    href: '/string-algorithms',
+    difficulty: 'Advanced',
+  },
+  { name: 'Backtracking', href: '/backtracking', difficulty: 'Advanced' },
+  {
+    name: 'Dynamic Programming',
+    href: '/dynamic-programming',
+    difficulty: 'Advanced',
+  },
+  {
+    name: 'DP Optimization Journey',
+    href: '/dp-journey',
+    difficulty: 'Advanced',
+  },
+  { name: 'Practice Sandbox', href: '/practice', difficulty: 'Intermediate' },
+  {
+    name: 'Guess the Algorithm',
+    href: '/challenge',
+    difficulty: 'Intermediate',
+  },
 ]
 
 export const Navbar = () => {

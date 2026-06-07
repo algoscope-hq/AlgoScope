@@ -2,10 +2,17 @@ import { useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { MoveUpRight } from 'lucide-react'
+import DifficultyBadge from './DifficultyBadge'
 
 const MotionLink = motion(Link)
 
-export default function AlgoCard({ title, description, link, color }) {
+export default function AlgoCard({
+  title,
+  description,
+  link,
+  color,
+  difficulty,
+}) {
   const cardRef = useRef(null)
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 })
   const [isHovering, setIsHovering] = useState(false)
@@ -88,7 +95,8 @@ export default function AlgoCard({ title, description, link, color }) {
 
       {/* Content */}
       <div className="relative z-10 flex flex-col h-full min-h-[200px]">
-        <div className="mb-4 mt-2">
+        <div className="mb-4 mt-2 flex flex-col gap-3 items-start">
+          {difficulty && <DifficultyBadge difficulty={difficulty} />}
           <h2 className="text-2xl md:text-3xl font-extrabold theme-text-strong tracking-tight mb-3 transition-all duration-300">
             {title}
           </h2>
