@@ -53,6 +53,16 @@ const pageMetadata = {
     description:
       "Visualize Moore's voting algorithm step by step to understand how it finds the majority element in an array with interactive animations and synchronized code.",
   },
+  '/dynamic-programming': {
+    title: 'Dynamic Programming Visualizer | AlgoScope',
+    description:
+      'Visualize dynamic programming algorithms step-by-step with interactive animations for LCS, Knapsack, Coin Change, LIS, and more.',
+  },
+  '/dp-journey': {
+    title: 'DP Journey | AlgoScope',
+    description:
+      'Explore the Dynamic Programming learning journey on AlgoScope with guided visualizations and step-by-step algorithm breakdowns.',
+  },
   '/about': {
     title: 'About AlgoScope',
     description:
