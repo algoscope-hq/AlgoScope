@@ -48,7 +48,6 @@ function SoloMode() {
   useEffect(() => {
     const param = searchParams.get('algo')
     const algo = VALID_ALGOS.has(param) ? param : 'kmp'
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     setAlgorithm(algo)
     setTextInput(DEFAULTS[algo].text)
     setPatternInput(DEFAULTS[algo].pattern)
