@@ -8,7 +8,7 @@ import { MenuSetStringAlgo } from './MenuSetStringAlgo'
 import { CanvasKMP } from './CanvasKMP'
 import { CanvasRabinKarp } from './CanvasRabinKarp'
 import { CanvasZAlgorithm } from './CanvasZAlgorithm'
-import CompareMode from './CompareMode' 
+import CompareMode from './CompareMode'
 import { stringSources } from '../../algorithms/stringAlgo/stringSources'
 
 const DEFAULTS = {
@@ -25,7 +25,7 @@ const TITLES = {
 
 const VALID_ALGOS = new Set(['kmp', 'rabinkarp', 'zalgorithm'])
 
-// ─── Solo visualizer ──────────────────────────────────────────────────────────
+// ─── Solo visualizer ───────────────────────────────────────────────────────────
 function SoloMode() {
   const [searchParams] = useSearchParams()
 
