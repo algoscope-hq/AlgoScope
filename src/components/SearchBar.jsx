@@ -141,13 +141,15 @@ const ALGORITHMS = [
     id: 'linear',
     name: 'Linear Search',
     category: 'Array Search',
-    route: '/ldssearch?algo=linear',
+    // Fix: was 'algo=linear', must match the algoMap key in Visualizer.jsx
+    route: '/ldssearch?algo=linearSearch',
   },
   {
     id: 'binary',
     name: 'Binary Search',
     category: 'Array Search',
-    route: '/ldssearch?algo=binary',
+    // Fix: was 'algo=binary', must match the algoMap key in Visualizer.jsx
+    route: '/ldssearch?algo=binarySearch',
   },
   {
     id: 'kadane',
@@ -167,7 +169,6 @@ const ALGORITHMS = [
     category: 'String',
     route: '/string-algorithms',
   },
-
   {
     id: 'kmp',
     name: 'KMP Algorithm (Knuth-Morris-Pratt)',
@@ -252,7 +253,6 @@ const ALGORITHMS = [
       'constraint',
     ],
   },
-
   // Math Theory
   {
     id: 'mathTheory',
@@ -314,7 +314,7 @@ const ALGORITHMS = [
     route: '/challenge',
     keywords: ['game', 'challenge', 'guess the algorithm', 'quiz', 'play'],
   },
-  //Dynamic-Programming
+  // Dynamic Programming
   {
     id: 'dynamic-prog',
     name: 'Dynamic Programming',
@@ -494,7 +494,6 @@ const SearchBar = () => {
   // Focus input when modal opens
   useEffect(() => {
     if (isModalOpen) {
-      // Small delay to ensure modal is rendered
       const timer = setTimeout(() => {
         inputRef.current?.focus()
       }, 50)
