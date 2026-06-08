@@ -221,37 +221,30 @@ export default function Visualizer() {
     return ''
   }
 
-  const getElementStyle = (index) => {
+  const getElementClass = (index) => {
     const stateClass = getStateClass(index)
+    const baseClasses =
+      'array-ele rounded-xl shadow-lg border px-3 py-2 sm:px-4 sm:py-3 text-base sm:text-lg font-mono font-medium transition-all duration-300'
+
     if (stateClass === 'found') {
-      return {
-        background: '#10b981',
-        color: '#fff',
-        borderColor: '#34d399',
-        transform: 'scale(1.15)',
-        boxShadow: '0 0 15px rgba(16, 185, 129, 0.4)',
-      }
+      return `${baseClasses} bg-emerald-500 border-emerald-400 text-white scale-[1.15] shadow-[0_0_15px_rgba(16,185,129,0.4)]`
     }
     if (stateClass === 'active') {
-      const bgColor = algorithm === 'binarySearch' ? '#facc15' : '#06b6d4'
-      return {
-        background: bgColor,
-        color: algorithm === 'binarySearch' ? '#0f172a' : '#fff',
-        borderColor: algorithm === 'binarySearch' ? '#fde047' : '#22d3ee',
-        transform: 'scale(1.1)',
-        boxShadow: `0 0 15px ${bgColor}66`,
+      if (algorithm === 'binarySearch') {
+        return `${baseClasses} bg-yellow-400 border-yellow-300 text-slate-900 scale-110 shadow-[0_0_15px_rgba(250,204,21,0.4)]`
       }
+      return `${baseClasses} bg-cyan-500 border-cyan-400 text-white scale-110 shadow-[0_0_15px_rgba(6,182,212,0.4)]`
     }
     if (stateClass === 'left') {
-      return { background: '#06b6d4', color: '#fff', borderColor: '#22d3ee' }
+      return `${baseClasses} bg-cyan-500 border-cyan-400 text-white`
     }
     if (stateClass === 'right') {
-      return { background: '#f43f5e', color: '#fff', borderColor: '#fb7185' }
+      return `${baseClasses} bg-rose-500 border-rose-400 text-white`
     }
     if (stateClass === 'inactive') {
-      return { opacity: 0.3, transform: 'scale(0.9)' }
+      return `${baseClasses} bg-slate-800/80 border-slate-700 text-slate-300 opacity-30 scale-90`
     }
-    return undefined
+    return `${baseClasses} bg-slate-800/80 border-slate-700 text-slate-300`
   }
 
   return (
@@ -316,11 +309,7 @@ export default function Visualizer() {
                 </div>
                 <div className="flex flex-wrap justify-center gap-2 sm:gap-3 py-4 sm:py-8">
                   {visualArray.map((item, idx) => (
-                    <span
-                      key={idx}
-                      className="array-ele rounded-xl shadow-lg border border-slate-700 px-3 py-2 sm:px-4 sm:py-3 text-base sm:text-lg font-mono font-medium text-slate-300 bg-slate-800/80 transition-all duration-300"
-                      style={getElementStyle(idx)}
-                    >
+                    <span key={idx} className={getElementClass(idx)}>
                       {item}
                     </span>
                   ))}

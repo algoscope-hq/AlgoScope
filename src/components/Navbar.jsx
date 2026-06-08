@@ -45,7 +45,7 @@ const Line = ({ variants }) => (
   />
 )
 
-const ThemeToggleButton = ({ compact = false }) => {
+const ThemeToggleButton = ({ compact = false, ...props }) => {
   const { isDark, toggleTheme } = useTheme()
   const label = `Switch to ${isDark ? 'light' : 'dark'} mode`
 
@@ -58,6 +58,7 @@ const ThemeToggleButton = ({ compact = false }) => {
       className={`theme-toggle inline-flex items-center justify-center rounded-xl border transition-all duration-300 active:scale-95 focus:outline-none focus:ring-2 focus:ring-cyan-400/40 ${
         compact ? 'h-10 w-10' : 'h-10 w-10 md:h-10 md:w-10'
       }`}
+      {...props}
     >
       {isDark ? (
         <svg
@@ -95,19 +96,40 @@ const ThemeToggleButton = ({ compact = false }) => {
 }
 
 const algorithmLinks = [
-  { name: 'Search', href: '/search' },
-  { name: 'Shortest Path', href: '/spath' },
-  { name: 'Sort', href: '/sort' },
-  { name: 'Abstract Data Types', href: '/adt' },
-  { name: 'Array Search', href: '/ldssearch' },
-  { name: "Kadane's Algorithm", href: '/kadane' },
-  { name: "Moore's Voting Algorithm", href: '/moore-voting' },
-  { name: 'Math Theory', href: '/math-theory' },
-  { name: 'String Algorithms', href: '/string-algorithms' },
-  { name: 'Backtracking', href: '/backtracking' },
-  { name: 'Dynamic Programming', href: '/dynamic-programming' },
-  { name: 'Practice Sandbox', href: '/practice' },
-  { name: 'Guess the Algorithm', href: '/challenge' },
+  { name: 'Search', href: '/search', difficulty: 'Beginner' },
+  { name: 'Sort', href: '/sort', difficulty: 'Beginner' },
+  { name: 'Array Search', href: '/ldssearch', difficulty: 'Beginner' },
+  { name: 'Shortest Path', href: '/spath', difficulty: 'Intermediate' },
+  { name: 'Abstract Data Types', href: '/adt', difficulty: 'Intermediate' },
+  { name: "Kadane's Algorithm", href: '/kadane', difficulty: 'Intermediate' },
+  {
+    name: "Moore's Voting Algorithm",
+    href: '/moore-voting',
+    difficulty: 'Intermediate',
+  },
+  { name: 'Math Theory', href: '/math-theory', difficulty: 'Intermediate' },
+  {
+    name: 'String Algorithms',
+    href: '/string-algorithms',
+    difficulty: 'Advanced',
+  },
+  { name: 'Backtracking', href: '/backtracking', difficulty: 'Advanced' },
+  {
+    name: 'Dynamic Programming',
+    href: '/dynamic-programming',
+    difficulty: 'Advanced',
+  },
+  {
+    name: 'DP Optimization Journey',
+    href: '/dp-journey',
+    difficulty: 'Advanced',
+  },
+  { name: 'Practice Sandbox', href: '/practice', difficulty: 'Intermediate' },
+  {
+    name: 'Guess the Algorithm',
+    href: '/challenge',
+    difficulty: 'Intermediate',
+  },
 ]
 
 export const Navbar = () => {
@@ -177,6 +199,7 @@ export const Navbar = () => {
         <div className="flex h-14 items-center justify-between relative">
           <Link
             to="/"
+            data-tour="logo-brand"
             className="flex flex-row text-xl font-semibold tracking-tight group"
           >
             <div className="w-10 h-10 m-auto rounded flex items-center justify-center mr-3 transition-transform group-hover:scale-110">
@@ -189,7 +212,10 @@ export const Navbar = () => {
           </Link>
 
           {/* Desktop Search */}
-          <div className="hidden md:flex flex-1 justify-center max-w-xs mx-4 z-10">
+          <div
+            data-tour="search-bar"
+            className="hidden md:flex flex-1 justify-center max-w-xs mx-4 z-10"
+          >
             <SearchBar />
           </div>
 
@@ -213,6 +239,7 @@ export const Navbar = () => {
               >
                 <button
                   ref={exploreButtonRef}
+                  data-tour="explore-nav"
                   type="button"
                   aria-haspopup="menu"
                   aria-expanded={isExploreMenuOpen}
@@ -301,6 +328,7 @@ export const Navbar = () => {
               >
                 <Link
                   to="/practice"
+                  data-tour="practice-nav"
                   className={`relative text-sm font-medium px-4 py-1.5 rounded-lg transition-all duration-300 z-10 ${
                     pathname === '/practice'
                       ? 'text-indigo-600 dark:text-indigo-300 font-semibold'
@@ -328,6 +356,7 @@ export const Navbar = () => {
               >
                 <Link
                   to="/challenge"
+                  data-tour="challenge-nav"
                   className={`relative text-sm font-medium px-4 py-1.5 rounded-lg transition-all duration-300 z-10 ${
                     pathname === '/challenge'
                       ? 'text-indigo-600 dark:text-indigo-300 font-semibold'
@@ -349,10 +378,11 @@ export const Navbar = () => {
               </li>
             </ul>
 
-            <ThemeToggleButton />
+            <ThemeToggleButton data-tour="theme-toggle" />
 
             <a
               href="https://github.com/algoscope-hq/AlgoScope"
+              data-tour="github-btn"
               target="_blank"
               rel="noopener noreferrer"
               className="flex items-center gap-2 border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/40 hover:bg-slate-100 dark:hover:bg-slate-800/80 text-slate-700 dark:text-slate-200 rounded-xl px-4 py-1.5 text-sm font-medium transition-all duration-300 shadow-md active:scale-95"
@@ -366,7 +396,10 @@ export const Navbar = () => {
               <span>Github</span>
             </a>
 
-            <div className="flex items-center gap-4 border-l border-slate-200 dark:border-slate-800/80 pl-6">
+            <div
+              data-tour="profile-nav"
+              className="flex items-center gap-4 border-l border-slate-200 dark:border-slate-800/80 pl-6"
+            >
               {HAS_CLERK ? (
                 <>
                   <SignedOut>
@@ -421,6 +454,7 @@ export const Navbar = () => {
 
             <motion.button
               type="button"
+              data-tour="mobile-menu-btn"
               aria-label="Toggle menu"
               aria-expanded={open}
               onClick={() => setOpen((o) => !o)}

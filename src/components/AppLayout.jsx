@@ -5,6 +5,7 @@ import { motion } from 'framer-motion'
 import SeoHead from './SeoHead'
 import Breadcrumbs from './Breadcrumbs'
 import ScrollToTopButton from './ScrollToTopButton'
+import AlgorithmNotes from './notes/AlgorithmNotes'
 
 const Background = () => (
   <div className="absolute inset-0 z-0 pointer-events-none fixed">
@@ -12,7 +13,11 @@ const Background = () => (
   </div>
 )
 
-export default function AppLayout({ children, showBackground = true }) {
+export default function AppLayout({
+  children,
+  showBackground = true,
+  notesKey,
+}) {
   return (
     <motion.div
       className="theme-app min-h-screen flex flex-col relative overflow-x-hidden"
@@ -28,6 +33,10 @@ export default function AppLayout({ children, showBackground = true }) {
         <Navbar />
 
         <Breadcrumbs />
+
+        {notesKey ? (
+          <AlgorithmNotes key={notesKey} storageKey={notesKey} />
+        ) : null}
 
         <div className="flex-1">{children}</div>
 

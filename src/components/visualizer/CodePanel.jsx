@@ -1,6 +1,7 @@
-import React, { useEffect, useState, useRef, memo } from 'react'
+import React, { useEffect, useState, useRef, memo, useContext } from 'react'
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter'
 import * as themes from 'react-syntax-highlighter/dist/esm/styles/prism'
+import { ThemeContext } from '../../context/theme'
 
 const CodePanel = memo(function CodePanel({
   title,
@@ -11,9 +12,13 @@ const CodePanel = memo(function CodePanel({
 }) {
   const scrollContainerRef = useRef(null)
 
-  const [theme, setTheme] = useState('vscDarkPlus')
+  const { isDark } = useContext(ThemeContext)
+
+  const defaultLightTheme = 'materialLight'
+  const [manualTheme, setManualTheme] = useState(null)
   const [copied, setCopied] = useState(false)
 
+  const theme = manualTheme ?? (isDark ? 'vscDarkPlus' : defaultLightTheme)
   const activeTheme = themes[theme] ?? themes.vscDarkPlus
 
   useEffect(() => {
@@ -156,7 +161,9 @@ const CodePanel = memo(function CodePanel({
             <div className="flex min-w-max items-center gap-3 pb-1">
               <select
                 value={theme}
-                onChange={(event) => setTheme(event.target.value)}
+                onChange={(event) => {
+                  setManualTheme(event.target.value)
+                }}
                 className="h-10 min-w-[140px] rounded-xl border border-slate-700 bg-slate-900 px-3 text-sm text-slate-100 transition focus:border-cyan-500 focus:outline-none"
               >
                 <option value="vscDarkPlus">VSC Dark Plus</option>
@@ -164,6 +171,8 @@ const CodePanel = memo(function CodePanel({
                 <option value="dracula">Dracula</option>
                 <option value="coldarkDark">Coldark Dark</option>
                 <option value="materialDark">Material Dark</option>
+                <option value="prism">Prism (Light)</option>
+                <option value="materialLight">Material Light</option>
               </select>
 
               <button
@@ -202,7 +211,8 @@ const CodePanel = memo(function CodePanel({
             padding: '1rem 0.75rem 1rem 0.5rem',
             fontSize: '0.9rem',
             lineHeight: '1.65',
-            background: 'transparent',
+            background: isDark ? 'transparent' : 'rgba(15, 23, 42, 0.94)',
+            color: isDark ? undefined : '#f8fafc',
           }}
           lineProps={(lineNumber) => ({
             'data-line-number': lineNumber,

@@ -53,6 +53,7 @@ export function Hero() {
 
             <motion.h1
               id="hero-heading"
+              data-tour="hero-heading"
               variants={item}
               className="logo-font mt-4 text-[1.9rem] font-semibold leading-[1.04] tracking-[-0.04em] theme-text-strong sm:mt-5 sm:text-[2.4rem] lg:text-[2.75rem] xl:text-[2.95rem]"
             >
@@ -78,6 +79,7 @@ export function Hero() {
             >
               <a
                 href="#explore"
+                data-tour="explore-visualizers-cta"
                 onClick={(e) => {
                   e.preventDefault()
                   document
@@ -102,6 +104,7 @@ export function Hero() {
               </a>
               <a
                 href="/practice"
+                data-tour="practice-cta"
                 className="inline-flex h-11 w-full items-center justify-center rounded-[10px] border theme-button-secondary px-4 text-[13px] font-semibold shadow-[0_1px_2px_rgba(0,0,0,0.05)] transition-all duration-300 active:scale-[0.98] sm:h-10 sm:w-auto"
               >
                 Practice
