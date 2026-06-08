@@ -130,6 +130,11 @@ const algorithmLinks = [
     href: '/challenge',
     difficulty: 'Intermediate',
   },
+  {
+    name: 'Sliding Window',
+    href: '/sliding-window',
+    difficulty: 'Advanced',
+  },
 ]
 
 export const Navbar = () => {
@@ -322,6 +327,33 @@ export const Navbar = () => {
               </li>
 
               {/* Top Level Link: Practice */}
+              <li
+                className="relative py-1.5"
+                onMouseEnter={() => setHoveredTab('favorites')}
+              >
+                <Link
+                  to="/favorites"
+                  data-tour="favorites-nav"
+                  className={`relative text-sm font-medium px-4 py-1.5 rounded-lg transition-all duration-300 z-10 ${
+                    pathname === '/favorites'
+                      ? 'text-indigo-600 dark:text-indigo-300 font-semibold'
+                      : 'text-slate-400 hover:text-slate-900 dark:hover:text-slate-100'
+                  }`}
+                >
+                  Favorites
+                </Link>
+                {hoveredTab === 'favorites' && (
+                  <motion.div
+                    layoutId="nav-hover-pill"
+                    className="absolute inset-0 bg-slate-200/50 dark:bg-slate-900/60 border border-slate-300/30 dark:border-slate-800/50 rounded-lg -z-0"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ type: 'spring', stiffness: 350, damping: 28 }}
+                  />
+                )}
+              </li>
+
               <li
                 className="relative py-1.5"
                 onMouseEnter={() => setHoveredTab('practice')}

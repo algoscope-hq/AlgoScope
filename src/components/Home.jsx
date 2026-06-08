@@ -17,6 +17,7 @@ const containerVariants = {
 
 const ALGORITHMS = [
   {
+    id: 'sorting',
     title: 'Sorting',
     description: 'Visualizing Bubble, Merge, Quick, Heap, and Shell Sort.',
     color: 'theme-card border-blue-500/30 hover:border-blue-400',
@@ -24,6 +25,7 @@ const ALGORITHMS = [
     difficulty: 'Beginner',
   },
   {
+    id: 'searching',
     title: 'Searching',
     description: 'Explore BFS, DFS, and other traversal methods.',
     color: 'theme-card border-cyan-500/30 hover:border-cyan-400',
@@ -31,6 +33,7 @@ const ALGORITHMS = [
     difficulty: 'Beginner',
   },
   {
+    id: 'graph-algorithms',
     title: 'Graph Algorithms',
     description: 'Dijkstra, Floyd-Warshall, and Topological Sort.',
     color: 'theme-card border-purple-500/30 hover:border-purple-400',
@@ -38,6 +41,7 @@ const ALGORITHMS = [
     difficulty: 'Intermediate',
   },
   {
+    id: 'array-search',
     title: 'Array Search',
     description: 'Linear and Binary search visualization.',
     color: 'theme-card border-orange-500/30 hover:border-orange-400',
@@ -45,6 +49,7 @@ const ALGORITHMS = [
     difficulty: 'Beginner',
   },
   {
+    id: 'abstract-data-types',
     title: 'Abstract Data Types',
     description:
       'Stacks, Queues, Binary Trees, Binary Heaps, and Priority Queues.',
@@ -53,6 +58,7 @@ const ALGORITHMS = [
     difficulty: 'Intermediate',
   },
   {
+    id: 'kadane-algorithm',
     title: 'Kadane Algorithm',
     description: 'Visualize Maximum Subarray Sum using Kadane’s Algorithm.',
     color: 'theme-card border-pink-500/30 hover:border-pink-400',
@@ -60,6 +66,7 @@ const ALGORITHMS = [
     difficulty: 'Intermediate',
   },
   {
+    id: 'moores-voting-algorithm',
     title: "Moore's Voting Algorithm",
     description:
       "Visualize the Moore's Voting Algorithm for finding the majority element.",
@@ -68,6 +75,7 @@ const ALGORITHMS = [
     difficulty: 'Intermediate',
   },
   {
+    id: 'math-theory',
     title: 'Math Theory',
     description:
       'Visualize GCD, Fast Exponentiation, and Bit Manipulation step-by-step.',
@@ -76,6 +84,7 @@ const ALGORITHMS = [
     difficulty: 'Intermediate',
   },
   {
+    id: 'string-algorithms',
     title: 'String Algorithms',
     description:
       'Visualize KMP, Rabin-Karp, Z-Algorithm, and pattern matching techniques step-by-step.',
@@ -84,6 +93,7 @@ const ALGORITHMS = [
     difficulty: 'Advanced',
   },
   {
+    id: 'dynamic-programming',
     title: 'Dynamic Programming',
     description:
       'LCS, 0/1 Knapsack, Coin Change, and LIS — watch the DP table fill step by step.',
@@ -93,6 +103,7 @@ const ALGORITHMS = [
     difficulty: 'Advanced',
   },
   {
+    id: 'dp-optimization-journey',
     title: 'DP Optimization Journey',
     description:
       'Visualize the progression from Recursion to Space Optimization.',
@@ -101,6 +112,7 @@ const ALGORITHMS = [
     difficulty: 'Advanced',
   },
   {
+    id: 'backtracking',
     title: 'Backtracking',
     description:
       'N-Queens, Sudoku Solver, and Tower of Hanoi with step-by-step recursion.',
@@ -108,10 +120,19 @@ const ALGORITHMS = [
     link: '/backtracking',
     difficulty: 'Advanced',
   },
+  {
+    title: 'Sliding Window',
+    description:
+      'Visualize the sliding window algorithm use to optimally solve problems on substrings and subarrays.',
+    color: 'theme-card border-rose-500/30 hover:border-rose-400',
+    link: '/sliding-window',
+    difficulty: 'Advanced',
+  },
 ]
 
 const OPERATING_SYSTEMS = [
   {
+    id: 'cpu-scheduling',
     title: 'CPU Scheduling',
     description: 'Visualize FCFS, SJF, Round Robin, and Priority Scheduling.',
     color: 'theme-card border-cyan-500/30 hover:border-cyan-400',
@@ -119,6 +140,7 @@ const OPERATING_SYSTEMS = [
     difficulty: 'Beginner',
   },
   {
+    id: 'page-replacement',
     title: 'Page Replacement',
     description: 'Explore FIFO, LRU, and Optimal page replacement algorithms.',
     color: 'theme-card border-purple-500/30 hover:border-purple-400',
@@ -126,6 +148,7 @@ const OPERATING_SYSTEMS = [
     difficulty: 'Intermediate',
   },
   {
+    id: 'disk-scheduling',
     title: 'Disk Scheduling',
     description:
       'Understand SCAN, C-SCAN, SSTF and disk head movement strategies.',
@@ -210,7 +233,8 @@ export const Home = () => {
             >
               {filteredAlgos.map((algo) => (
                 <AlgoCard
-                  key={algo.title}
+                  key={algo.id}
+                  id={algo.id}
                   title={algo.title}
                   description={algo.description}
                   color={algo.color}
@@ -245,7 +269,8 @@ export const Home = () => {
               >
                 {filteredOS.map((os) => (
                   <AlgoCard
-                    key={os.title}
+                    key={os.id}
+                    id={os.id}
                     title={os.title}
                     description={os.description}
                     color={os.color}
@@ -277,6 +302,7 @@ export const Home = () => {
               >
                 <div data-tour="challenge-card" className="w-full">
                   <AlgoCard
+                    id="guess-the-algorithm"
                     title="Guess the Algorithm"
                     description="Test your algorithm recognition skills! Can you identify the sorting algorithm purely from its visual animation?"
                     color="theme-card border-yellow-500/30 hover:border-yellow-400"
