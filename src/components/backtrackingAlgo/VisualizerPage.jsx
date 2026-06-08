@@ -12,6 +12,7 @@ import { CanvasGraphColoring } from './CanvasGraphColoring'
 import { MenuSetAlgoBacktracking } from './MenuSetAlgoBacktracking'
 import { ComparisonMode } from './ComparisonMode'
 import { getBacktrackingSource } from '../../algorithms/backtracking/backtrackingSources'
+import { useKeyboardShortcuts } from '../visualizer/useKeyboardShortcuts'
 
 export default function VisualizerPage() {
   useEffect(() => {
@@ -148,6 +149,13 @@ function SoloMode() {
 
   const handleVisualize = () => setTrigger((t) => t + 1)
   const handleReset = () => setTrigger(0)
+
+  useKeyboardShortcuts({
+    onPlayPause: handleVisualize,
+    onReset: handleReset,
+    onSpeedUp: () => setSpeed((s) => Math.min(3, +(s + 0.25).toFixed(2))),
+    onSlowDown: () => setSpeed((s) => Math.max(0.25, +(s - 0.25).toFixed(2))),
+  })
 
   const handleAlgoChange = (a) => {
     setAlgo(a)

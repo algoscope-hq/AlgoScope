@@ -5,6 +5,185 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.11.0] - 2026-06-07
+
+### Added
+
+- format & lint
+- format & lint
+- add algorithm notes and annotations feature
+
+### Fixed
+
+- format & lint
+- remove deprecated 'node' npm package from dependencies
+- correct formFieldLabel layout on signup form
+- improve SpeedSlider responsive UI for mobile devices
+
+### 📂 Changed Files
+
+```
+- 📁 **api/**
+  - ✏️ index.js
+- 📁 **src/**
+  - 📁 **components/**
+    - 📁 **arraySearch/**
+      - ✏️ VisualizerPage.jsx
+    - 📁 **kadaneAlgo/**
+      - ✏️ VisualizerPage.jsx
+    - 📁 **mooreVotingAlgo/**
+      - ✏️ VisualizerPage.jsx
+    - 📁 **notes/**
+      - ➕ AlgorithmNotes.jsx
+    - 📁 **sortingAlgo/**
+      - ✏️ VisualizerPage.jsx
+    - ✏️ AlgoCard.jsx
+    - ✏️ AppLayout.jsx
+    - ➕ DifficultyBadge.jsx
+    - ➕ difficultyColors.js
+    - ✏️ Home.jsx
+    - ➕ LearningPathSuggestions.jsx
+    - ✏️ Navbar.jsx
+    - ✏️ SpeedSlider.jsx
+  - 📁 **data/**
+    - ➕ difficultyMap.js
+  - ✏️ App.jsx
+  - ✏️ main.jsx
+- ✏️ CHANGELOG.md
+- ✏️ package.json
+```
+
+## [1.10.0] - 2026-06-06
+
+### Added
+
+- updated the searchbar with dsu and dp-journey
+- add operating systems section and category page
+- improve onboarding tour accessibility, restore previous button, and add mobile selector fallbacks
+- implement guided onboarding tour spotlight on home page
+- Add DP Optimization Journey visualizer with recursion tree and space complexity analysis
+- add disjoint set union visualizer
+- updated search and explore bar
+- add graph coloring visualizer
+- add aria-label to LinkedIn icon buttons for accessibility
+- add LinkedIn icons for both maintainers to footer social links
+- add scroll-to-bottom button alongside scroll-to-top
+- centralize app version from package.json and display dynamically across UI
+- add math theory deep links
+- add FFT algorithm visualization
+- add reset all functionality to grid visualizer
+
+### Fixed
+
+- add CORS restrictions, Helmet, rate limiting, and body size limit
+- improve Light Mode text and code readability
+- added code highlighting to Dynamic Programming
+- update repository and issue tracker URLs
+- format code with prettier
+- integrate useKeyboardShortcuts into Sorting, Shortest Path, and Backtracking visualizers
+- address CodeRabbit review comments
+- add tooltip and clearer terminal text for non-JS languages in Practice Sandbox
+- address review comments
+- hide scroll buttons on non-scrollable pages
+- enhance hero meta items with icons and background tags for better visual hierarchy
+- filter test case seeding check to current algorithm instead of global db emptiness
+- improve search modal focus management
+- Navbar Practice and Challenge links now highlight on active route
+- align footer array search card copy
+- make explore dropdown keyboard accessible
+- resolve unreachable path bug when source and target are the same node (#496)
+- format App.jsx router setup
+- resolve synchronous state updates in visualizer useEffect hooks
+- format
+- Sieve of Eratosthenes visualizer crashes on decimal inputs
+- lint & format
+- lint & format
+- lint & format
+- validate dynamic programming inputs
+- clamp oversized FFT inputs to maximum supported size
+- resolve stale visualizer states and router recreation
+- AlgoCard vanish issue
+- Fixed the Algo Card
+- preserve IndexedDB identities during backup imports (#321)
+- irrelevant search suggestions in search bar
+
+### 📂 Changed Files
+
+```
+- 📁 **.github/**
+  - 📁 **ISSUE_TEMPLATE/**
+    - ✏️ config.yml
+- 📁 **api/**
+  - ✏️ index.js
+- 📁 **src/**
+  - 📁 **algorithms/**
+    - 📁 **backtracking/**
+      - ✏️ backtrackingSources.js
+    - 📁 **mathTheory/**
+      - ✏️ mathTheorySources.jsx
+      - ✏️ mathTheorySteps.jsx
+  - 📁 **components/**
+    - 📁 **about/**
+      - ✏️ About.jsx
+    - 📁 **backtrackingAlgo/**
+      - ➕ CanvasGraphColoring.jsx
+      - ✏️ MenuSetAlgoBacktracking.jsx
+      - ✏️ VisualizerPage.jsx
+    - 📁 **challenge/**
+      - ✏️ ChallengeVisualizer.jsx
+    - 📁 **dataStructures/**
+      - ✏️ adtSources.js
+      - ✏️ DSLayout.jsx
+      - ➕ dsuIV.jsx
+    - 📁 **dynamicProgramming/**
+      - ➕ DPOptimizationJourney.jsx
+      - ✏️ DPVisualizer.jsx
+    - 📁 **hero/**
+      - ✏️ Hero.jsx
+    - 📁 **kadaneAlgo/**
+      - ✏️ CanvasKadane.jsx
+    - 📁 **MathTheory/**
+      - ➕ CanvasFFT.jsx
+      - ✏️ MathSoloVisualizer.jsx
+    - 📁 **mooreVotingAlgo/**
+      - ✏️ CanvasMooreVoting.jsx
+    - 📁 **operatingSystems/**
+      - ➕ OperatingSystemsPage.jsx
+    - 📁 **shortestPathAlgo/**
+      - ✏️ CanvasShortestPath.jsx
+      - ✏️ GridVisualizer.jsx
+      - ✏️ ShortestPathPage.jsx
+    - 📁 **sortingAlgo/**
+      - ✏️ Visualizer.jsx
+    - 📁 **testCaseManager/**
+      - ✏️ TestCaseManager.jsx
+    - 📁 **visualizer/**
+      - ✏️ CodePanel.jsx
+    - ✏️ AlgoCard.jsx
+    - ✏️ CodeEditor.jsx
+    - ✏️ Footer.jsx
+    - ➕ GuidedTour.jsx
+    - ✏️ Home.jsx
+    - ✏️ Navbar.jsx
+    - ✏️ PracticePage.jsx
+    - ✏️ ScrollToTopButton.jsx
+    - ✏️ SearchBar.jsx
+  - 📁 **data/**
+    - ✏️ complexityMap.js
+    - ➕ tourSteps.js
+  - 📁 **lib/**
+    - ✏️ testCaseStore.js
+    - ➕ testCaseStore.test.js
+    - ✏️ utils.js
+    - ➕ version.js
+  - ✏️ App.jsx
+  - ✏️ input.css
+- ✏️ CHANGELOG.md
+- ✏️ package-lock.json
+- ✏️ package.json
+- ➕ SECURITY.md
+```
+
 ## [1.9.0] - 2026-05-29
 
 ### Added
@@ -898,3 +1077,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - ➕ vite.config.js
 - ➕ yarn.lock
 ```
+

@@ -56,10 +56,16 @@ const StringAlgoVisualizerPage = lazy(
 const DPVisualizerPage = lazy(
   () => import('./components/dynamicProgramming/DPVisualizer')
 )
+const DPOptimizationJourneyPage = lazy(
+  () => import('./components/dynamicProgramming/DPOptimizationJourney') // Path to your main component
+)
 const PracticePage = lazy(() => import('./components/PracticePage'))
 const AboutAlgoScope = lazy(() => import('./components/about/About'))
 const NotFound = lazy(() => import('./components/PageNotFound'))
 const ChallengePage = lazy(() => import('./components/challenge/ChallengePage'))
+const OperatingSystemsPage = lazy(
+  () => import('./components/operatingSystems/OperatingSystemsPage')
+)
 
 // Simple fallback for Suspense
 const PageLoader = () => (
@@ -83,7 +89,7 @@ const router = createBrowserRouter([
     path: '/search',
     element: (
       <Suspense fallback={<PageLoader />}>
-        <AppLayout>
+        <AppLayout notesKey="algo-notes-search">
           <VisualizerPage />
         </AppLayout>
       </Suspense>
@@ -93,7 +99,7 @@ const router = createBrowserRouter([
     path: '/math-theory',
     element: (
       <Suspense fallback={<PageLoader />}>
-        <AppLayout>
+        <AppLayout notesKey="algo-notes-math-theory">
           <MathTheory />
         </AppLayout>
       </Suspense>
@@ -103,7 +109,7 @@ const router = createBrowserRouter([
     path: '/spath',
     element: (
       <Suspense fallback={<PageLoader />}>
-        <AppLayout>
+        <AppLayout notesKey="algo-notes-shortest-path">
           <ShortestPathPage />
         </AppLayout>
       </Suspense>
@@ -148,7 +154,7 @@ const router = createBrowserRouter([
     path: '/sort',
     element: (
       <Suspense fallback={<PageLoader />}>
-        <AppLayout>
+        <AppLayout notesKey="algo-notes-sorting">
           <SortingVisualizerPage />
         </AppLayout>
       </Suspense>
@@ -158,7 +164,7 @@ const router = createBrowserRouter([
     path: '/ldssearch',
     element: (
       <Suspense fallback={<PageLoader />}>
-        <AppLayout>
+        <AppLayout notesKey="algo-notes-array-search">
           <ArrayVisualizerPage />
         </AppLayout>
       </Suspense>
@@ -178,7 +184,7 @@ const router = createBrowserRouter([
     path: '/kadane',
     element: (
       <Suspense fallback={<PageLoader />}>
-        <AppLayout>
+        <AppLayout notesKey="algo-notes-kadane">
           <KadaneVisualizerPage />
         </AppLayout>
       </Suspense>
@@ -188,7 +194,7 @@ const router = createBrowserRouter([
     path: '/moore-voting',
     element: (
       <Suspense fallback={<PageLoader />}>
-        <AppLayout>
+        <AppLayout notesKey="algo-notes-moore-voting">
           <MooreVotingVisualizerPage />
         </AppLayout>
       </Suspense>
@@ -198,7 +204,7 @@ const router = createBrowserRouter([
     path: '/backtracking',
     element: (
       <Suspense fallback={<PageLoader />}>
-        <AppLayout>
+        <AppLayout notesKey="algo-notes-backtracking">
           <BacktrackingVisualizerPage />
         </AppLayout>
       </Suspense>
@@ -208,12 +214,23 @@ const router = createBrowserRouter([
     path: '/dynamic-programming',
     element: (
       <Suspense fallback={<PageLoader />}>
-        <AppLayout>
+        <AppLayout notesKey="algo-notes-dynamic-programming">
           <DPVisualizerPage />
         </AppLayout>
       </Suspense>
     ),
   },
+  {
+    path: '/dp-journey',
+    element: (
+      <Suspense fallback={<PageLoader />}>
+        <AppLayout notesKey="algo-notes-dp-journey">
+          <DPOptimizationJourneyPage />
+        </AppLayout>
+      </Suspense>
+    ),
+  },
+
   {
     path: '/challenge',
     element: (
@@ -228,8 +245,18 @@ const router = createBrowserRouter([
     path: '/string-algorithms',
     element: (
       <Suspense fallback={<PageLoader />}>
-        <AppLayout>
+        <AppLayout notesKey="algo-notes-string-algorithms">
           <StringAlgoVisualizerPage />
+        </AppLayout>
+      </Suspense>
+    ),
+  },
+  {
+    path: '/operating-systems',
+    element: (
+      <Suspense fallback={<PageLoader />}>
+        <AppLayout>
+          <OperatingSystemsPage />
         </AppLayout>
       </Suspense>
     ),
