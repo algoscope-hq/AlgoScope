@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState, useCallback } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useSearchParams } from 'react-router-dom'
 import SpeedSlider from '../SpeedSlider'
@@ -48,32 +48,34 @@ function SoloMode() {
   useEffect(() => {
     const param = searchParams.get('algo')
     const algo = VALID_ALGOS.has(param) ? param : 'kmp'
+    if (algo !== algorithm) {
+      setAlgorithm(algo)
+      setTextInput(DEFAULTS[algo].text)
+      setPatternInput(DEFAULTS[algo].pattern)
+      setActiveText('')
+      setActivePattern('')
+    }
+  }, [searchParams, algorithm])
+
+  const handleAlgorithmChange = (algo) => {
     setAlgorithm(algo)
     setTextInput(DEFAULTS[algo].text)
     setPatternInput(DEFAULTS[algo].pattern)
     setActiveText('')
     setActivePattern('')
-  }, [searchParams])
+  }
 
-  const handleAlgorithmChange = useCallback((algo) => {
-    setAlgorithm(algo)
-    setTextInput(DEFAULTS[algo].text)
-    setPatternInput(DEFAULTS[algo].pattern)
-    setActiveText('')
-    setActivePattern('')
-  }, [])
-
-  const handleVisualize = useCallback(() => {
+  const handleVisualize = () => {
     setActiveText(textInput.trim())
     setActivePattern(patternInput.trim())
-  }, [textInput, patternInput])
+  }
 
-  const handleReset = useCallback(() => {
+  const handleReset = () => {
     setTextInput(DEFAULTS[algorithm].text)
     setPatternInput(DEFAULTS[algorithm].pattern)
     setActiveText('')
     setActivePattern('')
-  }, [algorithm])
+  }
 
   const currentSource = useMemo(
     () =>
