@@ -12,7 +12,7 @@ import CompareMode from './CompareMode' // ← new
 import { stringSources } from '../../algorithms/stringAlgo/stringSources'
 
 const DEFAULTS = {
-  kmp: { text: 'AABAACAADAABAABA', pattern: 'AABA' },
+  kmp: { text: 'AABAACAADAABAABA', pattern: 'AOBA' },
   rabinkarp: { text: 'ABCCDABCDABDC', pattern: 'ABCD' },
   zalgorithm: { text: 'AABXAABXCAABXAABXAY', pattern: 'AABX' },
 }
@@ -23,15 +23,35 @@ const TITLES = {
   zalgorithm: 'Z-Algorithm Implementation',
 }
 
-// ─── Solo visualizer (extracted from original VisualizerPage) ─────────────────
+const VALID_ALGOS = new Set(['kmp', 'rabinkarp', 'zalgorithm'])
+
+// ─── Solo visualizer ──────────────────────────────────────────────────────────
 function SoloMode() {
-  const [algorithm, setAlgorithm] = useState('kmp')
-  const [textInput, setTextInput] = useState(DEFAULTS.kmp.text)
-  const [patternInput, setPatternInput] = useState(DEFAULTS.kmp.pattern)
+  const [searchParams] = useSearchParams()
+
+  const initialAlgo = (() => {
+    const param = searchParams.get('algo')
+    return VALID_ALGOS.has(param) ? param : 'kmp'
+  })()
+
+  const [algorithm, setAlgorithm] = useState(initialAlgo)
+  const [textInput, setTextInput] = useState(DEFAULTS[initialAlgo].text)
+  const [patternInput, setPatternInput] = useState(DEFAULTS[initialAlgo].pattern)
   const [activeText, setActiveText] = useState('')
   const [activePattern, setActivePattern] = useState('')
   const [speed, setSpeed] = useState(1)
   const [language, setLanguage] = useState('javascript')
+
+  // Sync state when the algo param changes (e.g. user navigates via search bar)
+  useEffect(() => {
+    const param = searchParams.get('algo')
+    const algo = VALID_ALGOS.has(param) ? param : 'kmp'
+    setAlgorithm(algo)
+    setTextInput(DEFAULTS[algo].text)
+    setPatternInput(DEFAULTS[algo].pattern)
+    setActiveText('')
+    setActivePattern('')
+  }, [searchParams])
 
   const handleAlgorithmChange = (algo) => {
     setAlgorithm(algo)
@@ -151,7 +171,7 @@ export default function VisualizerPage() {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 1, ease: 'easeInOut' }}
     >
-      {/* Header with tabs — identical structure to sortingAlgo/VisualizerPage */}
+      {/* Header with tabs */}
       <div className="px-4 sm:px-6 pt-4 sm:pt-6 pb-0 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
         <p className="text-xs font-semibold uppercase tracking-[0.2em] text-cyan-400/80">
           String Algorithms Visualizer
