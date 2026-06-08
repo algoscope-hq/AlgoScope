@@ -1,92 +1,92 @@
-import React, { useEffect, useMemo, useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { useSearchParams } from "react-router-dom";
-import SpeedSlider from "../SpeedSlider";
-import ComplexityCard from "../ComplexityCard";
-import CodePanel from "../visualizer/CodePanel";
-import { MenuSetStringAlgo } from "./MenuSetStringAlgo";
-import { CanvasKMP } from "./CanvasKMP";
-import { CanvasRabinKarp } from "./CanvasRabinKarp";
-import { CanvasZAlgorithm } from "./CanvasZAlgorithm";
-import CompareMode from "./CompareMode"; // ← new
-import { stringSources } from "../../algorithms/stringAlgo/stringSources";
+import React, { useEffect, useMemo, useState } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
+import { useSearchParams } from 'react-router-dom'
+import SpeedSlider from '../SpeedSlider'
+import ComplexityCard from '../ComplexityCard'
+import CodePanel from '../visualizer/CodePanel'
+import { MenuSetStringAlgo } from './MenuSetStringAlgo'
+import { CanvasKMP } from './CanvasKMP'
+import { CanvasRabinKarp } from './CanvasRabinKarp'
+import { CanvasZAlgorithm } from './CanvasZAlgorithm'
+import CompareMode from './CompareMode' 
+import { stringSources } from '../../algorithms/stringAlgo/stringSources'
 
 const DEFAULTS = {
-  kmp: { text: "AABAACAADAABAABA", pattern: "AOBA" },
-  rabinkarp: { text: "ABCCDABCDABDC", pattern: "ABCD" },
-  zalgorithm: { text: "AABXAABXCAABXAABXAY", pattern: "AABX" },
-};
+  kmp: { text: 'AABAACAADAABAABA', pattern: 'AABA' },
+  rabinkarp: { text: 'ABCCDABCDABDC', pattern: 'ABCD' },
+  zalgorithm: { text: 'AABXAABXCAABXAABXAY', pattern: 'AABX' },
+}
 
 const TITLES = {
-  kmp: "KMP Implementation",
-  rabinkarp: "Rabin-Karp Implementation",
-  zalgorithm: "Z-Algorithm Implementation",
-};
+  kmp: 'KMP Implementation',
+  rabinkarp: 'Rabin-Karp Implementation',
+  zalgorithm: 'Z-Algorithm Implementation',
+}
 
-const VALID_ALGOS = new Set(["kmp", "rabinkarp", "zalgorithm"]);
+const VALID_ALGOS = new Set(['kmp', 'rabinkarp', 'zalgorithm'])
 
 // ─── Solo visualizer ──────────────────────────────────────────────────────────
 function SoloMode() {
-  const [searchParams] = useSearchParams();
+  const [searchParams] = useSearchParams()
 
   const initialAlgo = (() => {
-    const param = searchParams.get("algo");
-    return VALID_ALGOS.has(param) ? param : "kmp";
-  })();
+    const param = searchParams.get('algo')
+    return VALID_ALGOS.has(param) ? param : 'kmp'
+  })()
 
-  const [algorithm, setAlgorithm] = useState(initialAlgo);
-  const [textInput, setTextInput] = useState(DEFAULTS[initialAlgo].text);
+  const [algorithm, setAlgorithm] = useState(initialAlgo)
+  const [textInput, setTextInput] = useState(DEFAULTS[initialAlgo].text)
   const [patternInput, setPatternInput] = useState(
-    DEFAULTS[initialAlgo].pattern,
-  );
-  const [activeText, setActiveText] = useState("");
-  const [activePattern, setActivePattern] = useState("");
-  const [speed, setSpeed] = useState(1);
-  const [language, setLanguage] = useState("javascript");
+    DEFAULTS[initialAlgo].pattern
+  )
+  const [activeText, setActiveText] = useState('')
+  const [activePattern, setActivePattern] = useState('')
+  const [speed, setSpeed] = useState(1)
+  const [language, setLanguage] = useState('javascript')
 
   // Sync state when the algo param changes (e.g. user navigates via search bar)
   useEffect(() => {
-    const param = searchParams.get("algo");
-    const algo = VALID_ALGOS.has(param) ? param : "kmp";
-    setAlgorithm(algo);
-    setTextInput(DEFAULTS[algo].text);
-    setPatternInput(DEFAULTS[algo].pattern);
-    setActiveText("");
-    setActivePattern("");
-  }, [searchParams]);
+    const param = searchParams.get('algo')
+    const algo = VALID_ALGOS.has(param) ? param : 'kmp'
+    setAlgorithm(algo)
+    setTextInput(DEFAULTS[algo].text)
+    setPatternInput(DEFAULTS[algo].pattern)
+    setActiveText('')
+    setActivePattern('')
+  }, [searchParams])
 
   const handleAlgorithmChange = (algo) => {
-    setAlgorithm(algo);
-    setTextInput(DEFAULTS[algo].text);
-    setPatternInput(DEFAULTS[algo].pattern);
-    setActiveText("");
-    setActivePattern("");
-  };
+    setAlgorithm(algo)
+    setTextInput(DEFAULTS[algo].text)
+    setPatternInput(DEFAULTS[algo].pattern)
+    setActiveText('')
+    setActivePattern('')
+  }
 
   const handleVisualize = () => {
-    setActiveText(textInput.trim());
-    setActivePattern(patternInput.trim());
-  };
+    setActiveText(textInput.trim())
+    setActivePattern(patternInput.trim())
+  }
 
   const handleReset = () => {
-    setTextInput(DEFAULTS[algorithm].text);
-    setPatternInput(DEFAULTS[algorithm].pattern);
-    setActiveText("");
-    setActivePattern("");
-  };
+    setTextInput(DEFAULTS[algorithm].text)
+    setPatternInput(DEFAULTS[algorithm].pattern)
+    setActiveText('')
+    setActivePattern('')
+  }
 
   const currentSource = useMemo(
     () =>
       stringSources?.[algorithm]?.[language]?.code ||
-      "// No implementation available",
-    [algorithm, language],
-  );
+      '// No implementation available',
+    [algorithm, language]
+  )
 
   const CanvasComponent = {
     kmp: CanvasKMP,
     rabinkarp: CanvasRabinKarp,
     zalgorithm: CanvasZAlgorithm,
-  }[algorithm];
+  }[algorithm]
 
   return (
     <motion.div
@@ -149,29 +149,29 @@ function SoloMode() {
         />
       </div>
     </motion.div>
-  );
+  )
 }
 
 // ─── Page root with Solo / Compare tabs ───────────────────────────────────────
 export default function VisualizerPage() {
   useEffect(() => {
-    document.title = "String Algorithms | AlgoScope";
-  }, []);
-  const [searchParams, setSearchParams] = useSearchParams();
-  const activeTab = searchParams.get("mode") === "compare" ? "compare" : "solo";
+    document.title = 'String Algorithms | AlgoScope'
+  }, [])
+  const [searchParams, setSearchParams] = useSearchParams()
+  const activeTab = searchParams.get('mode') === 'compare' ? 'compare' : 'solo'
 
   const setActiveTab = (tab) => {
-    const next = new URLSearchParams(searchParams);
-    tab === "compare" ? next.set("mode", "compare") : next.delete("mode");
-    setSearchParams(next);
-  };
+    const next = new URLSearchParams(searchParams)
+    tab === 'compare' ? next.set('mode', 'compare') : next.delete('mode')
+    setSearchParams(next)
+  }
 
   return (
     <motion.div
       className="w-full bg-slate-950/50 mx-auto min-h-screen shadow-2xl rounded-xl sm:rounded-2xl border border-white/10 backdrop-blur-xl"
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 1, ease: "easeInOut" }}
+      transition={{ duration: 1, ease: 'easeInOut' }}
     >
       {/* Header with tabs */}
       <div className="px-4 sm:px-6 pt-4 sm:pt-6 pb-0 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
@@ -182,37 +182,37 @@ export default function VisualizerPage() {
         <div
           className="flex rounded-xl p-1 gap-1 self-start sm:self-auto"
           style={{
-            background: "rgba(15,23,42,0.8)",
-            border: "1px solid rgba(51,65,85,0.6)",
+            background: 'rgba(15,23,42,0.8)',
+            border: '1px solid rgba(51,65,85,0.6)',
           }}
         >
-          {["solo", "compare"].map((tab) => (
+          {['solo', 'compare'].map((tab) => (
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
               className="relative px-4 py-1.5 rounded-lg text-xs font-semibold transition-all duration-200 flex items-center gap-1.5"
-              style={{ color: activeTab === tab ? "#fff" : "#64748b" }}
+              style={{ color: activeTab === tab ? '#fff' : '#64748b' }}
             >
               {activeTab === tab && (
                 <motion.div
                   layoutId="string-tab-bg"
                   className="absolute inset-0 rounded-lg"
                   style={{
-                    background: "rgba(6,182,212,0.2)",
-                    border: "1px solid rgba(6,182,212,0.4)",
+                    background: 'rgba(6,182,212,0.2)',
+                    border: '1px solid rgba(6,182,212,0.4)',
                   }}
-                  transition={{ type: "spring", bounce: 0.2, duration: 0.4 }}
+                  transition={{ type: 'spring', bounce: 0.2, duration: 0.4 }}
                 />
               )}
               <span className="relative capitalize">
-                {tab === "compare" ? "⚡ Compare" : "Solo Mode"}
+                {tab === 'compare' ? '⚡ Compare' : 'Solo Mode'}
               </span>
-              {tab === "compare" && (
+              {tab === 'compare' && (
                 <span
                   className="relative text-[9px] font-bold px-1.5 py-0.5 rounded-md"
                   style={{
-                    background: "rgba(6,182,212,0.25)",
-                    color: "#22d3ee",
+                    background: 'rgba(6,182,212,0.25)',
+                    color: '#22d3ee',
                   }}
                 >
                   NEW
@@ -224,7 +224,7 @@ export default function VisualizerPage() {
       </div>
 
       <AnimatePresence mode="wait">
-        {activeTab === "solo" ? (
+        {activeTab === 'solo' ? (
           <motion.div
             key="solo"
             initial={{ opacity: 0, x: -10 }}
@@ -247,5 +247,5 @@ export default function VisualizerPage() {
         )}
       </AnimatePresence>
     </motion.div>
-  );
+  )
 }
