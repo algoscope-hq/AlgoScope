@@ -12,7 +12,7 @@
     "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0",
     "test": "vitest run",
     "preview": "vite preview",
-    "format:check": "prettier --check \"src/**/*.{js,jsx,css,md}\""
+    "format:check": "prettier --check \"src/**/*.{js,jsx,css,md}\" \"api/**/*.{js,ts}\" \".github/**/*.{yml,yaml}\" \"*.{js,ts,json,md,cjs,mjs}\""
   },
   "dependencies": {
     "@clerk/clerk-react": "^5.61.6",
