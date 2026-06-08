@@ -130,6 +130,11 @@ const algorithmLinks = [
     href: '/challenge',
     difficulty: 'Intermediate',
   },
+  {
+    name: 'Sliding Window',
+    href: '/sliding-window',
+    difficulty: 'Advanced',
+  },
 ]
 
 export const Navbar = () => {

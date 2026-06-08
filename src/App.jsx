@@ -59,6 +59,10 @@ const DPVisualizerPage = lazy(
 const DPOptimizationJourneyPage = lazy(
   () => import('./components/dynamicProgramming/DPOptimizationJourney') // Path to your main component
 )
+
+const SlidingWindowVisualizerPage = lazy(
+  () => import('./components/slidingwindow/SlidingWindowVisualizer')
+)
 const PracticePage = lazy(() => import('./components/PracticePage'))
 const AboutAlgoScope = lazy(() => import('./components/about/About'))
 const NotFound = lazy(() => import('./components/PageNotFound'))
@@ -230,7 +234,16 @@ const router = createBrowserRouter([
       </Suspense>
     ),
   },
-
+  {
+    path: '/sliding-window',
+    element: (
+      <Suspense fallback={<PageLoader />}>
+        <AppLayout>
+          <SlidingWindowVisualizerPage />
+        </AppLayout>
+      </Suspense>
+    ),
+  },
   {
     path: '/challenge',
     element: (
