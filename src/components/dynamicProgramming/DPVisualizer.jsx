@@ -6,6 +6,7 @@ import {
   generateCoinChangeSteps,
   generateLISSteps,
 } from '../../algorithms/dp/dpStepGenerators'
+import CodePanel from '../visualizer/CodePanel'
 
 // ─── constants ───────────────────────────────────────────────────────────────
 const ALGORITHMS = ['LCS', 'Knapsack', 'Coin Change', 'LIS']
@@ -979,9 +980,13 @@ export default function DPVisualizer() {
               </button>
             </div>
           </div>
-          <pre className="flex-1 bg-slate-900 rounded-lg p-4 text-xs font-mono text-slate-300 overflow-auto leading-relaxed">
-            <code>{CODE_SNIPPETS[algo][lang]}</code>
-          </pre>
+          <div className="flex-1 overflow-auto rounded-lg border border-slate-700 bg-slate-900">
+            <CodePanel
+              title="Dynamic Programming Implementation"
+              code={CODE_SNIPPETS[algo][lang]}
+              language={lang}
+            />
+          </div>
 
           {/* Complexity info */}
           <div className="mt-4 grid grid-cols-2 gap-3">

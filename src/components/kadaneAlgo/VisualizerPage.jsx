@@ -6,6 +6,8 @@ import CodePanel from '../visualizer/CodePanel'
 import { CanvasKadane } from './CanvasKadane'
 import { MenuSetAlgoKadane } from './MenuSetAlgoKadane'
 import { kadaneSources } from '../../algorithms/kadane/kadaneSources'
+import DifficultyBadge from '../DifficultyBadge'
+import LearningPathSuggestions from '../LearningPathSuggestions'
 
 const complexityData = {
   time: 'O(N)',
@@ -52,9 +54,12 @@ const VisualizerPage = () => {
       transition={{ duration: 1 }}
     >
       <div className="w-full lg:w-1/4 xl:w-1/5 p-4 flex flex-col justify-between bg-slate-900/80 shadow-xl rounded-xl border border-white/5 backdrop-blur-sm">
-        <h2 className="text-2xl font-bold text-center text-white border-b border-white/10 pb-4 tracking-tight">
-          Controls
-        </h2>
+        <div className="flex flex-col items-center gap-2 border-b border-white/10 pb-4">
+          <h2 className="text-2xl font-bold text-center text-white tracking-tight">
+            Controls
+          </h2>
+          <DifficultyBadge size="xs" />
+        </div>
 
         <MenuSetAlgoKadane
           arrayInput={arrayInput}
@@ -88,6 +93,7 @@ const VisualizerPage = () => {
         </div>
 
         <ComplexityCard complexity={complexityData} />
+        <LearningPathSuggestions className="mt-4" />
       </div>
 
       <div className="w-full lg:w-3/4 xl:w-4/5 mt-4 lg:mt-0 lg:ml-6 flex flex-col gap-6">

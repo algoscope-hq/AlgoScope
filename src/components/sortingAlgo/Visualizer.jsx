@@ -7,6 +7,7 @@ import ComplexityCard from '../ComplexityCard'
 import Tooltip from '../Tooltip'
 import TestCaseManager from '../testCaseManager/TestCaseManager'
 import RecursiveTree from './RecursiveTree.jsx'
+import { useKeyboardShortcuts } from '../visualizer/useKeyboardShortcuts'
 
 import * as bubble from '../../algorithms/sorting/bubbleSortSteps'
 import * as selection from '../../algorithms/sorting/selectionSortSteps'
@@ -213,6 +214,22 @@ export default function Visualizer() {
     setIsStepMode(false)
   }
 
+  useKeyboardShortcuts({
+    onPlayPause: () => {
+      if (isPlaying) pausePlayback()
+      else if (hasSteps && !isComplete) playPlayback()
+    },
+    onStepForward: () => {
+      if (!isPlaying && !isComplete && hasSteps) stepForward()
+    },
+    onStepBackward: () => {
+      if (!isPlaying && currentStepIndex > 0) stepBackward()
+    },
+    onReset: handleReset,
+    onSpeedUp: () => setSpeed((s) => Math.min(3, +(s + 0.25).toFixed(2))),
+    onSlowDown: () => setSpeed((s) => Math.max(0.25, +(s - 0.25).toFixed(2))),
+  })
+
   const handleApplyCustomArray = () => {
     setInputError('')
     let input = customInput.trim()
@@ -313,8 +330,35 @@ export default function Visualizer() {
     return { ...baseStyle, ...getStateStyle(index, 'bar') }
   }
 
-  const getElementStyle = (index) => {
-    return getStateStyle(index, 'element')
+  const getElementClass = (index) => {
+    const stateClass = getStateClass(index)
+    const baseClasses =
+      'array-ele rounded-lg px-2 py-1.5 sm:px-3 sm:py-2 font-mono text-xs sm:text-sm shadow-sm transition-all duration-300 border'
+
+    if (!stateClass) {
+      return `${baseClasses} border-slate-600 bg-slate-800 text-cyan-400`
+    }
+
+    if (stateClass === 'compare') {
+      return `${baseClasses} bg-blue-600 border-blue-400 text-white scale-[1.12] shadow-[0_0_18px_rgba(59,130,246,0.35)]`
+    }
+    if (stateClass === 'swap') {
+      return `${baseClasses} bg-amber-500 border-amber-600 text-white scale-110`
+    }
+    if (stateClass === 'pivot') {
+      return `${baseClasses} bg-rose-500 border-rose-600 text-white scale-110`
+    }
+    if (stateClass === 'min') {
+      return `${baseClasses} bg-purple-500 border-purple-600 text-white scale-110`
+    }
+    if (stateClass === 'sorted') {
+      return `${baseClasses} bg-cyan-600 border-cyan-500 text-white`
+    }
+    if (stateClass === 'active') {
+      return `${baseClasses} bg-emerald-500 border-emerald-600 text-white scale-110`
+    }
+
+    return `${baseClasses} border-slate-600 bg-slate-800 text-cyan-400`
   }
 
   const handleAlgorithmChange = (event) => {
@@ -361,13 +405,7 @@ export default function Visualizer() {
 
                 <div className="next mt-4 flex flex-wrap justify-center gap-1.5 sm:gap-2">
                   {visualArray.map((item, idx) => (
-                    <span
-                      key={idx}
-                      className={`array-ele rounded-lg border border-slate-600 bg-slate-800 px-2 py-1.5 sm:px-3 sm:py-2 font-mono text-xs sm:text-sm text-cyan-400 shadow-sm transition-all duration-300 ${getStateClass(
-                        idx
-                      )}`}
-                      style={getElementStyle(idx)}
-                    >
+                    <span key={idx} className={getElementClass(idx)}>
                       {item}
                     </span>
                   ))}

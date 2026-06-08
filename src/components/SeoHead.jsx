@@ -46,7 +46,7 @@ const pageMetadata = {
   '/kadane': {
     title: 'Kadane Algorithm | AlgoScope',
     description:
-      'Visualize Kadane’s algorithm step by step to understand maximum subarray sums with interactive animations and synchronized code.',
+      "Visualize Kadane's algorithm step by step to understand maximum subarray sums with interactive animations and synchronized code.",
   },
   '/moore-voting': {
     title: "Moore's Voting Algorithm | AlgoScope",
@@ -62,6 +62,28 @@ const pageMetadata = {
     title: 'Guess the Algorithm Challenge | AlgoScope',
     description:
       'Test your algorithm recognition skills! Watch the visualization and guess which sorting algorithm is running in real-time.',
+  },
+
+  // 🆕 Previously missing live pages (fixes #566)
+  '/math-theory': {
+    title: 'Math Theory | AlgoScope',
+    description:
+      'Explore the mathematical foundations behind algorithms. Learn about complexity theory, proofs, and the core math concepts that power modern algorithms.',
+  },
+  '/string-algorithms': {
+    title: 'String Algorithms Visualizer | AlgoScope',
+    description:
+      'Visualize string algorithms step by step with interactive animations. Understand pattern matching, substring search, and other string manipulation techniques.',
+  },
+  '/dynamic-programming': {
+    title: 'Dynamic Programming Visualizer | AlgoScope',
+    description:
+      'Learn dynamic programming concepts interactively. Visualize memoization, tabulation, and optimal substructure through step-by-step animated examples.',
+  },
+  '/backtracking': {
+    title: 'Backtracking Algorithms | AlgoScope',
+    description:
+      'Understand backtracking algorithms with interactive visualizations. Explore how constraint-based search and recursive decision trees solve complex problems.',
   },
 }
 

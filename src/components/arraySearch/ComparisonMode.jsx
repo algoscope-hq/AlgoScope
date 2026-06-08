@@ -93,42 +93,35 @@ function SearchPanel({
   const foundIndex = currentStep?.foundIndex ?? null
   const totalComparisons = steps.filter((s) => s.type === 'compare').length
 
-  const getElemStyle = (idx) => {
-    if (foundIndex === idx)
-      return {
-        background: '#10b981',
-        color: '#fff',
-        borderColor: '#34d399',
-        transform: 'scale(1.15)',
-        boxShadow: '0 0 15px rgba(16,185,129,0.5)',
-      }
+  const getElemClass = (idx) => {
+    const baseClasses =
+      'w-9 h-9 flex items-center justify-center rounded-lg border font-mono text-xs font-bold transition-all duration-300'
+
+    if (foundIndex === idx) {
+      return `${baseClasses} bg-emerald-500 border-emerald-400 text-white scale-[1.15] shadow-[0_0_15px_rgba(16,185,129,0.5)]`
+    }
+
     if (algoKey === 'binarySearch' && currentStep) {
       const [mid, low, high] = activeIndices
-      if (idx === mid)
-        return {
-          background: '#facc15',
-          color: '#0f172a',
-          borderColor: '#fde047',
-          transform: 'scale(1.1)',
-          boxShadow: '0 0 12px rgba(250,204,21,0.4)',
-        }
-      if (idx === low)
-        return { background: '#06b6d4', color: '#fff', borderColor: '#22d3ee' }
-      if (idx === high)
-        return { background: '#f43f5e', color: '#fff', borderColor: '#fb7185' }
-      if (idx < low || idx > high)
-        return { opacity: 0.25, transform: 'scale(0.9)' }
-    }
-    if (algoKey === 'linearSearch' && activeIndices.includes(idx)) {
-      return {
-        background: meta.accent,
-        color: '#fff',
-        borderColor: meta.accent,
-        transform: 'scale(1.1)',
-        boxShadow: `0 0 12px ${meta.glow}`,
+      if (idx === mid) {
+        return `${baseClasses} bg-yellow-400 border-yellow-300 text-slate-900 scale-110 shadow-[0_0_12px_rgba(250,204,21,0.4)]`
+      }
+      if (idx === low) {
+        return `${baseClasses} bg-cyan-500 border-cyan-400 text-white`
+      }
+      if (idx === high) {
+        return `${baseClasses} bg-rose-500 border-rose-400 text-white`
+      }
+      if (idx < low || idx > high) {
+        return `${baseClasses} bg-slate-800/80 border-slate-700 text-slate-400 opacity-25 scale-90`
       }
     }
-    return {}
+
+    if (algoKey === 'linearSearch' && activeIndices.includes(idx)) {
+      return `${baseClasses} bg-cyan-500 border-cyan-400 text-white scale-110 shadow-[0_0_12px_rgba(6,182,212,0.35)]`
+    }
+
+    return `${baseClasses} bg-slate-800/80 border-slate-700 text-slate-400`
   }
 
   const complexity = complexityMap[meta.complexityKey]
@@ -206,17 +199,7 @@ function SearchPanel({
               style={{ transitionDuration: '220ms' }}
             >
               <span className="text-[8px] text-slate-600 font-mono">{idx}</span>
-              <span
-                className="w-9 h-9 flex items-center justify-center rounded-lg border font-mono text-xs font-bold transition-all duration-300"
-                style={{
-                  background: 'rgba(30,41,59,0.8)',
-                  borderColor: 'rgba(51,65,85,0.6)',
-                  color: '#94a3b8',
-                  ...getElemStyle(idx),
-                }}
-              >
-                {val}
-              </span>
+              <span className={getElemClass(idx)}>{val}</span>
             </div>
           ))}
         </div>
