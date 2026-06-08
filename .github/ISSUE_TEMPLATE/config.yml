@@ -1,5 +1,5 @@
-blank_issues_enabled: true
+blank_issues_enabled: false
 contact_links:
-  - name: AlgoScope Discussions via GitHub Issues
-    url: https://github.com/Yuvraj-Sarathe/AlgoScope/issues
-    about: Use issues for bugs, ideas, and project discussion.
+  - name: AlgoScope Discussions
+    url: https://github.com/algoscope-hq/AlgoScope/discussions
+    about: Use GitHub Discussions for questions, ideas, and general project conversation.
