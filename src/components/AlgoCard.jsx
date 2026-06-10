@@ -1,11 +1,20 @@
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { MoveUpRight } from 'lucide-react'
+import { isFavoriteId, subscribeFavoritesChange } from '../lib/favorites'
+import DifficultyBadge from './DifficultyBadge'
 
-const MotionLink = motion(Link)
+const MotionDiv = motion.div
 
-export default function AlgoCard({ title, description, link, color }) {
+export default function AlgoCard({
+  title,
+  description,
+  link,
+  color,
+  difficulty,
+  id,
+}) {
   const cardRef = useRef(null)
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 })
   const [isHovering, setIsHovering] = useState(false)
@@ -38,11 +47,46 @@ export default function AlgoCard({ title, description, link, color }) {
 
   const colorClasses =
     color || 'theme-card theme-border hover:border-neutral-700'
+  const algoId = id || title
+  const [favorite, setFavorite] = useState(() => isFavoriteId(algoId))
+
+  useEffect(() => {
+    const unsubscribe = subscribeFavoritesChange(() => {
+      setFavorite(isFavoriteId(algoId))
+    })
+    return unsubscribe
+  }, [algoId])
+
+  const handleFavoriteClick = (e) => {
+    e.preventDefault()
+    e.stopPropagation()
+
+    const saved = JSON.parse(localStorage.getItem('algo-favorites')) || []
+    const algorithm = {
+      id: algoId,
+      title,
+      link,
+      description,
+      color,
+      difficulty,
+    }
+    const exists = saved.some((item) => item.id === algorithm.id)
+
+    let updatedFavorites
+
+    if (exists) {
+      updatedFavorites = saved.filter((item) => item.id !== algorithm.id)
+    } else {
+      updatedFavorites = [...saved, algorithm]
+    }
+
+    localStorage.setItem('algo-favorites', JSON.stringify(updatedFavorites))
+    window.dispatchEvent(new Event('favorites-changed'))
+    setFavorite(!exists)
+  }
 
   return (
-    <MotionLink
-      to={link}
-      onClick={() => window.scrollTo(0, 0)}
+    <MotionDiv
       ref={cardRef}
       onMouseMove={handleMouseMove}
       onMouseEnter={() => setIsHovering(true)}
@@ -52,6 +96,20 @@ export default function AlgoCard({ title, description, link, color }) {
       whileHover="hover"
       whileTap={{ scale: 0.98 }}
     >
+      {/* Favorite / Bookmark Button */}
+      <button
+        type="button"
+        onClick={handleFavoriteClick}
+        aria-pressed={favorite}
+        aria-label={favorite ? 'Remove favorite' : 'Add to favorites'}
+        title={favorite ? 'Remove favorite' : 'Add to favorites'}
+        className={`absolute top-4 right-4 z-20 inline-flex items-center justify-center h-10 w-10 rounded-xl transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-cyan-400/40 cursor-pointer pointer-events-auto ${
+          favorite ? 'bg-yellow-500 text-white' : 'bg-transparent text-current'
+        }`}
+      >
+        <span className="text-lg leading-none">{favorite ? '★' : '☆'}</span>
+      </button>
+
       {/* Dynamic Mouse Spotlight Background */}
       <motion.div
         className="absolute inset-0 z-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
@@ -86,9 +144,14 @@ export default function AlgoCard({ title, description, link, color }) {
         <div className="w-16 h-16 border-[1px] border-current rounded-xl absolute top-0 right-0 transform rotate-45 group-hover:rotate-90 group-hover:scale-110 transition-all duration-700 ease-out theme-text-strong" />
       </div>
 
-      {/* Content */}
-      <div className="relative z-10 flex flex-col h-full min-h-[200px]">
-        <div className="mb-4 mt-2">
+      {/* Content - clickable area */}
+      <Link
+        to={link}
+        onClick={() => window.scrollTo(0, 0)}
+        className="relative z-10 flex flex-col h-full min-h-[200px]"
+      >
+        <div className="mb-4 mt-2 flex flex-col gap-3 items-start">
+          {difficulty && <DifficultyBadge difficulty={difficulty} />}
           <h2 className="text-2xl md:text-3xl font-extrabold theme-text-strong tracking-tight mb-3 transition-all duration-300">
             {title}
           </h2>
@@ -109,7 +172,7 @@ export default function AlgoCard({ title, description, link, color }) {
             <MoveUpRight className="w-5 h-5 group-hover:scale-110 transition-transform duration-500" />
           </div>
         </div>
-      </div>
-    </MotionLink>
+      </Link>
+    </MotionDiv>
   )
 }

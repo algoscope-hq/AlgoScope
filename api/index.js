@@ -37,16 +37,18 @@ const allowedOrigins = [
     : []),
 ].filter(Boolean)
 
-app.use(cors({
-  origin: (origin, cb) => {
-    if (!origin || allowedOrigins.includes(origin)) {
-      cb(null, true)
-    } else {
-      cb(new Error('Not allowed by CORS'))
-    }
-  },
-  credentials: true,
-}))
+app.use(
+  cors({
+    origin: (origin, cb) => {
+      if (!origin || allowedOrigins.includes(origin)) {
+        cb(null, true)
+      } else {
+        cb(new Error('Not allowed by CORS'))
+      }
+    },
+    credentials: true,
+  })
+)
 
 // Body parsing with size limit
 app.use(express.json({ limit: '10kb' }))

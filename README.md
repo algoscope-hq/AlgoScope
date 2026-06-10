@@ -18,9 +18,29 @@
 
 Join our community for updates and support!
 
+## Quick Links
+
+- [Contribution Guide](CONTRIBUTING.md)
+- [Code of Conduct](CODE_OF_CONDUCT.md)
+- [Security Policy](SECURITY.md)
+- [Changelog](CHANGELOG.md)
+
 ### 🌐 Live Demo
 
 Experience AlgoScope in your browser: **[algo-scope-virid.vercel.app](https://algo-scope-virid.vercel.app)**
+
+## 📚 Table of Contents
+
+- [Project Purpose](#-project-purpose)
+- [Features](#-features)
+- [Tech Stack](`#-tech-stack`)
+- [Quick Start](`#-quick-start`)
+- [Architecture](`#-architecture`)
+- [Star History](#star-history)
+- [Contributing](#-contributing)
+- [Contributors](#-contributors)
+- [Contact](#-contact)
+- [License](#-license)
 
 ### Core Maintainers
 
@@ -54,6 +74,16 @@ Experience AlgoScope in your browser: **[algo-scope-virid.vercel.app](https://al
 <sub>Click a profile or follow badge for updates and to connect with the team.</sub>
 
 </div>
+
+---
+
+## 📸 Preview
+
+<p align="center">
+  <img src="public/preview.png" alt="AlgoScope Preview" width="100%" />
+</p>
+
+Experience algorithm visualization through an interactive and modern learning interface.
 
 ---
 
@@ -161,6 +191,8 @@ Access the app at `http://localhost:8080`.
 
 ## 🏗️ Architecture
 
+### Project Structure
+
 AlgoScope uses a component-based architecture where each algorithm category has its own specialized visualizer:
 
 ```
@@ -240,7 +272,7 @@ flowchart TD
     vis_renderer -- Visualization Completed/Status --> input_handler
 ```
 
-### User Workflow & Execution Logic
+### User Execution Flow
 
 ```mermaid
 flowchart TD

@@ -12,6 +12,13 @@
   <url><loc>https://algo-scope-virid.vercel.app/practice</loc><priority>0.7</priority></url>
   <url><loc>https://algo-scope-virid.vercel.app/about</loc><priority>0.6</priority></url>
 
+  <!-- 🆕 Previously Missing Live Pages (fixes #567) -->
+  <url><loc>https://algo-scope-virid.vercel.app/math-theory</loc><priority>0.8</priority></url>
+  <url><loc>https://algo-scope-virid.vercel.app/string-algorithms</loc><priority>0.8</priority></url>
+  <url><loc>https://algo-scope-virid.vercel.app/dynamic-programming</loc><priority>0.8</priority></url>
+  <url><loc>https://algo-scope-virid.vercel.app/backtracking</loc><priority>0.8</priority></url>
+  <url><loc>https://algo-scope-virid.vercel.app/challenge</loc><priority>0.8</priority></url>
+
   <!-- Comparison Modes -->
   <url><loc>https://algo-scope-virid.vercel.app/sort?mode=compare</loc><priority>0.7</priority></url>
   <url><loc>https://algo-scope-virid.vercel.app/search?mode=compare</loc><priority>0.7</priority></url>

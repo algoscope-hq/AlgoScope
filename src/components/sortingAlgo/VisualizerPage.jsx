@@ -3,6 +3,8 @@ import Visualizer from './Visualizer'
 import ComparisonMode from './ComparisonMode'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useSearchParams } from 'react-router-dom'
+import DifficultyBadge from '../DifficultyBadge'
+import LearningPathSuggestions from '../LearningPathSuggestions'
 
 export default function VisualizerPage() {
   const [searchParams, setSearchParams] = useSearchParams()
@@ -27,9 +29,12 @@ export default function VisualizerPage() {
     >
       {/* Header with tabs */}
       <div className="px-4 sm:px-6 pt-4 sm:pt-6 pb-0 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-        <p className="text-xs font-semibold uppercase tracking-[0.2em] text-cyan-400/80">
-          Sorting Visualizer
-        </p>
+        <div className="flex items-center gap-2">
+          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-cyan-400/80">
+            Sorting Visualizer
+          </p>
+          <DifficultyBadge size="xs" />
+        </div>
 
         {/* Tab switcher */}
         <div
@@ -107,6 +112,9 @@ export default function VisualizerPage() {
           </motion.div>
         )}
       </AnimatePresence>
+      <div className="px-4 sm:px-6 pb-6 pt-2">
+        <LearningPathSuggestions />
+      </div>
     </motion.div>
   )
 }
