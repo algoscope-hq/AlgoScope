@@ -55,7 +55,8 @@ if (PUBLISHABLE_KEY) {
           elements: {
             card: {
               background: 'var(--clerk-card-bg)',
-              backdropFilter: 'blur(12px)',
+              backdropFilter: 'blur(20px)',
+              WebkitBackdropFilter: 'blur(20px)',
               boxShadow: 'var(--clerk-card-shadow)',
               border: '1px solid var(--clerk-border)',
             },
