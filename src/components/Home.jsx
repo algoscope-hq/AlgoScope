@@ -136,7 +136,7 @@ const OPERATING_SYSTEMS = [
     title: 'CPU Scheduling',
     description: 'Visualize FCFS, SJF, Round Robin, and Priority Scheduling.',
     color: 'theme-card border-cyan-500/30 hover:border-cyan-400',
-    link: '/operating-systems',
+    link: '/operating-systems/cpu-scheduling',
     difficulty: 'Beginner',
   },
   {
@@ -144,7 +144,7 @@ const OPERATING_SYSTEMS = [
     title: 'Page Replacement',
     description: 'Explore FIFO, LRU, and Optimal page replacement algorithms.',
     color: 'theme-card border-purple-500/30 hover:border-purple-400',
-    link: '/operating-systems',
+    link: '/operating-systems/page-replacement',
     difficulty: 'Intermediate',
   },
   {
@@ -153,7 +153,7 @@ const OPERATING_SYSTEMS = [
     description:
       'Understand SCAN, C-SCAN, SSTF and disk head movement strategies.',
     color: 'theme-card border-emerald-500/30 hover:border-emerald-400',
-    link: '/operating-systems',
+    link: '/operating-systems/disk-scheduling',
     difficulty: 'Intermediate',
   },
 ]
