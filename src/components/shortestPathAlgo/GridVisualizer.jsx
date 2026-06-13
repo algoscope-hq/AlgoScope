@@ -3,11 +3,8 @@ import React, { useCallback, useEffect, useRef, useState } from 'react'
 const ROWS = 24
 const COLS = 40
 
-const START_ROW = 12
-const START_COL = 5
-
-const END_ROW = 12
-const END_COL = 34
+const DEFAULT_START = { row: 12, col: 5 }
+const DEFAULT_END = { row: 12, col: 34 }
 
 const MAZE_WALL_PROBABILITY = 0.25
 
@@ -44,12 +41,12 @@ const getCellClassName = (node) => {
   }`
 }
 
-const createNode = (row, col) => {
+const createNode = (row, col, startPos, endPos) => {
   return {
     row,
     col,
-    isStart: row === START_ROW && col === START_COL,
-    isEnd: row === END_ROW && col === END_COL,
+    isStart: row === startPos.row && col === startPos.col,
+    isEnd: row === endPos.row && col === endPos.col,
     isWall: false,
     visited: false,
     path: false,
@@ -58,12 +55,12 @@ const createNode = (row, col) => {
   }
 }
 
-const createGrid = () => {
+const createGrid = (startPos, endPos) => {
   const grid = []
   for (let row = 0; row < ROWS; row++) {
     const currentRow = []
     for (let col = 0; col < COLS; col++) {
-      currentRow.push(createNode(row, col))
+      currentRow.push(createNode(row, col, startPos, endPos))
     }
     grid.push(currentRow)
   }
@@ -88,9 +85,9 @@ const getNeighbors = (node, currentGrid) => {
   return neighbors.filter(Boolean).filter((n) => !n.isWall)
 }
 
-const runDijkstra = (currentGrid) => {
-  const startNode = currentGrid[START_ROW][START_COL]
-  const endNode = currentGrid[END_ROW][END_COL]
+const runDijkstra = (currentGrid, startPos, endPos) => {
+  const startNode = currentGrid[startPos.row][startPos.col]
+  const endNode = currentGrid[endPos.row][endPos.col]
   const distances = {}
   const visited = new Set()
   const parent = {}
@@ -139,8 +136,8 @@ const runDijkstra = (currentGrid) => {
   return { order, parent, distances }
 }
 
-const runBellmanFord = (currentGrid) => {
-  const startNode = currentGrid[START_ROW][START_COL]
+const runBellmanFord = (currentGrid, startPos) => {
+  const startNode = currentGrid[startPos.row][startPos.col]
   const dists = {}
   const parent = {}
   const order = []
@@ -177,7 +174,7 @@ const runBellmanFord = (currentGrid) => {
   return { order, parent, distances: dists }
 }
 
-const runFloydWarshallVisualization = (currentGrid) => {
+const runFloydWarshallVisualization = (currentGrid, startPos, endPos) => {
   const nodes = []
   const nodeIndex = {}
 
@@ -216,8 +213,8 @@ const runFloydWarshallVisualization = (currentGrid) => {
     }
   }
 
-  const startKey = `${START_ROW}-${START_COL}`
-  const endKey = `${END_ROW}-${END_COL}`
+  const startKey = `${startPos.row}-${startPos.col}`
+  const endKey = `${endPos.row}-${endPos.col}`
   const startIdx = nodeIndex[startKey]
   const endIdx = nodeIndex[endKey]
 
@@ -271,10 +268,10 @@ const runFloydWarshallVisualization = (currentGrid) => {
   return { order, parent, distances }
 }
 
-const buildPath = (parent, currentGrid) => {
+const buildPath = (parent, currentGrid, startPos, endPos) => {
   const path = []
   const visited = new Set()
-  let current = currentGrid[END_ROW][END_COL]
+  let current = currentGrid[endPos.row][endPos.col]
   while (current && !visited.has(current)) {
     visited.add(current)
     path.unshift(current)
@@ -284,7 +281,10 @@ const buildPath = (parent, currentGrid) => {
 }
 
 const GridVisualizer = ({ algorithm, runKey, speed }) => {
-  const [grid, setGrid] = useState(() => createGrid())
+  const [startPos, setStartPos] = useState(DEFAULT_START)
+  const [endPos, setEndPos] = useState(DEFAULT_END)
+  const [draggingNode, setDraggingNode] = useState(null)
+  const [grid, setGrid] = useState(() => createGrid(DEFAULT_START, DEFAULT_END))
   const [mousePressed, setMousePressed] = useState(false)
   const [running, setRunning] = useState(false)
   const [drawMode, setDrawMode] = useState('wall')
@@ -323,7 +323,7 @@ const GridVisualizer = ({ algorithm, runKey, speed }) => {
   const clearGrid = () => {
     clearTimers()
     setRunning(false)
-    setGrid(createGrid())
+    setGrid(createGrid(startPos, endPos))
     setPathCost(0)
     setVisitedCount(0)
   }
@@ -331,7 +331,9 @@ const GridVisualizer = ({ algorithm, runKey, speed }) => {
   const resetAll = () => {
     clearTimers()
     setRunning(false)
-    setGrid(createGrid())
+    setStartPos(DEFAULT_START)
+    setEndPos(DEFAULT_END)
+    setGrid(createGrid(DEFAULT_START, DEFAULT_END))
     setPathCost(0)
     setVisitedCount(0)
     setDrawMode('wall')
@@ -373,9 +375,63 @@ const GridVisualizer = ({ algorithm, runKey, speed }) => {
     })
   }
 
+  const handleMouseDown = (row, col) => {
+    if (running) return
+    const node = grid[row][col]
+    if (node.isStart) {
+      setDraggingNode('start')
+    } else if (node.isEnd) {
+      setDraggingNode('end')
+    } else {
+      setMousePressed(true)
+      handleMouseInteraction(row, col)
+    }
+  }
+
+  const handleMouseEnter = (row, col) => {
+    if (running) return
+    if (draggingNode) {
+      const node = grid[row][col]
+      if (draggingNode === 'start') {
+        if (!node.isEnd && !node.isWall) {
+          clearPath()
+          setStartPos({ row, col })
+          setGrid((prev) =>
+            prev.map((r, y) =>
+              r.map((n, x) => ({
+                ...n,
+                isStart: y === row && x === col,
+              }))
+            )
+          )
+        }
+      } else if (draggingNode === 'end') {
+        if (!node.isStart && !node.isWall) {
+          clearPath()
+          setEndPos({ row, col })
+          setGrid((prev) =>
+            prev.map((r, y) =>
+              r.map((n, x) => ({
+                ...n,
+                isEnd: y === row && x === col,
+              }))
+            )
+          )
+        }
+      }
+    } else if (mousePressed) {
+      handleMouseInteraction(row, col)
+    }
+  }
+
+  const handleMouseUp = () => {
+    setMousePressed(false)
+    setDraggingNode(null)
+  }
+
   const generateMaze = () => {
     if (running) return
-    const freshGrid = createGrid()
+    const freshGrid = createGrid(startPos, endPos)
     for (let row = 0; row < ROWS; row++) {
       for (let col = 0; col < COLS; col++) {
         const node = freshGrid[row][col]
@@ -461,21 +517,23 @@ const GridVisualizer = ({ algorithm, runKey, speed }) => {
       row.map((node) => ({ ...node }))
     )
     let result
-    if (algorithm === 'dijkstra') result = runDijkstra(runGrid)
-    else if (algorithm === 'bellmanford') result = runBellmanFord(runGrid)
+    if (algorithm === 'dijkstra')
+      result = runDijkstra(runGrid, startPos, endPos)
+    else if (algorithm === 'bellmanford')
+      result = runBellmanFord(runGrid, startPos, endPos)
     else if (algorithm === 'floydwarshall')
-      result = runFloydWarshallVisualization(runGrid)
+      result = runFloydWarshallVisualization(runGrid, startPos, endPos)
 
     if (result) {
       setTimeout(() => {
         animate(
           result.order,
-          buildPath(result.parent, runGrid),
+          buildPath(result.parent, runGrid, startPos, endPos),
           result.distances
         )
       }, 0)
     }
-  }, [runKey, algorithm, animate])
+  }, [runKey, algorithm, animate, startPos, endPos])
 
   return (
     <div className="w-full bg-(--theme-surface-muted) border border-(--theme-border) p-4 rounded-xl">
@@ -565,21 +623,19 @@ const GridVisualizer = ({ algorithm, runKey, speed }) => {
 
         <div
           className="inline-block border border-(--theme-border-strong) overflow-hidden rounded-lg"
-          onMouseLeave={() => setMousePressed(false)}
+          onMouseLeave={() => {
+            setMousePressed(false)
+            setDraggingNode(null)
+          }}
         >
           {grid.map((row, r) => (
             <div key={r} className="flex">
               {row.map((node, c) => (
                 <div
                   key={`${r}-${c}`}
-                  onMouseDown={() => {
-                    setMousePressed(true)
-                    handleMouseInteraction(r, c)
-                  }}
-                  onMouseEnter={() =>
-                    mousePressed && handleMouseInteraction(r, c)
-                  }
-                  onMouseUp={() => setMousePressed(false)}
+                  onMouseDown={() => handleMouseDown(r, c)}
+                  onMouseEnter={() => handleMouseEnter(r, c)}
+                  onMouseUp={handleMouseUp}
                   className={getCellClassName(node)}
                 >
                   {node.isWeighted ? node.weight : null}

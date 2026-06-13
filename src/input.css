@@ -41,7 +41,7 @@
   --clerk-input-border: #78716c;
   --clerk-input-text: #1c1917;
   --clerk-input-placeholder: #57534e;
-  --clerk-card-bg: #e7e5e4;
+  --clerk-card-bg: rgba(231, 229, 228, 0.85);
   --clerk-card-shadow:
     0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.025);
   --clerk-footer-bg: transparent;
@@ -64,7 +64,7 @@
     --clerk-input-border: #78716c;
     --clerk-input-text: #1c1917;
     --clerk-input-placeholder: #57534e;
-    --clerk-card-bg: #e7e5e4;
+    --clerk-card-bg: rgba(231, 229, 228, 0.85);
     --clerk-card-shadow:
       0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.025);
     --clerk-footer-bg: transparent;

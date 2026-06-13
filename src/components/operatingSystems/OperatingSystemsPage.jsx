@@ -1,5 +1,6 @@
 import React from 'react'
 import { motion } from 'framer-motion'
+import { useNavigate } from 'react-router-dom'
 
 const modules = [
   {
@@ -40,6 +41,8 @@ const itemVariants = {
 }
 
 export default function OperatingSystemsPage() {
+  const navigate = useNavigate()
+
   return (
     <div className="theme-home min-h-screen w-full overflow-x-hidden">
       <div className="mx-auto max-w-7xl px-4 pt-24 pb-16">
@@ -79,31 +82,41 @@ export default function OperatingSystemsPage() {
           initial="hidden"
           animate="visible"
         >
-          {modules.map((module) => (
-            <motion.div
-              key={module.title}
-              variants={itemVariants}
-              className="group relative overflow-hidden rounded-2xl border theme-card p-6 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl"
-            >
-              <div className="mb-4 inline-flex rounded-full border border-cyan-500/30 bg-cyan-500/10 px-3 py-1">
-                <span className="text-xs font-medium text-cyan-400">
-                  Coming Soon
-                </span>
-              </div>
+          {modules.map((module) => {
+            const isCpuScheduling = module.title === 'CPU Scheduling'
+            return (
+              <motion.div
+                key={module.title}
+                variants={itemVariants}
+                onClick={() => {
+                  if (isCpuScheduling) {
+                    navigate('/operating-systems/cpu-scheduling')
+                  }
+                }}
+                className={`group relative overflow-hidden rounded-2xl border theme-card p-6 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl ${
+                  isCpuScheduling ? 'cursor-pointer' : ''
+                }`}
+              >
+                <div className="mb-4 inline-flex rounded-full border border-cyan-500/30 bg-cyan-500/10 px-3 py-1">
+                  <span className="text-xs font-medium text-cyan-400">
+                    {isCpuScheduling ? 'Available' : 'Coming Soon'}
+                  </span>
+                </div>
 
-              <h2 className="mb-3 text-xl font-semibold theme-text-strong">
-                {module.title}
-              </h2>
+                <h2 className="mb-3 text-xl font-semibold theme-text-strong">
+                  {module.title}
+                </h2>
 
-              <p className="text-sm leading-6 theme-text-muted">
-                {module.description}
-              </p>
+                <p className="text-sm leading-6 theme-text-muted">
+                  {module.description}
+                </p>
 
-              <div className="mt-6 text-sm font-medium text-cyan-400 transition-transform duration-300 group-hover:translate-x-1">
-                Planned Module →
-              </div>
-            </motion.div>
-          ))}
+                <div className="mt-6 text-sm font-medium text-cyan-400 transition-transform duration-300 group-hover:translate-x-1">
+                  {isCpuScheduling ? 'Open Visualizer →' : 'Planned Module →'}
+                </div>
+              </motion.div>
+            )
+          })}
         </motion.div>
       </div>
     </div>
