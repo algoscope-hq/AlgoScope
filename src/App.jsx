@@ -83,6 +83,8 @@ const PageReplacementPage = lazy(
 const DiskSchedulingPage = lazy(
   () => import('./components/operatingSystems/DiskSchedulingPage')
 )
+const SignInPage = lazy(() => import('./components/auth/SignInPage'))
+const SignUpPage = lazy(() => import('./components/auth/SignUpPage'))
 
 // Simple fallback for Suspense
 const PageLoader = () => (
@@ -92,6 +94,22 @@ const PageLoader = () => (
 )
 
 const router = createBrowserRouter([
+  {
+    path: '/sign-in',
+    element: (
+      <AppLayout>
+        <SignInPage />
+      </AppLayout>
+    ),
+  },
+  {
+    path: '/sign-up',
+    element: (
+      <AppLayout>
+        <SignUpPage />
+      </AppLayout>
+    ),
+  },
   {
     path: '/',
     element: (
@@ -134,7 +152,7 @@ const router = createBrowserRouter([
               <PracticePage />
             </SignedIn>
             <SignedOut>
-              <RedirectToSignIn />
+              <Navigate to="/sign-in" replace />
             </SignedOut>
           </>
         ) : import.meta.env.DEV ? (
