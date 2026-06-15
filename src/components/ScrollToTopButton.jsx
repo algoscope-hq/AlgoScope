@@ -19,15 +19,17 @@ setShowBottom(isScrollable && scrollY + windowHeight < docHeight - 500)
     return () => window.removeEventListener('scroll', onScroll)
   }, [])
 
-  const scrollToTop = () => window.scrollTo({ top: 0, behavior: 'smooth' })
-  const scrollToBottom = () =>
-    window.scrollTo({
-      top: document.documentElement.scrollHeight,
-      behavior: 'smooth',
-    })
+const scrollToTop = () =>
+  window.scrollTo({ top: 0, behavior: 'smooth' })
+
+const scrollToBottom = () =>
+  window.scrollTo({
+    top: document.documentElement.scrollHeight,
+    behavior: 'smooth',
+  })
 
   return (
-    <div className="fixed bottom-6 right-6 z-50 flex flex-col gap-3">
+    <div className="fixed bottom-6 right-6 z-[9999] flex flex-col gap-3">
       {showTop && (
         <button
           onClick={scrollToTop}
