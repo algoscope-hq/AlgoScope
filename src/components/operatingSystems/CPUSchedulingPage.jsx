@@ -1,11 +1,19 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { runFCFS, runSJF } from './cpuSchedulingAlgorithms'
+import {
+  runFCFS,
+  runSJF,
+  runRoundRobin,
+  runPriority,
+  runSRTF,
+  runMLQ,
+} from './cpuSchedulingAlgorithms'
+import { algorithmInfo } from './cpuSchedulingData'
 
 const DEFAULT_PROCESSES = [
-  { id: 'p1', pid: 'P1', arrivalTime: 0, burstTime: 5 },
-  { id: 'p2', pid: 'P2', arrivalTime: 1, burstTime: 3 },
-  { id: 'p3', pid: 'P3', arrivalTime: 2, burstTime: 8 },
+  { id: 'p1', pid: 'P1', arrivalTime: 0, burstTime: 5, priority: 1 },
+  { id: 'p2', pid: 'P2', arrivalTime: 1, burstTime: 3, priority: 2 },
+  { id: 'p3', pid: 'P3', arrivalTime: 2, burstTime: 8, priority: 3 },
 ]
 
 export default function CPUSchedulingPage() {
@@ -19,20 +27,18 @@ export default function CPUSchedulingPage() {
   const [avgWaitingTime, setAvgWaitingTime] = useState(0)
   const [avgTurnaroundTime, setAvgTurnaroundTime] = useState(0)
 
-  // Playback state
   const [isPlaying, setIsPlaying] = useState(false)
   const [currentStep, setCurrentStep] = useState(0)
   const [playbackSteps, setPlaybackSteps] = useState([])
   const [playbackSpeed, setPlaybackSpeed] = useState(1)
 
-  // Process Flow Simulator state
   const [flowArrival, setFlowArrival] = useState([])
   const [flowReadyQueue, setFlowReadyQueue] = useState([])
   const [flowCPU, setFlowCPU] = useState(null)
   const [flowCompleted, setFlowCompleted] = useState([])
   const [cpuExplanation, setCPUExplanation] = useState('')
+  const [cpuRemainingTime, setCpuRemainingTime] = useState(null)
 
-  // How To Use tracking state
   const [step1Completed, setStep1Completed] = useState(false)
   const [step2Completed, setStep2Completed] = useState(false)
   const [step3Completed, setStep3Completed] = useState(false)
@@ -40,25 +46,10 @@ export default function CPUSchedulingPage() {
   const [algorithmChanged, setAlgorithmChanged] = useState(false)
 
   const playbackTimerRef = useRef(null)
-
-  const algorithmInfo = {
-    fcfs: {
-      name: 'First Come First Serve (FCFS)',
-      description: 'Processes execute in order of arrival.',
-      timeComplexity: 'O(n log n)',
-      spaceComplexity: 'O(n)',
-      explanation: 'Processes are sorted by arrival time.',
-    },
-    sjf: {
-      name: 'Shortest Job First (SJF) - Non-preemptive',
-      description:
-        'Processes with the smallest burst time execute first. If tie, earlier arrival time wins.',
-      timeComplexity: 'O(n²)',
-      spaceComplexity: 'O(n)',
-      explanation:
-        'Each scheduling decision scans available processes to find the shortest job.',
-    },
-  }
+  const remainingTimeRef = useRef(new Map())
+  const completedSetRef = useRef(new Set())
+  const totalStepsRef = useRef(0)
+  const completionTimeoutsRef = useRef([])
 
   const addProcess = () => {
     const newId =
@@ -68,7 +59,7 @@ export default function CPUSchedulingPage() {
     const newPid = `P${processes.length + 1}`
     setProcesses((prev) => [
       ...prev,
-      { id: newId, pid: newPid, arrivalTime: 0, burstTime: 1 },
+      { id: newId, pid: newPid, arrivalTime: 0, burstTime: 1, priority: 1 },
     ])
     setStep2Completed(true)
   }
@@ -99,134 +90,166 @@ export default function CPUSchedulingPage() {
     setFlowCPU(null)
     setFlowCompleted([])
     setCPUExplanation('')
+    setCpuRemainingTime(null)
     setStep2Completed(false)
     setStep3Completed(false)
     setStep4Completed(false)
+    remainingTimeRef.current = new Map()
+    completedSetRef.current = new Set()
+    totalStepsRef.current = 0
     if (playbackTimerRef.current) {
       clearTimeout(playbackTimerRef.current)
     }
+    completionTimeoutsRef.current.forEach(clearTimeout)
+    completionTimeoutsRef.current = []
   }
 
-  const generatePlaybackSteps = (
-    rawGantt,
-    rawStatistics,
-    processesList,
-    algo
-  ) => {
-    const steps = []
+  const generatePlaybackSteps = (rawGantt, processesList) => {
+    const remaining = new Map()
+    processesList.forEach((p) => remaining.set(p.pid, p.burstTime))
 
-    for (let i = 0; i < rawGantt.length; i++) {
-      const segment = rawGantt[i]
-      const process = processesList.find((p) => p.pid === segment.pid)
+    return rawGantt.map((segment, i) => {
+      const remainingBefore = remaining.get(segment.pid) ?? segment.burstTime
+      const remainingAfter = remainingBefore - segment.burstTime
+      remaining.set(segment.pid, remainingAfter)
 
-      let availableProcesses = processesList.filter(
-        (p) =>
-          p.arrivalTime <= segment.start &&
-          !rawGantt.slice(0, i).some((g) => g.pid === p.pid)
+      const arrivedPids = new Set(
+        processesList
+          .filter((p) => p.arrivalTime <= segment.start)
+          .map((p) => p.pid)
       )
 
-      if (algo === 'sjf') {
-        availableProcesses = [...availableProcesses].sort((a, b) => {
-          if (a.burstTime !== b.burstTime) return a.burstTime - b.burstTime
-          return a.arrivalTime - b.arrivalTime
-        })
-      } else {
-        availableProcesses = [...availableProcesses].sort(
-          (a, b) => a.arrivalTime - b.arrivalTime
-        )
+      const completedBeforeThis = new Set()
+      const tempRemaining = new Map()
+      processesList.forEach((p) => tempRemaining.set(p.pid, p.burstTime))
+      for (let j = 0; j < i; j++) {
+        const s = rawGantt[j]
+        const prev = tempRemaining.get(s.pid) ?? 0
+        const after = prev - s.burstTime
+        tempRemaining.set(s.pid, after)
+        if (after <= 0) completedBeforeThis.add(s.pid)
       }
 
-      let reason = ''
-      if (algo === 'fcfs') {
-        if (availableProcesses[0]?.pid === segment.pid) {
-          reason = `Selected because it arrived first among ready processes.`
-        } else {
-          reason = `Process ${segment.pid} selected based on FCFS order.`
-        }
-      } else {
-        const shortestBurst = Math.min(
-          ...availableProcesses.map((p) => p.burstTime)
+      const readyQueue = processesList
+        .filter(
+          (p) =>
+            arrivedPids.has(p.pid) &&
+            !completedBeforeThis.has(p.pid) &&
+            p.pid !== segment.pid
         )
-        if (process && process.burstTime === shortestBurst) {
-          reason = `Selected because it has the shortest burst time (${process.burstTime}ms).`
-        } else {
-          reason = `Selected due to minimal burst time in ready queue.`
-        }
-      }
+        .map((p) => ({ pid: p.pid, arrivalTime: p.arrivalTime }))
 
-      steps.push({
-        step: i + 1,
-        process: segment.pid,
-        burstTime: segment.burstTime,
+      const willComplete = remainingAfter <= 0
+      const isLastSegment = i === rawGantt.length - 1
+
+      return {
+        segmentIndex: i,
+        pid: segment.pid,
+        segmentBurst: segment.burstTime,
         startTime: segment.start,
         endTime: segment.end,
-        reason: reason,
-        availableQueue: availableProcesses.map((p) => ({
-          pid: p.pid,
-          burstTime: p.burstTime,
-          arrivalTime: p.arrivalTime,
-        })),
-        allProcesses: processesList.map((p) => ({ ...p })),
-        currentTime: segment.start,
-      })
-    }
+        remainingBefore,
+        remainingAfter,
+        willComplete,
+        isLastSegment,
+        arrivedPids: [...arrivedPids],
+        readyQueue,
+        completedBefore: [...completedBeforeThis],
+      }
+    })
+  }
 
-    return steps
+  const buildExplanation = (step) => {
+    if (step.willComplete) {
+      return `${step.pid} finished execution (remaining: 0ms).`
+    }
+    if (step.remainingAfter > 0) {
+      return `${step.pid} ran for ${step.segmentBurst}ms — ${step.remainingAfter}ms remaining, returned to queue.`
+    }
+    return `${step.pid} is executing.`
+  }
+
+  const resetFlowState = () => {
+    completionTimeoutsRef.current.forEach(clearTimeout)
+    completionTimeoutsRef.current = []
+    setFlowArrival([])
+    setFlowReadyQueue([])
+    setFlowCPU(null)
+    setFlowCompleted([])
+    setCPUExplanation('')
+    setCpuRemainingTime(null)
+    remainingTimeRef.current = new Map()
+    completedSetRef.current = new Set()
   }
 
   const animateFlowStep = useCallback(
-    (step) => {
+    (step, processesList) => {
       if (!step) return
 
-      setFlowCPU(null)
-      setCPUExplanation('')
-
-      const arrived = step.allProcesses.filter(
-        (p) => p.arrivalTime <= step.currentTime
+      const arrived = processesList.filter((p) =>
+        step.arrivedPids.includes(p.pid)
       )
       setFlowArrival(arrived)
 
-      const completed = step.allProcesses.filter(
-        (p) => step.allProcesses.indexOf(p) < step.step - 1
-      )
-      const notCompleted = arrived.filter(
-        (p) => !completed.some((c) => c.pid === p.pid) && p.pid !== step.process
-      )
+      const readyProcs = step.readyQueue.map((r) => {
+        const proc = processesList.find((p) => p.pid === r.pid)
+        const rem = remainingTimeRef.current.get(r.pid)
+        return {
+          pid: r.pid,
+          arrivalTime: r.arrivalTime,
+          burstTime: rem !== undefined ? rem : proc?.burstTime,
+        }
+      })
+      setFlowReadyQueue(readyProcs)
 
-      let sortedReady = [...notCompleted]
-      if (selectedAlgorithm === 'sjf') {
-        sortedReady.sort((a, b) => {
-          if (a.burstTime !== b.burstTime) return a.burstTime - b.burstTime
-          return a.arrivalTime - b.arrivalTime
-        })
-      } else {
-        sortedReady.sort((a, b) => a.arrivalTime - b.arrivalTime)
-      }
+      const cpuProc = processesList.find((p) => p.pid === step.pid)
+      setFlowCPU(cpuProc ?? null)
+      setCpuRemainingTime(step.remainingAfter > 0 ? step.remainingAfter : 0)
+      setCPUExplanation(buildExplanation(step))
 
-      setFlowReadyQueue(sortedReady)
+      remainingTimeRef.current.set(step.pid, step.remainingAfter)
 
-      setTimeout(() => {
-        const selectedProc = step.allProcesses.find(
-          (p) => p.pid === step.process
-        )
-        setFlowCPU(selectedProc)
-        setCPUExplanation(step.reason)
+      const segDuration = (step.segmentBurst * 100) / playbackSpeed
 
-        setTimeout(() => {
+      const timeoutId = setTimeout(() => {
+        if (step.willComplete && !completedSetRef.current.has(step.pid)) {
+          completedSetRef.current.add(step.pid)
+          setFlowCompleted((prev) => {
+            if (prev.some((p) => p.pid === step.pid)) return prev
+            return [...prev, cpuProc ?? { pid: step.pid }]
+          })
+        }
+
+        if (step.isLastSegment) {
           setFlowCPU(null)
-          setFlowCompleted((prev) => [...prev, selectedProc])
-          setFlowReadyQueue((prev) =>
-            prev.filter((p) => p.pid !== step.process)
-          )
-        }, step.burstTime * 100)
-      }, 200)
+          setCpuRemainingTime(null)
+          setFlowReadyQueue([])
+        }
+        completionTimeoutsRef.current = completionTimeoutsRef.current.filter(
+          (id) => id !== timeoutId
+        )
+      }, segDuration)
+
+      completionTimeoutsRef.current.push(timeoutId)
     },
-    [selectedAlgorithm]
+    [playbackSpeed]
   )
 
   const handleRunSimulation = () => {
-    const result =
-      selectedAlgorithm === 'fcfs' ? runFCFS(processes) : runSJF(processes)
+    let result
+    if (selectedAlgorithm === 'fcfs') {
+      result = runFCFS(processes)
+    } else if (selectedAlgorithm === 'sjf') {
+      result = runSJF(processes)
+    } else if (selectedAlgorithm === 'rr') {
+      result = runRoundRobin(processes)
+    } else if (selectedAlgorithm === 'priority') {
+      result = runPriority(processes)
+    } else if (selectedAlgorithm === 'srtf') {
+      result = runSRTF(processes)
+    } else if (selectedAlgorithm === 'mlq') {
+      result = runMLQ(processes)
+    }
 
     setGanttData(result.ganttData)
     setStatistics(result.statistics)
@@ -238,26 +261,23 @@ export default function CPUSchedulingPage() {
       setStep4Completed(true)
     }
 
-    const steps = generatePlaybackSteps(
-      result.ganttData,
-      result.statistics,
-      processes,
-      selectedAlgorithm
-    )
+    const steps = generatePlaybackSteps(result.ganttData, processes)
+    totalStepsRef.current = steps.length
     setPlaybackSteps(steps)
     setCurrentStep(0)
-    setFlowArrival([])
-    setFlowReadyQueue([])
-    setFlowCPU(null)
-    setFlowCompleted([])
-    setCPUExplanation('')
+    resetFlowState()
+
+    const initRemaining = new Map()
+    processes.forEach((p) => initRemaining.set(p.pid, p.burstTime))
+    remainingTimeRef.current = initRemaining
+    completedSetRef.current = new Set()
+
     setIsPlaying(true)
   }
 
   const playNextStep = useCallback(() => {
     if (currentStep < playbackSteps.length) {
-      const nextStep = playbackSteps[currentStep]
-      animateFlowStep(nextStep)
+      animateFlowStep(playbackSteps[currentStep], processes)
       setCurrentStep((prev) => prev + 1)
     } else {
       setIsPlaying(false)
@@ -265,29 +285,33 @@ export default function CPUSchedulingPage() {
         clearTimeout(playbackTimerRef.current)
       }
     }
-  }, [currentStep, playbackSteps, animateFlowStep])
+  }, [currentStep, playbackSteps, animateFlowStep, processes])
 
   useEffect(() => {
     if (isPlaying && currentStep < playbackSteps.length) {
       const step = playbackSteps[currentStep]
-      const delay = step ? step.burstTime * 100 + 400 : 1000 / playbackSpeed
+      const delay = step
+        ? (step.segmentBurst * 100 + 400) / playbackSpeed
+        : 1000 / playbackSpeed
       playbackTimerRef.current = setTimeout(playNextStep, delay)
     }
     return () => {
       if (playbackTimerRef.current) {
         clearTimeout(playbackTimerRef.current)
       }
+      completionTimeoutsRef.current.forEach(clearTimeout)
+      completionTimeoutsRef.current = []
     }
   }, [isPlaying, currentStep, playbackSteps, playNextStep, playbackSpeed])
 
   const handlePlay = () => {
     if (currentStep >= playbackSteps.length) {
       setCurrentStep(0)
-      setFlowArrival([])
-      setFlowReadyQueue([])
-      setFlowCPU(null)
-      setFlowCompleted([])
-      setCPUExplanation('')
+      resetFlowState()
+      const initRemaining = new Map()
+      processes.forEach((p) => initRemaining.set(p.pid, p.burstTime))
+      remainingTimeRef.current = initRemaining
+      completedSetRef.current = new Set()
     }
     setIsPlaying(true)
   }
@@ -298,15 +322,15 @@ export default function CPUSchedulingPage() {
 
   const handleReplay = () => {
     setIsPlaying(false)
-    setCurrentStep(0)
-    setFlowArrival([])
-    setFlowReadyQueue([])
-    setFlowCPU(null)
-    setFlowCompleted([])
-    setCPUExplanation('')
     if (playbackTimerRef.current) {
       clearTimeout(playbackTimerRef.current)
     }
+    setCurrentStep(0)
+    resetFlowState()
+    const initRemaining = new Map()
+    processes.forEach((p) => initRemaining.set(p.pid, p.burstTime))
+    remainingTimeRef.current = initRemaining
+    completedSetRef.current = new Set()
     setIsPlaying(true)
   }
 
@@ -324,6 +348,12 @@ export default function CPUSchedulingPage() {
     const parsed = parseInt(rawValue)
     const burstTime = isNaN(parsed) ? 1 : Math.max(1, parsed)
     updateProcess(id, 'burstTime', burstTime)
+  }
+
+  const handlePriorityChange = (id, rawValue) => {
+    const parsed = parseInt(rawValue)
+    const priority = isNaN(parsed) ? 1 : Math.max(1, parsed)
+    updateProcess(id, 'priority', priority)
   }
 
   const handleAlgorithmChange = (e) => {
@@ -344,9 +374,7 @@ export default function CPUSchedulingPage() {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 1, ease: 'easeInOut' }}
     >
-      {/* Left Panel: Controls */}
       <div className="w-full lg:w-1/3 xl:w-1/4 p-4 flex flex-col gap-6 bg-slate-900/80 shadow-xl rounded-xl border border-white/5 backdrop-blur-sm overflow-y-auto">
-        {/* Header */}
         <div className="border-b border-white/10 pb-4">
           <p className="text-xs font-semibold uppercase tracking-[0.2em] text-cyan-400/80 text-center mb-1">
             CPU Scheduling Visualizer
@@ -356,7 +384,6 @@ export default function CPUSchedulingPage() {
           </h2>
         </div>
 
-        {/* How to use card */}
         <div className="bg-slate-950/60 rounded-xl border border-white/5 p-3 space-y-2">
           <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500 mb-2">
             How to use
@@ -416,7 +443,6 @@ export default function CPUSchedulingPage() {
           ))}
         </div>
 
-        {/* Algorithm Selector */}
         <div className="space-y-2">
           <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">
             Algorithm
@@ -428,10 +454,13 @@ export default function CPUSchedulingPage() {
           >
             <option value="fcfs">FCFS (First Come First Serve)</option>
             <option value="sjf">SJF (Shortest Job First)</option>
+            <option value="rr">Round Robin (RR)</option>
+            <option value="priority">Priority Scheduling</option>
+            <option value="srtf">Shortest Remaining Time First (SRTF)</option>
+            <option value="mlq">Multilevel Queue Scheduling (MLQ)</option>
           </select>
         </div>
 
-        {/* Playback Controls */}
         {playbackSteps.length > 0 && (
           <div className="space-y-3 bg-slate-950/60 rounded-xl border border-white/5 p-4">
             <p className="text-xs font-semibold uppercase tracking-[0.18em] text-cyan-400/80">
@@ -483,7 +512,6 @@ export default function CPUSchedulingPage() {
           </div>
         )}
 
-        {/* Action Buttons */}
         <div className="flex flex-col gap-2">
           <button
             onClick={handleRunSimulation}
@@ -499,7 +527,6 @@ export default function CPUSchedulingPage() {
           </button>
         </div>
 
-        {/* Complexity Card */}
         <div className="bg-slate-950/60 rounded-xl border border-white/5 p-4 space-y-2">
           <p className="text-xs font-semibold uppercase tracking-[0.18em] text-cyan-400/80">
             Complexity
@@ -524,9 +551,7 @@ export default function CPUSchedulingPage() {
         </div>
       </div>
 
-      {/* Right Panel: Visualization */}
       <div className="w-full lg:w-2/3 xl:w-3/4 flex flex-col gap-6">
-        {/* Summary Strip */}
         <div className="grid grid-cols-3 gap-4">
           <div className="bg-slate-900/80 rounded-xl border border-white/10 p-3 text-center">
             <p className="text-xs text-slate-400 mb-1">Processes</p>
@@ -537,7 +562,17 @@ export default function CPUSchedulingPage() {
           <div className="bg-slate-900/80 rounded-xl border border-white/10 p-3 text-center">
             <p className="text-xs text-slate-400 mb-1">Selected Algorithm</p>
             <p className="text-sm font-semibold text-white truncate">
-              {selectedAlgorithm === 'fcfs' ? 'FCFS' : 'SJF'}
+              {selectedAlgorithm === 'fcfs'
+                ? 'FCFS'
+                : selectedAlgorithm === 'sjf'
+                  ? 'SJF'
+                  : selectedAlgorithm === 'rr'
+                    ? 'RR'
+                    : selectedAlgorithm === 'priority'
+                      ? 'Priority'
+                      : selectedAlgorithm === 'srtf'
+                        ? 'SRTF'
+                        : 'MLQ'}
             </p>
           </div>
           <div className="bg-slate-900/80 rounded-xl border border-white/10 p-3 text-center">
@@ -548,14 +583,12 @@ export default function CPUSchedulingPage() {
           </div>
         </div>
 
-        {/* Process Flow Simulator */}
         <div className="bg-slate-900/80 rounded-xl border border-white/10 p-5 shadow-lg">
           <h3 className="text-lg font-semibold text-white mb-4">
             Process Flow Simulator
           </h3>
           <div className="bg-slate-950/60 rounded-lg border border-white/5 p-6">
             <div className="grid grid-cols-4 gap-4">
-              {/* Arrival */}
               <div className="text-center">
                 <p className="text-xs font-semibold text-slate-400 mb-3">
                   ARRIVAL
@@ -583,7 +616,6 @@ export default function CPUSchedulingPage() {
                 </div>
               </div>
 
-              {/* Ready Queue */}
               <div className="text-center">
                 <p className="text-xs font-semibold text-slate-400 mb-3">
                   READY QUEUE
@@ -612,14 +644,13 @@ export default function CPUSchedulingPage() {
                 </div>
               </div>
 
-              {/* CPU */}
               <div className="text-center">
                 <p className="text-xs font-semibold text-slate-400 mb-3">CPU</p>
                 <div className="min-h-[200px] bg-slate-900/50 rounded-lg border border-slate-700 p-2 flex flex-col items-center justify-center">
                   <AnimatePresence mode="wait">
                     {flowCPU ? (
                       <motion.div
-                        key={flowCPU.pid}
+                        key={`${flowCPU.pid}-${currentStep}`}
                         initial={{ scale: 0.5, opacity: 0, y: -20 }}
                         animate={{ scale: 1, opacity: 1, y: 0 }}
                         exit={{ scale: 0.5, opacity: 0, y: 20 }}
@@ -633,11 +664,29 @@ export default function CPUSchedulingPage() {
                             className="bg-green-500 h-full rounded-full"
                             initial={{ width: '0%' }}
                             animate={{ width: '100%' }}
-                            transition={{ duration: flowCPU.burstTime * 0.1 }}
+                            transition={{
+                              duration:
+                                (playbackSteps[currentStep - 1]?.segmentBurst ??
+                                  flowCPU.burstTime) * 0.1,
+                            }}
                           />
                         </div>
                         <span className="text-xs text-slate-400 mt-2 block">
-                          BT={flowCPU.burstTime}ms
+                          {cpuRemainingTime !== null && cpuRemainingTime > 0 ? (
+                            <>
+                              Slice:{' '}
+                              {playbackSteps[currentStep - 1]?.segmentBurst ??
+                                flowCPU.burstTime}
+                              ms | Remaining: {cpuRemainingTime}ms
+                            </>
+                          ) : (
+                            <>
+                              BT=
+                              {playbackSteps[currentStep - 1]?.segmentBurst ??
+                                flowCPU.burstTime}
+                              ms
+                            </>
+                          )}
                         </span>
                       </motion.div>
                     ) : (
@@ -662,7 +711,6 @@ export default function CPUSchedulingPage() {
                 )}
               </div>
 
-              {/* Completed */}
               <div className="text-center">
                 <p className="text-xs font-semibold text-slate-400 mb-3">
                   COMPLETED
@@ -689,7 +737,6 @@ export default function CPUSchedulingPage() {
           </div>
         </div>
 
-        {/* Execution Timeline Card */}
         <div className="bg-slate-900/80 rounded-xl border border-white/10 p-5 shadow-lg">
           <h3 className="text-lg font-semibold text-white mb-4">
             Execution Timeline
@@ -786,7 +833,6 @@ export default function CPUSchedulingPage() {
           </div>
         </div>
 
-        {/* Process Configuration Card */}
         <div className="bg-slate-900/80 rounded-xl border border-white/10 p-5 shadow-lg">
           <div className="flex justify-between items-center mb-4">
             <h3 className="text-lg font-semibold text-white">
@@ -803,16 +849,19 @@ export default function CPUSchedulingPage() {
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b border-white/10">
-                  <th className="text-left py-3 text-slate-400 font-medium w-1/4">
+                  <th className="text-left py-3 text-slate-400 font-medium w-1/5">
                     PID
                   </th>
-                  <th className="text-left py-3 text-slate-400 font-medium w-1/4">
+                  <th className="text-left py-3 text-slate-400 font-medium w-1/5">
                     Arrival Time
                   </th>
-                  <th className="text-left py-3 text-slate-400 font-medium w-1/4">
+                  <th className="text-left py-3 text-slate-400 font-medium w-1/5">
                     Burst Time
                   </th>
-                  <th className="text-left py-3 text-slate-400 font-medium w-1/4">
+                  <th className="text-left py-3 text-slate-400 font-medium w-1/5">
+                    Priority
+                  </th>
+                  <th className="text-left py-3 text-slate-400 font-medium w-1/5">
                     Actions
                   </th>
                 </tr>
@@ -850,6 +899,16 @@ export default function CPUSchedulingPage() {
                         className="bg-slate-800/50 border border-slate-700 rounded px-2 py-1.5 text-slate-200 text-sm w-full focus:border-cyan-500 focus:outline-none"
                       />
                     </td>
+                    <td className="py-2 pr-2">
+                      <input
+                        type="number"
+                        value={process.priority}
+                        onChange={(e) =>
+                          handlePriorityChange(process.id, e.target.value)
+                        }
+                        className="bg-slate-800/50 border border-slate-700 rounded px-2 py-1.5 text-slate-200 text-sm w-full focus:border-cyan-500 focus:outline-none"
+                      />
+                    </td>
                     <td className="py-2">
                       <button
                         onClick={() => deleteProcess(process.id)}
@@ -866,7 +925,6 @@ export default function CPUSchedulingPage() {
           </div>
         </div>
 
-        {/* Process Statistics Card */}
         <div className="bg-slate-900/80 rounded-xl border border-white/10 p-5 shadow-lg">
           <h3 className="text-lg font-semibold text-white mb-4">
             Process Statistics
@@ -954,7 +1012,6 @@ export default function CPUSchedulingPage() {
           )}
         </div>
 
-        {/* Algorithm Information Card */}
         <div className="bg-slate-900/80 rounded-xl border border-white/10 p-5 shadow-lg">
           <h3 className="text-lg font-semibold text-white mb-2">
             Algorithm Information

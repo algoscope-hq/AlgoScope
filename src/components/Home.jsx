@@ -52,7 +52,7 @@ const ALGORITHMS = [
     id: 'abstract-data-types',
     title: 'Abstract Data Types',
     description:
-      'Stacks, Queues, Binary Trees, Binary Heaps, and Priority Queues.',
+      'Stacks, Queues, Binary Trees, Binary Heaps, Linked Lists and Priority Queues.',
     color: 'theme-card border-emerald-500/30 hover:border-emerald-400',
     link: '/adt',
     difficulty: 'Intermediate',
