@@ -7,6 +7,7 @@ import TreeIV from './treeIV'
 import BinaryHeapIV from './binaryHeapIV'
 import PriorityQueueIV from './priorityQueueIV'
 import DSUIV from './dsuIV'
+import LinkedListIV from './LinkedListIV'
 import CodePanel from '../visualizer/CodePanel'
 import { adtSources } from './adtSources'
 import ComparisonMode from './ComparisonMode'
@@ -18,6 +19,7 @@ const tabs = [
   { id: 'heap', label: 'Binary Heap' },
   { id: 'priority-queue', label: 'Priority Queue' },
   { id: 'dsu', label: 'Disjoint Set Union' },
+  { id: 'linked-list', label: 'Linked List' },
   { id: 'graph', label: 'Graph Builder' },
 ]
 
@@ -124,6 +126,10 @@ export const DSLayout = () => {
       return adtSources.priorityQueue['priority queue']?.[selectedLang] || ''
     }
 
+    if (activeTab === 'linked-list') {
+      return adtSources.linkedList?.['singly linked list']?.[selectedLang] || ''
+    }
+
     return ''
   }, [activeTab, selectedLang, stackMode, treeTraversal])
 
@@ -134,6 +140,7 @@ export const DSLayout = () => {
     if (activeTab === 'heap') return 'Binary Heap'
     if (activeTab === 'priority-queue') return 'Priority Queue'
     if (activeTab === 'dsu') return 'Disjoint Set Union'
+    if (activeTab === 'linked-list') return 'Singly Linked List'
     return 'Queue'
   }
 
@@ -212,6 +219,8 @@ export const DSLayout = () => {
         )}
 
         {activeTab === 'dsu' && mode === 'solo' && <DSUIV />}
+
+        {activeTab === 'linked-list' && mode === 'solo' && <LinkedListIV />}
 
         {activeTab === 'graph' && (
           <div className="flex items-center justify-center min-h-[300px] text-slate-500">
