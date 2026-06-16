@@ -149,6 +149,12 @@ export const Navbar = () => {
 
   const { pathname } = useLocation()
   const isExploreMenuOpen = hoveredTab === 'explore' || exploreOpen
+  const isExploreActive = algorithmLinks.some(
+    (link) =>
+      link.href !== '/practice' &&
+      link.href !== '/challenge' &&
+      pathname.startsWith(link.href)
+  )
 
   const [history, setHistory] = useState(() => {
     try {
@@ -258,7 +264,11 @@ export const Navbar = () => {
                     setHoveredTab('explore')
                   }}
                   onKeyDown={handleExploreKeyDown}
-                  className="relative text-sm font-medium text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 px-4 py-1.5 rounded-lg transition-all duration-300 z-10 cursor-pointer"
+                  className={`relative text-sm font-medium px-4 py-1.5 rounded-lg transition-all duration-300 z-10 cursor-pointer ${
+                    isExploreActive
+                      ? 'text-indigo-600 dark:text-indigo-300 font-semibold'
+                      : 'text-slate-400 hover:text-slate-900 dark:hover:text-slate-100'
+                  }`}
                 >
                   Explore
                 </button>
