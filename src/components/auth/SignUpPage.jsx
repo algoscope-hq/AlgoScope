@@ -77,6 +77,12 @@ export default function SignUpPage() {
     }
   }
 
+  const handleBackToSignUp = () => {
+    setCode('')
+    setError('')
+    setPendingVerification(false)
+  }
+
   return (
     <div className="min-h-[calc(100vh-80px)] flex items-center justify-center bg-[#020617] py-12 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
       {/* Background ambient glows */}
@@ -121,7 +127,7 @@ export default function SignUpPage() {
             /* Signup Form Stage */
             <form onSubmit={handleSubmit} className="space-y-5">
               <div>
-                <label className="block text-sm font-semibold text-slate-200 mb-2">
+                <label htmlFor="email" className="block text-sm font-semibold text-slate-200 mb-2">
                   Email Address
                 </label>
                 <div className="relative">
@@ -129,6 +135,7 @@ export default function SignUpPage() {
                     <Mail className="h-5 h-5 text-slate-500" />
                   </div>
                   <input
+                    id="email"
                     type="email"
                     required
                     value={emailAddress}
@@ -140,7 +147,7 @@ export default function SignUpPage() {
               </div>
 
               <div>
-                <label className="block text-sm font-semibold text-slate-200 mb-2">
+                <label htmlFor="password" className="block text-sm font-semibold text-slate-200 mb-2">
                   Password
                 </label>
                 <div className="relative">
@@ -148,6 +155,7 @@ export default function SignUpPage() {
                     <Lock className="h-5 h-5 text-slate-500" />
                   </div>
                   <input
+                    id="password"
                     type="password"
                     required
                     value={password}
@@ -159,7 +167,7 @@ export default function SignUpPage() {
               </div>
 
               <div>
-                <label className="block text-sm font-semibold text-slate-200 mb-2">
+                <label htmlFor="confirm-password" className="block text-sm font-semibold text-slate-200 mb-2">
                   Confirm Password
                 </label>
                 <div className="relative">
@@ -167,6 +175,7 @@ export default function SignUpPage() {
                     <Lock className="h-5 h-5 text-slate-500" />
                   </div>
                   <input
+                    id="confirm-password"
                     type="password"
                     required
                     value={confirmPassword}
@@ -205,7 +214,7 @@ export default function SignUpPage() {
             /* OTP Verification Stage */
             <form onSubmit={handleVerify} className="space-y-6">
               <div>
-                <label className="block text-sm font-semibold text-slate-200 mb-2">
+                <label htmlFor="verification-code" className="block text-sm font-semibold text-slate-200 mb-2">
                   Verification Code
                 </label>
                 <div className="relative">
@@ -213,6 +222,7 @@ export default function SignUpPage() {
                     <KeyRound className="h-5 h-5 text-slate-500" />
                   </div>
                   <input
+                    id="verification-code"
                     type="text"
                     required
                     value={code}
@@ -238,7 +248,7 @@ export default function SignUpPage() {
               <div className="text-center pt-2">
                 <button
                   type="button"
-                  onClick={() => setPendingVerification(false)}
+                  onClick={handleBackToSignUp}
                   className="text-sm text-slate-400 hover:text-slate-200 transition duration-200"
                 >
                   Change email address

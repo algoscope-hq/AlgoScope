@@ -98,7 +98,7 @@ const router = createBrowserRouter([
     path: '/sign-in',
     element: (
       <AppLayout>
-        <SignInPage />
+        {HAS_CLERK ? <SignInPage /> : <Navigate to="/" replace />}
       </AppLayout>
     ),
   },
@@ -106,7 +106,7 @@ const router = createBrowserRouter([
     path: '/sign-up',
     element: (
       <AppLayout>
-        <SignUpPage />
+        {HAS_CLERK ? <SignUpPage /> : <Navigate to="/" replace />}
       </AppLayout>
     ),
   },
