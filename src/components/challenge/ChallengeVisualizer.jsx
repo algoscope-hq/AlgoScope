@@ -4,6 +4,7 @@ import { AnimatePresence, motion } from 'framer-motion'
 const MAX_QUESTIONS = 10
 
 const QUESTION_BANK = [
+  // ── Sorting ────────────
   {
     id: 'stable-sort',
     category: 'sorting',
@@ -22,11 +23,81 @@ const QUESTION_BANK = [
     explanation: 'Worst case occurs with bad pivots repeatedly → O(n²).',
   },
   {
+    id: 'merge-extra-space',
+    category: 'sorting',
+    question: 'Merge Sort typically needs…',
+    options: [
+      'O(1) extra space',
+      'O(log n) extra space',
+      'O(n) extra space',
+      'No extra space',
+    ],
+    correctIndex: 2,
+    explanation: 'Standard merge uses auxiliary arrays → O(n) extra space.',
+  },
+  {
+    id: 'insertion-best',
+    category: 'sorting',
+    question: "Insertion Sort's best-case time complexity is…",
+    options: ['O(n²)', 'O(n log n)', 'O(n)', 'O(1)'],
+    correctIndex: 2,
+    explanation:
+      'When the array is already sorted, Insertion Sort runs in O(n).',
+  },
+  {
+    id: 'heap-sort-space',
+    category: 'sorting',
+    question: 'Heap Sort has a space complexity of…',
+    options: ['O(n)', 'O(log n)', 'O(n log n)', 'O(1)'],
+    correctIndex: 3,
+    explanation:
+      'Heap Sort sorts in-place using the heap built within the original array.',
+  },
+  {
+    id: 'counting-sort-limit',
+    category: 'sorting',
+    question: 'Counting Sort is NOT suitable when…',
+    options: [
+      'Range of values is very large',
+      'Input is integers',
+      'Array is small',
+      'Values repeat frequently',
+    ],
+    correctIndex: 0,
+    explanation:
+      'Counting Sort needs O(k) extra space for the count array; huge k makes it impractical.',
+  },
+  {
+    id: 'quick-avg',
+    category: 'sorting',
+    question: "Quick Sort's average-case time complexity is…",
+    options: ['O(n²)', 'O(n)', 'O(n log n)', 'O(log n)'],
+    correctIndex: 2,
+    explanation:
+      'With a good pivot strategy, Quick Sort runs in O(n log n) on average.',
+  },
+  {
+    id: 'bubble-sort-stable',
+    category: 'sorting',
+    question: 'Is Bubble Sort stable?',
+    options: [
+      'Yes, always',
+      'No',
+      'Only on sorted input',
+      'Depends on implementation',
+    ],
+    correctIndex: 0,
+    explanation:
+      'Bubble Sort only swaps adjacent elements when strictly out of order, so equal elements stay in original order.',
+  },
+
+  // ── Graph ────────────────────────────────────────────────────────────────
+  {
     id: 'bfs-structure',
     category: 'graph',
     question: 'BFS uses which data structure?',
-    options: ['Stack', 'Queue', 'Priority Queue', 'Set'],
-    correctIndex: 1,
+    options: ['Stack', 'Set', 'Priority Queue', 'Queue'],
+    correctIndex: 3,
     explanation: 'BFS explores level-by-level using a queue.',
   },
   {
@@ -42,14 +113,14 @@ const QUESTION_BANK = [
     category: 'graph',
     question: "Why doesn't Dijkstra work with negative edge weights?",
     options: [
-      'It cannot detect cycles',
       'Greedy relaxation breaks (a shorter path may appear later)',
+      'It cannot detect cycles',
       'It needs an adjacency matrix',
       'It requires undirected graphs',
     ],
-    correctIndex: 1,
+    correctIndex: 0,
     explanation:
-      'Dijkstra assumes once a node is finalized it cannot be improved—negative edges violate that.',
+      "Dijkstra assumes once a node is finalized it can't be improved—negative edges violate that.",
   },
   {
     id: 'bellman-ford',
@@ -66,40 +137,6 @@ const QUESTION_BANK = [
       'After V−1 relaxations, one more improvement implies a reachable negative cycle.',
   },
   {
-    id: 'heap-property',
-    category: 'ds',
-    question: 'In a max-heap, the parent node is…',
-    options: [
-      'Always smaller than children',
-      'Always greater than or equal to children',
-      'Always the median',
-      'Always the minimum',
-    ],
-    correctIndex: 1,
-    explanation: 'Max-heap property: parent ≥ children.',
-  },
-  {
-    id: 'binary-search-requirement',
-    category: 'search',
-    question: 'Binary search requires the array to be…',
-    options: ['Sorted', 'Unique', 'All positive', 'Even length'],
-    correctIndex: 0,
-    explanation: 'Binary search relies on sorted order to discard halves.',
-  },
-  {
-    id: 'merge-extra-space',
-    category: 'sorting',
-    question: 'Merge Sort typically needs…',
-    options: [
-      'O(1) extra space',
-      'O(log n) extra space',
-      'O(n) extra space',
-      'No extra space',
-    ],
-    correctIndex: 2,
-    explanation: 'Standard merge uses auxiliary arrays → O(n) extra space.',
-  },
-  {
     id: 'floyd-warshall',
     category: 'graph',
     question: 'Floyd–Warshall computes…',
@@ -113,6 +150,195 @@ const QUESTION_BANK = [
     explanation: 'It finds shortest paths between all pairs of vertices.',
   },
   {
+    id: 'topo-sort-cycle',
+    category: 'graph',
+    question: 'Topological sort is only possible in a…',
+    options: [
+      'Undirected graph',
+      'Directed Acyclic Graph (DAG)',
+      'Cyclic directed graph',
+      'Weighted graph',
+    ],
+    correctIndex: 1,
+    explanation:
+      'Topological ordering requires no cycles—only DAGs support it.',
+  },
+  {
+    id: 'prim-vs-kruskal',
+    category: 'graph',
+    question: "Kruskal's MST algorithm is based on…",
+    options: [
+      'BFS traversal',
+      'DFS traversal',
+      'Greedy edge selection by weight',
+      'Dynamic programming',
+    ],
+    correctIndex: 2,
+    explanation:
+      "Kruskal's greedily picks the smallest-weight edge that doesn't form a cycle.",
+  },
+  {
+    id: 'graph-bfs-shortest',
+    category: 'graph',
+    question: 'BFS finds the shortest path in terms of…',
+    options: [
+      'Edge weights',
+      'DFS depth',
+      'Node values',
+      'Number of edges (hops)',
+    ],
+    correctIndex: 3,
+    explanation:
+      'BFS guarantees shortest path in hop count (unweighted graphs).',
+  },
+  {
+    id: 'scc',
+    category: 'graph',
+    question: "Kosaraju's algorithm is used to find…",
+    options: [
+      'Shortest paths',
+      'Strongly Connected Components',
+      'Minimum Spanning Tree',
+      'Bridges and articulation points',
+    ],
+    correctIndex: 1,
+    explanation:
+      "Kosaraju's does two DFS passes to identify strongly connected components.",
+  },
+
+  // ── Data Structures ──────────────────────────────────────────────────────
+  {
+    id: 'heap-property',
+    category: 'ds',
+    question: 'In a max-heap, the parent node is…',
+    options: [
+      'Always smaller than children',
+      'Always greater than or equal to children',
+      'Always the median',
+      'Always the minimum',
+    ],
+    correctIndex: 1,
+    explanation: 'Max-heap property: parent ≥ children.',
+  },
+  {
+    id: 'stack-lifo',
+    category: 'ds',
+    question: 'A stack follows which principle?',
+    options: ['FIFO', 'LIFO', 'Priority order', 'Random access'],
+    correctIndex: 1,
+    explanation:
+      'Stack is Last-In First-Out—the most recently pushed element is popped first.',
+  },
+  {
+    id: 'queue-fifo',
+    category: 'ds',
+    question: 'A queue follows which principle?',
+    options: ['LIFO', 'Max-order', 'Min-order', 'FIFO'],
+    correctIndex: 3,
+    explanation:
+      'Queue is First-In First-Out—elements are removed in the order they were added.',
+  },
+  {
+    id: 'hash-collision',
+    category: 'ds',
+    question: 'A hash collision occurs when…',
+    options: [
+      'Two different keys map to the same hash bucket',
+      'Two keys have the same value',
+      'The hash table is full',
+      'A key is deleted',
+    ],
+    correctIndex: 0,
+    explanation:
+      'A collision happens when distinct keys produce the same hash index.',
+  },
+  {
+    id: 'bst-search',
+    category: 'ds',
+    question: 'Binary Search Tree (BST) worst-case search time is…',
+    options: ['O(log n)', 'O(1)', 'O(n)', 'O(n log n)'],
+    correctIndex: 2,
+    explanation:
+      'A degenerate (skewed) BST degrades to O(n)—like a linked list.',
+  },
+  {
+    id: 'linked-list-access',
+    category: 'ds',
+    question: 'Accessing the k-th element in a singly linked list is…',
+    options: ['O(1)', 'O(log n)', 'O(k)', 'O(n²)'],
+    correctIndex: 2,
+    explanation: 'You must traverse from the head, taking O(k) steps.',
+  },
+  {
+    id: 'deque',
+    category: 'ds',
+    question: 'A deque (double-ended queue) supports…',
+    options: [
+      'Insertion and deletion at the front only',
+      'Insertion and deletion at both ends',
+      'Only priority-based insertion',
+      'Random access in O(1)',
+    ],
+    correctIndex: 1,
+    explanation: 'Deque allows push/pop from both front and back.',
+  },
+  {
+    id: 'trie-use',
+    category: 'ds',
+    question: 'Tries are most commonly used for…',
+    options: [
+      'Sorting numbers',
+      'Prefix-based string searches',
+      'Graph traversal',
+      'Heap operations',
+    ],
+    correctIndex: 1,
+    explanation:
+      'Tries store strings character-by-character enabling fast prefix lookups.',
+  },
+  {
+    id: 'avl-property',
+    category: 'ds',
+    question: 'An AVL tree maintains…',
+    options: [
+      'A height difference ≤ 1 between left and right subtrees',
+      'All leaves at the same level',
+      'A max-heap property',
+      'A sorted array internally',
+    ],
+    correctIndex: 0,
+    explanation:
+      'AVL trees self-balance by keeping the height difference (balance factor) ≤ 1.',
+  },
+
+  // ── Search & Binary Search ───────────────────────────────────────────────
+  {
+    id: 'binary-search-requirement',
+    category: 'search',
+    question: 'Binary search requires the array to be…',
+    options: ['Sorted', 'Unique', 'All positive', 'Even length'],
+    correctIndex: 0,
+    explanation: 'Binary search relies on sorted order to discard halves.',
+  },
+  {
+    id: 'binary-search-complexity',
+    category: 'search',
+    question: 'Binary search time complexity is…',
+    options: ['O(n)', 'O(n²)', 'O(log n)', 'O(1)'],
+    correctIndex: 2,
+    explanation: 'Each step halves the search space → O(log n).',
+  },
+  {
+    id: 'linear-search-worst',
+    category: 'search',
+    question: 'Linear search worst-case time complexity is…',
+    options: ['O(log n)', 'O(1)', 'O(n)', 'O(n²)'],
+    correctIndex: 2,
+    explanation: 'You may have to scan all n elements in the worst case.',
+  },
+
+  // ── Complexity Theory ────────────────────────────────────────────────────
+  {
     id: 'big-o-definition',
     category: 'theory',
     question: 'Big-O notation describes…',
@@ -125,19 +351,206 @@ const QUESTION_BANK = [
     correctIndex: 1,
     explanation: 'Big-O gives an asymptotic upper bound on growth rate.',
   },
+  {
+    id: 'big-omega',
+    category: 'theory',
+    question: 'Big-Ω (Omega) notation represents…',
+    options: ['Upper bound', 'Tight bound', 'Lower bound', 'Average case'],
+    correctIndex: 2,
+    explanation: 'Big-Ω is the asymptotic lower bound—best-case growth rate.',
+  },
+  {
+    id: 'np-complete',
+    category: 'theory',
+    question: 'An NP-complete problem is one that…',
+    options: [
+      'Can be solved in polynomial time',
+      'Is in NP and is NP-hard',
+      'Has no known solution',
+      'Can only be solved by brute force',
+    ],
+    correctIndex: 1,
+    explanation:
+      'NP-complete means both in NP (verifiable in poly time) and NP-hard (at least as hard as all NP problems).',
+  },
+  {
+    id: 'space-complexity',
+    category: 'theory',
+    question: 'Space complexity measures…',
+    options: [
+      'Number of operations performed',
+      'Time taken on real hardware',
+      'Number of recursive calls',
+      'Memory used relative to input size',
+    ],
+    correctIndex: 3,
+    explanation:
+      'Space complexity tracks extra memory an algorithm uses as input grows.',
+  },
+  {
+    id: 'amortized',
+    category: 'theory',
+    question: 'Amortized analysis gives you the…',
+    options: [
+      'Worst-case per operation, always',
+      'Average cost per operation over a sequence',
+      'Best-case per operation',
+      'Exact cost per operation',
+    ],
+    correctIndex: 1,
+    explanation:
+      'Amortized analysis spreads expensive operations over a sequence to get a tighter average.',
+  },
+
+  // ── Dynamic Programming ──────────────────────────────────────────────────
+  {
+    id: 'dp-overlapping',
+    category: 'dp',
+    question: 'Dynamic programming is best suited for problems with…',
+    options: [
+      'Overlapping subproblems and optimal substructure',
+      'Independent subproblems only',
+      'Random input distributions',
+      'Purely greedy choices',
+    ],
+    correctIndex: 0,
+    explanation:
+      'DP shines when subproblems repeat and the global optimum can be built from subproblem optima.',
+  },
+  {
+    id: 'memoization-vs-tabulation',
+    category: 'dp',
+    question: 'Memoization is…',
+    options: [
+      'Bottom-up DP with a table',
+      'Space-optimized iteration',
+      'Greedy optimization',
+      'Top-down DP with caching of recursive results',
+    ],
+    correctIndex: 3,
+    explanation:
+      'Memoization = top-down recursion + caching already-computed results.',
+  },
+  {
+    id: 'knapsack-type',
+    category: 'dp',
+    question: 'The 0/1 Knapsack problem is solved efficiently using…',
+    options: [
+      'Greedy algorithm',
+      'BFS',
+      'Dynamic programming',
+      'Divide and conquer',
+    ],
+    correctIndex: 2,
+    explanation:
+      '0/1 Knapsack has overlapping subproblems → DP gives O(n·W) solution.',
+  },
+  {
+    id: 'lcs',
+    category: 'dp',
+    question:
+      'The Longest Common Subsequence (LCS) of two strings of length m and n has DP time complexity…',
+    options: ['O(m+n)', 'O(m·n)', 'O(m²)', 'O(log(m·n))'],
+    correctIndex: 1,
+    explanation: 'LCS fills an m×n DP table → O(m·n).',
+  },
+
+  // ── Recursion & Divide and Conquer ───────────────────────────────────────
+  {
+    id: 'master-theorem',
+    category: 'theory',
+    question: 'The Master Theorem is used to solve…',
+    options: [
+      'DP recurrences',
+      'Graph shortest-path recurrences',
+      'Divide-and-conquer recurrences of the form T(n) = aT(n/b) + f(n)',
+      'Greedy algorithm runtimes',
+    ],
+    correctIndex: 2,
+    explanation:
+      'The Master Theorem handles recurrences that split into a subproblems of size n/b.',
+  },
+  {
+    id: 'recursion-base',
+    category: 'theory',
+    question: 'Without a base case, a recursive function will…',
+    options: [
+      'Cause a stack overflow',
+      'Run until it produces correct output',
+      'Return 0 automatically',
+      'Fall back to iteration',
+    ],
+    correctIndex: 0,
+    explanation:
+      'Infinite recursion keeps pushing stack frames until the call stack overflows.',
+  },
+
+  // ── Two Pointers / Sliding Window ────────────────────────────────────────
+  {
+    id: 'two-pointer-sorted',
+    category: 'patterns',
+    question:
+      'The two-pointer technique on a sorted array to find a pair summing to a target runs in…',
+    options: ['O(n²)', 'O(n log n)', 'O(n)', 'O(log n)'],
+    correctIndex: 2,
+    explanation:
+      'Two pointers advance from both ends, visiting each element at most once → O(n).',
+  },
+  {
+    id: 'sliding-window-use',
+    category: 'patterns',
+    question: 'Sliding window is ideal for problems asking about…',
+    options: [
+      'Sorted order of elements',
+      'Contiguous subarrays or substrings satisfying a condition',
+      'Graph connectivity',
+      'Minimum spanning trees',
+    ],
+    correctIndex: 1,
+    explanation:
+      'Sliding window efficiently tracks a moving subarray/substring window in O(n).',
+  },
+  {
+    id: 'prefix-sum-use',
+    category: 'patterns',
+    question: 'A prefix sum array lets you answer range-sum queries in…',
+    options: ['O(n)', 'O(log n)', 'O(1)', 'O(n²)'],
+    correctIndex: 2,
+    explanation:
+      'After O(n) preprocessing, any range sum [l, r] = prefix[r] − prefix[l−1] in O(1).',
+  },
 ]
 
-function pickQuestions() {
-  const pool = [...QUESTION_BANK]
-  for (let i = pool.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1))
-    ;[pool[i], pool[j]] = [pool[j], pool[i]]
+// ── Smart rotation: never repeat questions across resets until all are seen ──
+function createPicker() {
+  let remaining = []
+
+  return function pick() {
+    if (remaining.length === 0) {
+      const fresh = [...QUESTION_BANK]
+      for (let i = fresh.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1))
+        ;[fresh[i], fresh[j]] = [fresh[j], fresh[i]]
+      }
+      remaining = fresh
+    }
+    const batch = remaining.splice(0, MAX_QUESTIONS)
+    if (batch.length < MAX_QUESTIONS) {
+      const fresh = [...QUESTION_BANK]
+      for (let i = fresh.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1))
+        ;[fresh[i], fresh[j]] = [fresh[j], fresh[i]]
+      }
+      remaining = fresh
+      batch.push(...remaining.splice(0, MAX_QUESTIONS - batch.length))
+    }
+    return batch
   }
-  return pool.slice(0, Math.min(MAX_QUESTIONS, pool.length))
 }
 
 export default function ChallengeVisualizer() {
-  const [questions, setQuestions] = useState(() => pickQuestions())
+  const [pick] = useState(() => createPicker())
+  const [questions, setQuestions] = useState(() => pick())
   const [index, setIndex] = useState(0)
   const [score, setScore] = useState(0)
   const [streak, setStreak] = useState(0)
@@ -154,13 +567,14 @@ export default function ChallengeVisualizer() {
   }, [index, questions.length])
 
   const restart = () => {
-    setQuestions(pickQuestions())
+    setQuestions(pick())
     setIndex(0)
     setScore(0)
     setStreak(0)
     setCorrect(0)
     setSelectedIndex(null)
     setIsAnswered(false)
+    setShowResults(false)
   }
 
   const handleSelect = (optIndex) => {

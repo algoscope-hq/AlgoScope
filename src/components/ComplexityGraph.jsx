@@ -74,6 +74,7 @@ export default function ComplexityGraph({ algorithm }) {
               dataKey="performance"
               stroke={algorithmColors[algorithm]}
               strokeWidth={3}
+              dot={false}
             />
           </LineChart>
         </ResponsiveContainer>

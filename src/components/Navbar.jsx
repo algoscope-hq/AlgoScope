@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useCallback } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import {
   SignedIn,
@@ -150,6 +150,12 @@ export const Navbar = () => {
 
   const { pathname } = useLocation()
   const isExploreMenuOpen = hoveredTab === 'explore' || exploreOpen
+  const isExploreActive = algorithmLinks.some(
+    (link) =>
+      link.href !== '/practice' &&
+      link.href !== '/challenge' &&
+      pathname.startsWith(link.href)
+  )
 
   const [history, setHistory] = useState(() => {
     try {
@@ -180,10 +186,10 @@ export const Navbar = () => {
     localStorage.setItem('algo-history', JSON.stringify(history))
   }, [history])
 
-  const closeExploreMenu = () => {
+  const closeExploreMenu = useCallback(() => {
     setExploreOpen(false)
     setHoveredTab((current) => (current === 'explore' ? null : current))
-  }
+  }, [])
 
   const handleExploreKeyDown = (event) => {
     if (event.key === 'Enter' || event.key === ' ') {
@@ -226,7 +232,7 @@ export const Navbar = () => {
             data-tour="search-bar"
             className="hidden md:flex flex-1 justify-center max-w-xs mx-4 z-10"
           >
-            <SearchBar />
+            <SearchBar onOpen={closeExploreMenu} />
           </div>
 
           <div className="hidden md:flex items-center gap-6">
@@ -259,7 +265,11 @@ export const Navbar = () => {
                     setHoveredTab('explore')
                   }}
                   onKeyDown={handleExploreKeyDown}
-                  className="relative text-sm font-medium text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 px-4 py-1.5 rounded-lg transition-all duration-300 z-10 cursor-pointer"
+                  className={`relative text-sm font-medium px-4 py-1.5 rounded-lg transition-all duration-300 z-10 cursor-pointer ${
+                    isExploreActive
+                      ? 'text-indigo-600 dark:text-indigo-300 font-semibold'
+                      : 'text-slate-400 hover:text-slate-900 dark:hover:text-slate-100'
+                  }`}
                 >
                   Explore
                 </button>
@@ -552,7 +562,7 @@ export const Navbar = () => {
               <div className="flex-grow overflow-y-auto space-y-6 pr-2">
                 {/* Search */}
                 <div className="w-full">
-                  <SearchBar />
+                  <SearchBar onOpen={closeExploreMenu} />
                 </div>
 
                 {/* Nav list */}

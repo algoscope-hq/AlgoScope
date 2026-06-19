@@ -5,10 +5,10 @@ export const ROUTE_DIFFICULTIES = {
   '/ldssearch': 'Beginner',
   '/adt': 'Intermediate',
   '/kadane': 'Intermediate',
-  '/moore-voting': 'Intermediate',
+  '/moore-voting': 'Beginner',
   '/math-theory': 'Intermediate',
   '/string-algorithms': 'Advanced',
-  '/dynamic-programming': 'Advanced',
+  '/dynamic-programming': 'Intermediate',
   '/dp-journey': 'Advanced',
   '/backtracking': 'Advanced',
 }
@@ -19,7 +19,7 @@ export const NEXT_TOPICS_MAP = {
     {
       name: "Moore's Voting",
       href: '/moore-voting',
-      difficulty: 'Intermediate',
+      difficulty: 'Beginner',
     },
     { name: 'Abstract Data Types', href: '/adt', difficulty: 'Intermediate' },
   ],
@@ -32,7 +32,7 @@ export const NEXT_TOPICS_MAP = {
     {
       name: 'Dynamic Programming',
       href: '/dynamic-programming',
-      difficulty: 'Advanced',
+      difficulty: 'Intermediate',
     },
     { name: 'Backtracking', href: '/backtracking', difficulty: 'Advanced' },
   ],

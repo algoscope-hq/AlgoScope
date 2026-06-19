@@ -83,80 +83,108 @@ export const CanvasSearching = ({
 
   // ── Initialize vis-network ─────────────────────────────────────────────────
   useEffect(() => {
-    if (!window.vis || !containerRef.current) return
+    if (!containerRef.current) return
 
-    const nodes = new window.vis.DataSet(PRESET_NODES)
-    const edges = new window.vis.DataSet(PRESET_EDGES)
-    const data = { nodes, edges }
+    let network
+    let nodes
+    let edges
+    let cancelReady
+    let active = true
 
-    const options = {
-      physics: {
-        enabled: false,
-        stabilization: { enabled: true, iterations: 100, updateInterval: 25 },
-      },
-      nodes: {
-        shape: 'dot',
-        size: 15,
-        color: {
-          background: '#06b6d4',
-          border: '#e2e8f0',
-          highlight: { background: '#22d3ee', border: '#ffffff' },
-        },
-        font: {
-          size: 20,
-          color: '#f8fafc',
-          face: 'Arial',
-          bold: true,
-        },
-        borderWidth: 2,
-        shadow: {
-          enabled: true,
-          color: 'rgba(0,0,0,0.5)',
-          size: 5,
-          x: 5,
-          y: 5,
-        },
-      },
-      edges: {
-        arrows: { to: { enabled: true, scaleFactor: 1.0 } },
-        color: {
-          color: '#64748b',
-          highlight: '#22d3ee',
-          hover: '#22d3ee',
-        },
-        width: 3,
-        smooth: { type: 'curvedCW', roundness: 0.0 },
-        shadow: {
-          enabled: true,
-          color: 'rgba(0,0,0,0.5)',
-          size: 10,
-          x: 5,
-          y: 5,
-        },
-      },
-      interaction: {
-        hover: true,
-        tooltipDelay: 200,
-        dragNodes: true,
-        dragView: true,
-        zoomView: true,
-      },
+    const initNetwork = async () => {
+      try {
+        // Use dynamic import for vis-network
+        const visModule = await import('vis-network/standalone')
+        const vis = visModule.default || visModule
+
+        if (!active || !containerRef.current) return
+
+        nodes = new vis.DataSet(PRESET_NODES)
+        edges = new vis.DataSet(PRESET_EDGES)
+        const data = { nodes, edges }
+
+        const options = {
+          physics: {
+            enabled: false,
+            stabilization: {
+              enabled: true,
+              iterations: 100,
+              updateInterval: 25,
+            },
+          },
+          nodes: {
+            shape: 'dot',
+            size: 15,
+            color: {
+              background: '#06b6d4',
+              border: '#e2e8f0',
+              highlight: { background: '#22d3ee', border: '#ffffff' },
+            },
+            font: {
+              size: 20,
+              color: '#f8fafc',
+              face: 'Arial',
+              bold: true,
+            },
+            borderWidth: 2,
+            shadow: {
+              enabled: true,
+              color: 'rgba(0,0,0,0.5)',
+              size: 5,
+              x: 5,
+              y: 5,
+            },
+          },
+          edges: {
+            arrows: { to: { enabled: true, scaleFactor: 1.0 } },
+            color: {
+              color: '#64748b',
+              highlight: '#22d3ee',
+              hover: '#22d3ee',
+            },
+            width: 3,
+            smooth: { type: 'curvedCW', roundness: 0.0 },
+            shadow: {
+              enabled: true,
+              color: 'rgba(0,0,0,0.5)',
+              size: 10,
+              x: 5,
+              y: 5,
+            },
+          },
+          interaction: {
+            hover: true,
+            tooltipDelay: 200,
+            dragNodes: true,
+            dragView: true,
+            zoomView: true,
+          },
+        }
+
+        network = new vis.Network(containerRef.current, data, options)
+
+        nodesRef.current = nodes
+        edgesRef.current = edges
+        networkRef.current = network
+
+        cancelReady = scheduleNetworkReady(network, () => {
+          if (!active) return
+          setNetworkReady(true)
+          notifyGraphChange()
+        })
+      } catch (err) {
+        console.error('Failed to initialize vis-network:', err)
+      }
     }
 
-    const network = new window.vis.Network(containerRef.current, data, options)
-
-    nodesRef.current = nodes
-    edgesRef.current = edges
-    networkRef.current = network
-
-    const cancelReady = scheduleNetworkReady(network, () => {
-      setNetworkReady(true)
-      notifyGraphChange()
-    })
+    initNetwork()
 
     return () => {
-      cancelReady()
-      network.destroy()
+      active = false
+      if (cancelReady) cancelReady()
+      if (network) {
+        network.destroy()
+      }
       networkRef.current = null
       nodesRef.current = null
       edgesRef.current = null
