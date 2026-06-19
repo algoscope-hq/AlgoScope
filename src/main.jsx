@@ -4,6 +4,7 @@ import { createRoot } from 'react-dom/client'
 import './input.css'
 import App from './App.jsx'
 import { ThemeProvider } from './context/ThemeProvider.jsx'
+import { VisualizationStateProvider } from './context/visualizationState.jsx'
 import { ClerkProvider } from '@clerk/clerk-react'
 import { simple } from '@clerk/themes'
 
@@ -176,7 +177,9 @@ if (PUBLISHABLE_KEY) {
         }}
       >
         <ThemeProvider>
-          <App />
+          <VisualizationStateProvider>
+            <App />
+          </VisualizationStateProvider>
         </ThemeProvider>
       </ClerkProvider>
     </StrictMode>
@@ -185,7 +188,9 @@ if (PUBLISHABLE_KEY) {
   createRoot(document.getElementById('root')).render(
     <StrictMode>
       <ThemeProvider>
-        <App />
+        <VisualizationStateProvider>
+          <App />
+        </VisualizationStateProvider>
       </ThemeProvider>
     </StrictMode>
   )

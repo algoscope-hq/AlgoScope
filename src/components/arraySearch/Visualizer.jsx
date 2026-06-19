@@ -3,6 +3,7 @@ import { useSearchParams } from 'react-router-dom'
 import SpeedSlider from '../SpeedSlider.jsx'
 import CodePanel from '../visualizer/CodePanel'
 import { useStepPlayback } from '../visualizer/useStepPlayback'
+import { useVisualizationState } from '../../context/useVisualizationState'
 import ComplexityCard from '../ComplexityCard'
 import Tooltip from '../Tooltip'
 import TestCaseManager from '../testCaseManager/TestCaseManager'
@@ -33,6 +34,8 @@ const SEARCH_SAMPLE_CASES = [
     description: 'Target is in the middle of an unsorted array.',
   },
 ]
+
+const ARRAY_SEARCH_STATE_KEY = 'array-search:solo'
 
 const parseStoredSearchCase = (input) => {
   if (!input) return null
@@ -68,22 +71,43 @@ const parseStoredSearchCase = (input) => {
 
 export default function Visualizer() {
   const [searchParams, setSearchParams] = useSearchParams()
-  const [algorithm, setAlgorithm] = useState(
+  const [algorithm, setAlgorithm] = useVisualizationState(
+    `${ARRAY_SEARCH_STATE_KEY}:algorithm`,
     () => searchParams.get('algo') || 'linearSearch'
   )
-  const [baseArray, setBaseArray] = useState(() => createArray(algorithm))
-  const [target, setTarget] = useState(() => {
-    const urlTarget = searchParams.get('target')
-    if (urlTarget) return urlTarget
-    return algorithm === 'binarySearch' ? 37 : 30
-  })
-  const [customInput, setCustomInput] = useState('')
-  const [speed, setSpeed] = useState(1)
-  const [language, setLanguage] = useState(() => {
-    return searchParams.get('lang') || 'javascript'
-  })
+  const [baseArray, setBaseArray] = useVisualizationState(
+    `${ARRAY_SEARCH_STATE_KEY}:baseArray`,
+    () => createArray(algorithm)
+  )
+  const [target, setTarget] = useVisualizationState(
+    `${ARRAY_SEARCH_STATE_KEY}:target`,
+    () => {
+      const urlTarget = searchParams.get('target')
+      if (urlTarget) return urlTarget
+      return algorithm === 'binarySearch' ? 37 : 30
+    }
+  )
+  const [customInput, setCustomInput] = useVisualizationState(
+    `${ARRAY_SEARCH_STATE_KEY}:customInput`,
+    ''
+  )
+  const [speed, setSpeed] = useVisualizationState(
+    `${ARRAY_SEARCH_STATE_KEY}:speed`,
+    1
+  )
+  const [language, setLanguage] = useVisualizationState(
+    `${ARRAY_SEARCH_STATE_KEY}:language`,
+    () => searchParams.get('lang') || 'javascript'
+  )
   const [showShortcuts, setShowShortcuts] = useState(false)
-  const [isStepMode, setIsStepMode] = useState(false)
+  const [isStepMode, setIsStepMode] = useVisualizationState(
+    `${ARRAY_SEARCH_STATE_KEY}:isStepMode`,
+    false
+  )
+  const [playbackState, setPlaybackState] = useVisualizationState(
+    `${ARRAY_SEARCH_STATE_KEY}:playback`,
+    { steps: [], currentStepIndex: -1, isPlaying: false }
+  )
 
   const handleAlgorithmChange = (e) => {
     const newAlgo = e.target.value
@@ -117,7 +141,11 @@ export default function Visualizer() {
     replay: replayPlayback,
     stepForward,
     stepBackward,
-  } = useStepPlayback({ speed })
+  } = useStepPlayback({
+    speed,
+    initialState: playbackState,
+    onStateChange: setPlaybackState,
+  })
 
   const handleSearch = () => {
     if (algorithm && algoMap[algorithm]) {

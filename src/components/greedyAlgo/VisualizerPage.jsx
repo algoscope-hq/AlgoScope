@@ -3,6 +3,7 @@ import { useSearchParams } from 'react-router-dom'
 import SpeedSlider from '../SpeedSlider.jsx'
 import CodePanel from '../visualizer/CodePanel'
 import { useStepPlayback } from '../visualizer/useStepPlayback'
+import { useVisualizationState } from '../../context/useVisualizationState'
 import ComplexityCard from '../ComplexityCard'
 import Tooltip from '../Tooltip'
 import { useKeyboardShortcuts } from '../visualizer/useKeyboardShortcuts'
@@ -24,26 +25,49 @@ const DEFAULT_KNAPSACK_ITEMS = [
   { id: 'Item C', value: 120, weight: 30 },
 ]
 
+const GREEDY_STATE_KEY = 'greedy:solo'
+
 export default function VisualizerPage() {
   const [searchParams, setSearchParams] = useSearchParams()
-  const [algorithm, setAlgorithm] = useState(
+  const [algorithm, setAlgorithm] = useVisualizationState(
+    `${GREEDY_STATE_KEY}:algorithm`,
     () => searchParams.get('algo') || 'huffman'
   )
-  const [language, setLanguage] = useState(
+  const [language, setLanguage] = useVisualizationState(
+    `${GREEDY_STATE_KEY}:language`,
     () => searchParams.get('lang') || 'javascript'
   )
-  const [speed, setSpeed] = useState(1)
+  const [speed, setSpeed] = useVisualizationState(
+    `${GREEDY_STATE_KEY}:speed`,
+    1
+  )
   const [showShortcuts, setShowShortcuts] = useState(false)
-  const [isStepMode, setIsStepMode] = useState(false)
+  const [isStepMode, setIsStepMode] = useVisualizationState(
+    `${GREEDY_STATE_KEY}:isStepMode`,
+    false
+  )
 
   // Huffman Inputs
-  const [huffmanText, setHuffmanText] = useState('BEEP BOOP BEER')
+  const [huffmanText, setHuffmanText] = useVisualizationState(
+    `${GREEDY_STATE_KEY}:huffmanText`,
+    'BEEP BOOP BEER'
+  )
 
   // Knapsack Inputs
-  const [knapsackCapacity, setKnapsackCapacity] = useState(50)
-  const [knapsackItems, setKnapsackItems] = useState(DEFAULT_KNAPSACK_ITEMS)
+  const [knapsackCapacity, setKnapsackCapacity] = useVisualizationState(
+    `${GREEDY_STATE_KEY}:knapsackCapacity`,
+    50
+  )
+  const [knapsackItems, setKnapsackItems] = useVisualizationState(
+    `${GREEDY_STATE_KEY}:knapsackItems`,
+    DEFAULT_KNAPSACK_ITEMS
+  )
   const [newItemValue, setNewItemValue] = useState('')
   const [newItemWeight, setNewItemWeight] = useState('')
+  const [playbackState, setPlaybackState] = useVisualizationState(
+    `${GREEDY_STATE_KEY}:playback`,
+    { steps: [], currentStepIndex: -1, isPlaying: false }
+  )
 
   useEffect(() => {
     const params = { algo: algorithm, lang: language }
@@ -64,7 +88,11 @@ export default function VisualizerPage() {
     replay: replayPlayback,
     stepForward,
     stepBackward,
-  } = useStepPlayback({ speed })
+  } = useStepPlayback({
+    speed,
+    initialState: playbackState,
+    onStateChange: setPlaybackState,
+  })
 
   const handleVisualize = () => {
     clearPlayback()

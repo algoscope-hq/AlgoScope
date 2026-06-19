@@ -7,10 +7,24 @@ import {
 } from 'react'
 import { calculateStepDelay } from '../../lib/utils'
 
-export function useStepPlayback({ speed = 1 }) {
-  const [steps, setSteps] = useState([])
-  const [currentStepIndex, setCurrentStepIndex] = useState(-1)
-  const [isPlaying, setIsPlaying] = useState(false)
+const DEFAULT_PLAYBACK_STATE = {
+  steps: [],
+  currentStepIndex: -1,
+  isPlaying: false,
+}
+
+export function useStepPlayback({
+  speed = 1,
+  initialState = DEFAULT_PLAYBACK_STATE,
+  onStateChange,
+}) {
+  const [steps, setSteps] = useState(() => initialState.steps ?? [])
+  const [currentStepIndex, setCurrentStepIndex] = useState(
+    () => initialState.currentStepIndex ?? -1
+  )
+  const [isPlaying, setIsPlaying] = useState(
+    () => initialState.isPlaying ?? false
+  )
   const timeoutRef = useRef(null)
 
   const currentStep =
@@ -20,6 +34,10 @@ export function useStepPlayback({ speed = 1 }) {
 
   const hasSteps = steps.length > 0
   const isComplete = hasSteps && currentStepIndex === steps.length - 1
+
+  useEffect(() => {
+    onStateChange?.({ steps, currentStepIndex, isPlaying })
+  }, [currentStepIndex, isPlaying, onStateChange, steps])
 
   useEffect(() => {
     if (!isPlaying || !hasSteps || currentStepIndex < 0) {

@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react'
+import React, { useMemo } from 'react'
 import { motion } from 'framer-motion'
 import SpeedSlider from '../SpeedSlider'
 import ComplexityCard from '../ComplexityCard'
@@ -8,18 +8,33 @@ import { MenuSetAlgoKadane } from './MenuSetAlgoKadane'
 import { kadaneSources } from '../../algorithms/kadane/kadaneSources'
 import DifficultyBadge from '../DifficultyBadge'
 import LearningPathSuggestions from '../LearningPathSuggestions'
+import { useVisualizationState } from '../../context/useVisualizationState'
 
 const complexityData = {
   time: 'O(N)',
   space: 'O(1)',
 }
 
-const VisualizerPage = () => {
-  const [arrayInput, setArrayInput] = useState('-2,1,-3,4,-1,2,1,-5,4')
+const KADANE_STATE_KEY = 'kadane:solo'
 
-  const [numbers, setNumbers] = useState([])
-  const [speed, setSpeed] = useState(1)
-  const [language, setLanguage] = useState('javascript')
+const VisualizerPage = () => {
+  const [arrayInput, setArrayInput] = useVisualizationState(
+    `${KADANE_STATE_KEY}:arrayInput`,
+    '-2,1,-3,4,-1,2,1,-5,4'
+  )
+
+  const [numbers, setNumbers] = useVisualizationState(
+    `${KADANE_STATE_KEY}:numbers`,
+    []
+  )
+  const [speed, setSpeed] = useVisualizationState(
+    `${KADANE_STATE_KEY}:speed`,
+    1
+  )
+  const [language, setLanguage] = useVisualizationState(
+    `${KADANE_STATE_KEY}:language`,
+    'javascript'
+  )
 
   const handleVisualize = () => {
     const parsed = arrayInput

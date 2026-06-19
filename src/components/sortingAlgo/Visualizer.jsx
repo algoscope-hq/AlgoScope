@@ -1,8 +1,9 @@
-import React, { useState, useMemo } from 'react'
+import React, { useEffect, useMemo } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import SpeedSlider from '../SpeedSlider.jsx'
 import CodePanel from '../visualizer/CodePanel'
 import { useStepPlayback } from '../visualizer/useStepPlayback'
+import { useVisualizationState } from '../../context/useVisualizationState'
 import ComplexityCard from '../ComplexityCard'
 import Tooltip from '../Tooltip'
 import TestCaseManager from '../testCaseManager/TestCaseManager'
@@ -33,9 +34,11 @@ const algoMap = {
 }
 
 const DEFAULT_ARRAY_SIZE = 8
+const INITIAL_ARRAY = [50, 120, 70, 30, 200, 90, 160]
 const RANDOM_MIN = 50
 const RANDOM_MAX = 250
 const MAX_CUSTOM_INPUT_SIZE = 100
+const SORTING_STATE_KEY = 'sorting:solo'
 
 const parseStoredArray = (value) =>
   value
@@ -154,17 +157,61 @@ const STATE_STYLE_PRESETS = {
 
 export default function Visualizer() {
   const [searchParams, setSearchParams] = useSearchParams()
-  const [baseArray, setBaseArray] = useState([50, 120, 70, 30, 200, 90, 160])
-  const [speed, setSpeed] = useState(1)
-  const [language, setLanguage] = useState('javascript')
-  const [algorithmType, setAlgorithmType] = useState('simple')
-  const [customInput, setCustomInput] = useState('')
-  const [inputError, setInputError] = useState('')
-  const [isStepMode, setIsStepMode] = useState(false)
+  const [baseArray, setBaseArray] = useVisualizationState(
+    `${SORTING_STATE_KEY}:baseArray`,
+    INITIAL_ARRAY
+  )
+  const [speed, setSpeed] = useVisualizationState(
+    `${SORTING_STATE_KEY}:speed`,
+    1
+  )
+  const [language, setLanguage] = useVisualizationState(
+    `${SORTING_STATE_KEY}:language`,
+    'javascript'
+  )
+  const [algorithmType, setAlgorithmType] = useVisualizationState(
+    `${SORTING_STATE_KEY}:algorithmType`,
+    'simple'
+  )
+  const [customInput, setCustomInput] = useVisualizationState(
+    `${SORTING_STATE_KEY}:customInput`,
+    ''
+  )
+  const [inputError, setInputError] = useVisualizationState(
+    `${SORTING_STATE_KEY}:inputError`,
+    ''
+  )
+  const [isStepMode, setIsStepMode] = useVisualizationState(
+    `${SORTING_STATE_KEY}:isStepMode`,
+    false
+  )
+  const [persistedAlgorithm, setPersistedAlgorithm] = useVisualizationState(
+    `${SORTING_STATE_KEY}:selectedAlgorithm`,
+    ''
+  )
+  const [playbackState, setPlaybackState] = useVisualizationState(
+    `${SORTING_STATE_KEY}:playback`,
+    { steps: [], currentStepIndex: -1, isPlaying: false }
+  )
 
   const algoFromUrl = searchParams.get('algo')
   const selectedAlgorithm =
-    algoFromUrl && algoMap[algoFromUrl] ? algoFromUrl : ''
+    algoFromUrl && algoMap[algoFromUrl]
+      ? algoFromUrl
+      : persistedAlgorithm && algoMap[persistedAlgorithm]
+        ? persistedAlgorithm
+        : ''
+
+  useEffect(() => {
+    if (
+      algoFromUrl &&
+      algoMap[algoFromUrl] &&
+      algoFromUrl !== persistedAlgorithm
+    ) {
+      setPersistedAlgorithm(algoFromUrl)
+    }
+  }, [algoFromUrl, persistedAlgorithm, setPersistedAlgorithm])
+
   const testCaseAlgorithm = selectedAlgorithm || algorithmType
   const sortSampleCases = useMemo(
     () => buildSortSampleCases(testCaseAlgorithm),
@@ -185,7 +232,11 @@ export default function Visualizer() {
     replay: replayPlayback,
     stepForward,
     stepBackward,
-  } = useStepPlayback({ speed })
+  } = useStepPlayback({
+    speed,
+    initialState: playbackState,
+    onStateChange: setPlaybackState,
+  })
 
   const algorithmOptions = {
     simple: ['bubble', 'selection', 'insertion'],
@@ -205,7 +256,6 @@ export default function Visualizer() {
       }
     }
   }
-  const INITIAL_ARRAY = [50, 120, 70, 30, 200, 90, 160]
   const handleReset = () => {
     clearPlayback()
     setBaseArray(INITIAL_ARRAY)
@@ -364,6 +414,7 @@ export default function Visualizer() {
   const handleAlgorithmChange = (event) => {
     const newAlgo = event.target.value
     clearPlayback()
+    setPersistedAlgorithm(newAlgo)
     setSearchParams(newAlgo ? { algo: newAlgo } : {})
   }
 
@@ -555,6 +606,7 @@ export default function Visualizer() {
                         onChange={(e) => {
                           setAlgorithmType(e.target.value)
                           clearPlayback()
+                          setPersistedAlgorithm('')
                           setSearchParams({})
                         }}
                         disabled={isRunning}

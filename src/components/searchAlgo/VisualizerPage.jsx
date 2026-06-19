@@ -164,6 +164,9 @@ import SpeedSlider from '../SpeedSlider'
 import { graphSearchSources } from '../../algorithms/searching/graphSearchSources'
 import ComplexityCard from '../ComplexityCard'
 import ComparisonMode from './ComparisonMode'
+import { useVisualizationState } from '../../context/useVisualizationState'
+
+const GRAPH_SEARCH_STATE_KEY = 'graph-search:solo'
 
 export const VisualizerPage = () => {
   const [searchParams, setSearchParams] = useSearchParams()
@@ -179,14 +182,30 @@ export const VisualizerPage = () => {
     setSearchParams(newParams)
   }
 
-  const [node, setNode] = React.useState(null)
-  const [algorithm, setAlgorithm] = React.useState(null)
-  const [speed, setSpeed] = React.useState(1.0)
-  const [language, setLanguage] = React.useState('javascript')
-  const [runKey, setRunKey] = React.useState(null)
+  const [node, setNode] = useVisualizationState(
+    `${GRAPH_SEARCH_STATE_KEY}:node`,
+    null
+  )
+  const [algorithm, setAlgorithm] = useVisualizationState(
+    `${GRAPH_SEARCH_STATE_KEY}:algorithm`,
+    null
+  )
+  const [speed, setSpeed] = useVisualizationState(
+    `${GRAPH_SEARCH_STATE_KEY}:speed`,
+    1.0
+  )
+  const [language, setLanguage] = useVisualizationState(
+    `${GRAPH_SEARCH_STATE_KEY}:language`,
+    'javascript'
+  )
+  const [runKey, setRunKey] = useVisualizationState(
+    `${GRAPH_SEARCH_STATE_KEY}:runKey`,
+    null
+  )
   // Live list of node IDs from the canvas (kept in sync via onGraphChange)
-  const [nodeIds, setNodeIds] = React.useState(
-    Array.from({ length: 15 }, (_, i) => i + 1)
+  const [nodeIds, setNodeIds] = useVisualizationState(
+    `${GRAPH_SEARCH_STATE_KEY}:nodeIds`,
+    () => Array.from({ length: 15 }, (_, i) => i + 1)
   )
 
   const handleGraphChange = React.useCallback(
@@ -197,7 +216,7 @@ export const VisualizerPage = () => {
         setNode(null)
       }
     },
-    [node]
+    [node, setNode, setNodeIds]
   )
 
   const handleSpeedChange = (event, newValue) => {
