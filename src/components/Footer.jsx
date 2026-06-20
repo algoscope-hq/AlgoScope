@@ -181,7 +181,7 @@ const Footer = () => {
                 About Project &rarr;
               </Link>
               <Link
-                to="/cookiespage"
+                to="/cookies"
                 onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
                 className="text-xs theme-text-muted hover:theme-text-strong font-medium transition-colors"
               >
