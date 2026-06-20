@@ -87,7 +87,6 @@ const Footer = () => {
                 <h3 className="text-xl font-bold tracking-tight theme-text-strong logo-font">
                   AlgoScope
                 </h3>
-                {/* Fixed Gap Space here */}
                 <div className="flex items-center gap-2 mt-0.5">
                   <span className="relative flex h-1.5 w-1.5">
                     <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-75"></span>
@@ -173,13 +172,29 @@ const Footer = () => {
                 </svg>
               </motion.a>
             </div>
-            <Link
-              to="/about"
-              onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-              className="text-xs theme-text-muted hover:theme-text-strong font-medium transition-colors"
-            >
-              About Project &rarr;
-            </Link>
+            <div className="flex items-center gap-4">
+              <Link
+                to="/about"
+                onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+                className="text-xs theme-text-muted hover:theme-text-strong font-medium transition-colors"
+              >
+                About Project &rarr;
+              </Link>
+              <Link
+                to="/cookiespage"
+                onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+                className="text-xs theme-text-muted hover:theme-text-strong font-medium transition-colors"
+              >
+                Cookies
+              </Link>
+              <Link
+                to="/privacy"
+                onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+                className="text-xs theme-text-muted hover:theme-text-strong font-medium transition-colors"
+              >
+                Privacy Policy
+              </Link>
+            </div>
           </div>
         </div>
 
