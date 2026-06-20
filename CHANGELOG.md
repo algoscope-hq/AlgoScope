@@ -21,7 +21,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - correct array search algorithm names in global search
 - format App.jsx, Home.jsx, and CanvasSearching.jsx with LF endOfLine
 - import TwoPointerVisualizerPage and format code style
-- remove overly broad src/**/*.js pattern from ignores
+- remove overly broad src/\*_/_.js pattern from ignores
 - format & lint
 - format & lint
 - format & lint
@@ -1228,4 +1228,3 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - ➕ vite.config.js
 - ➕ yarn.lock
 ```
-
