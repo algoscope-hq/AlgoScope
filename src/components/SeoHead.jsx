@@ -105,6 +105,21 @@ const pageMetadata = {
     description:
       'Learn core operating systems concepts with interactive visualizations. Explore CPU scheduling, memory management, and process synchronization.',
   },
+  '/operating-systems/cpu-scheduling': {
+    title: 'CPU Scheduling Visualizer | AlgoScope',
+    description:
+      'Visualize CPU scheduling algorithms step by step. Compare FCFS, SJF, Round Robin, and Priority Scheduling with interactive Gantt charts.',
+  },
+  '/operating-systems/page-replacement': {
+    title: 'Page Replacement Visualizer | AlgoScope',
+    description:
+      'Explore page replacement algorithms interactively. Compare FIFO, LRU, and Optimal page replacement strategies with real-time animations.',
+  },
+  '/operating-systems/disk-scheduling': {
+    title: 'Disk Scheduling Visualizer | AlgoScope',
+    description:
+      'Understand disk scheduling algorithms with visual animations. Compare FCFS, SCAN, C-SCAN, LOOK, and C-LOOK scheduling strategies.',
+  },
 }
 
 function setMeta(selector, attribute, value) {
