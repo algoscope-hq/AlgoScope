@@ -1,7 +1,7 @@
 import React from 'react'
 import { motion } from 'framer-motion'
 import { Link } from 'react-router-dom'
-import Footer from '../components/Footer' // Adjust the import path if needed
+import Footer from './Footer' // Adjust the import path if needed
 
 const PrivacyPage = () => {
   return (
