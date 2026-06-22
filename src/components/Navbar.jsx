@@ -613,7 +613,7 @@ export const Navbar = () => {
                 {HAS_CLERK ? (
                   <SignedOut>
                     <SignInButton mode="modal">
-                      <button className="w-full relative group overflow-hidden rounded-xl bg-indigo-600 px-4 py-2.5 text-sm font-semibold text-white transition-all duration-300 active:scale-[0.98]">
+                      <button onClick={() => setOpen(false)} className="w-full relative group overflow-hidden rounded-xl bg-indigo-600 px-4 py-2.5 text-sm font-semibold text-white transition-all duration-300 active:scale-[0.98]">
                         <span className="relative z-10">Sign In</span>
                         <div className="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                       </button>
