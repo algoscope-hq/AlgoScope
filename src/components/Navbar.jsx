@@ -591,7 +591,24 @@ export const Navbar = () => {
               </div>
 
               {/* Drawer Footer */}
-              <div className="mt-6 pt-4 border-t border-slate-200 dark:border-slate-800/80 space-y-3 relative z-[60]">
+              <div className="grid grid-cols-2 gap-2 pt-2">
+  {[
+    { name: 'Home', href: '/' },
+    { name: 'Practice', href: '/practice' },
+    { name: 'Challenge', href: '/challenge' },
+    { name: 'Favorites', href: '/favorites' },
+  ].map((link) => (
+    <Link
+      key={link.name}
+      to={link.href}
+      onClick={() => setOpen(false)}
+      className="flex items-center justify-center w-full rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 px-4 py-2.5 text-sm font-semibold text-slate-700 dark:text-slate-200 transition-all duration-300 shadow-md active:scale-95"
+    >
+      {link.name}
+    </Link>
+  ))}
+</div>
+              <div className="mt-6 pt-4 border-t border-slate-200 dark:border-slate-800/80 space-y-3 ">
                
                 {HAS_CLERK ? (
                   <SignedOut>
@@ -627,7 +644,7 @@ export const Navbar = () => {
                   <span>Github</span>
                 </a>
               </div>
-              <div className="grid grid-cols-2 gap-2 pt-2">
+              {/* <div className="grid grid-cols-2 gap-2 pt-2">
    {[
     { name: 'Home', href: '/' },
     { name: 'Practice', href: '/practice' },
@@ -643,7 +660,7 @@ export const Navbar = () => {
       {link.name}
     </Link>
   ))}
-</div>
+</div> */}
             </motion.div>
           </>
         )}
