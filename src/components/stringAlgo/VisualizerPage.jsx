@@ -30,7 +30,7 @@ function SoloMode() {
   const [patternInput, setPatternInput] = useState(DEFAULTS.kmp.pattern)
   const [activeText, setActiveText] = useState('')
   const [activePattern, setActivePattern] = useState('')
-  const [speed, setSpeed] = useState(1)
+  const [speed, setSpeed] = usePersistedState('algo-speed-string', 1)
   const [language, setLanguage] = useState('javascript')
 
   const handleAlgorithmChange = (algo) => {
