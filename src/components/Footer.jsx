@@ -75,11 +75,11 @@ const Footer = () => {
         <div className="lg:col-span-1 theme-media-surface border theme-border rounded-xl p-6 flex flex-col justify-between space-y-8">
           <div className="space-y-4">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 theme-media-surface rounded-xl flex items-center justify-center p-1.5 border theme-border backdrop-blur shadow-inner">
+              <div className="w-12 h-12 theme-media-surface rounded-xl flex items-center justify-center p-1 border theme-border backdrop-blur shadow-inner">
                 <img
                   src="/logo3.png"
                   alt="AlgoScope"
-                  className="w-full h-full object-contain"
+                  className="w-full h-full object-contain scale-110"
                   onError={(e) => (e.target.style.display = 'none')}
                 />
               </div>
