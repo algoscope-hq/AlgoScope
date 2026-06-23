@@ -3,7 +3,6 @@ import { Link, useLocation } from 'react-router-dom'
 import {
   SignedIn,
   SignedOut,
-  SignInButton,
   UserButton,
 } from '@clerk/clerk-react'
 import { X } from 'lucide-react'
@@ -455,12 +454,13 @@ export const Navbar = () => {
               {HAS_CLERK ? (
                 <>
                   <SignedOut>
-                    <SignInButton mode="modal">
-                      <button className="theme-button-primary relative group overflow-hidden rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/40 hover:bg-slate-100 dark:hover:bg-slate-800/80 text-slate-700 dark:text-slate-200 px-6 py-2 text-sm font-bold transition-all duration-300 shadow-md active:scale-95">
-                        <span className="relative z-10">Sign In</span>
-                        <div className="absolute inset-0 bg-gradient-to-r from-indigo-600/20 to-purple-600/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                      </button>
-                    </SignInButton>
+                    <Link
+                      to="/sign-in"
+                      className="theme-button-primary relative group overflow-hidden rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/40 hover:bg-slate-100 dark:hover:bg-slate-800/80 text-slate-700 dark:text-slate-200 px-6 py-2 text-sm font-bold transition-all duration-300 shadow-md active:scale-95 inline-block text-center"
+                    >
+                      <span className="relative z-10">Sign In</span>
+                      <div className="absolute inset-0 bg-gradient-to-r from-indigo-600/20 to-purple-600/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                    </Link>
                   </SignedOut>
 
                   <SignedIn>
@@ -599,12 +599,14 @@ export const Navbar = () => {
               <div className="mt-6 pt-4 border-t border-slate-200 dark:border-slate-800/80 space-y-3">
                 {HAS_CLERK ? (
                   <SignedOut>
-                    <SignInButton mode="modal">
-                      <button className="w-full relative group overflow-hidden rounded-xl bg-indigo-600 px-4 py-2.5 text-sm font-semibold text-white transition-all duration-300 active:scale-[0.98]">
-                        <span className="relative z-10">Sign In</span>
-                        <div className="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                      </button>
-                    </SignInButton>
+                    <Link
+                      to="/sign-in"
+                      onClick={() => setOpen(false)}
+                      className="w-full block text-center relative group overflow-hidden rounded-xl bg-indigo-600 px-4 py-2.5 text-sm font-semibold text-white transition-all duration-300 active:scale-[0.98]"
+                    >
+                      <span className="relative z-10">Sign In</span>
+                      <div className="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                    </Link>
                   </SignedOut>
                 ) : (
                   <button
