@@ -124,12 +124,6 @@ const algorithmLinks = [
     href: '/dp-journey',
     difficulty: 'Advanced',
   },
-  { name: 'Practice Sandbox', href: '/practice', difficulty: 'Intermediate' },
-  {
-    name: 'Guess the Algorithm',
-    href: '/challenge',
-    difficulty: 'Intermediate',
-  },
   {
     name: 'Sliding Window',
     href: '/sliding-window',
@@ -139,6 +133,17 @@ const algorithmLinks = [
     name: 'Two Pointer Approach',
     href: '/two-pointer',
     difficulty: 'Advanced',
+  },
+  {
+    name: 'Monotonic Stack',
+    href: '/monotonic-stack',
+    difficulty: 'Advanced',
+  },
+  { name: 'Practice Sandbox', href: '/practice', difficulty: 'Intermediate' },
+  {
+    name: 'Guess the Algorithm',
+    href: '/challenge',
+    difficulty: 'Intermediate',
   },
 ]
 

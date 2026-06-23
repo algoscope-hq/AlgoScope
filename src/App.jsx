@@ -67,6 +67,9 @@ const SlidingWindowVisualizerPage = lazy(
 const TwoPointerVisualizerPage = lazy(
   () => import('./components/twoPointer/TwoPointerVisualizer')
 )
+const StackVisualizerPage = lazy(
+  () => import('./components/monotonicStack/StackVisualizerPage')
+)
 const PracticePage = lazy(() => import('./components/PracticePage'))
 const AboutAlgoScope = lazy(() => import('./components/about/About'))
 const Favorites = lazy(() => import('./components/Favorites'))
@@ -259,6 +262,14 @@ const router = createBrowserRouter([
     element: (
       <AppLayout notesKey="algo-notes-string-algorithms">
         <StringAlgoVisualizerPage />
+      </AppLayout>
+    ),
+  },
+  {
+    path: '/monotonic-stack',
+    element: (
+      <AppLayout notesKey="algo-notes-stack">
+        <StackVisualizerPage />
       </AppLayout>
     ),
   },

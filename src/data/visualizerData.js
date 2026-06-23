@@ -32,6 +32,15 @@ export const ALGORITHMS = [
     difficulty: 'Beginner',
   },
   {
+    id: 'monotonic-stack',
+    title: 'Monotonic Stack',
+    description:
+      'Visualize the Largest Rectangle in Histogram & Maximal Rectangle using a Monotonic Stack to track elements efficiently.',
+    color: 'theme-card border-amber-500/30 hover:border-amber-400',
+    link: '/monotonic-stack',
+    difficulty: 'Advanced',
+  },
+  {
     id: 'abstract-data-types',
     title: 'Abstract Data Types',
     description:

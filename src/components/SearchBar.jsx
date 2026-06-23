@@ -206,6 +206,22 @@ const ALGORITHMS = [
     route: '/adt?type=stack',
   },
   {
+    id: 'monotonic-stack',
+    name: 'Monotonic Stack',
+    category: 'Data Structures',
+    route: '/monotonic-stack',
+    keywords: [
+      'monotonic stack',
+      'stack',
+      'largest rectangle in histogram',
+      'histogram',
+      'rectangle',
+      'maximal rectangle',
+      '2d-matrix mode',
+      '2d matrix',
+    ],
+  },
+  {
     id: 'queue',
     name: 'Queue',
     category: 'Data Structures',
