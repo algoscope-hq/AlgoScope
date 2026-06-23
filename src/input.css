@@ -78,7 +78,11 @@
 }
 
 @layer base {
-  :root {
+html {
+  scroll-behavior: smooth;
+}
+
+:root {
     --theme-bg: #020617;
     --theme-bg-soft: rgba(15, 23, 42, 0.72);
     --theme-surface: rgba(15, 23, 42, 0.66);
