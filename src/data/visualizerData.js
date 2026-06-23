@@ -125,7 +125,7 @@ export const ALGORITHMS = [
     id: 'two-pointer',
     title: 'Two Pointer Approach',
     description:
-      'Place two pointers at opposite ends and converge them inward — at each step, move the pointer that can not improve the answer, eliminating half the remaining pairs in O(n) instead of checking all pairs in O(n²).',
+      'Use two pointers converging inward to solve pair-sum and container problems in O(n) time.',
     color: 'theme-card border-rose-500/30 hover:border-rose-400',
     link: '/two-pointer',
     difficulty: 'Intermediate',
