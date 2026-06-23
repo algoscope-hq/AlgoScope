@@ -199,4 +199,16 @@ export const complexityMap = {
     worst: 'O(n + m)',
     space: 'O(n + m)',
   },
+  histogram: {
+    best: 'O(N)',
+    average: 'O(N)',
+    worst: 'O(N)',
+    space: 'O(N)',
+  },
+  matrix: {
+    best: 'O(R * C)',
+    average: 'O(R * C)',
+    worst: 'O(R * C)',
+    space: 'O(C)',
+  },
 }
