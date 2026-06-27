@@ -206,6 +206,22 @@ const ALGORITHMS = [
     route: '/adt?type=stack',
   },
   {
+    id: 'monotonic-stack',
+    name: 'Monotonic Stack',
+    category: 'Data Structures',
+    route: '/monotonic-stack',
+    keywords: [
+      'monotonic stack',
+      'stack',
+      'largest rectangle in histogram',
+      'histogram',
+      'rectangle',
+      'maximal rectangle',
+      '2d-matrix mode',
+      '2d matrix',
+    ],
+  },
+  {
     id: 'queue',
     name: 'Queue',
     category: 'Data Structures',
@@ -216,6 +232,55 @@ const ALGORITHMS = [
     name: 'Binary Tree',
     category: 'Data Structures',
     route: '/adt?type=tree',
+  },
+  {
+    id: 'linkedlist',
+    name: 'Linked List',
+    category: 'Data Structures',
+    route: '/adt?type=linked-list',
+    keywords: [
+      'linked list',
+      'singly',
+      'doubly',
+      'circular',
+      'circular doubly',
+      'pointers',
+      'nodes',
+    ],
+  },
+  // Operating Systems
+  {
+    id: 'cpu-scheduling',
+    name: 'CPU Scheduling',
+    category: 'Operating Systems',
+    route: '/operating-systems/cpu-scheduling',
+    keywords: ['fcfs', 'sjf', 'round robin', 'priority scheduling', 'cpu'],
+  },
+  {
+    id: 'page-replacement',
+    name: 'Page Replacement',
+    category: 'Operating Systems',
+    route: '/operating-systems/page-replacement',
+    keywords: ['fifo', 'lru', 'optimal', 'page fault', 'memory'],
+  },
+  {
+    id: 'disk-scheduling',
+    name: 'Disk Scheduling',
+    category: 'Operating Systems',
+    route: '/operating-systems/disk-scheduling',
+    keywords: ['scan', 'c-scan', 'sstf', 'disk head', 'fcfs disk'],
+  },
+  {
+    id: 'practice',
+    name: 'Practice Sandbox',
+    category: 'General',
+    route: '/practice',
+  },
+  {
+    id: 'favorites',
+    name: 'Favorites',
+    category: 'General',
+    route: '/favorites',
   },
   {
     id: 'dsu',
@@ -568,10 +633,11 @@ const SearchBar = ({ onOpen }) => {
         aria-label="Search algorithms"
       >
         <svg
-          className="w-4 h-4 transition-colors"
+          className="w-4 h-4 text-slate-400 transition-colors duration-300"
           fill="none"
           viewBox="0 0 24 24"
           stroke="currentColor"
+          aria-hidden="true"
         >
           <path
             strokeLinecap="round"
@@ -619,10 +685,11 @@ const SearchBar = ({ onOpen }) => {
                 </h2>
                 <div className="absolute inset-y-0 left-7 flex items-center pointer-events-none">
                   <svg
-                    className="w-5 h-5 text-slate-400 group-focus-within:text-cyan-400 transition-colors"
+                    className="w-5 h-5 text-slate-400 group-focus-within:text-cyan-400 transition-colors duration-300"
                     fill="none"
                     viewBox="0 0 24 24"
                     stroke="currentColor"
+                    aria-hidden="true"
                   >
                     <path
                       strokeLinecap="round"

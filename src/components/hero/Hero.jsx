@@ -2,6 +2,7 @@ import { motion } from 'framer-motion'
 import { ArrowRight, LayoutGrid, Globe, Code2, Unlock } from 'lucide-react'
 import { HeroProductPreview } from './HeroProductPreview'
 import { APP_VERSION } from '../../lib/version'
+import { VISUALIZER_COUNT } from '../../data/visualizerData'
 
 const ease = [0.22, 1, 0.36, 1]
 
@@ -116,7 +117,7 @@ export function Hero() {
               className="mt-7 flex flex-wrap items-center justify-center gap-x-2 gap-y-2 border-t theme-border pt-5 text-[10px] theme-text-muted sm:mt-8 sm:justify-start sm:gap-x-3 sm:pt-6 sm:text-[11px]"
             >
               <Meta
-                t="9+ visualizers"
+                t={`${VISUALIZER_COUNT} visualizers`}
                 icon={<LayoutGrid className="size-3" />}
               />
               <Meta t="Runs in browser" icon={<Globe className="size-3" />} />
