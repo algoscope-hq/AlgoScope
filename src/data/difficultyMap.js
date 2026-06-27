@@ -11,6 +11,7 @@ export const ROUTE_DIFFICULTIES = {
   '/dynamic-programming': 'Intermediate',
   '/dp-journey': 'Advanced',
   '/backtracking': 'Advanced',
+  '/monotonic-stack': 'Advanced',
 }
 
 export const NEXT_TOPICS_MAP = {

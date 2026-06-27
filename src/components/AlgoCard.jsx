@@ -91,7 +91,7 @@ export default function AlgoCard({
       onMouseMove={handleMouseMove}
       onMouseEnter={() => setIsHovering(true)}
       onMouseLeave={() => setIsHovering(false)}
-      className={`group relative block w-full rounded-3xl p-8 backdrop-blur-2xl transition-all duration-500 ease-out text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-500/50 overflow-hidden ${colorClasses} border hover:-translate-y-2 hover:shadow-2xl`}
+      className={`group relative block w-full rounded-3xl p-8 backdrop-blur-2xl transition-all duration-300 ease-out text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-500/50 overflow-hidden ${colorClasses} border hover:-translate-y-2 hover:shadow-2xl`}
       variants={cardVariants}
       whileHover="hover"
       whileTap={{ scale: 0.98 }}
@@ -158,7 +158,7 @@ export default function AlgoCard({
           <div className="w-8 h-1 bg-current opacity-20 rounded-full group-hover:w-16 group-hover:opacity-60 transition-all duration-500 ease-out theme-text-strong" />
         </div>
 
-        <p className="text-base theme-text-muted leading-relaxed mb-10 group-hover:theme-text-strong transition-colors duration-300 max-w-[90%] font-light">
+        <p className="text-base theme-text-muted leading-relaxed mb-10 group-hover:theme-text-strong transition-colors duration-300 max-w-[90%] font-light line-clamp-3">
           {description}
         </p>
 
