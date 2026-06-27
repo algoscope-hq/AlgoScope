@@ -569,7 +569,7 @@ export const Navbar = () => {
                 <div className="w-full">
                   <SearchBar onOpen={closeExploreMenu} />
                 </div>
-
+                
                 {/* Nav list */}
                 <div>
                   <h3 className="text-xs font-semibold uppercase tracking-widest text-slate-500 mb-3 px-2">
@@ -596,11 +596,31 @@ export const Navbar = () => {
               </div>
 
               {/* Drawer Footer */}
-              <div className="mt-6 pt-4 border-t border-slate-200 dark:border-slate-800/80 space-y-3">
+              <div className="grid grid-cols-2 gap-2 pt-2">
+  {[
+    { name: 'Home', href: '/' },
+    { name: 'Practice', href: '/practice' },
+    { name: 'Challenge', href: '/challenge' },
+    { name: 'Favorites', href: '/favorites' },
+  ].map((link) => (
+    <Link
+      key={link.name}
+      to={link.href}
+      onClick={() => setOpen(false)}
+      className="flex items-center justify-center w-full rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 px-4 py-2.5 text-sm font-semibold text-slate-700 dark:text-slate-200 transition-all duration-300 shadow-md active:scale-95"
+    >
+      {link.name}
+    </Link>
+  ))}
+</div>
+              <div className="mt-6 pt-4 border-t border-slate-200 dark:border-slate-800/80 space-y-3 ">
+               
                 {HAS_CLERK ? (
                   <SignedOut>
                     <SignInButton mode="modal">
-                      <button className="w-full relative group overflow-hidden rounded-xl bg-indigo-600 px-4 py-2.5 text-sm font-semibold text-white transition-all duration-300 active:scale-[0.98]">
+                      <button 
+                      onClick={() => setOpen(false)} 
+                      className="w-full relative group overflow-hidden rounded-xl bg-indigo-600 px-4 py-2.5 text-sm font-semibold text-white transition-all duration-300 active:scale-[0.98]">
                         <span className="relative z-10">Sign In</span>
                         <div className="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                       </button>
