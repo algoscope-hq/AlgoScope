@@ -1,8 +1,9 @@
 import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import { MoveUpRight } from 'lucide-react'
+import { MoveUpRight, CheckCircle } from 'lucide-react'
 import { isFavoriteId, subscribeFavoritesChange } from '../lib/favorites'
+import { isCompleted, subscribeCompletionsChange } from '../lib/completions'
 import DifficultyBadge from './DifficultyBadge'
 
 const MotionDiv = motion.div
@@ -49,12 +50,16 @@ export default function AlgoCard({
     color || 'theme-card theme-border hover:border-neutral-700'
   const algoId = id || title
   const [favorite, setFavorite] = useState(() => isFavoriteId(algoId))
+  const [completed, setCompleted] = useState(() => isCompleted(algoId))
 
   useEffect(() => {
-    const unsubscribe = subscribeFavoritesChange(() => {
+    const unsubFav = subscribeFavoritesChange(() => {
       setFavorite(isFavoriteId(algoId))
     })
-    return unsubscribe
+    const unsubComp = subscribeCompletionsChange(() => {
+      setCompleted(isCompleted(algoId))
+    })
+    return () => { unsubFav(); unsubComp() }
   }, [algoId])
 
   const handleFavoriteClick = (e) => {
@@ -96,6 +101,14 @@ export default function AlgoCard({
       whileHover="hover"
       whileTap={{ scale: 0.98 }}
     >
+      {/* Completion Badge */}
+      {completed && (
+        <div className="absolute top-4 left-4 z-20 inline-flex items-center gap-1 rounded-full bg-emerald-500/20 border border-emerald-500/40 px-2.5 py-1 text-emerald-400 text-xs font-bold shadow-lg backdrop-blur-sm">
+          <CheckCircle className="w-3.5 h-3.5" />
+          <span>Completed</span>
+        </div>
+      )}
+
       {/* Favorite / Bookmark Button */}
       <button
         type="button"

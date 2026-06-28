@@ -1,5 +1,6 @@
-import React, { useState, useMemo } from 'react'
+import React, { useState, useMemo, useEffect, useRef } from 'react'
 import { useSearchParams } from 'react-router-dom'
+import { markCompleted } from '../../lib/completions'
 import SpeedSlider from '../SpeedSlider.jsx'
 import CodePanel from '../visualizer/CodePanel'
 import { useStepPlayback } from '../visualizer/useStepPlayback'
@@ -161,6 +162,10 @@ export default function Visualizer() {
   const [customInput, setCustomInput] = useState('')
   const [inputError, setInputError] = useState('')
   const [isStepMode, setIsStepMode] = useState(false)
+  const startTimeRef = useRef(null)
+  const [elapsedTime, setElapsedTime] = useState(0)
+  const timerRef = useRef(null)
+  const completedRef = useRef(false)
 
   const algoFromUrl = searchParams.get('algo')
   const selectedAlgorithm =
@@ -186,6 +191,39 @@ export default function Visualizer() {
     stepForward,
     stepBackward,
   } = useStepPlayback({ speed })
+
+  useEffect(() => {
+    if (isComplete && !completedRef.current) {
+      completedRef.current = true
+      markCompleted('sorting')
+    }
+    if (!isComplete) {
+      completedRef.current = false
+    }
+  }, [isComplete])
+
+  useEffect(() => {
+    if (isPlaying && !timerRef.current) {
+      startTimeRef.current = performance.now()
+      timerRef.current = setInterval(() => {
+        setElapsedTime((performance.now() - startTimeRef.current) / 1000)
+      }, 100)
+    }
+    if (!isPlaying && timerRef.current) {
+      clearInterval(timerRef.current)
+      timerRef.current = null
+    }
+    return () => { if (timerRef.current) clearInterval(timerRef.current) }
+  }, [isPlaying])
+
+  const stats = useMemo(() => {
+    if (!hasSteps || currentStepIndex < 0) {
+      return { comparisons: 0, swaps: 0, steps: 0 }
+    }
+    const compareCount = steps.slice(0, currentStepIndex + 1).filter(s => s.type === 'compare').length
+    const swapCount = steps.slice(0, currentStepIndex + 1).filter(s => s.type === 'swap').length
+    return { comparisons: compareCount, swaps: swapCount, steps: currentStepIndex + 1 }
+  }, [currentStepIndex, steps, hasSteps])
 
   const algorithmOptions = {
     simple: ['bubble', 'selection', 'insertion'],
@@ -378,10 +416,26 @@ export default function Visualizer() {
                   <h3 className="text-base font-semibold text-slate-200">
                     Array
                   </h3>
-                  <div className="rounded-full border border-cyan-500/20 bg-cyan-500/10 px-3 py-1 text-xs font-medium text-cyan-200">
-                    {currentStep?.type
-                      ? currentStep.type.replace('-', ' ')
-                      : 'Ready'}
+                  <div className="flex items-center gap-2">
+                    {hasSteps && (
+                      <div className="hidden sm:flex items-center gap-2 mr-2 text-[10px] font-mono text-slate-500 bg-slate-950/60 rounded-lg px-2.5 py-1 border border-slate-700/50">
+                        <span className="text-cyan-400 font-bold">{stats.comparisons}</span>
+                        <span className="text-slate-600">cmp</span>
+                        <span className="text-slate-700">|</span>
+                        <span className="text-amber-400 font-bold">{stats.swaps}</span>
+                        <span className="text-slate-600">swp</span>
+                        <span className="text-slate-700">|</span>
+                        <span className="text-slate-400 font-bold">{stats.steps}</span>
+                        <span className="text-slate-600">stp</span>
+                        <span className="text-slate-700">|</span>
+                        <span className="text-emerald-400 font-bold">{elapsedTime.toFixed(1)}s</span>
+                      </div>
+                    )}
+                    <div className="rounded-full border border-cyan-500/20 bg-cyan-500/10 px-3 py-1 text-xs font-medium text-cyan-200">
+                      {currentStep?.type
+                        ? currentStep.type.replace('-', ' ')
+                        : 'Ready'}
+                    </div>
                   </div>
                 </div>
 
@@ -646,7 +700,7 @@ export default function Visualizer() {
                       </button>
                     </Tooltip>
                     <Tooltip
-                      content="Shuffle and generate a new array"
+                      content="Reset (R)"
                       position="top"
                     >
                       <button
@@ -712,7 +766,7 @@ export default function Visualizer() {
 
                   <div className="grid grid-cols-4 gap-2">
                     <Tooltip
-                      content={isPlaying ? 'Pause' : 'Start Visualization'}
+                      content={isPlaying ? 'Pause (Space)' : 'Play (Space)'}
                       position="top"
                     >
                       <button
@@ -724,7 +778,7 @@ export default function Visualizer() {
                         {isPlaying ? 'Pause' : 'Play'}
                       </button>
                     </Tooltip>
-                    <Tooltip content="Go back one step" position="top">
+                    <Tooltip content="Step Back (←)" position="top">
                       <button
                         type="button"
                         onClick={stepBackward}
@@ -734,7 +788,7 @@ export default function Visualizer() {
                         Back
                       </button>
                     </Tooltip>
-                    <Tooltip content="Advance one step forward" position="top">
+                    <Tooltip content="Step Forward (→)" position="top">
                       <button
                         type="button"
                         onClick={stepForward}
@@ -744,7 +798,7 @@ export default function Visualizer() {
                         Step
                       </button>
                     </Tooltip>
-                    <Tooltip content="Replay from the beginning" position="top">
+                    <Tooltip content="Replay (R)" position="top">
                       <button
                         type="button"
                         onClick={replayPlayback}
@@ -753,6 +807,9 @@ export default function Visualizer() {
                         Replay
                       </button>
                     </Tooltip>
+                  </div>
+                  <div className="mt-2 text-center text-[10px] text-slate-600 font-mono tracking-wide">
+                    Speed: <kbd className="text-cyan-500">+</kbd>/<kbd className="text-cyan-500">-</kbd> &nbsp;|&nbsp; Help: <kbd className="text-cyan-500">?</kbd>
                   </div>
                 </div>
               )}

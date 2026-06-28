@@ -153,7 +153,7 @@
 //     </motion.div>
 //   )
 // }
-import React, { useMemo } from 'react'
+import React, { useEffect, useMemo } from 'react'
 import { CanvasSearching } from './CanvasSearching'
 import CodePanel from '../visualizer/CodePanel'
 import { MenuSelectNodeSearch } from './MenuSelectNodeSearch'
@@ -164,10 +164,15 @@ import SpeedSlider from '../SpeedSlider'
 import { graphSearchSources } from '../../algorithms/searching/graphSearchSources'
 import ComplexityCard from '../ComplexityCard'
 import ComparisonMode from './ComparisonMode'
+import { markCompleted } from '../../lib/completions'
 
 export const VisualizerPage = () => {
   const [searchParams, setSearchParams] = useSearchParams()
   const mode = searchParams.get('mode') === 'compare' ? 'compare' : 'solo'
+
+  useEffect(() => {
+    markCompleted('searching')
+  }, [])
 
   const setMode = (newMode) => {
     const newParams = new URLSearchParams(searchParams)
