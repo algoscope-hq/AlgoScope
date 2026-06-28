@@ -3,6 +3,7 @@ import AlgoCard from './AlgoCard'
 import { Hero } from './hero/Hero'
 import { motion } from 'framer-motion'
 import { GuidedTour } from './GuidedTour'
+import ProgressTracker from './ProgressTracker'
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -49,6 +50,8 @@ export const Home = () => {
   return (
     <div className="theme-home relative min-h-screen w-full overflow-x-hidden selection:bg-cyan-500/30">
       <Hero />
+
+      <ProgressTracker />
 
       <div className="relative z-10 px-4 pb-16">
         <div id="explore" className="mx-auto w-full max-w-7xl px-4">
