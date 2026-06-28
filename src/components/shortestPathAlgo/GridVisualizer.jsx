@@ -85,6 +85,90 @@ const getNeighbors = (node, currentGrid) => {
   return neighbors.filter(Boolean).filter((n) => !n.isWall)
 }
 
+/**
+ * Min-Priority Queue implementation using a binary min-heap.
+ * Provides O(log n) enqueue and dequeue operations.
+ */
+class MinPriorityQueue {
+  constructor() {
+    this.heap = []
+  }
+
+  enqueue(node, priority) {
+    this.heap.push({ node, priority })
+    this._bubbleUp(this.heap.length - 1)
+  }
+
+  dequeue() {
+    if (this.heap.length === 0) return null
+    const min = this.heap[0]
+    const end = this.heap.pop()
+    if (this.heap.length > 0) {
+      this.heap[0] = end
+      this._sinkDown(0)
+    }
+    return min
+  }
+
+  isEmpty() {
+    return this.heap.length === 0
+  }
+
+  _bubbleUp(index) {
+    const element = this.heap[index]
+    while (index > 0) {
+      const parentIndex = Math.floor((index - 1) / 2)
+      const parent = this.heap[parentIndex]
+      if (element.priority >= parent.priority) break
+      this.heap[index] = parent
+      index = parentIndex
+    }
+    this.heap[index] = element
+  }
+
+  _sinkDown(index) {
+    const length = this.heap.length
+    const element = this.heap[index]
+    while (true) {
+      let leftChildIndex = 2 * index + 1
+      let rightChildIndex = 2 * index + 2
+      let swapIndex = null
+
+      if (leftChildIndex < length) {
+        if (this.heap[leftChildIndex].priority < element.priority) {
+          swapIndex = leftChildIndex
+        }
+      }
+
+      if (rightChildIndex < length) {
+        const rightPriority = this.heap[rightChildIndex].priority
+        if (
+          swapIndex === null
+            ? rightPriority < element.priority
+            : rightPriority < this.heap[swapIndex].priority
+        ) {
+          swapIndex = rightChildIndex
+        }
+      }
+
+      if (swapIndex === null) break
+      this.heap[index] = this.heap[swapIndex]
+      index = swapIndex
+    }
+    this.heap[index] = element
+  }
+}
+
+/**
+ * Optimized Dijkstra's algorithm using a Min-Priority Queue (binary heap).
+ *
+ * Complexity improvement:
+ * - Before (linear scan): O(V²) — each iteration scanned all nodes to find the minimum.
+ * - After (Min-Priority Queue): O((V + E) log V) — each node is dequeued once and each edge
+ *   triggers a potential enqueue, both O(log V) heap operations.
+ *
+ * @returns {{ order: Array, parent: Object, distances: Object }}
+ */
 const runDijkstra = (currentGrid, startPos, endPos) => {
   const startNode = currentGrid[startPos.row][startPos.col]
   const endNode = currentGrid[endPos.row][endPos.col]
@@ -99,25 +183,18 @@ const runDijkstra = (currentGrid, startPos, endPos) => {
     }
   }
 
-  distances[`${startNode.row}-${startNode.col}`] = 0
+  const startKey = `${startNode.row}-${startNode.col}`
+  distances[startKey] = 0
 
-  while (visited.size < ROWS * COLS) {
-    let current = null
-    let smallest = Infinity
+  const pq = new MinPriorityQueue()
+  pq.enqueue(startNode, 0)
 
-    for (const row of currentGrid) {
-      for (const node of row) {
-        const key = `${node.row}-${node.col}`
-        if (!visited.has(key) && distances[key] < smallest) {
-          smallest = distances[key]
-          current = node
-        }
-      }
-    }
+  while (!pq.isEmpty()) {
+    const { node: current } = pq.dequeue()
+    const currentKey = `${current.row}-${current.col}`
 
-    if (!current || current.isWall) break
-
-    visited.add(`${current.row}-${current.col}`)
+    if (visited.has(currentKey)) continue
+    visited.add(currentKey)
     order.push(current)
 
     if (current.row === endNode.row && current.col === endNode.col) break
@@ -125,14 +202,17 @@ const runDijkstra = (currentGrid, startPos, endPos) => {
     const neighbors = getNeighbors(current, currentGrid)
     for (const next of neighbors) {
       const nextKey = `${next.row}-${next.col}`
+      if (visited.has(nextKey)) continue
       const newDistance =
-        distances[`${current.row}-${current.col}`] + next.weight
+        distances[currentKey] + next.weight
       if (newDistance < distances[nextKey]) {
         distances[nextKey] = newDistance
         parent[nextKey] = current
+        pq.enqueue(next, newDistance)
       }
     }
   }
+
   return { order, parent, distances }
 }
 
