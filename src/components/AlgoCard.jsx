@@ -85,6 +85,13 @@ export default function AlgoCard({
     setFavorite(!exists)
   }
 
+  const difficultyBarColors = {
+    Beginner: 'bg-emerald-500',
+    Intermediate: 'bg-amber-500',
+    Advanced: 'bg-rose-500',
+  }
+  const barColor = difficultyBarColors[difficulty] || 'bg-cyan-500'
+
   return (
     <MotionDiv
       ref={cardRef}
@@ -96,6 +103,10 @@ export default function AlgoCard({
       whileHover="hover"
       whileTap={{ scale: 0.98 }}
     >
+      {/* Difficulty Accent Bar */}
+      <div
+        className={`absolute top-0 left-0 right-0 h-1 ${barColor} opacity-60 group-hover:opacity-100 transition-opacity duration-300`}
+      />
       {/* Favorite / Bookmark Button */}
       <button
         type="button"

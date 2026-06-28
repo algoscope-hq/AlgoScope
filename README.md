@@ -110,6 +110,19 @@ Learning Data Structures and Algorithms (DSA) is often a daunting task for stude
 | **Interactive Playground** | Create custom inputs, change array sizes, and interact directly with the canvas. |
 | **Secure & Modern UI** | Dark-themed interface built with Tailwind CSS v4, featuring Clerk authentication and modal-based search. |
 
+### Linked List Types
+
+AlgoScope supports the following linked list types within the **Abstract Data Types** category:
+
+| Type | Description | Status |
+| ---- | ----------- | ------ |
+| **Singly Linked List** | Each node points to the next node in the sequence. Linear traversal from head to tail. | ✅ Supported |
+| **Doubly Linked List** | Each node holds references to both the next and previous nodes, enabling bidirectional traversal. | 🔜 Planned |
+| **Circular Linked List** | The last node points back to the head, forming a circular chain. Useful for round-robin scheduling. | 🔜 Planned |
+| **Circular Doubly Linked List** | Combines doubly linked and circular properties — each node links to both neighbors and the tail links back to the head. | 🔜 Planned |
+
+> 💡 *Contributions are welcome! If you'd like to implement any of the planned linked list types, check out the open issues or open a new one.*
+
 ---
 
 ## 🛠️ Tech Stack

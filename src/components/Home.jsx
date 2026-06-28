@@ -3,6 +3,17 @@ import AlgoCard from './AlgoCard'
 import { Hero } from './hero/Hero'
 import { motion } from 'framer-motion'
 import { GuidedTour } from './GuidedTour'
+import {
+  Eye,
+  MousePointerClick,
+  Settings2,
+  BookOpen,
+  BarChart3,
+  Layers,
+  GitBranch,
+  Cpu,
+  Zap,
+} from 'lucide-react'
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -15,6 +26,73 @@ const containerVariants = {
   },
 }
 import { ALGORITHMS, OPERATING_SYSTEMS } from '../data/visualizerData'
+
+const statCategories = [
+  {
+    label: 'Total Algorithms',
+    count: ALGORITHMS.length + OPERATING_SYSTEMS.length + 1,
+    icon: BarChart3,
+    color: 'text-cyan-400',
+    bg: 'bg-cyan-500/10',
+    border: 'border-cyan-500/30',
+  },
+  {
+    label: 'Sorting Algorithms',
+    count: ALGORITHMS.filter((a) => a.id === 'sorting').length,
+    icon: Layers,
+    color: 'text-blue-400',
+    bg: 'bg-blue-500/10',
+    border: 'border-blue-500/30',
+  },
+  {
+    label: 'Graph Algorithms',
+    count: ALGORITHMS.filter((a) => a.id === 'graph-algorithms').length,
+    icon: GitBranch,
+    color: 'text-purple-400',
+    bg: 'bg-purple-500/10',
+    border: 'border-purple-500/30',
+  },
+  {
+    label: 'Dynamic Programming',
+    count: ALGORITHMS.filter((a) => a.id === 'dynamic-programming' || a.id === 'dp-optimization-journey').length,
+    icon: Cpu,
+    color: 'text-rose-400',
+    bg: 'bg-rose-500/10',
+    border: 'border-rose-500/30',
+  },
+  {
+    label: 'Recently Added',
+    count: 2,
+    icon: Zap,
+    color: 'text-emerald-400',
+    bg: 'bg-emerald-500/10',
+    border: 'border-emerald-500/30',
+  },
+]
+
+const howItWorksSteps = [
+  {
+    icon: MousePointerClick,
+    title: 'Select an Algorithm',
+    desc: 'Choose from Sorting, Graphs, DP, and more.',
+  },
+  {
+    icon: Eye,
+    title: 'Watch It Visualize',
+    desc: 'See step-by-step animations in real time.',
+  },
+  {
+    icon: Settings2,
+    title: 'Control the Pace',
+    desc: 'Adjust speed, pause, or step through manually.',
+  },
+  {
+    icon: BookOpen,
+    title: 'Learn & Practice',
+    desc: 'Read code in multiple languages and take challenges.',
+  },
+]
+
 export const Home = () => {
   const [filter, setFilter] = useState('All')
 
@@ -51,6 +129,80 @@ export const Home = () => {
       <Hero />
 
       <div className="relative z-10 px-4 pb-16">
+        {/* How It Works Section */}
+        <div className="mx-auto w-full max-w-7xl px-4 mb-16">
+          <div className="mb-12 flex items-center gap-4">
+            <div className="h-px flex-1 bg-gradient-to-r from-transparent via-current to-transparent opacity-20 theme-text-strong" />
+            <span className="font-mono text-sm uppercase tracking-[0.3em] theme-text-subtle">
+              How It Works
+            </span>
+            <div className="h-px flex-1 bg-gradient-to-r from-transparent via-current to-transparent opacity-20 theme-text-strong" />
+          </div>
+          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+            {howItWorksSteps.map((step, i) => {
+              const Icon = step.icon
+              return (
+                <motion.div
+                  key={step.title}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.5, delay: i * 0.1 }}
+                  className="theme-card border theme-border rounded-2xl p-6 text-center hover:border-cyan-500/40 transition-all duration-300"
+                >
+                  <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-cyan-500/10 border border-cyan-500/20">
+                    <Icon className="w-6 h-6 text-cyan-400" />
+                  </div>
+                  <h3 className="text-lg font-bold theme-text-strong mb-2">
+                    {step.title}
+                  </h3>
+                  <p className="text-sm theme-text-muted leading-relaxed">
+                    {step.desc}
+                  </p>
+                </motion.div>
+              )
+            })}
+          </div>
+        </div>
+
+        {/* Category Statistics Cards */}
+        <div className="mx-auto w-full max-w-7xl px-4 mb-16">
+          <div className="mb-8 flex items-center gap-4">
+            <div className="h-px flex-1 bg-gradient-to-r from-transparent via-current to-transparent opacity-20 theme-text-strong" />
+            <span className="font-mono text-sm uppercase tracking-[0.3em] theme-text-subtle">
+              Platform Overview
+            </span>
+            <div className="h-px flex-1 bg-gradient-to-r from-transparent via-current to-transparent opacity-20 theme-text-strong" />
+          </div>
+          <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-5">
+            {statCategories.map((stat) => {
+              const Icon = stat.icon
+              return (
+                <motion.div
+                  key={stat.label}
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  whileInView={{ opacity: 1, scale: 1 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.4 }}
+                  className={`theme-card border ${stat.border} ${stat.bg} rounded-2xl p-5 text-center hover:scale-[1.03] transition-all duration-300`}
+                >
+                  <div
+                    className={`mx-auto mb-3 flex h-10 w-10 items-center justify-center rounded-xl ${stat.bg} ${stat.border} border`}
+                  >
+                    <Icon className={`w-5 h-5 ${stat.color}`} />
+                  </div>
+                  <p className={`text-2xl font-extrabold ${stat.color} mb-1`}>
+                    {stat.count}
+                  </p>
+                  <p className="text-xs font-medium theme-text-muted uppercase tracking-wider">
+                    {stat.label}
+                  </p>
+                </motion.div>
+              )
+            })}
+          </div>
+        </div>
+
         <div id="explore" className="mx-auto w-full max-w-7xl px-4">
           {/* Difficulty Filter Tabs */}
           <div className="flex justify-center mb-12">
