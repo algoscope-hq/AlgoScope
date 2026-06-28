@@ -6,8 +6,6 @@ import Tooltip from './Tooltip'
 const audio = new Audio(clickSound)
 audio.volume = 0.2
 
-const STORAGE_KEY = 'algoscope_visualization_speed'
-
 // Define the gradient
 const sliderGradient = 'linear-gradient(to right, #22d3ee, #3b82f6)' // cyan-400 to blue-500
 
@@ -21,9 +19,6 @@ const SpeedSlider = memo(function SpeedSlider({
   const handleChange = (event, newValue) => {
     audio.currentTime = 0
     audio.play().catch(() => {})
-    try {
-      localStorage.setItem(STORAGE_KEY, String(newValue))
-    } catch {}
     onChange(event, newValue)
   }
 

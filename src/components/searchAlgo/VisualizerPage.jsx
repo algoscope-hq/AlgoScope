@@ -153,7 +153,7 @@
 //     </motion.div>
 //   )
 // }
-import React, { useMemo } from 'react'
+import React, { useEffect, useMemo } from 'react'
 import { CanvasSearching } from './CanvasSearching'
 import CodePanel from '../visualizer/CodePanel'
 import { MenuSelectNodeSearch } from './MenuSelectNodeSearch'
@@ -166,6 +166,17 @@ import ComplexityCard from '../ComplexityCard'
 import ComparisonMode from './ComparisonMode'
 
 export const VisualizerPage = () => {
+  const readPersistedSpeed = () => {
+    try {
+      const stored = localStorage.getItem('algoscope_visualization_speed')
+      const parsed = Number.parseFloat(stored)
+      if (!Number.isFinite(parsed)) return 1.0
+      return Math.min(3, Math.max(0.5, parsed))
+    } catch {
+      return 1.0
+    }
+  }
+
   const [searchParams, setSearchParams] = useSearchParams()
   const mode = searchParams.get('mode') === 'compare' ? 'compare' : 'solo'
 
@@ -181,9 +192,7 @@ export const VisualizerPage = () => {
 
   const [node, setNode] = React.useState(null)
   const [algorithm, setAlgorithm] = React.useState(null)
-  const [speed, setSpeed] = React.useState(
-    () => parseFloat(localStorage.getItem('algoscope_visualization_speed')) || 1.0
-  )
+  const [speed, setSpeed] = React.useState(() => readPersistedSpeed())
   const [language, setLanguage] = React.useState('javascript')
   const [runKey, setRunKey] = React.useState(null)
   // Live list of node IDs from the canvas (kept in sync via onGraphChange)
@@ -205,6 +214,14 @@ export const VisualizerPage = () => {
   const handleSpeedChange = (event, newValue) => {
     setSpeed(newValue)
   }
+
+  useEffect(() => {
+    try {
+      localStorage.setItem('algoscope_visualization_speed', String(speed))
+    } catch {
+      // Ignore storage failures in blocked environments.
+    }
+  }, [speed])
 
   const handleRun = () => {
     if (!algorithm || !node) return

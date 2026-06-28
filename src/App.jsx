@@ -1,6 +1,10 @@
 import React, { lazy, Suspense } from 'react'
-import { createBrowserRouter, RouterProvider, Navigate } from 'react-router-dom'
-import { useAuth } from '@clerk/clerk-react'
+import {
+  createBrowserRouter,
+  RouterProvider,
+  Navigate,
+} from 'react-router-dom'
+import { useAuth, RedirectToSignIn } from '@clerk/clerk-react'
 
 const ConceptsOverview = lazy(
   () => import('./components/concepts/ConceptsOverview')
@@ -107,7 +111,7 @@ function ProtectedPracticePage() {
   }
 
   if (!isSignedIn) {
-    return <Navigate to="/" replace />
+    return <RedirectToSignIn />
   }
 
   return <PracticePage />

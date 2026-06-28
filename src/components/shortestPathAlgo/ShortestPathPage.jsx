@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react'
+import React, { useEffect, useMemo } from 'react'
 import { CanvasShortestPath } from './CanvasShortestPath'
 import GridVisualizer from './GridVisualizer'
 import GridComparisonMode from './GridComparisonMode'
@@ -14,6 +14,17 @@ import ComparisonMode from './ComparisonMode'
 import { useKeyboardShortcuts } from '../visualizer/useKeyboardShortcuts'
 
 export const ShortestPathPage = () => {
+  const readPersistedSpeed = () => {
+    try {
+      const stored = localStorage.getItem('algoscope_visualization_speed')
+      const parsed = Number.parseFloat(stored)
+      if (!Number.isFinite(parsed)) return 1.0
+      return Math.min(3, Math.max(0.5, parsed))
+    } catch {
+      return 1.0
+    }
+  }
+
   const [searchParams, setSearchParams] = useSearchParams()
 
   const mode = searchParams.get('mode') === 'compare' ? 'compare' : 'solo'
@@ -38,9 +49,7 @@ export const ShortestPathPage = () => {
   const [algorithm, setAlgorithm] = React.useState(null)
   const [source, setSource] = React.useState(null)
   const [target, setTarget] = React.useState(null)
-  const [speed, setSpeed] = React.useState(
-    () => parseFloat(localStorage.getItem('algoscope_visualization_speed')) || 1.0
-  )
+  const [speed, setSpeed] = React.useState(() => readPersistedSpeed())
   const [language, setLanguage] = React.useState('javascript')
   const [runKey, setRunKey] = React.useState(null)
   const [nodeIds, setNodeIds] = React.useState(
@@ -59,6 +68,14 @@ export const ShortestPathPage = () => {
   const handleSpeedChange = (_, newValue) => {
     setSpeed(newValue)
   }
+
+  useEffect(() => {
+    try {
+      localStorage.setItem('algoscope_visualization_speed', String(speed))
+    } catch {
+      // Ignore storage failures in blocked environments.
+    }
+  }, [speed])
 
   const handleRun = () => {
     if (!algorithm) return

@@ -444,14 +444,6 @@ const PracticePage = () => {
 
   const handleLanguageChange = (e) => {
     const selectedLang = languages.find((lang) => lang.value === e.target.value)
-    const prevLang = language
-    if (prevLang !== selectedLang.value) {
-      savedCodeRef.current.single = code
-      if (executionMode === 'compare') {
-        savedCodeRef.current.compareA = codeA
-        savedCodeRef.current.compareB = codeB
-      }
-    }
     setLanguage(selectedLang.value)
     setCode(selectedLang.default)
     if (executionMode === 'compare') {
@@ -520,28 +512,29 @@ const PracticePage = () => {
       ...prev,
       { type: 'info', content: 'Executing user code...' },
     ])
-    const result = await runCodeInWorker(userCode, undefined, activeWorkerRef)
+    try {
+      const result = await runCodeInWorker(userCode, undefined, activeWorkerRef)
 
-    if (!isMountedRef.current) {
+      if (!isMountedRef.current) {
+        return
+      }
+
+      if (result.status === 'cancelled') {
+        return
+      }
+
+      setLogs((prev) => [...prev, ...result.logs])
+      if (result.status === 'error') {
+        setLogs((prev) => [
+          ...prev,
+          { type: 'error', content: `Runtime Error: ${result.error}` },
+        ])
+      }
+      scrollConsoleIntoView()
+    } finally {
+      setIsExecuting(false)
       executionLockRef.current = false
-      return
     }
-
-    if (result.status === 'cancelled') {
-      executionLockRef.current = false
-      return
-    }
-
-    setLogs((prev) => [...prev, ...result.logs])
-    if (result.status === 'error') {
-      setLogs((prev) => [
-        ...prev,
-        { type: 'error', content: `Runtime Error: ${result.error}` },
-      ])
-    }
-    setIsExecuting(false)
-    executionLockRef.current = false
-    scrollConsoleIntoView()
   }
 
   const handleRunCodeA = async (userCode) => {
