@@ -54,7 +54,10 @@ const statCategories = [
   },
   {
     label: 'Dynamic Programming',
-    count: ALGORITHMS.filter((a) => a.id === 'dynamic-programming' || a.id === 'dp-optimization-journey').length,
+    count: ALGORITHMS.filter(
+      (a) =>
+        a.id === 'dynamic-programming' || a.id === 'dp-optimization-journey'
+    ).length,
     icon: Cpu,
     color: 'text-rose-400',
     bg: 'bg-rose-500/10',

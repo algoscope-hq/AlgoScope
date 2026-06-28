@@ -496,8 +496,7 @@ export const Navbar = () => {
                           formFieldLabel: 'text-sm font-medium',
                           formButtonPrimary:
                             'py-3 px-6 rounded-xl text-sm font-semibold',
-                          socialButtonsBlockButton:
-                            'py-3 rounded-xl text-sm',
+                          socialButtonsBlockButton: 'py-3 rounded-xl text-sm',
                           headerTitle: 'text-xl sm:text-2xl font-bold',
                           headerSubtitle: 'text-sm sm:text-base',
                           footer: 'py-4 px-0',
@@ -673,8 +672,7 @@ export const Navbar = () => {
                           formFieldLabel: 'text-sm font-medium',
                           formButtonPrimary:
                             'py-3 px-6 rounded-xl text-sm font-semibold',
-                          socialButtonsBlockButton:
-                            'py-3 rounded-xl text-sm',
+                          socialButtonsBlockButton: 'py-3 rounded-xl text-sm',
                           headerTitle: 'text-xl sm:text-2xl font-bold',
                           headerSubtitle: 'text-sm sm:text-base',
                           footer: 'py-4 px-0',
