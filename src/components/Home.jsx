@@ -182,6 +182,7 @@ export const Home = () => {
                     description="Test your algorithm recognition skills! Can you identify the sorting algorithm purely from its visual animation?"
                     color="theme-card border-yellow-500/30 hover:border-yellow-400"
                     link="/challenge"
+                    difficulty="Intermediate"
                   />
                 </div>
               </motion.div>

@@ -6,6 +6,7 @@ import {
   SignInButton,
   UserButton,
 } from '@clerk/clerk-react'
+import { dark } from '@clerk/themes'
 import { X } from 'lucide-react'
 
 const HAS_CLERK = Boolean(import.meta.env.VITE_CLERK_PUBLISHABLE_KEY)
@@ -152,6 +153,7 @@ export const Navbar = () => {
   const [hoveredTab, setHoveredTab] = useState(null)
   const [exploreOpen, setExploreOpen] = useState(false)
   const exploreButtonRef = useRef(null)
+  const { isDark } = useTheme()
 
   const { pathname } = useLocation()
   const isExploreMenuOpen = hoveredTab === 'explore' || exploreOpen
@@ -373,6 +375,32 @@ export const Navbar = () => {
                   />
                 )}
               </li>
+              {/* Top Level Link: Concepts */}
+              <li
+                className="relative py-1.5"
+                onMouseEnter={() => setHoveredTab('concepts')}
+              >
+                <Link
+                  to="/concepts"
+                  className={`relative text-sm font-medium px-4 py-1.5 rounded-lg transition-all duration-300 z-10 ${
+                    pathname === '/concepts'
+                      ? 'text-indigo-600 dark:text-indigo-300 font-semibold'
+                      : 'text-slate-400 hover:text-slate-900 dark:hover:text-slate-100'
+                  }`}
+                >
+                  Concepts
+                </Link>
+                {hoveredTab === 'concepts' && (
+                  <motion.div
+                    layoutId="nav-hover-pill"
+                    className="absolute inset-0 bg-slate-200/50 dark:bg-slate-900/60 border border-slate-300/30 dark:border-slate-800/50 rounded-lg -z-0"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ type: 'spring', stiffness: 350, damping: 28 }}
+                  />
+                )}
+              </li>
 
               <li
                 className="relative py-1.5"
@@ -455,7 +483,10 @@ export const Navbar = () => {
               {HAS_CLERK ? (
                 <>
                   <SignedOut>
-                    <SignInButton mode="modal">
+                    <SignInButton
+                      mode="modal"
+                      appearance={{ baseTheme: isDark ? dark : undefined }}
+                    >
                       <button className="theme-button-primary relative group overflow-hidden rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/40 hover:bg-slate-100 dark:hover:bg-slate-800/80 text-slate-700 dark:text-slate-200 px-6 py-2 text-sm font-bold transition-all duration-300 shadow-md active:scale-95">
                         <span className="relative z-10">Sign In</span>
                         <div className="absolute inset-0 bg-gradient-to-r from-indigo-600/20 to-purple-600/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
@@ -599,7 +630,10 @@ export const Navbar = () => {
               <div className="mt-6 pt-4 border-t border-slate-200 dark:border-slate-800/80 space-y-3">
                 {HAS_CLERK ? (
                   <SignedOut>
-                    <SignInButton mode="modal">
+                    <SignInButton
+                      mode="modal"
+                      appearance={{ baseTheme: isDark ? dark : undefined }}
+                    >
                       <button className="w-full relative group overflow-hidden rounded-xl bg-indigo-600 px-4 py-2.5 text-sm font-semibold text-white transition-all duration-300 active:scale-[0.98]">
                         <span className="relative z-10">Sign In</span>
                         <div className="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />

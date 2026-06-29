@@ -145,7 +145,12 @@ export default function TestCaseManager({
     let shouldReload = false
 
     try {
-      await importTestCases(file)
+      const result = await importTestCases(file)
+      if (result.skipped > 0) {
+        console.warn(
+          `Import completed: ${result.success} imported, ${result.skipped} skipped due to missing required fields.`
+        )
+      }
       shouldReload = true
     } catch (error) {
       console.error('Failed to import test cases:', error)

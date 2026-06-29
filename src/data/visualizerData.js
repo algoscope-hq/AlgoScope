@@ -125,7 +125,7 @@ export const ALGORITHMS = [
     id: 'two-pointer',
     title: 'Two Pointer Approach',
     description:
-      'Use two pointers converging inward to solve pair-sum and container problems in O(n) time.',
+      'Visualize Container with Most Water, Trapping Rain Water, Valid Palindrome and more with converging pointers.',
     color: 'theme-card border-rose-500/30 hover:border-rose-400',
     link: '/two-pointer',
     difficulty: 'Intermediate',
