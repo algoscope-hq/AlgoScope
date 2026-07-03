@@ -14,6 +14,7 @@ export default function AlgoCard({
   color,
   difficulty,
   id,
+  dataTour,
 }) {
   const cardRef = useRef(null)
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 })
@@ -88,6 +89,7 @@ export default function AlgoCard({
   return (
     <MotionDiv
       ref={cardRef}
+      data-tour={dataTour}
       onMouseMove={handleMouseMove}
       onMouseEnter={() => setIsHovering(true)}
       onMouseLeave={() => setIsHovering(false)}

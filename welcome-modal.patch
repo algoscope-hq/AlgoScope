@@ -1,0 +1,293 @@
+diff --git a/src/components/AlgoCard.jsx b/src/components/AlgoCard.jsx
+index 6861859..f1599b5 100644
+--- a/src/components/AlgoCard.jsx
++++ b/src/components/AlgoCard.jsx
+@@ -14,6 +14,7 @@ export default function AlgoCard({
+   color,
+   difficulty,
+   id,
++  dataTour,
+ }) {
+   const cardRef = useRef(null)
+   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 })
+@@ -88,6 +89,7 @@ export default function AlgoCard({
+   return (
+     <MotionDiv
+       ref={cardRef}
++      data-tour={dataTour}
+       onMouseMove={handleMouseMove}
+       onMouseEnter={() => setIsHovering(true)}
+       onMouseLeave={() => setIsHovering(false)}
+diff --git a/src/components/GuidedTour.jsx b/src/components/GuidedTour.jsx
+index 6006fe1..d5d79a6 100644
+--- a/src/components/GuidedTour.jsx
++++ b/src/components/GuidedTour.jsx
+@@ -3,8 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion'
+ import { ChevronLeft, ChevronRight, X } from 'lucide-react'
+ import { tourSteps } from '../data/tourSteps'
+ 
+-export const GuidedTour = () => {
+-  const [isOpen, setIsOpen] = useState(false)
++export const GuidedTour = ({ isOpen = false, onClose = () => {} }) => {
+   const [currentStep, setCurrentStep] = useState(0)
+   const [rect, setRect] = useState(null)
+   const [windowWidth, setWindowWidth] = useState(
+@@ -37,16 +36,8 @@ export const GuidedTour = () => {
+     return () => window.removeEventListener('resize', handleResize)
+   }, [])
+ 
+-  // Auto-start tour on first visit
+-  useEffect(() => {
+-    const completed = localStorage.getItem('algoscope-tour-completed')
+-    if (completed !== 'true') {
+-      const timer = setTimeout(() => {
+-        setIsOpen(true)
+-      }, 800)
+-      return () => clearTimeout(timer)
+-    }
+-  }, [])
++  // Note: currentStep is already reset to 0 in handleComplete/handleSkip,
++  // so each time the tour re-opens it naturally starts from the first step.
+ 
+   // Update highlighted element bounding rect
+   useEffect(() => {
+@@ -108,10 +99,10 @@ export const GuidedTour = () => {
+   }
+ 
+   const handleComplete = () => {
+-    setIsOpen(false)
+     setCurrentStep(0)
+     setRect(null)
+     localStorage.setItem('algoscope-tour-completed', 'true')
++    onClose()
+   }
+ 
+   const getPopoverStyles = () => {
+diff --git a/src/components/Home.jsx b/src/components/Home.jsx
+index 6643c7f..f05db70 100644
+--- a/src/components/Home.jsx
++++ b/src/components/Home.jsx
+@@ -1,8 +1,9 @@
+-import React, { useState } from 'react'
++import React, { useState, useEffect, useCallback } from 'react'
+ import AlgoCard from './AlgoCard'
+ import { Hero } from './hero/Hero'
+ import { motion } from 'framer-motion'
+ import { GuidedTour } from './GuidedTour'
++import { WelcomeModal, WELCOME_STORAGE_KEY } from './WelcomeModal'
+ 
+ const containerVariants = {
+   hidden: { opacity: 0 },
+@@ -17,6 +18,30 @@ const containerVariants = {
+ import { ALGORITHMS, OPERATING_SYSTEMS } from '../data/visualizerData'
+ export const Home = () => {
+   const [filter, setFilter] = useState('All')
++  const [showWelcomeModal, setShowWelcomeModal] = useState(false)
++  const [showTour, setShowTour] = useState(false)
++
++  // Show the welcome modal once, on a user's very first visit
++  useEffect(() => {
++    const hasSeenWelcome = localStorage.getItem(WELCOME_STORAGE_KEY)
++    if (!hasSeenWelcome) {
++      const timer = setTimeout(() => setShowWelcomeModal(true), 600)
++      return () => clearTimeout(timer)
++    }
++  }, [])
++
++  const handleExplore = useCallback(() => {
++    localStorage.setItem(WELCOME_STORAGE_KEY, 'true')
++    setShowWelcomeModal(false)
++  }, [])
++
++  const handleTakeTour = useCallback(() => {
++    localStorage.setItem(WELCOME_STORAGE_KEY, 'true')
++    setShowWelcomeModal(false)
++    setShowTour(true)
++  }, [])
++
++  const handleCloseTour = useCallback(() => setShowTour(false), [])
+ 
+   const difficultyWeight = {
+     Beginner: 1,
+@@ -99,6 +124,7 @@ export const Home = () => {
+ 
+           {filteredAlgos.length > 0 ? (
+             <motion.div
++              data-tour="algo-cards-section"
+               layout
+               className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3"
+               variants={containerVariants}
+@@ -106,7 +132,7 @@ export const Home = () => {
+               whileInView="visible"
+               viewport={{ once: true, amount: 0.1 }}
+             >
+-              {filteredAlgos.map((algo) => (
++              {filteredAlgos.map((algo, index) => (
+                 <AlgoCard
+                   key={algo.id}
+                   id={algo.id}
+@@ -115,6 +141,7 @@ export const Home = () => {
+                   color={algo.color}
+                   link={algo.link}
+                   difficulty={algo.difficulty}
++                  dataTour={index === 0 ? 'first-algo-card' : undefined}
+                 />
+               ))}
+             </motion.div>
+@@ -191,7 +218,12 @@ export const Home = () => {
+         </div>
+       </div>
+ 
+-      <GuidedTour />
++      <WelcomeModal
++        isOpen={showWelcomeModal}
++        onExplore={handleExplore}
++        onTakeTour={handleTakeTour}
++      />
++      <GuidedTour isOpen={showTour} onClose={handleCloseTour} />
+     </div>
+   )
+ }
+diff --git a/src/components/WelcomeModal.jsx b/src/components/WelcomeModal.jsx
+new file mode 100644
+index 0000000..863b677
+--- /dev/null
++++ b/src/components/WelcomeModal.jsx
+@@ -0,0 +1,102 @@
++import React, { useEffect } from 'react'
++import { motion, AnimatePresence } from 'framer-motion'
++import { Compass, MapPin, Sparkles } from 'lucide-react'
++
++export const WELCOME_STORAGE_KEY = 'algoscope-welcome-seen'
++
++export const WelcomeModal = ({ isOpen, onExplore, onTakeTour }) => {
++  // Prevent background scroll while the modal is open
++  useEffect(() => {
++    if (!isOpen) return
++    const original = document.body.style.overflow
++    document.body.style.overflow = 'hidden'
++    return () => {
++      document.body.style.overflow = original
++    }
++  }, [isOpen])
++
++  // Allow dismissing with Escape (treated as "Explore Platform")
++  useEffect(() => {
++    if (!isOpen) return
++    const handleKeyDown = (event) => {
++      if (event.key === 'Escape') onExplore()
++    }
++    window.addEventListener('keydown', handleKeyDown)
++    return () => window.removeEventListener('keydown', handleKeyDown)
++  }, [isOpen, onExplore])
++
++  return (
++    <AnimatePresence>
++      {isOpen && (
++        <>
++          {/* Backdrop */}
++          <motion.div
++            initial={{ opacity: 0 }}
++            animate={{ opacity: 1 }}
++            exit={{ opacity: 0 }}
++            transition={{ duration: 0.2 }}
++            className="fixed inset-0 z-[9998] bg-slate-950/75 dark:bg-slate-950/85 backdrop-blur-sm"
++            onClick={onExplore}
++          />
++
++          {/* Modal */}
++          <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 pointer-events-none">
++            <motion.div
++              initial={{ opacity: 0, scale: 0.95, y: 12 }}
++              animate={{ opacity: 1, scale: 1, y: 0 }}
++              exit={{ opacity: 0, scale: 0.95, y: 12 }}
++              transition={{ type: 'spring', stiffness: 300, damping: 28 }}
++              role="dialog"
++              aria-modal="true"
++              aria-labelledby="welcome-modal-title"
++              onClick={(e) => e.stopPropagation()}
++              className="theme-card border border-[var(--theme-border)] rounded-3xl shadow-2xl backdrop-blur-xl w-full max-w-md p-7 sm:p-8 pointer-events-auto"
++            >
++              {/* Icon */}
++              <div className="flex justify-center mb-5">
++                <div className="flex items-center justify-center w-14 h-14 rounded-2xl bg-cyan-500/10 border border-cyan-500/30">
++                  <Sparkles className="w-7 h-7 text-cyan-400" />
++                </div>
++              </div>
++
++              {/* Heading */}
++              <h2
++                id="welcome-modal-title"
++                className="text-center text-2xl font-extrabold theme-text-strong tracking-tight mb-2"
++              >
++                Welcome to AlgoScope
++              </h2>
++              <p className="text-center text-sm theme-text-muted leading-relaxed mb-8 max-w-sm mx-auto">
++                Watch algorithms and data structures come to life with
++                interactive visualizations. New here? Take a quick tour, or jump
++                straight in.
++              </p>
++
++              {/* Actions */}
++              <div className="flex flex-col gap-3">
++                <button
++                  type="button"
++                  onClick={onTakeTour}
++                  className="w-full flex items-center justify-center gap-2 px-5 py-3 rounded-xl text-sm font-bold theme-button-primary shadow-sm hover:scale-[1.02] active:scale-95 transition-all cursor-pointer"
++                >
++                  <MapPin className="w-4 h-4" />
++                  Take Quick Tour
++                </button>
++                <button
++                  type="button"
++                  onClick={onExplore}
++                  className="w-full flex items-center justify-center gap-2 px-5 py-3 rounded-xl text-sm font-bold border border-[var(--theme-border)] theme-text-strong hover:bg-[var(--theme-button-secondary-hover)] transition-all cursor-pointer"
++                >
++                  <Compass className="w-4 h-4" />
++                  Explore Platform
++                </button>
++              </div>
++            </motion.div>
++          </div>
++        </>
++      )}
++    </AnimatePresence>
++  )
++}
++
++export default WelcomeModal
+diff --git a/src/data/tourSteps.js b/src/data/tourSteps.js
+index 79ac4c4..fc36d0a 100644
+--- a/src/data/tourSteps.js
++++ b/src/data/tourSteps.js
+@@ -18,7 +18,28 @@ export const tourSteps = [
+     placement: 'bottom',
+     title: 'Explore Visualizers',
+     description:
+-      'Browse our complete library of animated algorithm visualizers categorized by sorting, pathfinding, and dynamic programming.',
++      'Browse our complete library of animated visualizers, categorized by sorting, pathfinding, dynamic programming, and Abstract Data Types like stacks, queues, and trees.',
++  },
++  {
++    selector: ['[data-tour="algo-cards-section"]'],
++    placement: 'top',
++    title: 'Algorithm Cards',
++    description:
++      'Each card represents an algorithm or data structure. Use the difficulty tabs above to filter by Beginner, Intermediate, or Advanced.',
++  },
++  {
++    selector: ['[data-tour="first-algo-card"]'],
++    placement: 'right',
++    title: 'Using a Visualizer',
++    description:
++      'Click any card to open its visualizer. From there you can step through the algorithm, adjust speed and input, and read the theory alongside the code.',
++  },
++  {
++    selector: ['[data-tour="favorites-nav"]', '[data-tour="mobile-menu-btn"]'],
++    placement: 'bottom',
++    title: 'Favorites',
++    description:
++      'Bookmark any algorithm or data structure by clicking the star on its card, then find them all here for quick access later.',
+   },
+   {
+     selector: ['[data-tour="practice-nav"]', '[data-tour="mobile-menu-btn"]'],
+     

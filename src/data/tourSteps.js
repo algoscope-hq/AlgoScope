@@ -18,7 +18,28 @@ export const tourSteps = [
     placement: 'bottom',
     title: 'Explore Visualizers',
     description:
-      'Browse our complete library of animated algorithm visualizers categorized by sorting, pathfinding, and dynamic programming.',
+      'Browse our complete library of animated visualizers, categorized by sorting, pathfinding, dynamic programming, and Abstract Data Types like stacks, queues, and trees.',
+  },
+  {
+    selector: ['[data-tour="algo-cards-section"]'],
+    placement: 'top',
+    title: 'Algorithm Cards',
+    description:
+      'Each card represents an algorithm or data structure. Use the difficulty tabs above to filter by Beginner, Intermediate, or Advanced.',
+  },
+  {
+    selector: ['[data-tour="first-algo-card"]'],
+    placement: 'right',
+    title: 'Using a Visualizer',
+    description:
+      'Click any card to open its visualizer. From there you can step through the algorithm, adjust speed and input, and read the theory alongside the code.',
+  },
+  {
+    selector: ['[data-tour="favorites-nav"]', '[data-tour="mobile-menu-btn"]'],
+    placement: 'bottom',
+    title: 'Favorites',
+    description:
+      'Bookmark any algorithm or data structure by clicking the star on its card, then find them all here for quick access later.',
   },
   {
     selector: ['[data-tour="practice-nav"]', '[data-tour="mobile-menu-btn"]'],

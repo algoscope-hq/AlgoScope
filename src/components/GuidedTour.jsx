@@ -3,8 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { ChevronLeft, ChevronRight, X } from 'lucide-react'
 import { tourSteps } from '../data/tourSteps'
 
-export const GuidedTour = () => {
-  const [isOpen, setIsOpen] = useState(false)
+export const GuidedTour = ({ isOpen = false, onClose = () => {} }) => {
   const [currentStep, setCurrentStep] = useState(0)
   const [rect, setRect] = useState(null)
   const [windowWidth, setWindowWidth] = useState(
@@ -37,16 +36,8 @@ export const GuidedTour = () => {
     return () => window.removeEventListener('resize', handleResize)
   }, [])
 
-  // Auto-start tour on first visit
-  useEffect(() => {
-    const completed = localStorage.getItem('algoscope-tour-completed')
-    if (completed !== 'true') {
-      const timer = setTimeout(() => {
-        setIsOpen(true)
-      }, 800)
-      return () => clearTimeout(timer)
-    }
-  }, [])
+  // Note: currentStep is already reset to 0 in handleComplete/handleSkip,
+  // so each time the tour re-opens it naturally starts from the first step.
 
   // Update highlighted element bounding rect
   useEffect(() => {
@@ -108,10 +99,10 @@ export const GuidedTour = () => {
   }
 
   const handleComplete = () => {
-    setIsOpen(false)
     setCurrentStep(0)
     setRect(null)
     localStorage.setItem('algoscope-tour-completed', 'true')
+    onClose()
   }
 
   const getPopoverStyles = () => {

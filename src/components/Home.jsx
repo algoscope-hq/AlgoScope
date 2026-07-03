@@ -1,8 +1,9 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import AlgoCard from './AlgoCard'
 import { Hero } from './hero/Hero'
 import { motion } from 'framer-motion'
 import { GuidedTour } from './GuidedTour'
+import { WelcomeModal, WELCOME_STORAGE_KEY } from './WelcomeModal'
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -17,6 +18,30 @@ const containerVariants = {
 import { ALGORITHMS, OPERATING_SYSTEMS } from '../data/visualizerData'
 export const Home = () => {
   const [filter, setFilter] = useState('All')
+  const [showWelcomeModal, setShowWelcomeModal] = useState(false)
+  const [showTour, setShowTour] = useState(false)
+
+  // Show the welcome modal once, on a user's very first visit
+  useEffect(() => {
+    const hasSeenWelcome = localStorage.getItem(WELCOME_STORAGE_KEY)
+    if (!hasSeenWelcome) {
+      const timer = setTimeout(() => setShowWelcomeModal(true), 600)
+      return () => clearTimeout(timer)
+    }
+  }, [])
+
+  const handleExplore = useCallback(() => {
+    localStorage.setItem(WELCOME_STORAGE_KEY, 'true')
+    setShowWelcomeModal(false)
+  }, [])
+
+  const handleTakeTour = useCallback(() => {
+    localStorage.setItem(WELCOME_STORAGE_KEY, 'true')
+    setShowWelcomeModal(false)
+    setShowTour(true)
+  }, [])
+
+  const handleCloseTour = useCallback(() => setShowTour(false), [])
 
   const difficultyWeight = {
     Beginner: 1,
@@ -99,6 +124,7 @@ export const Home = () => {
 
           {filteredAlgos.length > 0 ? (
             <motion.div
+              data-tour="algo-cards-section"
               layout
               className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3"
               variants={containerVariants}
@@ -106,7 +132,7 @@ export const Home = () => {
               whileInView="visible"
               viewport={{ once: true, amount: 0.1 }}
             >
-              {filteredAlgos.map((algo) => (
+              {filteredAlgos.map((algo, index) => (
                 <AlgoCard
                   key={algo.id}
                   id={algo.id}
@@ -115,6 +141,7 @@ export const Home = () => {
                   color={algo.color}
                   link={algo.link}
                   difficulty={algo.difficulty}
+                  dataTour={index === 0 ? 'first-algo-card' : undefined}
                 />
               ))}
             </motion.div>
@@ -191,7 +218,12 @@ export const Home = () => {
         </div>
       </div>
 
-      <GuidedTour />
+      <WelcomeModal
+        isOpen={showWelcomeModal}
+        onExplore={handleExplore}
+        onTakeTour={handleTakeTour}
+      />
+      <GuidedTour isOpen={showTour} onClose={handleCloseTour} />
     </div>
   )
 }
