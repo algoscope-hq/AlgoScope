@@ -33,6 +33,10 @@ jobs:
         # Fails the PR if there are syntax errors or bad practices
         run: npm run lint
 
+      - name: Run Type Checker (TypeScript)
+        # Fails the PR if typings do not match the implementation
+        run: npm run type-check
+
   # JOB 2: Build and Test (Functionality)
   # Runs parallel to code-quality for faster feedback
   build-and-test:
