@@ -130,6 +130,15 @@ export const ALGORITHMS = [
     link: '/two-pointer',
     difficulty: 'Intermediate',
   },
+  {
+    id: 'greedy',
+    title: 'Greedy Algorithms',
+    description:
+      'Explore Huffman Coding, Fractional Knapsack, and Job Sequencing with Deadlines.',
+    color: 'theme-card border-cyan-500/30 hover:border-cyan-400',
+    link: '/greedy',
+    difficulty: 'Intermediate',
+  },
 ]
 
 export const OPERATING_SYSTEMS = [

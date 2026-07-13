@@ -136,6 +136,11 @@ const algorithmLinks = [
     difficulty: 'Advanced',
   },
   {
+    name: 'Greedy Algorithms',
+    href: '/greedy',
+    difficulty: 'Intermediate',
+  },
+  {
     name: 'Monotonic Stack',
     href: '/monotonic-stack',
     difficulty: 'Advanced',
