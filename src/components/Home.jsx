@@ -1,7 +1,9 @@
-import React from 'react'
+import React, { useState } from 'react'
 import AlgoCard from './AlgoCard'
 import { Hero } from './hero/Hero'
 import { motion } from 'framer-motion'
+import { GuidedTour } from './GuidedTour'
+import { useTheme } from '../context/useTheme'
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -13,90 +15,86 @@ const containerVariants = {
     },
   },
 }
-
-const ALGORITHMS = [
-  {
-    title: 'Sorting',
-    description: 'Visualizing Bubble, Merge, Quick, Heap, and Shell Sort.',
-    color: 'theme-card border-blue-500/30 hover:border-blue-400',
-    link: '/sort',
-  },
-  {
-    title: 'Searching',
-    description: 'Explore BFS, DFS, and other traversal methods.',
-    color: 'theme-card border-cyan-500/30 hover:border-cyan-400',
-    link: '/search',
-  },
-  {
-    title: 'Graph Algorithms',
-    description: 'Dijkstra, Floyd-Warshall, and Topological Sort.',
-    color: 'theme-card border-purple-500/30 hover:border-purple-400',
-    link: '/spath',
-  },
-  {
-    title: 'Array Search',
-    description: 'Linear and Binary search visualization.',
-    color: 'theme-card border-orange-500/30 hover:border-orange-400',
-    link: '/ldssearch',
-  },
-  {
-    title: 'Abstract Data Types',
-    description:
-      'Stacks, Queues, Binary Trees, Binary Heaps, and Priority Queues.',
-    color: 'theme-card border-emerald-500/30 hover:border-emerald-400',
-    link: '/adt',
-  },
-  {
-    title: 'Kadane Algorithm',
-    description: 'Visualize Maximum Subarray Sum using Kadane’s Algorithm.',
-    color: 'theme-card border-pink-500/30 hover:border-pink-400',
-    link: '/kadane',
-  },
-  {
-    title: "Moore's Voting Algorithm",
-    description:
-      "Visualize the Moore's Voting Algorithm for finding the majority element.",
-    color: 'theme-card border-green-500/30 hover:border-green-400',
-    link: '/moore-voting',
-  },
-  {
-    title: 'Math Theory',
-    description:
-      'Visualize GCD, Fast Exponentiation, and Bit Manipulation step-by-step.',
-    color: 'theme-card border-indigo-500/30 hover:border-indigo-400',
-    link: '/math-theory',
-  },
-  {
-    title: 'String Algorithms',
-    description:
-      'Visualize KMP, Rabin-Karp, Z-Algorithm, and pattern matching techniques step-by-step.',
-    color: 'theme-card border-violet-500/30 hover:border-violet-400',
-    link: '/string-algorithms',
-  },
-  {
-    title: 'Dynamic Programming',
-    description:
-      'LCS, 0/1 Knapsack, Coin Change, and LIS — watch the DP table fill step by step.',
-    path: '/dynamic-programming', // or "to" depending on your card schema
-    color: 'theme-card border-rose-500/30 hover:border-rose-400',
-    link: '/dynamic-programming',
-  },
-  {
-    title: 'Backtracking',
-    description:
-      'N-Queens, Sudoku Solver, and Tower of Hanoi with step-by-step recursion.',
-    color: 'theme-card border-rose-500/30 hover:border-rose-400',
-    link: '/backtracking',
-  },
-]
-
+import { ALGORITHMS, OPERATING_SYSTEMS } from '../data/visualizerData'
 export const Home = () => {
+  const [filter, setFilter] = useState('All')
+  const { isDark } = useTheme()
+
+  const difficultyWeight = {
+    Beginner: 1,
+    Intermediate: 2,
+    Advanced: 3,
+  }
+
+  const sortItems = (a, b) => {
+    const weightA = difficultyWeight[a.difficulty]
+    const weightB = difficultyWeight[b.difficulty]
+
+    if (weightA !== weightB) {
+      return weightA - weightB
+    }
+    return a.title.localeCompare(b.title)
+  }
+
+  const filteredAlgos = (
+    filter === 'All'
+      ? ALGORITHMS
+      : ALGORITHMS.filter((algo) => algo.difficulty === filter)
+  ).sort(sortItems)
+
+  const filteredOS = (
+    filter === 'All'
+      ? OPERATING_SYSTEMS
+      : OPERATING_SYSTEMS.filter((os) => os.difficulty === filter)
+  ).sort(sortItems)
+
   return (
     <div className="theme-home relative min-h-screen w-full overflow-x-hidden selection:bg-cyan-500/30">
       <Hero />
 
       <div className="relative z-10 px-4 pb-16">
         <div id="explore" className="mx-auto w-full max-w-7xl px-4">
+          {/* Difficulty Filter Tabs */}
+          <div className="flex justify-center mb-12">
+            <div
+              className={`flex rounded-xl p-1 gap-1 border transition-all duration-300 ${
+                isDark
+                  ? 'bg-slate-900/80 border-slate-800/60'
+                  : 'bg-stone-200/70 border-stone-300/80 shadow-inner'
+              }`}
+            >
+              {['All', 'Beginner', 'Intermediate', 'Advanced'].map((level) => (
+                <button
+                  key={level}
+                  onClick={() => setFilter(level)}
+                  className="relative px-5 py-2 rounded-lg text-xs font-bold transition-all duration-200 cursor-pointer"
+                  style={{
+                    color: filter === level 
+                      ? (isDark ? '#fff' : '#0891b2') 
+                      : (isDark ? '#64748b' : '#78716c')
+                  }}
+                >
+                  {filter === level && (
+                    <motion.div
+                      layoutId="home-filter-bg"
+                      className="absolute inset-0 rounded-lg"
+                      style={{
+                        background: isDark ? 'rgba(6,182,212,0.2)' : 'rgba(6,182,212,0.15)',
+                        border: isDark ? '1px solid rgba(6,182,212,0.4)' : '1px solid rgba(6,182,212,0.3)',
+                      }}
+                      transition={{
+                        type: 'spring',
+                        bounce: 0.2,
+                        duration: 0.4,
+                      }}
+                    />
+                  )}
+                  <span className="relative">{level}</span>
+                </button>
+              ))}
+            </div>
+          </div>
+
           <div className="mb-12 flex items-center gap-4">
             <div className="h-px flex-1 bg-gradient-to-r from-transparent via-current to-transparent opacity-20 theme-text-strong" />
             <span className="font-mono text-sm uppercase tracking-[0.3em] theme-text-subtle">
@@ -105,48 +103,101 @@ export const Home = () => {
             <div className="h-px flex-1 bg-gradient-to-r from-transparent via-current to-transparent opacity-20 theme-text-strong" />
           </div>
 
-          <motion.div
-            className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3"
-            variants={containerVariants}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, amount: 0.1 }}
-          >
-            {ALGORITHMS.map((algo, index) => (
-              <AlgoCard
-                key={index}
-                title={algo.title}
-                description={algo.description}
-                color={algo.color}
-                link={algo.link}
-              />
-            ))}
-          </motion.div>
+          {filteredAlgos.length > 0 ? (
+            <motion.div
+              layout
+              className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3"
+              variants={containerVariants}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, amount: 0.1 }}
+            >
+              {filteredAlgos.map((algo) => (
+                <AlgoCard
+                  key={algo.id}
+                  id={algo.id}
+                  title={algo.title}
+                  description={algo.description}
+                  color={algo.color}
+                  link={algo.link}
+                  difficulty={algo.difficulty}
+                />
+              ))}
+            </motion.div>
+          ) : (
+            <p className="text-center text-slate-500 font-mono text-sm my-8">
+              No algorithms match this difficulty level.
+            </p>
+          )}
 
-          <div className="mt-16 mb-12 flex items-center gap-4">
-            <div className="h-px flex-1 bg-gradient-to-r from-transparent via-current to-transparent opacity-20 theme-text-strong" />
-            <span className="font-mono text-sm uppercase tracking-[0.3em] theme-text-subtle">
-              Games & Challenges
-            </span>
-            <div className="h-px flex-1 bg-gradient-to-r from-transparent via-current to-transparent opacity-20 theme-text-strong" />
-          </div>
+          {filteredOS.length > 0 && (
+            <>
+              <div className="mt-16 mb-12 flex items-center gap-4">
+                <div className="h-px flex-1 bg-gradient-to-r from-transparent via-current to-transparent opacity-20 theme-text-strong" />
+                <span className="font-mono text-sm uppercase tracking-[0.3em] theme-text-subtle">
+                  Operating Systems
+                </span>
+                <div className="h-px flex-1 bg-gradient-to-r from-transparent via-current to-transparent opacity-20 theme-text-strong" />
+              </div>
 
-          <motion.div
-            className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3"
-            variants={containerVariants}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, amount: 0.1 }}
-          >
-            <AlgoCard
-              title="Guess the Algorithm"
-              description="Test your algorithm recognition skills! Can you identify the sorting algorithm purely from its visual animation?"
-              color="theme-card border-yellow-500/30 hover:border-yellow-400"
-              link="/challenge"
-            />
-          </motion.div>
+              <motion.div
+                layout
+                className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3"
+                variants={containerVariants}
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true, amount: 0.1 }}
+              >
+                {filteredOS.map((os) => (
+                  <AlgoCard
+                    key={os.id}
+                    id={os.id}
+                    title={os.title}
+                    description={os.description}
+                    color={os.color}
+                    link={os.link}
+                    difficulty={os.difficulty}
+                  />
+                ))}
+              </motion.div>
+            </>
+          )}
+
+          {filter === 'All' && (
+            <>
+              <div className="mt-16 mb-12 flex items-center gap-4">
+                <div className="h-px flex-1 bg-gradient-to-r from-transparent via-current to-transparent opacity-20 theme-text-strong" />
+                <span className="font-mono text-sm uppercase tracking-[0.3em] theme-text-subtle">
+                  Games & Challenges
+                </span>
+                <div className="h-px flex-1 bg-gradient-to-r from-transparent via-current to-transparent opacity-20 theme-text-strong" />
+              </div>
+
+              <motion.div
+                layout
+                className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3"
+                variants={containerVariants}
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true, amount: 0.1 }}
+              >
+                <div data-tour="challenge-card" className="w-full">
+                  <AlgoCard
+                    id="guess-the-algorithm"
+                    title="Guess the Algorithm"
+                    description="Test your algorithm recognition skills! Can you identify the sorting algorithm purely from its visual animation?"
+                    color="theme-card border-yellow-500/30 hover:border-yellow-400"
+                    link="/challenge"
+                    difficulty="Intermediate"
+                  />
+                </div>
+              </motion.div>
+            </>
+          )}
         </div>
       </div>
+
+      <GuidedTour />
     </div>
   )
 }

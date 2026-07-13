@@ -38,7 +38,8 @@ function safeText(value) {
   return typeof value === 'string' ? value : value == null ? '' : String(value)
 }
 
-function buildTestCaseEntry({
+export function buildTestCaseEntry({
+  id,
   name,
   algorithm,
   input,
@@ -50,7 +51,7 @@ function buildTestCaseEntry({
   const now = new Date().toISOString()
 
   return {
-    id: `tc_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`,
+    id: id || `tc_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`,
     name: safeText(name).trim(),
     algorithm: safeText(algorithm).trim(),
     input: safeText(input),
@@ -201,11 +202,22 @@ export async function importTestCases(file) {
         const store = tx.objectStore(STORE_NAME)
 
         let successfulImports = 0
+        let skippedImports = 0
 
         data.forEach((tc) => {
-          if (!tc || typeof tc !== 'object') return
+          if (
+            !tc ||
+            typeof tc !== 'object' ||
+            !tc.name?.trim() ||
+            !tc.algorithm?.trim() ||
+            !tc.input?.trim()
+          ) {
+            skippedImports += 1
+            return
+          }
 
           const entry = buildTestCaseEntry({
+            id: tc.id,
             name: tc.name,
             algorithm: tc.algorithm,
             input: tc.input,
@@ -219,7 +231,11 @@ export async function importTestCases(file) {
           successfulImports += 1
         })
 
-        tx.oncomplete = () => resolve(successfulImports)
+        tx.oncomplete = () =>
+          resolve({
+            success: successfulImports,
+            skipped: skippedImports,
+          })
         tx.onerror = (err) => reject(err.target.error)
       } catch (err) {
         reject(err)

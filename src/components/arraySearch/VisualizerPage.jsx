@@ -2,6 +2,8 @@ import { motion } from 'framer-motion'
 import { useSearchParams } from 'react-router-dom'
 import Visualizer from './Visualizer'
 import ComparisonMode from './ComparisonMode'
+import DifficultyBadge from '../DifficultyBadge'
+import LearningPathSuggestions from '../LearningPathSuggestions'
 
 const ArrayVisualizerPage = () => {
   const [searchParams, setSearchParams] = useSearchParams()
@@ -26,9 +28,12 @@ const ArrayVisualizerPage = () => {
     >
       {/* Header */}
       <div className="px-4 sm:px-6 pt-4 sm:pt-6 pb-2 flex items-center justify-between">
-        <p className="text-xs font-semibold uppercase tracking-[0.2em] text-cyan-400/80">
-          Array Search Visualizer
-        </p>
+        <div className="flex items-center gap-2">
+          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-cyan-400/80">
+            Array Search Visualizer
+          </p>
+          <DifficultyBadge size="xs" />
+        </div>
 
         {/* Mode Toggle */}
         <div className="flex gap-2">
@@ -59,6 +64,9 @@ const ArrayVisualizerPage = () => {
       {/* Content */}
       <div className="px-4 sm:px-6 pb-6">
         {mode === 'solo' ? <Visualizer /> : <ComparisonMode />}
+        <div className="mt-4">
+          <LearningPathSuggestions />
+        </div>
       </div>
     </motion.div>
   )

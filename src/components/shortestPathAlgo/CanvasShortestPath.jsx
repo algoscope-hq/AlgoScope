@@ -291,6 +291,19 @@ export const CanvasShortestPath = ({
       const pathNodes = []
       const pathEdges = []
       let cur = dst
+
+      if (src === dst) {
+        setStatus(
+          `Source and Target are the same node (${src}). Distance is 0.`
+        )
+        nodes.update({
+          id: src,
+          color: { background: '#10b981', border: '#ffffff' },
+          size: 28,
+        })
+        return
+      }
+
       if (parent[cur] == null) {
         setStatus(`Node ${dst} is not reachable from ${src}.`)
         return

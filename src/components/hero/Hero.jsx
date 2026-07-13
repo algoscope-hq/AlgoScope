@@ -1,6 +1,8 @@
 import { motion } from 'framer-motion'
-import { ArrowRight } from 'lucide-react'
+import { ArrowRight, LayoutGrid, Globe, Code2, Unlock } from 'lucide-react'
 import { HeroProductPreview } from './HeroProductPreview'
+import { APP_VERSION } from '../../lib/version'
+import { VISUALIZER_COUNT } from '../../data/visualizerData'
 
 const ease = [0.22, 1, 0.36, 1]
 
@@ -46,12 +48,13 @@ export function Hero() {
                   animate={{ opacity: [0.65, 1, 0.65] }}
                   transition={{ duration: 2.2, repeat: Infinity }}
                 />
-                v1.5 · open source
+                {APP_VERSION} · open source
               </span>
             </motion.div>
 
             <motion.h1
               id="hero-heading"
+              data-tour="hero-heading"
               variants={item}
               className="logo-font mt-4 text-[1.9rem] font-semibold leading-[1.04] tracking-[-0.04em] theme-text-strong sm:mt-5 sm:text-[2.4rem] lg:text-[2.75rem] xl:text-[2.95rem]"
             >
@@ -77,6 +80,7 @@ export function Hero() {
             >
               <a
                 href="#explore"
+                data-tour="explore-visualizers-cta"
                 onClick={(e) => {
                   e.preventDefault()
                   document
@@ -101,6 +105,7 @@ export function Hero() {
               </a>
               <a
                 href="/practice"
+                data-tour="practice-cta"
                 className="inline-flex h-11 w-full items-center justify-center rounded-[10px] border theme-button-secondary px-4 text-[13px] font-semibold shadow-[0_1px_2px_rgba(0,0,0,0.05)] transition-all duration-300 active:scale-[0.98] sm:h-10 sm:w-auto"
               >
                 Practice
@@ -109,12 +114,15 @@ export function Hero() {
 
             <motion.div
               variants={item}
-              className="mt-7 flex flex-wrap items-center justify-center gap-x-4 gap-y-2 border-t theme-border pt-5 text-[10px] theme-text-muted sm:mt-8 sm:justify-start sm:gap-x-5 sm:pt-6 sm:text-[11px]"
+              className="mt-7 flex flex-wrap items-center justify-center gap-x-2 gap-y-2 border-t theme-border pt-5 text-[10px] theme-text-muted sm:mt-8 sm:justify-start sm:gap-x-3 sm:pt-6 sm:text-[11px]"
             >
-              <Meta n="9+" t="visualizers" />
-              <span>Runs in browser</span>
-              <span>Open source</span>
-              <span>Free to use</span>
+              <Meta
+                t={`${VISUALIZER_COUNT} visualizers`}
+                icon={<LayoutGrid className="size-3" />}
+              />
+              <Meta t="Runs in browser" icon={<Globe className="size-3" />} />
+              <Meta t="Open source" icon={<Code2 className="size-3" />} />
+              <Meta t="Free to use" icon={<Unlock className="size-3" />} />
             </motion.div>
           </motion.div>
 
@@ -136,12 +144,10 @@ export function Hero() {
   )
 }
 
-function Meta({ n, t }) {
+function Meta({ t, icon }) {
   return (
-    <span className="inline-flex items-baseline gap-1.5">
-      <span className="logo-font font-semibold tabular-nums text-zinc-400">
-        {n}
-      </span>
+    <span className="inline-flex items-center gap-1.5 bg-white/5 px-2 py-0.5 rounded-md">
+      {icon && <span className="opacity-50">{icon}</span>}
       <span>{t}</span>
     </span>
   )

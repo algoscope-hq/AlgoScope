@@ -1,6 +1,11 @@
 import React, { lazy, Suspense } from 'react'
 import { createBrowserRouter, RouterProvider, Navigate } from 'react-router-dom'
 import { SignedIn, SignedOut, RedirectToSignIn } from '@clerk/clerk-react'
+
+const ConceptsOverview = lazy(
+  () => import('./components/concepts/ConceptsOverview')
+)
+
 // import DPVisualizer from "./components/dynamicProgramming/DPVisualizer";
 
 const HAS_CLERK = Boolean(import.meta.env.VITE_CLERK_PUBLISHABLE_KEY)
@@ -56,10 +61,36 @@ const StringAlgoVisualizerPage = lazy(
 const DPVisualizerPage = lazy(
   () => import('./components/dynamicProgramming/DPVisualizer')
 )
+const DPOptimizationJourneyPage = lazy(
+  () => import('./components/dynamicProgramming/DPOptimizationJourney') // Path to your main component
+)
+
+const SlidingWindowVisualizerPage = lazy(
+  () => import('./components/slidingwindow/SlidingWindowVisualizer')
+)
+const TwoPointerVisualizerPage = lazy(
+  () => import('./components/twoPointer/TwoPointerVisualizer')
+)
+const StackVisualizerPage = lazy(
+  () => import('./components/monotonicStack/StackVisualizerPage')
+)
 const PracticePage = lazy(() => import('./components/PracticePage'))
 const AboutAlgoScope = lazy(() => import('./components/about/About'))
+const Favorites = lazy(() => import('./components/Favorites'))
 const NotFound = lazy(() => import('./components/PageNotFound'))
 const ChallengePage = lazy(() => import('./components/challenge/ChallengePage'))
+const OperatingSystemsPage = lazy(
+  () => import('./components/operatingSystems/OperatingSystemsPage')
+)
+const CPUSchedulingPage = lazy(
+  () => import('./components/operatingSystems/CPUSchedulingPage')
+)
+const PageReplacementPage = lazy(
+  () => import('./components/operatingSystems/PageReplacementPage')
+)
+const DiskSchedulingPage = lazy(
+  () => import('./components/operatingSystems/DiskSchedulingPage')
+)
 
 // Simple fallback for Suspense
 const PageLoader = () => (
@@ -68,186 +99,246 @@ const PageLoader = () => (
   </div>
 )
 
-function App() {
-  const route = createBrowserRouter([
-    {
-      path: '/',
-      element: (
-        <Suspense fallback={<PageLoader />}>
-          <AppLayout showBackground={false}>
-            <Home />
-          </AppLayout>
-        </Suspense>
-      ),
-    },
-    {
-      path: '/search',
-      element: (
-        <Suspense fallback={<PageLoader />}>
-          <AppLayout>
-            <VisualizerPage />
-          </AppLayout>
-        </Suspense>
-      ),
-    },
-    {
-      path: '/math-theory',
-      element: (
-        <Suspense fallback={<PageLoader />}>
-          <AppLayout>
-            <MathTheory />
-          </AppLayout>
-        </Suspense>
-      ),
-    },
-    {
-      path: '/spath',
-      element: (
-        <Suspense fallback={<PageLoader />}>
-          <AppLayout>
-            <ShortestPathPage />
-          </AppLayout>
-        </Suspense>
-      ),
-    },
-    {
-      path: '/practice',
-      element: (
-        <Suspense fallback={<PageLoader />}>
-          <AppLayout>
-            {HAS_CLERK ? (
-              <>
-                <SignedIn>
-                  <PracticePage />
-                </SignedIn>
-                <SignedOut>
-                  <RedirectToSignIn />
-                </SignedOut>
-              </>
-            ) : import.meta.env.DEV ? (
-              // Allow access to PracticePage only in development when Clerk is not configured
+const router = createBrowserRouter([
+  {
+    path: '/',
+    element: (
+      <AppLayout showBackground={false}>
+        <Home />
+      </AppLayout>
+    ),
+  },
+  {
+    path: '/search',
+    element: (
+      <AppLayout notesKey="algo-notes-search">
+        <VisualizerPage />
+      </AppLayout>
+    ),
+  },
+  {
+    path: '/math-theory',
+    element: (
+      <AppLayout notesKey="algo-notes-math-theory">
+        <MathTheory />
+      </AppLayout>
+    ),
+  },
+  {
+    path: '/spath',
+    element: (
+      <AppLayout notesKey="algo-notes-shortest-path">
+        <ShortestPathPage />
+      </AppLayout>
+    ),
+  },
+  {
+    path: '/practice',
+    element: (
+      <AppLayout>
+        {HAS_CLERK ? (
+          <>
+            <SignedIn>
               <PracticePage />
-            ) : (
-              // In non-dev environments without Clerk, redirect to home (or show unauthorized)
-              <Navigate to="/" replace />
-            )}
-          </AppLayout>
-        </Suspense>
-      ),
-    },
-    {
-      path: '/about',
-      element: (
-        <Suspense fallback={<PageLoader />}>
-          <AppLayout>
-            <AboutAlgoScope />
-          </AppLayout>
-        </Suspense>
-      ),
-    },
-    {
-      path: '/sort',
-      element: (
-        <Suspense fallback={<PageLoader />}>
-          <AppLayout>
-            <SortingVisualizerPage />
-          </AppLayout>
-        </Suspense>
-      ),
-    },
-    {
-      path: '/ldssearch',
-      element: (
-        <Suspense fallback={<PageLoader />}>
-          <AppLayout>
-            <ArrayVisualizerPage />
-          </AppLayout>
-        </Suspense>
-      ),
-    },
-    {
-      path: '/adt',
-      element: (
-        <Suspense fallback={<PageLoader />}>
-          <AppLayout>
-            <DSLayout />
-          </AppLayout>
-        </Suspense>
-      ),
-    },
-    {
-      path: '/kadane',
-      element: (
-        <Suspense fallback={<PageLoader />}>
-          <AppLayout>
-            <KadaneVisualizerPage />
-          </AppLayout>
-        </Suspense>
-      ),
-    },
-    {
-      path: '/moore-voting',
-      element: (
-        <Suspense fallback={<PageLoader />}>
-          <AppLayout>
-            <MooreVotingVisualizerPage />
-          </AppLayout>
-        </Suspense>
-      ),
-    },
-    {
-      path: '/backtracking',
-      element: (
-        <Suspense fallback={<PageLoader />}>
-          <AppLayout>
-            <BacktrackingVisualizerPage />
-          </AppLayout>
-        </Suspense>
-      ),
-    },
-    {
-      path: '/dynamic-programming',
-      element: (
-        <Suspense fallback={<PageLoader />}>
-          <AppLayout>
-            <DPVisualizerPage />
-          </AppLayout>
-        </Suspense>
-      ),
-    },
-    {
-      path: '/challenge',
-      element: (
-        <Suspense fallback={<PageLoader />}>
-          <AppLayout>
-            <ChallengePage />
-          </AppLayout>
-        </Suspense>
-      ),
-    },
-    {
-      path: '/string-algorithms',
-      element: (
-        <Suspense fallback={<PageLoader />}>
-          <AppLayout>
-            <StringAlgoVisualizerPage />
-          </AppLayout>
-        </Suspense>
-      ),
-    },
-    {
-      path: '*',
-      element: (
-        <Suspense fallback={<PageLoader />}>
-          <AppLayout>
-            <NotFound />
-          </AppLayout>
-        </Suspense>
-      ),
-    },
-  ])
+            </SignedIn>
+            <SignedOut>
+              <RedirectToSignIn />
+            </SignedOut>
+          </>
+        ) : import.meta.env.DEV ? (
+          <PracticePage />
+        ) : (
+          <Navigate to="/" replace />
+        )}
+      </AppLayout>
+    ),
+  },
+  {
+    path: '/about',
+    element: (
+      <AppLayout>
+        <AboutAlgoScope />
+      </AppLayout>
+    ),
+  },
+  {
+    path: '/concepts',
+    element: (
+      <AppLayout>
+        <ConceptsOverview />
+      </AppLayout>
+    ),
+  },
+  {
+    path: '/favorites',
+    element: (
+      <AppLayout>
+        <Favorites />
+      </AppLayout>
+    ),
+  },
+  {
+    path: '/sort',
+    element: (
+      <AppLayout notesKey="algo-notes-sorting">
+        <SortingVisualizerPage />
+      </AppLayout>
+    ),
+  },
+  {
+    path: '/ldssearch',
+    element: (
+      <AppLayout notesKey="algo-notes-array-search">
+        <ArrayVisualizerPage />
+      </AppLayout>
+    ),
+  },
+  {
+    path: '/adt',
+    element: (
+      <AppLayout>
+        <DSLayout />
+      </AppLayout>
+    ),
+  },
+  {
+    path: '/kadane',
+    element: (
+      <AppLayout notesKey="algo-notes-kadane">
+        <KadaneVisualizerPage />
+      </AppLayout>
+    ),
+  },
+  {
+    path: '/moore-voting',
+    element: (
+      <AppLayout notesKey="algo-notes-moore-voting">
+        <MooreVotingVisualizerPage />
+      </AppLayout>
+    ),
+  },
+  {
+    path: '/backtracking',
+    element: (
+      <AppLayout notesKey="algo-notes-backtracking">
+        <BacktrackingVisualizerPage />
+      </AppLayout>
+    ),
+  },
+  {
+    path: '/dynamic-programming',
+    element: (
+      <AppLayout notesKey="algo-notes-dynamic-programming">
+        <DPVisualizerPage />
+      </AppLayout>
+    ),
+  },
+  {
+    path: '/dp-journey',
+    element: (
+      <AppLayout notesKey="algo-notes-dp-journey">
+        <DPOptimizationJourneyPage />
+      </AppLayout>
+    ),
+  },
+  {
+    path: '/sliding-window',
+    element: (
+      <Suspense fallback={<PageLoader />}>
+        <AppLayout>
+          <SlidingWindowVisualizerPage />
+        </AppLayout>
+      </Suspense>
+    ),
+  },
+  {
+    path: '/two-pointer',
+    element: (
+      <Suspense fallback={<PageLoader />}>
+        <AppLayout>
+          <TwoPointerVisualizerPage />
+        </AppLayout>
+      </Suspense>
+    ),
+  },
+  {
+    path: '/challenge',
+    element: (
+      <AppLayout>
+        <ChallengePage />
+      </AppLayout>
+    ),
+  },
+  {
+    path: '/string-algorithms',
+    element: (
+      <AppLayout notesKey="algo-notes-string-algorithms">
+        <StringAlgoVisualizerPage />
+      </AppLayout>
+    ),
+  },
+  {
+    path: '/monotonic-stack',
+    element: (
+      <AppLayout notesKey="algo-notes-stack">
+        <StackVisualizerPage />
+      </AppLayout>
+    ),
+  },
+  {
+    path: '/operating-systems',
+    element: (
+      <AppLayout>
+        <OperatingSystemsPage />
+      </AppLayout>
+    ),
+  },
+  {
+    path: '/operating-systems/cpu-scheduling',
+    element: (
+      <Suspense fallback={<PageLoader />}>
+        <AppLayout notesKey="algo-notes-cpu-scheduling">
+          <CPUSchedulingPage />
+        </AppLayout>
+      </Suspense>
+    ),
+  },
+  {
+    path: '/operating-systems/page-replacement',
+    element: (
+      <Suspense fallback={<PageLoader />}>
+        <AppLayout notesKey="algo-notes-page-replacement">
+          <PageReplacementPage />
+        </AppLayout>
+      </Suspense>
+    ),
+  },
+  {
+    path: '/operating-systems/disk-scheduling',
+    element: (
+      <Suspense fallback={<PageLoader />}>
+        <AppLayout notesKey="algo-notes-disk-scheduling">
+          <DiskSchedulingPage />
+        </AppLayout>
+      </Suspense>
+    ),
+  },
+  {
+    path: '*',
+    element: (
+      <AppLayout>
+        <NotFound />
+      </AppLayout>
+    ),
+  },
+])
 
-  return <RouterProvider router={route} />
+function App() {
+  return (
+    <Suspense fallback={<PageLoader />}>
+      <RouterProvider router={router} />
+    </Suspense>
+  )
 }
 
 export default App

@@ -5,6 +5,421 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.13.0] - 2026-06-18
+
+### Added
+
+- expand MCQ bank and prevent repeated questions on restart
+- add Linked List visualization module (closes #649)
+- add RR, Priority, SRTF and MLQ scheduling algorithms
+- advanced trees visualizer improvements and lint fixes
+
+### Fixed
+
+- format & lint
+- address CodeRabbit review comments on picker logic and useRef
+- correct array search algorithm names in global search
+- format App.jsx, Home.jsx, and CanvasSearching.jsx with LF endOfLine
+- import TwoPointerVisualizerPage and format code style
+- remove overly broad src/\*_/_.js pattern from ignores
+- format & lint
+- format & lint
+- format & lint
+- highlight navbar Explore button when on algorithm sub-pages
+- hide overlapping data dots on complexity graph
+- add docstrings to LinkedListIV and complete C/Rust snippets in adtSources
+- close explore dropdown when search modal opens
+- synchronize playback timers
+- address CodeRabbit scheduling review comments
+- format step playback hook and exclude nested dist in eslint config
+- remove unused setVersion and clean up TrieVisualizer
+
+### Changed
+
+- lazy load vis-network to reduce render-blocking resources
+- memoize closeExploreMenu with useCallback
+
+### 📂 Changed Files
+
+```
+- 📁 **src/**
+  - 📁 **algorithms/**
+    - 📁 **greedy/**
+      - ➕ fractionalKnapsackSteps.js
+      - ➕ greedySources.js
+      - ➕ huffmanCodingSteps.js
+    - 📁 **trees/**
+      - ➕ avlTree.js
+      - ➕ segmentTree.js
+      - ➕ trie.js
+  - 📁 **components/**
+    - 📁 **advancedTrees/**
+      - ➕ AVLTreeVisualizer.jsx
+      - ➕ BinaryTreeWithTrie.jsx
+      - ➕ SegmentTreeVisualizer.jsx
+      - ➕ TrieVisualizer.jsx
+    - 📁 **challenge/**
+      - ✏️ ChallengeVisualizer.jsx
+    - 📁 **dataStructures/**
+      - ✏️ adtSources.js
+      - ✏️ DSLayout.jsx
+      - ➕ LinkedListIV.jsx
+    - 📁 **greedyAlgo/**
+      - ➕ GreedyAlgorithmCard.jsx
+      - ➕ GreedyBlock.jsx
+      - ➕ HuffmanVisualizer.jsx
+      - ➕ KnapsackVisualizer.jsx
+      - ➕ VisualizerPage.jsx
+    - 📁 **operatingSystems/**
+      - ✏️ cpuSchedulingAlgorithms.js
+      - ➕ cpuSchedulingData.js
+      - ✏️ CPUSchedulingPage.jsx
+    - 📁 **searchAlgo/**
+      - ✏️ CanvasSearching.jsx
+    - 📁 **visualizer/**
+      - ✏️ useStepPlayback.js
+    - ✏️ ComplexityGraph.jsx
+    - ✏️ Home.jsx
+    - ✏️ Navbar.jsx
+    - ✏️ SearchBar.jsx
+  - 📁 **data/**
+    - ✏️ complexityMap.js
+  - 📁 **pages/**
+    - ➕ AdvancedTreesPage.jsx
+  - ✏️ App.jsx
+  - ✏️ main.jsx
+- ✏️ CHANGELOG.md
+- ✏️ eslint.config.js
+- ✏️ index.html
+- ✏️ package-lock.json
+- ✏️ package.json
+- ✏️ README.md
+```
+
+## [1.12.0] - 2026-06-13
+
+### Added
+
+- add drag and drop support for start and end nodes
+- add glassmorphism effect to Clerk sign in/up modal
+- add CPU scheduling visualizer with FCFS and SJF
+- add cpu scheduling route
+- add algorithm bookmark favorites system
+
+### Fixed
+
+- resolve lint errors
+- expand format check to project files
+- add metadata for missing application routes
+- add missing routes to sitemap
+- add missing pageMetadata entries for /dynamic-programming and /dp-journey routes
+- resolve inline style specificity clash in light and dark modes
+
+### 📂 Changed Files
+
+```
+- 📁 **public/**
+  - ✏️ preview.png
+  - ✏️ sitemap.xml
+- 📁 **src/**
+  - 📁 **components/**
+    - 📁 **arraySearch/**
+      - ✏️ ComparisonMode.jsx
+      - ✏️ Visualizer.jsx
+    - 📁 **operatingSystems/**
+      - ➕ cpuSchedulingAlgorithms.js
+      - ➕ CPUSchedulingPage.jsx
+      - ➕ DiskSchedulingPage.jsx
+      - ✏️ OperatingSystemsPage.jsx
+      - ➕ PageReplacementPage.jsx
+    - 📁 **shortestPathAlgo/**
+      - ✏️ GridVisualizer.jsx
+    - 📁 **slidingwindow/**
+      - ➕ SlidingWindowVisualizer.jsx
+    - 📁 **sortingAlgo/**
+      - ✏️ Visualizer.jsx
+    - 📁 **twoPointer/**
+      - ➕ TwoPointerVisualizer.jsx
+    - ✏️ AlgoCard.jsx
+    - ➕ Favorites.jsx
+    - ✏️ Home.jsx
+    - ✏️ Navbar.jsx
+    - ✏️ SeoHead.jsx
+  - 📁 **lib/**
+    - ➕ favorites.js
+  - ✏️ App.jsx
+  - ✏️ input.css
+  - ✏️ main.jsx
+- ✏️ CHANGELOG.md
+- ✏️ package-lock.json
+- ✏️ package.json
+- ✏️ README.md
+```
+
+## [1.11.0] - 2026-06-07
+
+### Added
+
+- format & lint
+- format & lint
+- add algorithm notes and annotations feature
+
+### Fixed
+
+- format & lint
+- remove deprecated 'node' npm package from dependencies
+- correct formFieldLabel layout on signup form
+- improve SpeedSlider responsive UI for mobile devices
+
+### 📂 Changed Files
+
+```
+- 📁 **api/**
+  - ✏️ index.js
+- 📁 **src/**
+  - 📁 **components/**
+    - 📁 **arraySearch/**
+      - ✏️ VisualizerPage.jsx
+    - 📁 **kadaneAlgo/**
+      - ✏️ VisualizerPage.jsx
+    - 📁 **mooreVotingAlgo/**
+      - ✏️ VisualizerPage.jsx
+    - 📁 **notes/**
+      - ➕ AlgorithmNotes.jsx
+    - 📁 **sortingAlgo/**
+      - ✏️ VisualizerPage.jsx
+    - ✏️ AlgoCard.jsx
+    - ✏️ AppLayout.jsx
+    - ➕ DifficultyBadge.jsx
+    - ➕ difficultyColors.js
+    - ✏️ Home.jsx
+    - ➕ LearningPathSuggestions.jsx
+    - ✏️ Navbar.jsx
+    - ✏️ SpeedSlider.jsx
+  - 📁 **data/**
+    - ➕ difficultyMap.js
+  - ✏️ App.jsx
+  - ✏️ main.jsx
+- ✏️ CHANGELOG.md
+- ✏️ package.json
+```
+
+## [1.10.0] - 2026-06-06
+
+### Added
+
+- updated the searchbar with dsu and dp-journey
+- add operating systems section and category page
+- improve onboarding tour accessibility, restore previous button, and add mobile selector fallbacks
+- implement guided onboarding tour spotlight on home page
+- Add DP Optimization Journey visualizer with recursion tree and space complexity analysis
+- add disjoint set union visualizer
+- updated search and explore bar
+- add graph coloring visualizer
+- add aria-label to LinkedIn icon buttons for accessibility
+- add LinkedIn icons for both maintainers to footer social links
+- add scroll-to-bottom button alongside scroll-to-top
+- centralize app version from package.json and display dynamically across UI
+- add math theory deep links
+- add FFT algorithm visualization
+- add reset all functionality to grid visualizer
+
+### Fixed
+
+- add CORS restrictions, Helmet, rate limiting, and body size limit
+- improve Light Mode text and code readability
+- added code highlighting to Dynamic Programming
+- update repository and issue tracker URLs
+- format code with prettier
+- integrate useKeyboardShortcuts into Sorting, Shortest Path, and Backtracking visualizers
+- address CodeRabbit review comments
+- add tooltip and clearer terminal text for non-JS languages in Practice Sandbox
+- address review comments
+- hide scroll buttons on non-scrollable pages
+- enhance hero meta items with icons and background tags for better visual hierarchy
+- filter test case seeding check to current algorithm instead of global db emptiness
+- improve search modal focus management
+- Navbar Practice and Challenge links now highlight on active route
+- align footer array search card copy
+- make explore dropdown keyboard accessible
+- resolve unreachable path bug when source and target are the same node (#496)
+- format App.jsx router setup
+- resolve synchronous state updates in visualizer useEffect hooks
+- format
+- Sieve of Eratosthenes visualizer crashes on decimal inputs
+- lint & format
+- lint & format
+- lint & format
+- validate dynamic programming inputs
+- clamp oversized FFT inputs to maximum supported size
+- resolve stale visualizer states and router recreation
+- AlgoCard vanish issue
+- Fixed the Algo Card
+- preserve IndexedDB identities during backup imports (#321)
+- irrelevant search suggestions in search bar
+
+### 📂 Changed Files
+
+```
+- 📁 **.github/**
+  - 📁 **ISSUE_TEMPLATE/**
+    - ✏️ config.yml
+- 📁 **api/**
+  - ✏️ index.js
+- 📁 **src/**
+  - 📁 **algorithms/**
+    - 📁 **backtracking/**
+      - ✏️ backtrackingSources.js
+    - 📁 **mathTheory/**
+      - ✏️ mathTheorySources.jsx
+      - ✏️ mathTheorySteps.jsx
+  - 📁 **components/**
+    - 📁 **about/**
+      - ✏️ About.jsx
+    - 📁 **backtrackingAlgo/**
+      - ➕ CanvasGraphColoring.jsx
+      - ✏️ MenuSetAlgoBacktracking.jsx
+      - ✏️ VisualizerPage.jsx
+    - 📁 **challenge/**
+      - ✏️ ChallengeVisualizer.jsx
+    - 📁 **dataStructures/**
+      - ✏️ adtSources.js
+      - ✏️ DSLayout.jsx
+      - ➕ dsuIV.jsx
+    - 📁 **dynamicProgramming/**
+      - ➕ DPOptimizationJourney.jsx
+      - ✏️ DPVisualizer.jsx
+    - 📁 **hero/**
+      - ✏️ Hero.jsx
+    - 📁 **kadaneAlgo/**
+      - ✏️ CanvasKadane.jsx
+    - 📁 **MathTheory/**
+      - ➕ CanvasFFT.jsx
+      - ✏️ MathSoloVisualizer.jsx
+    - 📁 **mooreVotingAlgo/**
+      - ✏️ CanvasMooreVoting.jsx
+    - 📁 **operatingSystems/**
+      - ➕ OperatingSystemsPage.jsx
+    - 📁 **shortestPathAlgo/**
+      - ✏️ CanvasShortestPath.jsx
+      - ✏️ GridVisualizer.jsx
+      - ✏️ ShortestPathPage.jsx
+    - 📁 **sortingAlgo/**
+      - ✏️ Visualizer.jsx
+    - 📁 **testCaseManager/**
+      - ✏️ TestCaseManager.jsx
+    - 📁 **visualizer/**
+      - ✏️ CodePanel.jsx
+    - ✏️ AlgoCard.jsx
+    - ✏️ CodeEditor.jsx
+    - ✏️ Footer.jsx
+    - ➕ GuidedTour.jsx
+    - ✏️ Home.jsx
+    - ✏️ Navbar.jsx
+    - ✏️ PracticePage.jsx
+    - ✏️ ScrollToTopButton.jsx
+    - ✏️ SearchBar.jsx
+  - 📁 **data/**
+    - ✏️ complexityMap.js
+    - ➕ tourSteps.js
+  - 📁 **lib/**
+    - ✏️ testCaseStore.js
+    - ➕ testCaseStore.test.js
+    - ✏️ utils.js
+    - ➕ version.js
+  - ✏️ App.jsx
+  - ✏️ input.css
+- ✏️ CHANGELOG.md
+- ✏️ package-lock.json
+- ✏️ package.json
+- ➕ SECURITY.md
+```
+
+## [1.9.0] - 2026-05-29
+
+### Added
+
+- implement native Floyd-Warshall for solo grid visualizer
+- integrate guess the algorithm challenge page into navigation, search, footer, and SEO
+- add MCQ quiz game
+- add empirical Big-O runtime benchmarking system (#386)
+- add responsive scroll-to-top button
+- refine grid comparison visualization and scoring
+- add grid comparison mode for shortest path algorithms
+- add custom array input for search visualizer (linear & binary)
+
+### Fixed
+
+- lint
+- restore string algorithms route and improve complexity layout
+- correct browser title on valid sub-routes
+- overlap between close button and sort dropdown
+- resolve formatting and division by zero when maxSize is 1
+- address remaining visualization nitpicks
+- address comparison mode review feedback
+- resolve footer link JSX syntax issue
+- make maintainer link styles consistent
+
+### Changed
+
+- standardize semantic theme variable syntax
+- replace hardcoded colors with semantic theme variables
+
+### 📂 Changed Files
+
+```
+- 📁 **.github/**
+  - 📁 **ISSUE_TEMPLATE/**
+    - ✏️ feature_request.yml
+- 📁 **src/**
+  - 📁 **algorithms/**
+    - 📁 **dp/**
+      - ➕ dpStepGenerators.js
+    - 📁 **sorting/**
+      - ✏️ mergeSortSteps.js
+  - 📁 **components/**
+    - 📁 **arraySearch/**
+      - ✏️ Visualizer.jsx
+    - 📁 **backtrackingAlgo/**
+      - ✏️ VisualizerPage.jsx
+    - 📁 **challenge/**
+      - ➕ ChallengePage.jsx
+      - ➕ ChallengeVisualizer.jsx
+    - 📁 **dataStructures/**
+      - ✏️ stackIV.jsx
+    - 📁 **dynamicProgramming/**
+      - ➕ DPVisualizer.jsx
+    - 📁 **MathTheory/**
+      - ✏️ MathSoloVisualizer.jsx
+    - 📁 **shortestPathAlgo/**
+      - ➕ GridComparisonMode.jsx
+      - ✏️ GridVisualizer.jsx
+      - ✏️ ShortestPathPage.jsx
+    - 📁 **sortingAlgo/**
+      - ➕ RecursiveTree.jsx
+      - ✏️ Visualizer.jsx
+    - 📁 **stringAlgo/**
+      - ✏️ VisualizerPage.jsx
+    - 📁 **visualizer/**
+      - ✏️ CodePanel.jsx
+    - ✏️ AppLayout.jsx
+    - ✏️ CodeEditor.jsx
+    - ✏️ ComplexityCard.jsx
+    - ✏️ Footer.jsx
+    - ✏️ Home.jsx
+    - ✏️ Navbar.jsx
+    - ✏️ PracticePage.jsx
+    - ➕ ProfilerGraph.jsx
+    - ➕ ScrollToTopButton.jsx
+    - ✏️ SearchBar.jsx
+    - ✏️ SeoHead.jsx
+  - ✏️ App.jsx
+  - ✏️ input.css
+- ✏️ CHANGELOG.md
+- ✏️ package-lock.json
+- ✏️ README.md
+```
+
 ## [1.8.0] - 2026-05-26
 
 ### Added

@@ -46,7 +46,7 @@ const pageMetadata = {
   '/kadane': {
     title: 'Kadane Algorithm | AlgoScope',
     description:
-      'Visualize Kadane’s algorithm step by step to understand maximum subarray sums with interactive animations and synchronized code.',
+      "Visualize Kadane's algorithm step by step to understand maximum subarray sums with interactive animations and synchronized code.",
   },
   '/moore-voting': {
     title: "Moore's Voting Algorithm | AlgoScope",
@@ -62,6 +62,48 @@ const pageMetadata = {
     title: 'Guess the Algorithm Challenge | AlgoScope',
     description:
       'Test your algorithm recognition skills! Watch the visualization and guess which sorting algorithm is running in real-time.',
+  },
+
+  // 🆕 Previously missing live pages (fixes #566)
+  '/math-theory': {
+    title: 'Math Theory | AlgoScope',
+    description:
+      'Explore the mathematical foundations behind algorithms. Learn about complexity theory, proofs, and the core math concepts that power modern algorithms.',
+  },
+  '/string-algorithms': {
+    title: 'String Algorithms Visualizer | AlgoScope',
+    description:
+      'Visualize string algorithms step by step with interactive animations. Understand pattern matching, substring search, and other string manipulation techniques.',
+  },
+  '/dynamic-programming': {
+    title: 'Dynamic Programming Visualizer | AlgoScope',
+    description:
+      'Learn dynamic programming concepts interactively. Visualize memoization, tabulation, and optimal substructure through step-by-step animated examples.',
+  },
+  '/backtracking': {
+    title: 'Backtracking Algorithms | AlgoScope',
+    description:
+      'Understand backtracking algorithms with interactive visualizations. Explore how constraint-based search and recursive decision trees solve complex problems.',
+  },
+  '/dp-journey': {
+    title: 'DP Optimization Journey | AlgoScope',
+    description:
+      'Watch dynamic programming optimizations step by step. See how algorithms evolve from brute-force recursion to optimal space complexity.',
+  },
+  '/sliding-window': {
+    title: 'Sliding Window Visualizer | AlgoScope',
+    description:
+      'Visualize the sliding window technique interactively. Understand how to maintain a window of elements to solve array and string problems efficiently.',
+  },
+  '/two-pointer': {
+    title: 'Two Pointer Technique | AlgoScope',
+    description:
+      'Watch the two pointer technique in action. See how pointers converge to solve array problems in O(n) time instead of O(n²) brute force.',
+  },
+  '/operating-systems': {
+    title: 'Operating Systems | AlgoScope',
+    description:
+      'Learn core operating systems concepts with interactive visualizations. Explore CPU scheduling, memory management, and process synchronization.',
   },
 }
 

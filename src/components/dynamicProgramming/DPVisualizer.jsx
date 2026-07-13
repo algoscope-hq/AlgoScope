@@ -6,6 +6,7 @@ import {
   generateCoinChangeSteps,
   generateLISSteps,
 } from '../../algorithms/dp/dpStepGenerators'
+import CodePanel from '../visualizer/CodePanel'
 
 // ─── constants ───────────────────────────────────────────────────────────────
 const ALGORITHMS = ['LCS', 'Knapsack', 'Coin Change', 'LIS']
@@ -196,11 +197,112 @@ const CODE_SNIPPETS = {
 }
 
 // ─── helpers ─────────────────────────────────────────────────────────────────
-function parseInts(str) {
-  return str
-    .split(',')
-    .map((s) => parseInt(s.trim(), 10))
-    .filter((n) => !isNaN(n))
+function parseIntegerList(str, label, { min } = {}) {
+  const trimmed = str.trim()
+
+  if (!trimmed) {
+    return { error: `${label} cannot be empty.` }
+  }
+
+  const tokens = trimmed.split(',').map((token) => token.trim())
+
+  if (tokens.some((token) => token === '')) {
+    return {
+      error: `${label} must be comma-separated integers without empty values.`,
+    }
+  }
+
+  const values = []
+
+  for (const token of tokens) {
+    if (!/^-?\d+$/.test(token)) {
+      return { error: `${label} must contain only integers.` }
+    }
+
+    const value = Number(token)
+
+    if (!Number.isSafeInteger(value)) {
+      return { error: `${label} contains a number that is too large.` }
+    }
+
+    if (min !== undefined && value < min) {
+      return { error: `${label} values must be at least ${min}.` }
+    }
+
+    values.push(value)
+  }
+
+  return { values }
+}
+
+function parseIntegerValue(value, label, { min } = {}) {
+  const trimmed = String(value).trim()
+
+  if (!trimmed) {
+    return { error: `${label} cannot be empty.` }
+  }
+
+  if (!/^-?\d+$/.test(trimmed)) {
+    return { error: `${label} must be an integer.` }
+  }
+
+  const parsed = Number(trimmed)
+
+  if (!Number.isSafeInteger(parsed)) {
+    return { error: `${label} is too large.` }
+  }
+
+  if (min !== undefined && parsed < min) {
+    return { error: `${label} must be at least ${min}.` }
+  }
+
+  return { value: parsed }
+}
+
+function validateDpInputs(algo, inputs) {
+  if (algo === 'Knapsack') {
+    const weights = parseIntegerList(inputs.weights, 'Weights', { min: 1 })
+    if (weights.error) return weights
+
+    const values = parseIntegerList(inputs.values, 'Values', { min: 0 })
+    if (values.error) return values
+
+    if (weights.values.length !== values.values.length) {
+      return {
+        error: 'Weights and values must contain the same number of items.',
+      }
+    }
+
+    const capacity = parseIntegerValue(inputs.capacity, 'Capacity', { min: 0 })
+    if (capacity.error) return capacity
+
+    return {
+      data: {
+        weights: weights.values,
+        values: values.values,
+        capacity: capacity.value,
+      },
+    }
+  }
+
+  if (algo === 'Coin Change') {
+    const coins = parseIntegerList(inputs.coins, 'Coins', { min: 1 })
+    if (coins.error) return coins
+
+    const amount = parseIntegerValue(inputs.amount, 'Amount', { min: 0 })
+    if (amount.error) return amount
+
+    return { data: { coins: coins.values, amount: amount.value } }
+  }
+
+  if (algo === 'LIS') {
+    const arr = parseIntegerList(inputs.arr, 'Array')
+    if (arr.error) return arr
+
+    return { data: { arr: arr.values } }
+  }
+
+  return { data: inputs }
 }
 
 // ─── sub-visualizers ─────────────────────────────────────────────────────────
@@ -469,7 +571,7 @@ function LISView({ step, arr }) {
 }
 
 // ─── Input Panel ─────────────────────────────────────────────────────────────
-function InputPanel({ algo, inputs, setInputs, onRun }) {
+function InputPanel({ algo, inputs, setInputs, onRun, inputError }) {
   const handle = (key) => (e) =>
     setInputs((p) => ({ ...p, [key]: e.target.value }))
 
@@ -566,6 +668,11 @@ function InputPanel({ algo, inputs, setInputs, onRun }) {
       >
         Run
       </button>
+      {inputError && (
+        <p className="basis-full text-sm font-medium text-red-300">
+          {inputError}
+        </p>
+      )}
     </div>
   )
 }
@@ -581,7 +688,13 @@ export default function DPVisualizer() {
   const [speed, setSpeed] = useState(400)
   const [lang, setLang] = useState('javascript')
   const [copied, setCopied] = useState(false)
+  const [inputError, setInputError] = useState('')
   const intervalRef = useRef(null)
+
+  const updateInputs = useCallback((updater) => {
+    setInputError('')
+    setInputs(updater)
+  }, [])
 
   const handleAlgoChange = (newAlgo) => {
     if (newAlgo === algo) return
@@ -591,10 +704,24 @@ export default function DPVisualizer() {
     setMeta(null)
     setStepIdx(0)
     setPlaying(false)
+    setInputError('')
   }
 
   const buildSteps = useCallback(() => {
     try {
+      const validation = validateDpInputs(algo, inputs)
+
+      if (validation.error) {
+        setInputError(validation.error)
+        setSteps([])
+        setMeta(null)
+        setStepIdx(0)
+        setPlaying(false)
+        return
+      }
+
+      setInputError('')
+
       if (algo === 'LCS') {
         const {
           steps: s,
@@ -604,9 +731,7 @@ export default function DPVisualizer() {
         setSteps(s)
         setMeta({ strA, strB })
       } else if (algo === 'Knapsack') {
-        const w = parseInts(inputs.weights)
-        const v = parseInts(inputs.values)
-        const cap = parseInt(inputs.capacity, 10)
+        const { weights: w, values: v, capacity: cap } = validation.data
         const {
           steps: s,
           weights,
@@ -616,13 +741,12 @@ export default function DPVisualizer() {
         setSteps(s)
         setMeta({ weights, values, capacity })
       } else if (algo === 'Coin Change') {
-        const coins = parseInts(inputs.coins)
-        const amount = parseInt(inputs.amount, 10)
+        const { coins, amount } = validation.data
         const { steps: s, INF } = generateCoinChangeSteps(coins, amount)
         setSteps(s)
         setMeta({ coins, amount, INF })
       } else if (algo === 'LIS') {
-        const arr = parseInts(inputs.arr)
+        const { arr } = validation.data
         const { steps: s } = generateLISSteps(arr)
         setSteps(s)
         setMeta({ arr })
@@ -698,8 +822,9 @@ export default function DPVisualizer() {
             <InputPanel
               algo={algo}
               inputs={inputs}
-              setInputs={setInputs}
+              setInputs={updateInputs}
               onRun={buildSteps}
+              inputError={inputError}
             />
           </div>
 
@@ -855,9 +980,13 @@ export default function DPVisualizer() {
               </button>
             </div>
           </div>
-          <pre className="flex-1 bg-slate-900 rounded-lg p-4 text-xs font-mono text-slate-300 overflow-auto leading-relaxed">
-            <code>{CODE_SNIPPETS[algo][lang]}</code>
-          </pre>
+          <div className="flex-1 overflow-auto rounded-lg border border-slate-700 bg-slate-900">
+            <CodePanel
+              title="Dynamic Programming Implementation"
+              code={CODE_SNIPPETS[algo][lang]}
+              language={lang}
+            />
+          </div>
 
           {/* Complexity info */}
           <div className="mt-4 grid grid-cols-2 gap-3">

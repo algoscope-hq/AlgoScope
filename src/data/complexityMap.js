@@ -129,6 +129,12 @@ export const complexityMap = {
     worst: 'O(2^N)',
     space: 'O(N)',
   },
+  graphcoloring: {
+    best: 'O(k^V)',
+    average: 'O(k^V)',
+    worst: 'O(k^V)',
+    space: 'O(V)',
+  },
   gcd: {
     best: 'O(log min(a, b))',
     average: 'O(log min(a, b))',
@@ -192,5 +198,17 @@ export const complexityMap = {
     average: 'O(n + m)',
     worst: 'O(n + m)',
     space: 'O(n + m)',
+  },
+  histogram: {
+    best: 'O(N)',
+    average: 'O(N)',
+    worst: 'O(N)',
+    space: 'O(N)',
+  },
+  matrix: {
+    best: 'O(R * C)',
+    average: 'O(R * C)',
+    worst: 'O(R * C)',
+    space: 'O(C)',
   },
 }

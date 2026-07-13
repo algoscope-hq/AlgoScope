@@ -230,7 +230,7 @@ var forwardStack []string`,
     return st.empty();
 }`,
       java: `public boolean isValid(String s) {
-    Stack<Character> st = new Stack<>();
+    java.util.Stack<Character> st = new java.util.Stack<>();
     for(char c : s.toCharArray()) {
         if(c == '(' || c == '{' || c == '[') st.push(c);
         else {
@@ -330,9 +330,8 @@ var forwardStack []string`,
     }
     return st.top();
 }`,
-      java: `import java.util.Stack;
-public int evaluate(String s) {
-    Stack<Integer> st = new Stack<>();
+      java: `public int evaluate(String s) {
+    java.util.Stack<Integer> st = new java.util.Stack<>();
     for(char c : s.toCharArray()) {
         if(Character.isDigit(c)) st.push(c - '0');
         else {
@@ -864,6 +863,582 @@ func main() {
 	
 	popped := heap.Pop(&pq).(*Item)
 	fmt.Printf("Popped: %s (priority %d)\\n", popped.value, popped.priority)
+}`,
+    },
+  },
+  linkedList: {
+    'singly linked list': {
+      javascript: `class Node {
+  constructor(val) {
+    this.val = val;
+    this.next = null;
+  }
+}
+
+class LinkedList {
+  constructor() { this.head = null; }
+
+  insertAtBeginning(val) {
+    const node = new Node(val);
+    node.next = this.head;
+    this.head = node;
+  }
+
+  insertAtEnd(val) {
+    const node = new Node(val);
+    if (!this.head) { this.head = node; return; }
+    let cur = this.head;
+    while (cur.next) cur = cur.next;
+    cur.next = node;
+  }
+
+  delete(val) {
+    if (!this.head) return;
+    if (this.head.val === val) { this.head = this.head.next; return; }
+    let cur = this.head;
+    while (cur.next && cur.next.val !== val) cur = cur.next;
+    if (cur.next) cur.next = cur.next.next;
+  }
+
+  search(val) {
+    let cur = this.head, idx = 0;
+    while (cur) {
+      if (cur.val === val) return idx;
+      cur = cur.next; idx++;
+    }
+    return -1;
+  }
+}`,
+      python: `class Node:
+    def __init__(self, val):
+        self.val = val
+        self.next = None
+
+class LinkedList:
+    def __init__(self):
+        self.head = None
+
+    def insert_beginning(self, val):
+        node = Node(val)
+        node.next = self.head
+        self.head = node
+
+    def insert_end(self, val):
+        node = Node(val)
+        if not self.head:
+            self.head = node
+            return
+        cur = self.head
+        while cur.next:
+            cur = cur.next
+        cur.next = node
+
+    def delete(self, val):
+        if not self.head: return
+        if self.head.val == val:
+            self.head = self.head.next
+            return
+        cur = self.head
+        while cur.next and cur.next.val != val:
+            cur = cur.next
+        if cur.next:
+            cur.next = cur.next.next
+
+    def search(self, val):
+        cur, idx = self.head, 0
+        while cur:
+            if cur.val == val: return idx
+            cur = cur.next
+            idx += 1
+        return -1`,
+      cpp: `#include <iostream>
+using namespace std;
+
+struct Node {
+    int val;
+    Node* next;
+    Node(int v) : val(v), next(nullptr) {}
+};
+
+class LinkedList {
+public:
+    Node* head = nullptr;
+
+    void insertAtBeginning(int val) {
+        Node* node = new Node(val);
+        node->next = head;
+        head = node;
+    }
+
+    void insertAtEnd(int val) {
+        Node* node = new Node(val);
+        if (!head) { head = node; return; }
+        Node* cur = head;
+        while (cur->next) cur = cur->next;
+        cur->next = node;
+    }
+
+    void deleteNode(int val) {
+        if (!head) return;
+        if (head->val == val) { head = head->next; return; }
+        Node* cur = head;
+        while (cur->next && cur->next->val != val) cur = cur->next;
+        if (cur->next) cur->next = cur->next->next;
+    }
+
+    int search(int val) {
+        Node* cur = head; int idx = 0;
+        while (cur) {
+            if (cur->val == val) return idx;
+            cur = cur->next; idx++;
+        }
+        return -1;
+    }
+};`,
+      java: `class Node {
+    int val;
+    Node next;
+    Node(int v) { val = v; next = null; }
+}
+
+class LinkedList {
+    Node head = null;
+
+    void insertAtBeginning(int val) {
+        Node node = new Node(val);
+        node.next = head;
+        head = node;
+    }
+
+    void insertAtEnd(int val) {
+        Node node = new Node(val);
+        if (head == null) { head = node; return; }
+        Node cur = head;
+        while (cur.next != null) cur = cur.next;
+        cur.next = node;
+    }
+
+    void delete(int val) {
+        if (head == null) return;
+        if (head.val == val) { head = head.next; return; }
+        Node cur = head;
+        while (cur.next != null && cur.next.val != val) cur = cur.next;
+        if (cur.next != null) cur.next = cur.next.next;
+    }
+
+    int search(int val) {
+        Node cur = head; int idx = 0;
+        while (cur != null) {
+            if (cur.val == val) return idx;
+            cur = cur.next; idx++;
+        }
+        return -1;
+    }
+}`,
+      c: `#include <stdio.h>
+#include <stdlib.h>
+
+struct Node {
+    int val;
+    struct Node* next;
+};
+
+struct Node* newNode(int val) {
+    struct Node* node = malloc(sizeof(struct Node));
+    node->val = val;
+    node->next = NULL;
+    return node;
+}
+
+void insertAtBeginning(struct Node** head, int val) {
+    struct Node* node = newNode(val);
+    node->next = *head;
+    *head = node;
+}
+
+void insertAtEnd(struct Node** head, int val) {
+    struct Node* node = newNode(val);
+    if (!*head) { *head = node; return; }
+    struct Node* cur = *head;
+    while (cur->next) cur = cur->next;
+    cur->next = node;
+}
+
+void deleteNode(struct Node** head, int val) {
+    if (!*head) return;
+    if ((*head)->val == val) { *head = (*head)->next; return; }
+    struct Node* cur = *head;
+    while (cur->next && cur->next->val != val) cur = cur->next;
+    if (cur->next) cur->next = cur->next->next;
+}
+
+struct Node* search(struct Node* head, int val) {
+    struct Node* cur = head;
+    while (cur) {
+        if (cur->val == val) return cur;
+        cur = cur->next;
+    }
+    return NULL;
+}`,
+      rust: `struct Node {
+    val: i32,
+    next: Option<Box<Node>>,
+}
+
+struct LinkedList {
+    head: Option<Box<Node>>,
+}
+
+impl LinkedList {
+    fn new() -> Self { LinkedList { head: None } }
+
+    fn insert_at_beginning(&mut self, val: i32) {
+        let node = Box::new(Node {
+            val,
+            next: self.head.take(),
+        });
+        self.head = Some(node);
+    }
+
+    fn insert_at_end(&mut self, val: i32) {
+        let new_node = Box::new(Node { val, next: None });
+        let mut cur = &mut self.head;
+        while cur.is_some() {
+            cur = &mut cur.as_mut().unwrap().next;
+        }
+        *cur = Some(new_node);
+    }
+
+    fn delete_by_value(&mut self, val: i32) {
+        let mut cur = &mut self.head;
+        loop {
+            match cur {
+                None => break,
+                Some(node) if node.val == val => {
+                    *cur = node.next.take();
+                    break;
+                }
+                Some(node) => cur = &mut node.next,
+            }
+        }
+    }
+
+    fn search_by_value(&self, val: i32) -> Option<usize> {
+        let mut cur = &self.head;
+        let mut idx = 0;
+        while let Some(node) = cur {
+            if node.val == val { return Some(idx); }
+            cur = &node.next;
+            idx += 1;
+        }
+        None
+    }
+}`,
+      go: `package main
+
+import "fmt"
+
+type Node struct {
+    val  int
+    next *Node
+}
+
+type LinkedList struct {
+    head *Node
+}
+
+func (l *LinkedList) InsertAtBeginning(val int) {
+    node := &Node{val: val, next: l.head}
+    l.head = node
+}
+
+func (l *LinkedList) InsertAtEnd(val int) {
+    node := &Node{val: val}
+    if l.head == nil { l.head = node; return }
+    cur := l.head
+    for cur.next != nil { cur = cur.next }
+    cur.next = node
+}
+
+func (l *LinkedList) Delete(val int) {
+    if l.head == nil { return }
+    if l.head.val == val { l.head = l.head.next; return }
+    cur := l.head
+    for cur.next != nil && cur.next.val != val { cur = cur.next }
+    if cur.next != nil { cur.next = cur.next.next }
+}
+
+func (l *LinkedList) Search(val int) int {
+    cur := l.head
+    for idx := 0; cur != nil; idx++ {
+        if cur.val == val { return idx }
+        cur = cur.next
+    }
+    return -1
+}`,
+    },
+  },
+  dsu: {
+    'union find': {
+      javascript: `// Alternative optimization: Union by Size tracks subtree sizes
+// instead of ranks and always attaches the smaller tree to the
+// larger tree. Path compression can still be used alongside it.
+class DisjointSetUnion {
+  constructor(n) {
+    this.parent = Array(n);
+    this.rank = Array(n);
+    for (let i = 0; i < n; i++) {
+      this.parent[i] = i;
+      this.rank[i] = 0;
+    }
+  }
+
+  find(x) {
+    if (this.parent[x] !== x) {
+      this.parent[x] = this.find(this.parent[x]);
+    }
+    return this.parent[x];
+  }
+
+  union(x, y) {
+    const rootX = this.find(x);
+    const rootY = this.find(y);
+    
+    if (rootX === rootY) return false;
+    
+    if (this.rank[rootX] < this.rank[rootY]) {
+      this.parent[rootX] = rootY;
+    } else if (this.rank[rootX] > this.rank[rootY]) {
+      this.parent[rootY] = rootX;
+    } else {
+      this.parent[rootY] = rootX;
+      this.rank[rootX]++;
+    }
+    return true;
+  }
+}`,
+      python: `class DisjointSetUnion:
+    def __init__(self, n):
+        self.parent = list(range(n))
+        self.rank = [0] * n
+    
+    def find(self, x):
+        if self.parent[x] != x:
+            self.parent[x] = self.find(self.parent[x])
+        return self.parent[x]
+    
+    def union(self, x, y):
+        root_x = self.find(x)
+        root_y = self.find(y)
+        
+        if root_x == root_y:
+            return False
+        
+        if self.rank[root_x] < self.rank[root_y]:
+            self.parent[root_x] = root_y
+        elif self.rank[root_x] > self.rank[root_y]:
+            self.parent[root_y] = root_x
+        else:
+            self.parent[root_y] = root_x
+            self.rank[root_x] += 1
+        return True`,
+      cpp: `#include <vector>
+
+class DisjointSetUnion {
+private:
+    std::vector<int> parent, rank;
+    
+public:
+    DisjointSetUnion(int n) {
+        parent.resize(n);
+        rank.resize(n, 0);
+        for (int i = 0; i < n; i++) {
+            parent[i] = i;
+        }
+    }
+    
+    int find(int x) {
+        if (parent[x] != x) {
+            parent[x] = find(parent[x]);
+        }
+        return parent[x];
+    }
+    
+    bool unionSets(int x, int y) {
+        int rootX = find(x);
+        int rootY = find(y);
+        
+        if (rootX == rootY) return false;
+        
+        if (rank[rootX] < rank[rootY]) {
+            parent[rootX] = rootY;
+        } else if (rank[rootX] > rank[rootY]) {
+            parent[rootY] = rootX;
+        } else {
+            parent[rootY] = rootX;
+            rank[rootX]++;
+        }
+        return true;
+    }
+};`,
+      java: `class DisjointSetUnion {
+    private int[] parent;
+    private int[] rank;
+    
+    public DisjointSetUnion(int n) {
+        parent = new int[n];
+        rank = new int[n];
+        for (int i = 0; i < n; i++) {
+            parent[i] = i;
+            rank[i] = 0;
+        }
+    }
+    
+    public int find(int x) {
+        if (parent[x] != x) {
+            parent[x] = find(parent[x]);
+        }
+        return parent[x];
+    }
+    
+    public boolean union(int x, int y) {
+        int rootX = find(x);
+        int rootY = find(y);
+        
+        if (rootX == rootY) return false;
+        
+        if (rank[rootX] < rank[rootY]) {
+            parent[rootX] = rootY;
+        } else if (rank[rootX] > rank[rootY]) {
+            parent[rootY] = rootX;
+        } else {
+            parent[rootY] = rootX;
+            rank[rootX]++;
+        }
+        return true;
+    }
+}`,
+      c: `#include <stdlib.h>
+
+#define MAX 1000
+
+typedef struct {
+    int parent[MAX];
+    int rank[MAX];
+} DisjointSetUnion;
+
+void init(DisjointSetUnion* dsu, int n) {
+    for (int i = 0; i < n; i++) {
+        dsu->parent[i] = i;
+        dsu->rank[i] = 0;
+    }
+}
+
+int find(DisjointSetUnion* dsu, int x) {
+    if (dsu->parent[x] != x) {
+        dsu->parent[x] = find(dsu, dsu->parent[x]);
+    }
+    return dsu->parent[x];
+}
+
+int unionSets(DisjointSetUnion* dsu, int x, int y) {
+    int rootX = find(dsu, x);
+    int rootY = find(dsu, y);
+    
+    if (rootX == rootY) return 0;
+    
+    if (dsu->rank[rootX] < dsu->rank[rootY]) {
+        dsu->parent[rootX] = rootY;
+    } else if (dsu->rank[rootX] > dsu->rank[rootY]) {
+        dsu->parent[rootY] = rootX;
+    } else {
+        dsu->parent[rootY] = rootX;
+        dsu->rank[rootX]++;
+    }
+    return 1;
+}`,
+      rust: `struct DisjointSetUnion {
+    parent: Vec<usize>,
+    rank: Vec<usize>,
+}
+
+impl DisjointSetUnion {
+    fn new(n: usize) -> Self {
+        DisjointSetUnion {
+            parent: (0..n).collect(),
+            rank: vec![0; n],
+        }
+    }
+    
+    fn find(&mut self, x: usize) -> usize {
+        if self.parent[x] != x {
+            self.parent[x] = self.find(self.parent[x]);
+        }
+        self.parent[x]
+    }
+    
+    fn union(&mut self, x: usize, y: usize) -> bool {
+        let root_x = self.find(x);
+        let root_y = self.find(y);
+        
+        if root_x == root_y {
+            return false;
+        }
+        
+        match self.rank[root_x].cmp(&self.rank[root_y]) {
+            std::cmp::Ordering::Less => self.parent[root_x] = root_y,
+            std::cmp::Ordering::Greater => self.parent[root_y] = root_x,
+            std::cmp::Ordering::Equal => {
+                self.parent[root_y] = root_x;
+                self.rank[root_x] += 1;
+            }
+        }
+        true
+    }
+}`,
+      go: `package main
+
+type DisjointSetUnion struct {
+    parent []int
+    rank   []int
+}
+
+func NewDSU(n int) *DisjointSetUnion {
+    parent := make([]int, n)
+    rank := make([]int, n)
+    for i := 0; i < n; i++ {
+        parent[i] = i
+    }
+    return &DisjointSetUnion{
+        parent: parent,
+        rank:   rank,
+    }
+}
+
+func (dsu *DisjointSetUnion) Find(x int) int {
+    if dsu.parent[x] != x {
+        dsu.parent[x] = dsu.Find(dsu.parent[x])
+    }
+    return dsu.parent[x]
+}
+
+func (dsu *DisjointSetUnion) Union(x, y int) bool {
+    rootX := dsu.Find(x)
+    rootY := dsu.Find(y)
+    
+    if rootX == rootY {
+        return false
+    }
+    
+    if dsu.rank[rootX] < dsu.rank[rootY] {
+        dsu.parent[rootX] = rootY
+    } else if dsu.rank[rootX] > dsu.rank[rootY] {
+        dsu.parent[rootY] = rootX
+    } else {
+        dsu.parent[rootY] = rootX
+        dsu.rank[rootX]++
+    }
+    return true
 }`,
     },
   },

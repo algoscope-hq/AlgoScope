@@ -749,9 +749,9 @@ export function HeroProductPreview() {
         <div className="flex h-8 shrink-0 items-center justify-between border-b border-white/[0.07] bg-[#0c0c0e] px-3 sm:h-9 sm:px-4">
           <div className="flex min-w-0 items-center gap-2 sm:gap-3">
             <div className="hidden items-center gap-1.5 sm:flex" aria-hidden>
-              <span className="size-2 rounded-full bg-white/15" />
-              <span className="size-2 rounded-full bg-white/10" />
-              <span className="size-2 rounded-full bg-white/10" />
+              <span className="size-2 rounded-full bg-red-500/80 shadow-[0_0_4px_rgba(239,68,68,0.2)]" />
+              <span className="size-2 rounded-full bg-yellow-500/80 shadow-[0_0_4px_rgba(234,179,8,0.2)]" />
+              <span className="size-2 rounded-full bg-green-500/80 shadow-[0_0_4px_rgba(34,197,94,0.2)]" />
             </div>
             <span className="truncate text-[10px] font-medium tracking-tight text-zinc-400 sm:text-[11px]">
               <span className="sm:hidden">Visualizers</span>

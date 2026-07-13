@@ -49,8 +49,8 @@ const Terminal = React.forwardRef(function Terminal({ logs, onClear }, ref) {
       >
         {logs.length === 0 ? (
           <p className="text-slate-600 italic text-xs">
-            No output yet. Click &quot;Run Code&quot; to execute your
-            JavaScript.
+            No output yet. Select JavaScript and click &quot;Run Code&quot; to
+            execute (Python, Java, C++ execution coming soon).
           </p>
         ) : (
           logs.map((log, i) => (
@@ -479,6 +479,17 @@ const PracticePage = () => {
   }
 
   const handleRunCode = async (userCode) => {
+    if (language !== 'javascript') {
+      setLogs((prev) => [
+        ...prev,
+        {
+          type: 'error',
+          content:
+            'Code execution is only supported for JavaScript. Python, Java, and C++ support coming soon.',
+        },
+      ])
+      return
+    }
     if (isExecuting || isExecutingA || isExecutingB || isComparing) {
       return
     }
@@ -507,6 +518,17 @@ const PracticePage = () => {
   }
 
   const handleRunCodeA = async (userCode) => {
+    if (language !== 'javascript') {
+      setLogsA((prev) => [
+        ...prev,
+        {
+          type: 'error',
+          content:
+            'Code execution is only supported for JavaScript. Python, Java, and C++ support coming soon.',
+        },
+      ])
+      return
+    }
     if (isExecuting || isExecutingA || isExecutingB || isComparing) {
       return
     }
@@ -535,6 +557,17 @@ const PracticePage = () => {
   }
 
   const handleRunCodeB = async (userCode) => {
+    if (language !== 'javascript') {
+      setLogsB((prev) => [
+        ...prev,
+        {
+          type: 'error',
+          content:
+            'Code execution is only supported for JavaScript. Python, Java, and C++ support coming soon.',
+        },
+      ])
+      return
+    }
     if (isExecuting || isExecutingA || isExecutingB || isComparing) {
       return
     }
@@ -563,6 +596,25 @@ const PracticePage = () => {
   }
 
   const handleCompareBenchmark = async () => {
+    if (language !== 'javascript') {
+      setLogsA((prev) => [
+        ...prev,
+        {
+          type: 'error',
+          content:
+            'Compare is only supported for JavaScript. Python, Java, and C++ support coming soon.',
+        },
+      ])
+      setLogsB((prev) => [
+        ...prev,
+        {
+          type: 'error',
+          content:
+            'Compare is only supported for JavaScript. Python, Java, and C++ support coming soon.',
+        },
+      ])
+      return
+    }
     if (isExecuting || isExecutingA || isExecutingB || isComparing) {
       return
     }

@@ -18,9 +18,29 @@
 
 Join our community for updates and support!
 
+## Quick Links
+
+- [Contribution Guide](CONTRIBUTING.md)
+- [Code of Conduct](CODE_OF_CONDUCT.md)
+- [Security Policy](SECURITY.md)
+- [Changelog](CHANGELOG.md)
+
 ### 🌐 Live Demo
 
 Experience AlgoScope in your browser: **[algo-scope-virid.vercel.app](https://algo-scope-virid.vercel.app)**
+
+## 📚 Table of Contents
+
+- [Project Purpose](#-project-purpose)
+- [Features](#-features)
+- [Tech Stack](`#-tech-stack`)
+- [Quick Start](`#-quick-start`)
+- [Architecture](`#-architecture`)
+- [Star History](#star-history)
+- [Contributing](#-contributing)
+- [Contributors](#-contributors)
+- [Contact](#-contact)
+- [License](#-license)
 
 ### Core Maintainers
 
@@ -57,6 +77,16 @@ Experience AlgoScope in your browser: **[algo-scope-virid.vercel.app](https://al
 
 ---
 
+## 📸 Preview
+
+<p align="center">
+  <img src="public/preview.png" alt="AlgoScope Preview" width="100%" />
+</p>
+
+Experience algorithm visualization through an interactive and modern learning interface.
+
+---
+
 ## 💡 Project Purpose
 
 Learning Data Structures and Algorithms (DSA) is often a daunting task for students and developers. Traditional resources like static pseudocode and textbooks fail to capture the dynamic nature of algorithms.
@@ -67,17 +97,18 @@ Learning Data Structures and Algorithms (DSA) is often a daunting task for stude
 
 ## ✨ Features
 
-| Feature                     | Description                                                                                                                                     |
-| --------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Real-time Visualization** | Watch algorithms come alive with smooth, step-by-step animations using Framer Motion and Anime.js.                                              |
-| **Adjustable Speed**        | Full control over animation speed with +/- precision buttons and input data to learn at your own pace.                                          |
-| **Algorithm Coverage**      | Support for Sorting (Quick, Merge, Shell), Searching (Linear, Binary), Graph (BFS, DFS, Dijkstra), and Dynamic Programming (Kadane's, Moore's). |
-| **Comparison Mode**         | Side-by-side visualization of multiple algorithms to compare their efficiency and execution patterns in real-time.                              |
-| **Code Insights**           | See implementations in C++, Java, Python, and JS with a multi-language viewer and one-click copy functionality.                                 |
-| **Complexity Analysis**     | Interactive performance graphs and complexity cards to visualize Big O notations and scaling behavior.                                          |
-| **URL Persistence**         | Shareable links that preserve the current algorithm state and parameters using URL search params.                                               |
-| **Interactive Playground**  | Create custom inputs, change array sizes, and interact directly with the canvas.                                                                |
-| **Secure & Modern UI**      | Dark-themed interface built with Tailwind CSS v4, featuring Clerk authentication and modal-based search.                                        |
+| Feature                     | Description                                                                                                                                                                                                                                          |
+| --------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Real-time Visualization** | Watch algorithms come alive with smooth, step-by-step animations using Framer Motion and Anime.js.                                                                                                                                                   |
+| **Adjustable Speed**        | Full control over animation speed with +/- precision buttons and input data to learn at your own pace.                                                                                                                                               |
+| **Algorithm Coverage**      | Support for Sorting (Quick, Merge, Shell), Searching (Linear, Binary), Graph (BFS, DFS, Dijkstra), Abstract Data Types (Stacks, Queues, Binary Trees, Binary Heaps, Linked Lists, and Priority Queues), and Dynamic Programming (Kadane's, Moore's). |
+
+| **Comparison Mode** | Side-by-side visualization of multiple algorithms to compare their efficiency and execution patterns in real-time. |
+| **Code Insights** | See implementations in C++, Java, Python, and JS with a multi-language viewer and one-click copy functionality. |
+| **Complexity Analysis** | Interactive performance graphs and complexity cards to visualize Big O notations and scaling behavior. |
+| **URL Persistence** | Shareable links that preserve the current algorithm state and parameters using URL search params. |
+| **Interactive Playground** | Create custom inputs, change array sizes, and interact directly with the canvas. |
+| **Secure & Modern UI** | Dark-themed interface built with Tailwind CSS v4, featuring Clerk authentication and modal-based search. |
 
 ---
 
@@ -161,33 +192,51 @@ Access the app at `http://localhost:8080`.
 
 ## 🏗️ Architecture
 
+### Project Structure
+
 AlgoScope uses a component-based architecture where each algorithm category has its own specialized visualizer:
 
-```text
-api/
-├── index.js               # Backend entry point (Express)
-└── vercel.json            # Vercel deployment configuration
-src/
-├── algorithms/
-│   ├── kadane/            # Kadane's Algorithm step generator
-│   ├── mooreVoting/       # Moore Voting Algorithm step generator
-│   ├── searching/         # Search and shortest-path step generators/source data
-│   └── sorting/           # Sorting algorithm step generators
-├── assets/                # Static images and icons
-├── components/
-│   ├── about/             # About page cards and sections
-│   ├── arraySearch/       # Linear and binary search visualizers
-│   ├── dataStructures/    # Stack, queue, and tree visualizers
-│   ├── kadaneAlgo/        # Kadane's Algorithm visualizers
-│   ├── mooreVotingAlgo/   # Moore Voting Algorithm visualizers
-│   ├── searchAlgo/        # Graph traversal visualizers and controls
-│   ├── shortestPathAlgo/  # Shortest-path visualizers and controls
-│   ├── sortingAlgo/       # Sorting visualizers
-│   └── visualizer/        # Shared code panel and playback helpers
-├── App.jsx                # Main routing and global state management
-├── App.css                # App-level styles
-├── input.css              # Tailwind entry styles
-└── main.jsx               # React entry point
+```
+AlgoScope/
+├── api/                                 # Backend server
+│   ├── index.js                         # Backend entry point (Express)
+│   └── vercel.json                      # Vercel deployment configuration
+├── src/
+│   ├── algorithms/
+│   │   ├── backtracking/                # Backtracking algorithm step generators
+│   │   ├── dp/                          # Dynamic programming step generators
+│   │   ├── kadane/                      # Kadane's Algorithm step generator
+│   │   ├── mathTheory/                  # Math theory sources and step generators
+│   │   ├── mooreVoting/                 # Moore Voting Algorithm step generator
+│   │   ├── searching/                   # Search and shortest-path step generators
+│   │   ├── sorting/                     # Sorting algorithm step generators
+│   │   └── stringAlgo/                  # String algorithm sources
+│   ├── assets/                          # Static images and icons
+│   ├── components/
+│   │   ├── MathTheory/                  # Math theory canvas visualizers
+│   │   ├── about/                       # About page cards and sections
+│   │   ├── arraySearch/                 # Linear and binary search visualizers
+│   │   ├── backtrackingAlgo/            # Backtracking visualizers (N-Queens, Sudoku, Hanoi)
+│   │   ├── challenge/                   # Challenge page and visualizer
+│   │   ├── dataStructures/              # Stack, queue, and tree visualizers
+│   │   ├── dynamicProgramming/          # Dynamic programming visualizer
+│   │   ├── hero/                        # Hero section and product preview
+│   │   ├── kadaneAlgo/                  # Kadane's Algorithm visualizers
+│   │   ├── mooreVotingAlgo/             # Moore Voting Algorithm visualizers
+│   │   ├── searchAlgo/                  # Graph traversal visualizers and controls
+│   │   ├── shared/                      # Shared UI components
+│   │   ├── shortestPathAlgo/            # Shortest-path visualizers and controls
+│   │   ├── sortingAlgo/                 # Sorting visualizers
+│   │   ├── stringAlgo/                  # String algorithm visualizers (KMP, Rabin-Karp, Z)
+│   │   ├── testCaseManager/             # Test case management UI
+│   │   └── visualizer/                  # Shared code panel and playback helpers
+│   ├── context/                         # Theme context and provider
+│   ├── data/                            # Static data (complexity maps, etc.)
+│   ├── lib/                             # Utility functions and shared logic
+│   ├── App.jsx                          # Main routing and global state management
+│   ├── App.css                          # App-level styles
+│   ├── input.css                        # Tailwind entry styles
+│   └── main.jsx                         # React entry point
 ```
 
 ### How It Works
@@ -224,7 +273,7 @@ flowchart TD
     vis_renderer -- Visualization Completed/Status --> input_handler
 ```
 
-### User Workflow & Execution Logic
+### User Execution Flow
 
 ```mermaid
 flowchart TD
