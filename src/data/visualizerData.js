@@ -104,6 +104,15 @@ export const ALGORITHMS = [
     difficulty: 'Advanced',
   },
   {
+    id: 'greedy-algorithms',
+    title: 'Greedy Algorithms',
+    description:
+      'Explore decision-making strategies through Activity Selection, Fractional Knapsack, Huffman Coding, and Dijkstra.',
+    color: 'theme-card border-emerald-500/30 hover:border-emerald-400',
+    link: '/greedy',
+    difficulty: 'Intermediate',
+  },
+  {
     id: 'backtracking',
     title: 'Backtracking',
     description:

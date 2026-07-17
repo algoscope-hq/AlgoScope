@@ -1,0 +1,2 @@
+const items = [['Current', 'bg-cyan-500'], ['Selected', 'bg-emerald-500'], ['Rejected', 'bg-rose-500'], ['Pending', 'bg-slate-500']]
+export default function GreedyLegend() { return <div className="flex flex-wrap gap-3 text-xs theme-text-muted">{items.map(([label, color]) => <span key={label} className="inline-flex items-center gap-2"><span className={`h-2.5 w-2.5 rounded-full ${color}`} />{label}</span>)}</div> }

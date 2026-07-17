@@ -1,0 +1,4 @@
+export default function GreedyTimeline({ steps, currentIndex, onSelect }) {
+  if (!steps.length) return null
+  return <section className="theme-card rounded-2xl border p-4 sm:p-5"><p className="text-xs font-semibold uppercase tracking-[0.18em] text-emerald-400">Timeline</p><div className="mt-4 flex gap-2 overflow-x-auto pb-2">{steps.map((step, index) => <button type="button" key={`${step.line}-${index}`} onClick={() => onSelect(index)} className={`min-w-20 rounded-xl border px-3 py-2 text-left text-xs transition ${index === currentIndex ? 'border-emerald-400 bg-emerald-500/20 text-emerald-400' : 'theme-border theme-text-muted hover:border-emerald-400/60'}`}><span className="block font-bold">Step {index + 1}</span><span className="mt-1 block truncate">Line {step.line}</span></button>)}</div></section>
+}
