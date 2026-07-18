@@ -21,9 +21,20 @@ export default function CPUSchedulingPage() {
     DEFAULT_PROCESSES.map((p) => ({ ...p }))
   )
 
-  const [selectedAlgorithm, setSelectedAlgorithm] = useState(() => {
-  return localStorage.getItem('cpu-selected-algorithm') || 'fcfs'
+  const VALID_ALGORITHMS = [
+  'fcfs',
+  'sjf',
+  'srtf',
+  'priority',
+  'roundRobin',
+  'multilevelQueue',
+]
+
+const [selectedAlgorithm, setSelectedAlgorithm] = useState(() => {
+  const saved = localStorage.getItem('cpu-selected-algorithm')
+  return VALID_ALGORITHMS.includes(saved) ? saved : 'fcfs'
 })
+
   const [simulationStatus, setSimulationStatus] = useState('Not Started')
   const [ganttData, setGanttData] = useState([])
   const [statistics, setStatistics] = useState([])
