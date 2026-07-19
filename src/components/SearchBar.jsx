@@ -627,7 +627,7 @@ const SearchBar = ({ onOpen }) => {
       <button
         ref={triggerRef}
         onClick={openModal}
-        className="flex items-center gap-2 px-3 py-1.5 bg-slate-900/40 border border-white/10 hover:border-cyan-500/50 rounded-xl text-slate-400 hover:text-cyan-400 transition-all group w-full lg:w-48"
+        className="flex items-center gap-2 px-3 py-1.5 bg-slate-900/40 border border-white/10 hover:border-cyan-500/50 rounded-xl text-slate-400 hover:text-cyan-400 transition-all group w-full lg:w-48 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-900"
         aria-haspopup="dialog"
         aria-expanded={isModalOpen}
         aria-label="Search algorithms"
@@ -704,7 +704,7 @@ const SearchBar = ({ onOpen }) => {
                   type="text"
                   value={query}
                   onChange={handleSearch}
-                  className="w-full bg-transparent text-slate-200 text-lg block pl-12 pr-24 py-2 outline-none"
+                  className="w-full bg-transparent text-slate-200 text-lg block pl-12 pr-24 py-2 outline-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-900"
                   placeholder="Search algorithms..."
                 />
                 <div className="absolute right-4 top-1/2 -translate-y-1/2 flex items-center gap-3">
@@ -729,7 +729,7 @@ const SearchBar = ({ onOpen }) => {
                         )
                         setResults(sortedResults)
                       }}
-                      className="bg-slate-800 border border-slate-600 text-slate-300 text-xs px-2 py-1 rounded-lg cursor-pointer outline-none"
+                      className="bg-slate-800 border border-slate-600 text-slate-300 text-xs px-2 py-1 rounded-lg cursor-pointer outline-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-900"
                       aria-label="Sort results"
                     >
                       <option value="relevance">Relevance</option>
@@ -741,7 +741,7 @@ const SearchBar = ({ onOpen }) => {
                   {/* Close Button */}
                   <button
                     onClick={handleCloseModal}
-                    className="p-1.5 rounded-lg text-slate-500 hover:text-white hover:bg-white/10 transition-all duration-200"
+                    className="p-1.5 rounded-lg text-slate-500 hover:text-white hover:bg-white/10 transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-900"
                     aria-label="Close search"
                   >
                     <svg

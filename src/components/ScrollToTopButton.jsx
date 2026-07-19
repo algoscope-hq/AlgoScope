@@ -32,7 +32,7 @@ const ScrollToTopButton = () => {
         <button
           onClick={scrollToTop}
           aria-label="Scroll to top"
-          className="w-10 h-10 rounded-full bg-violet-600 flex items-center justify-center shadow-lg hover:scale-110 active:scale-95 transition-all duration-200"
+          className="w-10 h-10 rounded-full bg-violet-600 flex items-center justify-center shadow-lg hover:scale-110 active:scale-95 transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-900"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -54,7 +54,7 @@ const ScrollToTopButton = () => {
         <button
           onClick={scrollToBottom}
           aria-label="Scroll to bottom"
-          className="w-10 h-10 rounded-full bg-violet-600 flex items-center justify-center shadow-lg hover:scale-110 active:scale-95 transition-all duration-200"
+          className="w-10 h-10 rounded-full bg-violet-600 flex items-center justify-center shadow-lg hover:scale-110 active:scale-95 transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-900"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
