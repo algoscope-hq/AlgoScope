@@ -272,7 +272,7 @@ export const Navbar = () => {
                     setHoveredTab('explore')
                   }}
                   onKeyDown={handleExploreKeyDown}
-                  className={`relative text-sm font-medium px-4 py-1.5 rounded-lg transition-all duration-300 z-10 cursor-pointer ${
+                  className={`relative text-sm font-medium px-4 py-1.5 rounded-lg transition-all duration-300 z-10 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-900 ${
                     isExploreActive
                       ? 'text-indigo-600 dark:text-indigo-300 font-semibold'
                       : 'text-slate-400 hover:text-slate-900 dark:hover:text-slate-100'
@@ -306,7 +306,7 @@ export const Navbar = () => {
                       to={link.href}
                       role="menuitem"
                       onClick={closeExploreMenu}
-                      className={`block rounded-lg px-4 py-2 text-sm transition-all duration-200 border-l-2 ${
+                      className={`block rounded-lg px-4 py-2 text-sm transition-all duration-200 border-l-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-900 ${
                         pathname === link.href
                           ? 'bg-indigo-50/80 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-300 border-indigo-600 dark:border-indigo-500 font-medium'
                           : 'text-slate-600 dark:text-slate-400 border-transparent hover:bg-slate-100 dark:hover:bg-slate-900 hover:text-slate-900 dark:hover:text-slate-200 hover:border-slate-300 dark:hover:border-slate-700'

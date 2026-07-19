@@ -160,7 +160,7 @@ const Footer = () => {
                 rel="noreferrer"
                 title="Bratik Mukherjee on LinkedIn"
                 aria-label="Bratik Mukherjee on LinkedIn"
-                className="w-9 h-9 theme-media-surface border theme-border rounded-lg flex items-center justify-center theme-text-muted hover:text-[#0A66C2] hover:bg-[#0A66C2]/10 hover:border-[#0A66C2]/20 transition-all"
+                className="w-9 h-9 theme-media-surface border theme-border rounded-lg flex items-center justify-center theme-text-muted hover:text-[#0A66C2] hover:bg-[#0A66C2]/10 hover:border-[#0A66C2]/20 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-900"
                 whileHover={{ scale: 1.05, y: -2 }}
               >
                 <svg
