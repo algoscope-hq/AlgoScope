@@ -1442,4 +1442,287 @@ func (dsu *DisjointSetUnion) Union(x, y int) bool {
 }`,
     },
   },
+  trie: {
+    'prefix tree': {
+      javascript: `class TrieNode {
+  constructor() {
+    this.children = {};
+    this.isEnd = false;
+  }
+}
+
+class Trie {
+  constructor() {
+    this.root = new TrieNode();
+  }
+
+  insert(word) {
+    let node = this.root;
+    for (const char of word) {
+      if (!node.children[char])
+        node.children[char] = new TrieNode();
+      node = node.children[char];
+    }
+    node.isEnd = true;
+  }
+
+  search(word) {
+    let node = this.root;
+    for (const char of word) {
+      if (!node.children[char]) return false;
+      node = node.children[char];
+    }
+    return node.isEnd;
+  }
+
+  startsWith(prefix) {
+    let node = this.root;
+    for (const char of prefix) {
+      if (!node.children[char]) return false;
+      node = node.children[char];
+    }
+    return true;
+  }
+}`,
+      python: `class TrieNode:
+    def __init__(self):
+        self.children = {}
+        self.is_end = False
+
+class Trie:
+    def __init__(self):
+        self.root = TrieNode()
+
+    def insert(self, word):
+        node = self.root
+        for char in word:
+            if char not in node.children:
+                node.children[char] = TrieNode()
+            node = node.children[char]
+        node.is_end = True
+
+    def search(self, word):
+        node = self.root
+        for char in word:
+            if char not in node.children:
+                return False
+            node = node.children[char]
+        return node.is_end
+
+    def starts_with(self, prefix):
+        node = self.root
+        for char in prefix:
+            if char not in node.children:
+                return False
+            node = node.children[char]
+        return True`,
+      cpp: `#include <unordered_map>
+#include <string>
+
+struct TrieNode {
+    std::unordered_map<char, TrieNode*> children;
+    bool isEnd = false;
+};
+
+class Trie {
+    TrieNode* root;
+public:
+    Trie() { root = new TrieNode(); }
+
+    void insert(std::string word) {
+        TrieNode* node = root;
+        for (char c : word) {
+            if (!node->children.count(c))
+                node->children[c] = new TrieNode();
+            node = node->children[c];
+        }
+        node->isEnd = true;
+    }
+
+    bool search(std::string word) {
+        TrieNode* node = root;
+        for (char c : word) {
+            if (!node->children.count(c)) return false;
+            node = node->children[c];
+        }
+        return node->isEnd;
+    }
+
+    bool startsWith(std::string prefix) {
+        TrieNode* node = root;
+        for (char c : prefix) {
+            if (!node->children.count(c)) return false;
+            node = node->children[c];
+        }
+        return true;
+    }
+};`,
+      java: `import java.util.HashMap;
+
+class TrieNode {
+    HashMap<Character, TrieNode> children = new HashMap<>();
+    boolean isEnd = false;
+}
+
+class Trie {
+    TrieNode root = new TrieNode();
+
+    public void insert(String word) {
+        TrieNode node = root;
+        for (char c : word.toCharArray()) {
+            node.children.putIfAbsent(c, new TrieNode());
+            node = node.children.get(c);
+        }
+        node.isEnd = true;
+    }
+
+    public boolean search(String word) {
+        TrieNode node = root;
+        for (char c : word.toCharArray()) {
+            if (!node.children.containsKey(c)) return false;
+            node = node.children.get(c);
+        }
+        return node.isEnd;
+    }
+
+    public boolean startsWith(String prefix) {
+        TrieNode node = root;
+        for (char c : prefix.toCharArray()) {
+            if (!node.children.containsKey(c)) return false;
+            node = node.children.get(c);
+        }
+        return true;
+    }
+}`,
+      c: `#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define ALPHA 26
+
+typedef struct TrieNode {
+    struct TrieNode* children[ALPHA];
+    int isEnd;
+} TrieNode;
+
+TrieNode* newNode() {
+    TrieNode* node = calloc(1, sizeof(TrieNode));
+    node->isEnd = 0;
+    return node;
+}
+
+void insert(TrieNode* root, char* word) {
+    TrieNode* node = root;
+    for (int i = 0; word[i]; i++) {
+        int idx = word[i] - 'a';
+        if (!node->children[idx])
+            node->children[idx] = newNode();
+        node = node->children[idx];
+    }
+    node->isEnd = 1;
+}
+
+int search(TrieNode* root, char* word) {
+    TrieNode* node = root;
+    for (int i = 0; word[i]; i++) {
+        int idx = word[i] - 'a';
+        if (!node->children[idx]) return 0;
+        node = node->children[idx];
+    }
+    return node->isEnd;
+}`,
+      rust: `use std::collections::HashMap;
+
+#[derive(Default)]
+struct TrieNode {
+    children: HashMap<char, TrieNode>,
+    is_end: bool,
+}
+
+struct Trie {
+    root: TrieNode,
+}
+
+impl Trie {
+    fn new() -> Self { Trie { root: TrieNode::default() } }
+
+    fn insert(&mut self, word: &str) {
+        let mut node = &mut self.root;
+        for c in word.chars() {
+            node = node.children.entry(c).or_default();
+        }
+        node.is_end = true;
+    }
+
+    fn search(&self, word: &str) -> bool {
+        let mut node = &self.root;
+        for c in word.chars() {
+            match node.children.get(&c) {
+                None => return false,
+                Some(n) => node = n,
+            }
+        }
+        node.is_end
+    }
+
+    fn starts_with(&self, prefix: &str) -> bool {
+        let mut node = &self.root;
+        for c in prefix.chars() {
+            match node.children.get(&c) {
+                None => return false,
+                Some(n) => node = n,
+            }
+        }
+        true
+    }
+}`,
+      go: `package main
+
+type TrieNode struct {
+    children map[rune]*TrieNode
+    isEnd    bool
+}
+
+func newTrieNode() *TrieNode {
+    return &TrieNode{children: make(map[rune]*TrieNode)}
+}
+
+type Trie struct{ root *TrieNode }
+
+func NewTrie() *Trie { return &Trie{root: newTrieNode()} }
+
+func (t *Trie) Insert(word string) {
+    node := t.root
+    for _, c := range word {
+        if _, ok := node.children[c]; !ok {
+            node.children[c] = newTrieNode()
+        }
+        node = node.children[c]
+    }
+    node.isEnd = true
+}
+
+func (t *Trie) Search(word string) bool {
+    node := t.root
+    for _, c := range word {
+        if _, ok := node.children[c]; !ok {
+            return false
+        }
+        node = node.children[c]
+    }
+    return node.isEnd
+}
+
+func (t *Trie) StartsWith(prefix string) bool {
+    node := t.root
+    for _, c := range prefix {
+        if _, ok := node.children[c]; !ok {
+            return false
+        }
+        node = node.children[c]
+    }
+    return true
+}`,
+    },
+  },
 }
