@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react'
+import React, { useState, useCallback, useRef } from 'react'
 
 class TrieNode {
   constructor() {
@@ -107,7 +107,7 @@ function TrieNodeView({ node, highlightPath, depth = 0 }) {
 }
 
 export default function TrieIV() {
-  const [trie] = useState(() => new Trie())
+  const trieRef = useRef(new Trie())
   const [, forceUpdate] = useState(0)
   const [inputWord, setInputWord] = useState('')
   const [operation, setOperation] = useState('insert')
@@ -117,8 +117,8 @@ export default function TrieIV() {
 
   const refresh = useCallback(() => forceUpdate((n) => n + 1), [])
 
-  const handleReset = () => {
-    trie.root = new TrieNode()
+const handleReset = () => {
+    trieRef.current = new Trie()
     setWords([])
     setResult(null)
     setHighlightPath([])
@@ -127,9 +127,9 @@ export default function TrieIV() {
   }
 
   const handleSample = () => {
-    trie.root = new TrieNode()
+    trieRef.current = new Trie()
     const sample = ['apple', 'app', 'apt', 'bat', 'ball', 'band']
-    sample.forEach((w) => trie.insert(w))
+    sample.forEach((w) => trieRef.current.insert(w))
     setWords(sample)
     setResult(null)
     setHighlightPath([])
@@ -141,7 +141,7 @@ export default function TrieIV() {
     if (!word) return
 
     if (operation === 'insert') {
-      const path = trie.insert(word)
+      const path = trieRef.current.insert(word)
       setWords((prev) => (prev.includes(word) ? prev : [...prev, word]))
       setHighlightPath(
         path.reduce((acc, _, i) => {
@@ -152,7 +152,7 @@ export default function TrieIV() {
       setResult({ type: 'insert', word, message: `"${word}" inserted into Trie` })
       refresh()
     } else if (operation === 'search') {
-      const { found, path } = trie.search(word)
+      const { found, path } = trieRef.current.search(word)
       setHighlightPath(
         path.reduce((acc, _, i) => {
           acc.push(path.slice(1, i + 1).join(''))
@@ -167,7 +167,7 @@ export default function TrieIV() {
           : `"${word}" not found in Trie ✗`,
       })
     } else if (operation === 'startsWith') {
-      const { found, path } = trie.startsWith(word)
+      const { found, path } = trieRef.current.startsWith(word)
       setHighlightPath(
         path.reduce((acc, _, i) => {
           acc.push(path.slice(1, i + 1).join(''))
@@ -184,7 +184,7 @@ export default function TrieIV() {
     }
   }
 
-  const trieJSON = trie.toJSON()
+  const trieJSON = trieRef.current.toJSON()
 
   return (
     <div className="flex flex-col gap-4 text-slate-200 min-h-[400px]">

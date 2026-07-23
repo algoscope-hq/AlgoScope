@@ -1611,10 +1611,16 @@ TrieNode* newNode() {
     return node;
 }
 
+static int charIndex(char c) {
+    int idx = c - 'a';
+    return (idx >= 0 && idx < ALPHA) ? idx : -1;
+}
+
 void insert(TrieNode* root, char* word) {
     TrieNode* node = root;
     for (int i = 0; word[i]; i++) {
-        int idx = word[i] - 'a';
+        int idx = charIndex(word[i]);
+        if (idx < 0) return;
         if (!node->children[idx])
             node->children[idx] = newNode();
         node = node->children[idx];
@@ -1625,11 +1631,21 @@ void insert(TrieNode* root, char* word) {
 int search(TrieNode* root, char* word) {
     TrieNode* node = root;
     for (int i = 0; word[i]; i++) {
-        int idx = word[i] - 'a';
-        if (!node->children[idx]) return 0;
+        int idx = charIndex(word[i]);
+        if (idx < 0 || !node->children[idx]) return 0;
         node = node->children[idx];
     }
     return node->isEnd;
+}
+
+int startsWith(TrieNode* root, char* prefix) {
+    TrieNode* node = root;
+    for (int i = 0; prefix[i]; i++) {
+        int idx = charIndex(prefix[i]);
+        if (idx < 0 || !node->children[idx]) return 0;
+        node = node->children[idx];
+    }
+    return 1;
 }`,
       rust: `use std::collections::HashMap;
 
