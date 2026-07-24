@@ -22,18 +22,18 @@ export default function CPUSchedulingPage() {
   )
 
   const VALID_ALGORITHMS = [
-  'fcfs',
-  'sjf',
-  'srtf',
-  'priority',
-  'roundRobin',
-  'multilevelQueue',
-]
+    'fcfs',
+    'sjf',
+    'srtf',
+    'priority',
+    'roundRobin',
+    'multilevelQueue',
+  ]
 
-const [selectedAlgorithm, setSelectedAlgorithm] = useState(() => {
-  const saved = localStorage.getItem('cpu-selected-algorithm')
-  return VALID_ALGORITHMS.includes(saved) ? saved : 'fcfs'
-})
+  const [selectedAlgorithm, setSelectedAlgorithm] = useState(() => {
+    const saved = localStorage.getItem('cpu-selected-algorithm')
+    return VALID_ALGORITHMS.includes(saved) ? saved : 'fcfs'
+  })
 
   const [simulationStatus, setSimulationStatus] = useState('Not Started')
   const [ganttData, setGanttData] = useState([])
@@ -60,7 +60,7 @@ const [selectedAlgorithm, setSelectedAlgorithm] = useState(() => {
   const [algorithmChanged, setAlgorithmChanged] = useState(false)
 
   useEffect(() => {
-  localStorage.setItem('cpu-selected-algorithm', selectedAlgorithm)
+    localStorage.setItem('cpu-selected-algorithm', selectedAlgorithm)
   }, [selectedAlgorithm])
 
   const playbackTimerRef = useRef(null)
