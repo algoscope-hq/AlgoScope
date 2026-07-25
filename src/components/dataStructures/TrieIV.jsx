@@ -71,10 +71,10 @@ function TrieNodeView({ node, highlightPath, depth = 0 }) {
           isHighlighted
             ? 'bg-cyan-500 border-cyan-300 text-white shadow-[0_0_12px_rgba(6,182,212,0.6)]'
             : node.isEnd
-            ? 'bg-green-700 border-green-400 text-white'
-            : depth === 0
-            ? 'bg-slate-600 border-slate-400 text-slate-200'
-            : 'bg-slate-800 border-slate-600 text-slate-300'
+              ? 'bg-green-700 border-green-400 text-white'
+              : depth === 0
+                ? 'bg-slate-600 border-slate-400 text-slate-200'
+                : 'bg-slate-800 border-slate-600 text-slate-300'
         }`}
       >
         {node.label === 'root' ? '·' : node.label}
@@ -117,7 +117,7 @@ export default function TrieIV() {
 
   const refresh = useCallback(() => forceUpdate((n) => n + 1), [])
 
-const handleReset = () => {
+  const handleReset = () => {
     trieRef.current = new Trie()
     setWords([])
     setResult(null)
@@ -144,20 +144,30 @@ const handleReset = () => {
       const path = trieRef.current.insert(word)
       setWords((prev) => (prev.includes(word) ? prev : [...prev, word]))
       setHighlightPath(
-        path.reduce((acc, _, i) => {
-          acc.push(path.slice(1, i + 1).join(''))
-          return acc
-        }, [''])
+        path.reduce(
+          (acc, _, i) => {
+            acc.push(path.slice(1, i + 1).join(''))
+            return acc
+          },
+          ['']
+        )
       )
-      setResult({ type: 'insert', word, message: `"${word}" inserted into Trie` })
+      setResult({
+        type: 'insert',
+        word,
+        message: `"${word}" inserted into Trie`,
+      })
       refresh()
     } else if (operation === 'search') {
       const { found, path } = trieRef.current.search(word)
       setHighlightPath(
-        path.reduce((acc, _, i) => {
-          acc.push(path.slice(1, i + 1).join(''))
-          return acc
-        }, [''])
+        path.reduce(
+          (acc, _, i) => {
+            acc.push(path.slice(1, i + 1).join(''))
+            return acc
+          },
+          ['']
+        )
       )
       setResult({
         type: found ? 'success' : 'fail',
@@ -169,10 +179,13 @@ const handleReset = () => {
     } else if (operation === 'startsWith') {
       const { found, path } = trieRef.current.startsWith(word)
       setHighlightPath(
-        path.reduce((acc, _, i) => {
-          acc.push(path.slice(1, i + 1).join(''))
-          return acc
-        }, [''])
+        path.reduce(
+          (acc, _, i) => {
+            acc.push(path.slice(1, i + 1).join(''))
+            return acc
+          },
+          ['']
+        )
       )
       setResult({
         type: found ? 'success' : 'fail',
@@ -239,7 +252,9 @@ const handleReset = () => {
           {words.length === 0 ? (
             <div className="text-slate-400 text-center py-20">
               <p>Trie is empty</p>
-              <p className="text-sm mt-2">Insert a word or click Sample to begin</p>
+              <p className="text-sm mt-2">
+                Insert a word or click Sample to begin
+              </p>
             </div>
           ) : (
             <div className="flex justify-center pt-4">
@@ -255,15 +270,17 @@ const handleReset = () => {
         {/* Info Panel */}
         <div className="space-y-3">
           <div className="bg-slate-800/50 rounded-xl border border-slate-700 p-3">
-            <div className="text-cyan-400 font-bold text-xs mb-2">Last Result</div>
+            <div className="text-cyan-400 font-bold text-xs mb-2">
+              Last Result
+            </div>
             {result ? (
               <div
                 className={`font-mono text-xs whitespace-pre-wrap ${
                   result.type === 'insert'
                     ? 'text-cyan-400'
                     : result.type === 'success'
-                    ? 'text-green-400'
-                    : 'text-red-400'
+                      ? 'text-green-400'
+                      : 'text-red-400'
                 }`}
               >
                 {result.message}

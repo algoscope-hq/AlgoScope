@@ -131,7 +131,7 @@ export const DSLayout = () => {
     if (activeTab === 'linked-list') {
       return adtSources.linkedList?.['singly linked list']?.[selectedLang] || ''
     }
-     if (activeTab === 'trie') {
+    if (activeTab === 'trie') {
       return adtSources.trie?.['prefix tree']?.[selectedLang] || ''
     }
 
