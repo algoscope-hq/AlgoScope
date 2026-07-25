@@ -188,7 +188,9 @@ export default function TestCaseManager({
           className="absolute right-0 top-10 z-50 w-96 rounded-xl border border-gray-700 bg-gray-900 shadow-2xl"
         >
           <div className="flex items-center justify-between border-b border-gray-700 p-4">
-            <h3 id="tcm-dialog-title" className="font-semibold text-white">Test Case Manager</h3>
+            <h3 id="tcm-dialog-title" className="font-semibold text-white">
+              Test Case Manager
+            </h3>
             <div className="flex items-center gap-2">
               <button
                 type="button"
