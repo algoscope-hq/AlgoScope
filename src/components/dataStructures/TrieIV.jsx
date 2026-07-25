@@ -62,7 +62,7 @@ class Trie {
 
 function TrieNodeView({ node, highlightPath, depth = 0 }) {
   const isHighlighted = highlightPath.includes(node.fullPrefix)
-  const isLeaf = node.children.length === 0
+  
 
   return (
     <div className="flex flex-col items-center">
@@ -108,14 +108,16 @@ function TrieNodeView({ node, highlightPath, depth = 0 }) {
 
 export default function TrieIV() {
   const trieRef = useRef(new Trie())
-  const [, forceUpdate] = useState(0)
+  const [trieJSON, setTrieJSON] = useState(() => new Trie().toJSON())
   const [inputWord, setInputWord] = useState('')
   const [operation, setOperation] = useState('insert')
   const [result, setResult] = useState(null)
   const [highlightPath, setHighlightPath] = useState([])
   const [words, setWords] = useState([])
 
-  const refresh = useCallback(() => forceUpdate((n) => n + 1), [])
+  const refresh = useCallback(() => {
+    setTrieJSON(trieRef.current.toJSON())
+  }, [])
 
   const handleReset = () => {
     trieRef.current = new Trie()
@@ -197,7 +199,7 @@ export default function TrieIV() {
     }
   }
 
-  const trieJSON = trieRef.current.toJSON()
+  
 
   return (
     <div className="flex flex-col gap-4 text-slate-200 min-h-[400px]">
