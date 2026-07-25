@@ -62,7 +62,6 @@ class Trie {
 
 function TrieNodeView({ node, highlightPath, depth = 0 }) {
   const isHighlighted = highlightPath.includes(node.fullPrefix)
-  
 
   return (
     <div className="flex flex-col items-center">
@@ -198,8 +197,6 @@ export default function TrieIV() {
       })
     }
   }
-
-  
 
   return (
     <div className="flex flex-col gap-4 text-slate-200 min-h-[400px]">
