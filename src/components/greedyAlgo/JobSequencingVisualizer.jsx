@@ -58,7 +58,6 @@ export default function JobSequencingVisualizer({ currentStep }) {
     () => currentStep?.timeline || [],
     [currentStep?.timeline]
   )
-  const activeJobId = currentStep?.activeJobId || null
   const activeSlotIndex = currentStep?.activeSlotIndex ?? null
 
   const jobColorMap = React.useMemo(() => {
@@ -145,7 +144,8 @@ export default function JobSequencingVisualizer({ currentStep }) {
             {timeline.map((slot, index) => {
               const assignedJobId = slot.jobId
               const jobColor = assignedJobId ? jobColorMap[assignedJobId] : null
-              const isChecking = activeSlotIndex === index && slot.status === 'checking'
+              const isChecking =
+                activeSlotIndex === index && slot.status === 'checking'
 
               let slotClass =
                 'border-dashed border-2 border-slate-800 bg-slate-950/20 text-slate-500'

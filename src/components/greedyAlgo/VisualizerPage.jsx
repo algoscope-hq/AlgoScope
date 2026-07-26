@@ -668,7 +668,8 @@ export default function VisualizerPage() {
                     disabled={
                       isPlaying ||
                       (algorithm === 'huffman' && !huffmanText.trim()) ||
-                      (algorithm === 'knapsack' && knapsackItems.length === 0) ||
+                      (algorithm === 'knapsack' &&
+                        knapsackItems.length === 0) ||
                       (algorithm === 'jobsequencing' && jobs.length === 0)
                     }
                     className="w-full text-sm font-bold rounded-xl bg-cyan-600 px-6 py-3 text-white transition-all duration-300 hover:-translate-y-0.5 hover:bg-cyan-500 hover:shadow-[0_0_15px_rgba(6,182,212,0.4)] disabled:cursor-not-allowed disabled:opacity-50"

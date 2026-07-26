@@ -1,6 +1,6 @@
 # Greedy Algorithms Visualizer
 
-This directory contains the components and layout for the interactive visualizers of **Greedy Algorithms** in AlgoScope. 
+This directory contains the components and layout for the interactive visualizers of **Greedy Algorithms** in AlgoScope.
 
 The visualizers allow users to explore step-by-step greedy strategy animations, modify input datasets, inspect variables in real time, and view code execution mappings in Java, C++, Python, and JavaScript.
 
@@ -33,6 +33,7 @@ The visualizers allow users to explore step-by-step greedy strategy animations, 
 ## Step Generation & Playback
 
 Algorithm logic is separated into standalone generators that produce step states consumed by the `useStepPlayback` hook:
+
 - `src/algorithms/greedy/huffmanCodingSteps.js`
 - `src/algorithms/greedy/fractionalKnapsackSteps.js`
 - `src/algorithms/greedy/jobSequencingSteps.js`

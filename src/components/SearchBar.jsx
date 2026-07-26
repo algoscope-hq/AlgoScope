@@ -400,7 +400,15 @@ const ALGORITHMS = [
     name: 'Greedy Algorithms',
     category: 'Greedy Algorithms',
     route: '/greedy',
-    keywords: ['greedy', 'huffman', 'knapsack', 'fractional knapsack', 'job sequencing', 'deadline', 'scheduling'],
+    keywords: [
+      'greedy',
+      'huffman',
+      'knapsack',
+      'fractional knapsack',
+      'job sequencing',
+      'deadline',
+      'scheduling',
+    ],
   },
   {
     id: 'dynamic-prog-journey',
