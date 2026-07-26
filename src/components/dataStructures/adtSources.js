@@ -1442,4 +1442,714 @@ func (dsu *DisjointSetUnion) Union(x, y int) bool {
 }`,
     },
   },
+  trie: {
+    'prefix tree': {
+      javascript: `class TrieNode {
+  constructor() {
+    this.children = {};
+    this.isEnd = false;
+  }
+}
+
+class Trie {
+  constructor() {
+    this.root = new TrieNode();
+  }
+
+  insert(word) {
+    let node = this.root;
+    for (const char of word) {
+      if (!node.children[char])
+        node.children[char] = new TrieNode();
+      node = node.children[char];
+    }
+    node.isEnd = true;
+  }
+
+  search(word) {
+    let node = this.root;
+    for (const char of word) {
+      if (!node.children[char]) return false;
+      node = node.children[char];
+    }
+    return node.isEnd;
+  }
+
+  startsWith(prefix) {
+    let node = this.root;
+    for (const char of prefix) {
+      if (!node.children[char]) return false;
+      node = node.children[char];
+    }
+    return true;
+  }
+}`,
+      python: `class TrieNode:
+    def __init__(self):
+        self.children = {}
+        self.is_end = False
+
+class Trie:
+    def __init__(self):
+        self.root = TrieNode()
+
+    def insert(self, word):
+        node = self.root
+        for char in word:
+            if char not in node.children:
+                node.children[char] = TrieNode()
+            node = node.children[char]
+        node.is_end = True
+
+    def search(self, word):
+        node = self.root
+        for char in word:
+            if char not in node.children:
+                return False
+            node = node.children[char]
+        return node.is_end
+
+    def starts_with(self, prefix):
+        node = self.root
+        for char in prefix:
+            if char not in node.children:
+                return False
+            node = node.children[char]
+        return True`,
+      cpp: `#include <unordered_map>
+#include <string>
+
+struct TrieNode {
+    std::unordered_map<char, TrieNode*> children;
+    bool isEnd = false;
+};
+
+class Trie {
+    TrieNode* root;
+public:
+    Trie() { root = new TrieNode(); }
+
+    void insert(std::string word) {
+        TrieNode* node = root;
+        for (char c : word) {
+            if (!node->children.count(c))
+                node->children[c] = new TrieNode();
+            node = node->children[c];
+        }
+        node->isEnd = true;
+    }
+
+    bool search(std::string word) {
+        TrieNode* node = root;
+        for (char c : word) {
+            if (!node->children.count(c)) return false;
+            node = node->children[c];
+        }
+        return node->isEnd;
+    }
+
+    bool startsWith(std::string prefix) {
+        TrieNode* node = root;
+        for (char c : prefix) {
+            if (!node->children.count(c)) return false;
+            node = node->children[c];
+        }
+        return true;
+    }
+};`,
+      java: `import java.util.HashMap;
+
+class TrieNode {
+    HashMap<Character, TrieNode> children = new HashMap<>();
+    boolean isEnd = false;
+}
+
+class Trie {
+    TrieNode root = new TrieNode();
+
+    public void insert(String word) {
+        TrieNode node = root;
+        for (char c : word.toCharArray()) {
+            node.children.putIfAbsent(c, new TrieNode());
+            node = node.children.get(c);
+        }
+        node.isEnd = true;
+    }
+
+    public boolean search(String word) {
+        TrieNode node = root;
+        for (char c : word.toCharArray()) {
+            if (!node.children.containsKey(c)) return false;
+            node = node.children.get(c);
+        }
+        return node.isEnd;
+    }
+
+    public boolean startsWith(String prefix) {
+        TrieNode node = root;
+        for (char c : prefix.toCharArray()) {
+            if (!node.children.containsKey(c)) return false;
+            node = node.children.get(c);
+        }
+        return true;
+    }
+}`,
+      c: `#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define ALPHA 26
+
+typedef struct TrieNode {
+    struct TrieNode* children[ALPHA];
+    int isEnd;
+} TrieNode;
+
+TrieNode* newNode() {
+    TrieNode* node = calloc(1, sizeof(TrieNode));
+    node->isEnd = 0;
+    return node;
+}
+
+static int charIndex(char c) {
+    int idx = c - 'a';
+    return (idx >= 0 && idx < ALPHA) ? idx : -1;
+}
+
+void insert(TrieNode* root, char* word) {
+    TrieNode* node = root;
+    for (int i = 0; word[i]; i++) {
+        int idx = charIndex(word[i]);
+        if (idx < 0) return;
+        if (!node->children[idx])
+            node->children[idx] = newNode();
+        node = node->children[idx];
+    }
+    node->isEnd = 1;
+}
+
+int search(TrieNode* root, char* word) {
+    TrieNode* node = root;
+    for (int i = 0; word[i]; i++) {
+        int idx = charIndex(word[i]);
+        if (idx < 0 || !node->children[idx]) return 0;
+        node = node->children[idx];
+    }
+    return node->isEnd;
+}
+
+int startsWith(TrieNode* root, char* prefix) {
+    TrieNode* node = root;
+    for (int i = 0; prefix[i]; i++) {
+        int idx = charIndex(prefix[i]);
+        if (idx < 0 || !node->children[idx]) return 0;
+        node = node->children[idx];
+    }
+    return 1;
+}`,
+      rust: `use std::collections::HashMap;
+
+#[derive(Default)]
+struct TrieNode {
+    children: HashMap<char, TrieNode>,
+    is_end: bool,
+}
+
+struct Trie {
+    root: TrieNode,
+}
+
+impl Trie {
+    fn new() -> Self { Trie { root: TrieNode::default() } }
+
+    fn insert(&mut self, word: &str) {
+        let mut node = &mut self.root;
+        for c in word.chars() {
+            node = node.children.entry(c).or_default();
+        }
+        node.is_end = true;
+    }
+
+    fn search(&self, word: &str) -> bool {
+        let mut node = &self.root;
+        for c in word.chars() {
+            match node.children.get(&c) {
+                None => return false,
+                Some(n) => node = n,
+            }
+        }
+        node.is_end
+    }
+
+    fn starts_with(&self, prefix: &str) -> bool {
+        let mut node = &self.root;
+        for c in prefix.chars() {
+            match node.children.get(&c) {
+                None => return false,
+                Some(n) => node = n,
+            }
+        }
+        true
+    }
+}`,
+      go: `package main
+
+type TrieNode struct {
+    children map[rune]*TrieNode
+    isEnd    bool
+}
+
+func newTrieNode() *TrieNode {
+    return &TrieNode{children: make(map[rune]*TrieNode)}
+}
+
+type Trie struct{ root *TrieNode }
+
+func NewTrie() *Trie { return &Trie{root: newTrieNode()} }
+
+func (t *Trie) Insert(word string) {
+    node := t.root
+    for _, c := range word {
+        if _, ok := node.children[c]; !ok {
+            node.children[c] = newTrieNode()
+        }
+        node = node.children[c]
+    }
+    node.isEnd = true
+}
+
+func (t *Trie) Search(word string) bool {
+    node := t.root
+    for _, c := range word {
+        if _, ok := node.children[c]; !ok {
+            return false
+        }
+        node = node.children[c]
+    }
+    return node.isEnd
+}
+
+func (t *Trie) StartsWith(prefix string) bool {
+    node := t.root
+    for _, c := range prefix {
+        if _, ok := node.children[c]; !ok {
+            return false
+        }
+        node = node.children[c]
+    }
+ return true
+}`,
+    },
+  },
+  hashTable: {
+    'hash map': {
+      javascript: `class HashNode {
+  constructor(key, value) {
+    this.key = key;
+    this.value = value;
+    this.next = null;
+  }
+}
+
+class HashTable {
+  constructor(size = 11) {
+    this.size = size;
+    this.buckets = Array(size).fill(null);
+    this.count = 0;
+  }
+
+  hash(key) {
+    let hash = 0;
+    for (let i = 0; i < key.length; i++) {
+      hash = (hash + key.charCodeAt(i)) % this.size;
+    }
+    return hash;
+  }
+
+  insert(key, value) {
+    const index = this.hash(key);
+    let node = this.buckets[index];
+    while (node) {
+      if (node.key === key) { node.value = value; return; }
+      node = node.next;
+    }
+    const newNode = new HashNode(key, value);
+    newNode.next = this.buckets[index];
+    this.buckets[index] = newNode;
+    this.count++;
+  }
+
+  search(key) {
+    const index = this.hash(key);
+    let node = this.buckets[index];
+    while (node) {
+      if (node.key === key) return node.value;
+      node = node.next;
+    }
+    return null;
+  }
+
+  delete(key) {
+    const index = this.hash(key);
+    let node = this.buckets[index], prev = null;
+    while (node) {
+      if (node.key === key) {
+        if (prev) prev.next = node.next;
+        else this.buckets[index] = node.next;
+        this.count--;
+        return true;
+      }
+      prev = node;
+      node = node.next;
+    }
+    return false;
+  }
+}`,
+      python: `class HashNode:
+    def __init__(self, key, value):
+        self.key = key
+        self.value = value
+        self.next = None
+
+class HashTable:
+    def __init__(self, size=11):
+        self.size = size
+        self.buckets = [None] * size
+        self.count = 0
+
+    def _hash(self, key):
+        return sum(ord(c) for c in key) % self.size
+
+    def insert(self, key, value):
+        index = self._hash(key)
+        node = self.buckets[index]
+        while node:
+            if node.key == key:
+                node.value = value
+                return
+            node = node.next
+        new_node = HashNode(key, value)
+        new_node.next = self.buckets[index]
+        self.buckets[index] = new_node
+        self.count += 1
+
+    def search(self, key):
+        index = self._hash(key)
+        node = self.buckets[index]
+        while node:
+            if node.key == key:
+                return node.value
+            node = node.next
+        return None
+
+    def delete(self, key):
+        index = self._hash(key)
+        node = self.buckets[index]
+        prev = None
+        while node:
+            if node.key == key:
+                if prev:
+                    prev.next = node.next
+                else:
+                    self.buckets[index] = node.next
+                self.count -= 1
+                return True
+            prev = node
+            node = node.next
+        return False`,
+      cpp: `#include <string>
+using namespace std;
+
+struct HashNode {
+    string key, value;
+    HashNode* next;
+    HashNode(string k, string v) : key(k), value(v), next(nullptr) {}
+};
+
+class HashTable {
+    int size;
+    HashNode** buckets;
+    int count;
+
+    int hash(const string& key) {
+        int h = 0;
+        for (char c : key) h = (h + c) % size;
+        return h;
+    }
+
+public:
+    HashTable(int size = 11) : size(size), count(0) {
+        buckets = new HashNode*[size]();
+    }
+
+    void insert(const string& key, const string& value) {
+        int idx = hash(key);
+        HashNode* node = buckets[idx];
+        while (node) {
+            if (node->key == key) { node->value = value; return; }
+            node = node->next;
+        }
+        HashNode* newNode = new HashNode(key, value);
+        newNode->next = buckets[idx];
+        buckets[idx] = newNode;
+        count++;
+    }
+
+    string search(const string& key) {
+        int idx = hash(key);
+        HashNode* node = buckets[idx];
+        while (node) {
+            if (node->key == key) return node->value;
+            node = node->next;
+        }
+        return "";
+    }
+
+    bool deleteKey(const string& key) {
+        int idx = hash(key);
+        HashNode* node = buckets[idx];
+        HashNode* prev = nullptr;
+        while (node) {
+            if (node->key == key) {
+                if (prev) prev->next = node->next;
+                else buckets[idx] = node->next;
+                delete node;
+                count--;
+                return true;
+            }
+            prev = node;
+            node = node->next;
+        }
+        return false;
+    }
+};`,
+      java: `import java.util.LinkedList;
+
+class HashTable<K, V> {
+    private static class Entry<K, V> {
+        K key; V value;
+        Entry(K k, V v) { key = k; value = v; }
+    }
+
+    private final int size;
+    private final LinkedList<Entry<K, V>>[] buckets;
+    private int count;
+
+    @SuppressWarnings("unchecked")
+    public HashTable(int size) {
+        this.size = size;
+        buckets = new LinkedList[size];
+        for (int i = 0; i < size; i++)
+            buckets[i] = new LinkedList<>();
+    }
+
+    private int hash(K key) {
+        int h = 0;
+        for (char c : key.toString().toCharArray())
+            h = (h + c) % size;
+        return h;
+    }
+
+    public void insert(K key, V value) {
+        int idx = hash(key);
+        for (Entry<K, V> e : buckets[idx]) {
+            if (e.key.equals(key)) { e.value = value; return; }
+        }
+        buckets[idx].addFirst(new Entry<>(key, value));
+        count++;
+    }
+
+    public V search(K key) {
+        for (Entry<K, V> e : buckets[hash(key)])
+            if (e.key.equals(key)) return e.value;
+        return null;
+    }
+
+    public boolean delete(K key) {
+        int idx = hash(key);
+        for (Entry<K, V> e : buckets[idx]) {
+            if (e.key.equals(key)) {
+                buckets[idx].remove(e);
+                count--;
+                return true;
+            }
+        }
+        return false;
+    }
+}`,
+      c: `#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define SIZE 11
+
+typedef struct HashNode {
+    char key[64];
+    char value[64];
+    struct HashNode* next;
+} HashNode;
+
+typedef struct {
+    HashNode* buckets[SIZE];
+    int count;
+} HashTable;
+
+static int hash(const char* key) {
+    int h = 0;
+    for (int i = 0; key[i]; i++)
+        h = (h + (unsigned char)key[i]) % SIZE;
+    return h;
+}
+
+void insert(HashTable* ht, const char* key, const char* value) {
+    int idx = hash(key);
+    HashNode* node = ht->buckets[idx];
+    while (node) {
+        if (strcmp(node->key, key) == 0) {
+            strncpy(node->value, value, 63);
+            return;
+        }
+        node = node->next;
+    }
+    HashNode* newNode = calloc(1, sizeof(HashNode));
+    strncpy(newNode->key, key, 63);
+    strncpy(newNode->value, value, 63);
+    newNode->next = ht->buckets[idx];
+    ht->buckets[idx] = newNode;
+    ht->count++;
+}
+
+const char* search(HashTable* ht, const char* key) {
+    int idx = hash(key);
+    HashNode* node = ht->buckets[idx];
+    while (node) {
+        if (strcmp(node->key, key) == 0) return node->value;
+        node = node->next;
+    }
+    return NULL;
+}
+
+int deleteKey(HashTable* ht, const char* key) {
+    int idx = hash(key);
+    HashNode* node = ht->buckets[idx];
+    HashNode* prev = NULL;
+    while (node) {
+        if (strcmp(node->key, key) == 0) {
+            if (prev) prev->next = node->next;
+            else ht->buckets[idx] = node->next;
+            free(node);
+            ht->count--;
+            return 1;
+        }
+        prev = node;
+        node = node->next;
+    }
+    return 0;
+}`,
+      rust: `use std::collections::LinkedList;
+
+struct Entry {
+    key: String,
+    value: String,
+}
+
+struct HashTable {
+    size: usize,
+    buckets: Vec<LinkedList<Entry>>,
+    count: usize,
+}
+
+impl HashTable {
+    fn new(size: usize) -> Self {
+        let mut buckets = Vec::with_capacity(size);
+        for _ in 0..size { buckets.push(LinkedList::new()); }
+        HashTable { size, buckets, count: 0 }
+    }
+
+    fn hash(&self, key: &str) -> usize {
+        key.chars().fold(0usize, |acc, c| (acc + c as usize) % self.size)
+    }
+
+    fn insert(&mut self, key: String, value: String) {
+        let idx = self.hash(&key);
+        for entry in &mut self.buckets[idx] {
+            if entry.key == key { entry.value = value; return; }
+        }
+        self.buckets[idx].push_front(Entry { key, value });
+        self.count += 1;
+    }
+
+    fn search(&self, key: &str) -> Option<&str> {
+        let idx = self.hash(key);
+        for entry in &self.buckets[idx] {
+            if entry.key == key { return Some(&entry.value); }
+        }
+        None
+    }
+
+    fn delete(&mut self, key: &str) -> bool {
+        let idx = self.hash(key);
+        let before = self.buckets[idx].len();
+        self.buckets[idx].retain(|e| e.key != key);
+        let deleted = self.buckets[idx].len() < before;
+        if deleted { self.count -= 1; }
+        deleted
+    }
+}`,
+      go: `package main
+
+type Entry struct {
+    key, value string
+    next       *Entry
+}
+
+type HashTable struct {
+    size    int
+    buckets []*Entry
+    count   int
+}
+
+func NewHashTable(size int) *HashTable {
+    return &HashTable{size: size, buckets: make([]*Entry, size)}
+}
+
+func (ht *HashTable) hash(key string) int {
+    h := 0
+    for _, c := range key {
+        h = (h + int(c)) % ht.size
+    }
+    return h
+}
+
+func (ht *HashTable) Insert(key, value string) {
+    idx := ht.hash(key)
+    for node := ht.buckets[idx]; node != nil; node = node.next {
+        if node.key == key { node.value = value; return }
+    }
+    ht.buckets[idx] = &Entry{key, value, ht.buckets[idx]}
+    ht.count++
+}
+
+func (ht *HashTable) Search(key string) (string, bool) {
+    for node := ht.buckets[ht.hash(key)]; node != nil; node = node.next {
+        if node.key == key { return node.value, true }
+    }
+    return "", false
+}
+
+func (ht *HashTable) Delete(key string) bool {
+    idx := ht.hash(key)
+    var prev *Entry
+    for node := ht.buckets[idx]; node != nil; node = node.next {
+        if node.key == key {
+            if prev != nil { prev.next = node.next } else { ht.buckets[idx] = node.next }
+            ht.count--
+            return true
+        }
+        prev = node
+    }
+    return false
+}`,
+    },
+  },
 }
