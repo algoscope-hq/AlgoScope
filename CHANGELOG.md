@@ -5,37 +5,113 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [1.14.0](https://github.com/algoscope-hq/AlgoScope/compare/v1.13.0...v1.14.0) (2026-07-26)
+## [1.14.0] - 2026-07-26
 
+### Added
 
-### Features
+- add Trie (Prefix Tree) visualizer to Abstract Data Types
+- remember selected CPU scheduling algorithm after refresh
+- add minimize/expand toggle to My Notes panel
+- add automatic issue assignment workflow and format codebase
+- add Concepts overview page and search bar data updates
+- add missing difficulty badge to Guess the Algorithm card
+- updated search bar
+- sorted all the algos according to difficulty.
 
-* add automatic issue assignment workflow and format codebase ([0c15df7](https://github.com/algoscope-hq/AlgoScope/commit/0c15df7b37ee0a9727c588f28cb30f3d00576a0c))
-* add Concepts overview page and search bar data updates ([b3d1f17](https://github.com/algoscope-hq/AlgoScope/commit/b3d1f17cee9ea899e23b5299d8aca0d8720fa9a3))
-* add minimize/expand toggle to My Notes panel ([62ee499](https://github.com/algoscope-hq/AlgoScope/commit/62ee499f782bb297748208c59b7b9838ac41eece))
-* add missing difficulty badge to Guess the Algorithm card ([b969d6b](https://github.com/algoscope-hq/AlgoScope/commit/b969d6b293b17413822a83d402ef14a9795be015))
-* add Trie (Prefix Tree) visualizer to Abstract Data Types ([b0ead83](https://github.com/algoscope-hq/AlgoScope/commit/b0ead83277fe3eb3757ab3bb5946c1d8344667f6))
-* remember selected CPU scheduling algorithm after refresh ([4846eec](https://github.com/algoscope-hq/AlgoScope/commit/4846eecb209ec71ccb4e2f2f5205c1ef41453e0e))
-* updated search bar ([1f485d2](https://github.com/algoscope-hq/AlgoScope/commit/1f485d2e09ea530ec3a76c007dad01686d7183f6))
+### Fixed
 
+- remove unused isLeaf var and store trie snapshot in state
+- store Trie in useRef and add bounds checking with startsWith to C implementation
+- complete dialog semantics for Test Cases panel (#615)
+- improve contrast and accessibility of Test Cases button (#615)
+- validate persisted CPU scheduling algorithm
+- correct Bubble Sort swap step message values
+- small bugs
+- batch bug fixes for code exec guard, search icon, drag leave, signup modal, test validation
+- correct linked list route param in search bar
+- improve hover transition duration and normalize card heights (#725, #727)
+- add FRONTEND_URL to .env.example (closes #642)
+- shorten two pointers description and mention the important question
+- add missing id fields and fix syntax error
+- move visualizer data to shared module to break circular import
+- compute visualizer count dynamically instead of hardcoded 9+ (closes #698)
 
-### Bug Fixes
+### 📂 Changed Files
 
-* **a11y:** complete dialog semantics for Test Cases panel ([#615](https://github.com/algoscope-hq/AlgoScope/issues/615)) ([ee41e7e](https://github.com/algoscope-hq/AlgoScope/commit/ee41e7ecc641664bd66b170a892fcf9d55ca20c4))
-* add FRONTEND_URL to .env.example (closes [#642](https://github.com/algoscope-hq/AlgoScope/issues/642)) ([db51d25](https://github.com/algoscope-hq/AlgoScope/commit/db51d256c1480d860c39b8820a04220994818416))
-* add missing id fields and fix syntax error ([7f3e007](https://github.com/algoscope-hq/AlgoScope/commit/7f3e007446c8dea8fdd7dcdd5c9886b534dfd101))
-* batch bug fixes for code exec guard, search icon, drag leave, signup modal, test validation ([01b3ef1](https://github.com/algoscope-hq/AlgoScope/commit/01b3ef1e266bdb361051337fcf5b803af960dc5e))
-* compute visualizer count dynamically instead of hardcoded 9+ (closes [#698](https://github.com/algoscope-hq/AlgoScope/issues/698)) ([9c173bf](https://github.com/algoscope-hq/AlgoScope/commit/9c173bf04406c1540da69feca164d2330436e947))
-* correct Bubble Sort swap step message values ([1ffb788](https://github.com/algoscope-hq/AlgoScope/commit/1ffb788fd4470c26af38ef3f187e1c602b1a9d18))
-* correct linked list route param in search bar ([6a1977d](https://github.com/algoscope-hq/AlgoScope/commit/6a1977d205c6f7990bcad0060bfbe455e04a1875))
-* improve hover transition duration and normalize card heights ([#725](https://github.com/algoscope-hq/AlgoScope/issues/725), [#727](https://github.com/algoscope-hq/AlgoScope/issues/727)) ([d015f77](https://github.com/algoscope-hq/AlgoScope/commit/d015f776c68187a0f9d726cd70d15dd14ec9dbdf))
-* move visualizer data to shared module to break circular import ([91648e1](https://github.com/algoscope-hq/AlgoScope/commit/91648e1a9b804ea744b8545a32e1436c11d6fb6f))
-* remove unused isLeaf var and store trie snapshot in state ([563d820](https://github.com/algoscope-hq/AlgoScope/commit/563d82019694fd1fb8dbdaa7a6ffa6fb9011602e))
-* shorten two pointers description and mention the important question ([5f46446](https://github.com/algoscope-hq/AlgoScope/commit/5f46446e4d09ca8a6b5030a232db7f0fc1e1a311))
-* small bugs ([3010610](https://github.com/algoscope-hq/AlgoScope/commit/3010610331876561576b22269ad27e1ab3340da5))
-* store Trie in useRef and add bounds checking with startsWith to C implementation ([37f36e7](https://github.com/algoscope-hq/AlgoScope/commit/37f36e7e792876786deb974012e18b9e6ed51d76))
-* **ui:** improve contrast and accessibility of Test Cases button ([#615](https://github.com/algoscope-hq/AlgoScope/issues/615)) ([add9c6b](https://github.com/algoscope-hq/AlgoScope/commit/add9c6b4eb49058296668b4438fc4cef82de00cf))
-* validate persisted CPU scheduling algorithm ([3d0abe9](https://github.com/algoscope-hq/AlgoScope/commit/3d0abe9ea335544648e7b1aeca528b65645dd626))
+```
+- 📁 **.github/**
+  - 📁 **workflows/**
+    - ➕ issue-comment-assign.yml
+- 📁 **src/**
+  - 📁 **algorithms/**
+    - 📁 **greedy/**
+      - ❌ fractionalKnapsackSteps.js
+      - ❌ greedySources.js
+      - ❌ huffmanCodingSteps.js
+    - 📁 **monotonicStack/**
+      - ➕ largestRectangleSteps.js
+      - ➕ maximalRectangleSteps.js
+    - 📁 **sorting/**
+      - ✏️ bubbleSortSteps.js
+    - 📁 **trees/**
+      - ❌ avlTree.js
+      - ❌ segmentTree.js
+      - ❌ trie.js
+  - 📁 **components/**
+    - 📁 **advancedTrees/**
+      - ❌ AVLTreeVisualizer.jsx
+      - ❌ BinaryTreeWithTrie.jsx
+      - ❌ SegmentTreeVisualizer.jsx
+      - ❌ TrieVisualizer.jsx
+    - 📁 **concepts/**
+      - ➕ ConceptsOverview.jsx
+    - 📁 **dataStructures/**
+      - ✏️ adtSources.js
+      - ✏️ DSLayout.jsx
+      - ➕ TrieIV.jsx
+    - 📁 **greedyAlgo/**
+      - ❌ GreedyAlgorithmCard.jsx
+      - ❌ GreedyBlock.jsx
+      - ❌ HuffmanVisualizer.jsx
+      - ❌ KnapsackVisualizer.jsx
+      - ❌ VisualizerPage.jsx
+    - 📁 **hero/**
+      - ✏️ Hero.jsx
+    - 📁 **monotonicStack/**
+      - ➕ StackVisualizer.jsx
+      - ➕ StackVisualizerPage.jsx
+    - 📁 **notes/**
+      - ✏️ AlgorithmNotes.jsx
+    - 📁 **operatingSystems/**
+      - ✏️ CPUSchedulingPage.jsx
+    - 📁 **shortestPathAlgo/**
+      - ✏️ GridVisualizer.jsx
+    - 📁 **testCaseManager/**
+      - ✏️ TestCaseManager.jsx
+    - 📁 **visualizer/**
+      - ✏️ useStepPlayback.js
+    - ✏️ AlgoCard.jsx
+    - ✏️ Home.jsx
+    - ✏️ Navbar.jsx
+    - ✏️ PracticePage.jsx
+    - ✏️ SearchBar.jsx
+  - 📁 **data/**
+    - ✏️ complexityMap.js
+    - ✏️ difficultyMap.js
+    - ➕ visualizerData.js
+  - 📁 **lib/**
+    - ✏️ testCaseStore.js
+    - ✏️ testCaseStore.test.js
+  - 📁 **pages/**
+    - ❌ AdvancedTreesPage.jsx
+  - ✏️ App.jsx
+  - ✏️ main.jsx
+- ✏️ .env.example
+- ✏️ CHANGELOG.md
+- ✏️ eslint.config.js
+- ✏️ package-lock.json
+- ✏️ package.json
+```
 
 ## [1.13.0] - 2026-06-18
 
@@ -53,7 +129,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - correct array search algorithm names in global search
 - format App.jsx, Home.jsx, and CanvasSearching.jsx with LF endOfLine
 - import TwoPointerVisualizerPage and format code style
-- remove overly broad src/\*_/_.js pattern from ignores
+- remove overly broad src/**/*.js pattern from ignores
 - format & lint
 - format & lint
 - format & lint
@@ -1260,3 +1336,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - ➕ vite.config.js
 - ➕ yarn.lock
 ```
+
