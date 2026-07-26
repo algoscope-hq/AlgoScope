@@ -71,6 +71,9 @@ const SlidingWindowVisualizerPage = lazy(
 const TwoPointerVisualizerPage = lazy(
   () => import('./components/twoPointer/TwoPointerVisualizer')
 )
+const GreedyVisualizerPage = lazy(
+  () => import('./components/greedyAlgo/VisualizerPage')
+)
 const StackVisualizerPage = lazy(
   () => import('./components/monotonicStack/StackVisualizerPage')
 )
@@ -257,6 +260,16 @@ const router = createBrowserRouter([
       <Suspense fallback={<PageLoader />}>
         <AppLayout>
           <TwoPointerVisualizerPage />
+        </AppLayout>
+      </Suspense>
+    ),
+  },
+  {
+    path: '/greedy',
+    element: (
+      <Suspense fallback={<PageLoader />}>
+        <AppLayout notesKey="algo-notes-greedy">
+          <GreedyVisualizerPage />
         </AppLayout>
       </Suspense>
     ),

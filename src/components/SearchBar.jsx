@@ -394,6 +394,22 @@ const ALGORITHMS = [
     route: '/dynamic-programming',
     keywords: ['lcs', 'knapsack', 'Coin Change', 'LIS'],
   },
+  //Greedy Algorithms
+  {
+    id: 'greedy',
+    name: 'Greedy Algorithms',
+    category: 'Greedy Algorithms',
+    route: '/greedy',
+    keywords: [
+      'greedy',
+      'huffman',
+      'knapsack',
+      'fractional knapsack',
+      'job sequencing',
+      'deadline',
+      'scheduling',
+    ],
+  },
   {
     id: 'dynamic-prog-journey',
     name: 'DP Journey',

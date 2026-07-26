@@ -211,4 +211,22 @@ export const complexityMap = {
     worst: 'O(R * C)',
     space: 'O(C)',
   },
+  huffman: {
+    best: 'O(N log N)',
+    average: 'O(N log N)',
+    worst: 'O(N log N)',
+    space: 'O(N)',
+  },
+  knapsack: {
+    best: 'O(N log N)',
+    average: 'O(N log N)',
+    worst: 'O(N log N)',
+    space: 'O(N)',
+  },
+  jobsequencing: {
+    best: 'O(N log N)',
+    average: 'O(N²)',
+    worst: 'O(N²)',
+    space: 'O(N)',
+  },
 }
