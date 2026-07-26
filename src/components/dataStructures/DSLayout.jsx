@@ -8,6 +8,7 @@ import BinaryHeapIV from './binaryHeapIV'
 import PriorityQueueIV from './priorityQueueIV'
 import DSUIV from './dsuIV'
 import TrieIV from './TrieIV'
+import HashTableIV from './HashTableIV'
 import LinkedListIV from './LinkedListIV'
 import CodePanel from '../visualizer/CodePanel'
 import { adtSources } from './adtSources'
@@ -23,6 +24,7 @@ const tabs = [
   { id: 'linked-list', label: 'Linked List' },
   { id: 'graph', label: 'Graph Builder' },
   { id: 'trie', label: 'Trie' },
+  { id: 'hash-table', label: 'Hash Table' },
 ]
 
 export const DSLayout = () => {
@@ -134,6 +136,9 @@ export const DSLayout = () => {
     if (activeTab === 'trie') {
       return adtSources.trie?.['prefix tree']?.[selectedLang] || ''
     }
+    if (activeTab === 'hash-table') {
+      return adtSources.hashTable?.['hash map']?.[selectedLang] || ''
+    }
 
     return ''
   }, [activeTab, selectedLang, stackMode, treeTraversal])
@@ -147,6 +152,7 @@ export const DSLayout = () => {
     if (activeTab === 'dsu') return 'Disjoint Set Union'
     if (activeTab === 'linked-list') return 'Singly Linked List'
     if (activeTab === 'trie') return 'Trie (Prefix Tree)'
+    if (activeTab === 'hash-table') return 'Hash Table (HashMap)'
     return 'Queue'
   }
 
@@ -229,6 +235,7 @@ export const DSLayout = () => {
         {activeTab === 'linked-list' && mode === 'solo' && <LinkedListIV />}
 
         {activeTab === 'trie' && mode === 'solo' && <TrieIV />}
+        {activeTab === 'hash-table' && mode === 'solo' && <HashTableIV />}
 
         {activeTab === 'graph' && (
           <div className="flex items-center justify-center min-h-[300px] text-slate-500">

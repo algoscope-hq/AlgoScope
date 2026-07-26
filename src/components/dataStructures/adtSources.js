@@ -1737,7 +1737,418 @@ func (t *Trie) StartsWith(prefix string) bool {
         }
         node = node.children[c]
     }
-    return true
+ return true
+}`,
+    },
+  },
+  hashTable: {
+    'hash map': {
+      javascript: `class HashNode {
+  constructor(key, value) {
+    this.key = key;
+    this.value = value;
+    this.next = null;
+  }
+}
+
+class HashTable {
+  constructor(size = 11) {
+    this.size = size;
+    this.buckets = Array(size).fill(null);
+    this.count = 0;
+  }
+
+  hash(key) {
+    let hash = 0;
+    for (let i = 0; i < key.length; i++) {
+      hash = (hash + key.charCodeAt(i)) % this.size;
+    }
+    return hash;
+  }
+
+  insert(key, value) {
+    const index = this.hash(key);
+    let node = this.buckets[index];
+    while (node) {
+      if (node.key === key) { node.value = value; return; }
+      node = node.next;
+    }
+    const newNode = new HashNode(key, value);
+    newNode.next = this.buckets[index];
+    this.buckets[index] = newNode;
+    this.count++;
+  }
+
+  search(key) {
+    const index = this.hash(key);
+    let node = this.buckets[index];
+    while (node) {
+      if (node.key === key) return node.value;
+      node = node.next;
+    }
+    return null;
+  }
+
+  delete(key) {
+    const index = this.hash(key);
+    let node = this.buckets[index], prev = null;
+    while (node) {
+      if (node.key === key) {
+        if (prev) prev.next = node.next;
+        else this.buckets[index] = node.next;
+        this.count--;
+        return true;
+      }
+      prev = node;
+      node = node.next;
+    }
+    return false;
+  }
+}`,
+      python: `class HashNode:
+    def __init__(self, key, value):
+        self.key = key
+        self.value = value
+        self.next = None
+
+class HashTable:
+    def __init__(self, size=11):
+        self.size = size
+        self.buckets = [None] * size
+        self.count = 0
+
+    def _hash(self, key):
+        return sum(ord(c) for c in key) % self.size
+
+    def insert(self, key, value):
+        index = self._hash(key)
+        node = self.buckets[index]
+        while node:
+            if node.key == key:
+                node.value = value
+                return
+            node = node.next
+        new_node = HashNode(key, value)
+        new_node.next = self.buckets[index]
+        self.buckets[index] = new_node
+        self.count += 1
+
+    def search(self, key):
+        index = self._hash(key)
+        node = self.buckets[index]
+        while node:
+            if node.key == key:
+                return node.value
+            node = node.next
+        return None
+
+    def delete(self, key):
+        index = self._hash(key)
+        node = self.buckets[index]
+        prev = None
+        while node:
+            if node.key == key:
+                if prev:
+                    prev.next = node.next
+                else:
+                    self.buckets[index] = node.next
+                self.count -= 1
+                return True
+            prev = node
+            node = node.next
+        return False`,
+      cpp: `#include <string>
+using namespace std;
+
+struct HashNode {
+    string key, value;
+    HashNode* next;
+    HashNode(string k, string v) : key(k), value(v), next(nullptr) {}
+};
+
+class HashTable {
+    int size;
+    HashNode** buckets;
+    int count;
+
+    int hash(const string& key) {
+        int h = 0;
+        for (char c : key) h = (h + c) % size;
+        return h;
+    }
+
+public:
+    HashTable(int size = 11) : size(size), count(0) {
+        buckets = new HashNode*[size]();
+    }
+
+    void insert(const string& key, const string& value) {
+        int idx = hash(key);
+        HashNode* node = buckets[idx];
+        while (node) {
+            if (node->key == key) { node->value = value; return; }
+            node = node->next;
+        }
+        HashNode* newNode = new HashNode(key, value);
+        newNode->next = buckets[idx];
+        buckets[idx] = newNode;
+        count++;
+    }
+
+    string search(const string& key) {
+        int idx = hash(key);
+        HashNode* node = buckets[idx];
+        while (node) {
+            if (node->key == key) return node->value;
+            node = node->next;
+        }
+        return "";
+    }
+
+    bool deleteKey(const string& key) {
+        int idx = hash(key);
+        HashNode* node = buckets[idx];
+        HashNode* prev = nullptr;
+        while (node) {
+            if (node->key == key) {
+                if (prev) prev->next = node->next;
+                else buckets[idx] = node->next;
+                delete node;
+                count--;
+                return true;
+            }
+            prev = node;
+            node = node->next;
+        }
+        return false;
+    }
+};`,
+      java: `import java.util.LinkedList;
+
+class HashTable<K, V> {
+    private static class Entry<K, V> {
+        K key; V value;
+        Entry(K k, V v) { key = k; value = v; }
+    }
+
+    private final int size;
+    private final LinkedList<Entry<K, V>>[] buckets;
+    private int count;
+
+    @SuppressWarnings("unchecked")
+    public HashTable(int size) {
+        this.size = size;
+        buckets = new LinkedList[size];
+        for (int i = 0; i < size; i++)
+            buckets[i] = new LinkedList<>();
+    }
+
+    private int hash(K key) {
+        int h = 0;
+        for (char c : key.toString().toCharArray())
+            h = (h + c) % size;
+        return h;
+    }
+
+    public void insert(K key, V value) {
+        int idx = hash(key);
+        for (Entry<K, V> e : buckets[idx]) {
+            if (e.key.equals(key)) { e.value = value; return; }
+        }
+        buckets[idx].addFirst(new Entry<>(key, value));
+        count++;
+    }
+
+    public V search(K key) {
+        for (Entry<K, V> e : buckets[hash(key)])
+            if (e.key.equals(key)) return e.value;
+        return null;
+    }
+
+    public boolean delete(K key) {
+        int idx = hash(key);
+        for (Entry<K, V> e : buckets[idx]) {
+            if (e.key.equals(key)) {
+                buckets[idx].remove(e);
+                count--;
+                return true;
+            }
+        }
+        return false;
+    }
+}`,
+      c: `#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define SIZE 11
+
+typedef struct HashNode {
+    char key[64];
+    char value[64];
+    struct HashNode* next;
+} HashNode;
+
+typedef struct {
+    HashNode* buckets[SIZE];
+    int count;
+} HashTable;
+
+static int hash(const char* key) {
+    int h = 0;
+    for (int i = 0; key[i]; i++)
+        h = (h + (unsigned char)key[i]) % SIZE;
+    return h;
+}
+
+void insert(HashTable* ht, const char* key, const char* value) {
+    int idx = hash(key);
+    HashNode* node = ht->buckets[idx];
+    while (node) {
+        if (strcmp(node->key, key) == 0) {
+            strncpy(node->value, value, 63);
+            return;
+        }
+        node = node->next;
+    }
+    HashNode* newNode = calloc(1, sizeof(HashNode));
+    strncpy(newNode->key, key, 63);
+    strncpy(newNode->value, value, 63);
+    newNode->next = ht->buckets[idx];
+    ht->buckets[idx] = newNode;
+    ht->count++;
+}
+
+const char* search(HashTable* ht, const char* key) {
+    int idx = hash(key);
+    HashNode* node = ht->buckets[idx];
+    while (node) {
+        if (strcmp(node->key, key) == 0) return node->value;
+        node = node->next;
+    }
+    return NULL;
+}
+
+int deleteKey(HashTable* ht, const char* key) {
+    int idx = hash(key);
+    HashNode* node = ht->buckets[idx];
+    HashNode* prev = NULL;
+    while (node) {
+        if (strcmp(node->key, key) == 0) {
+            if (prev) prev->next = node->next;
+            else ht->buckets[idx] = node->next;
+            free(node);
+            ht->count--;
+            return 1;
+        }
+        prev = node;
+        node = node->next;
+    }
+    return 0;
+}`,
+      rust: `use std::collections::LinkedList;
+
+struct Entry {
+    key: String,
+    value: String,
+}
+
+struct HashTable {
+    size: usize,
+    buckets: Vec<LinkedList<Entry>>,
+    count: usize,
+}
+
+impl HashTable {
+    fn new(size: usize) -> Self {
+        let mut buckets = Vec::with_capacity(size);
+        for _ in 0..size { buckets.push(LinkedList::new()); }
+        HashTable { size, buckets, count: 0 }
+    }
+
+    fn hash(&self, key: &str) -> usize {
+        key.chars().fold(0usize, |acc, c| (acc + c as usize) % self.size)
+    }
+
+    fn insert(&mut self, key: String, value: String) {
+        let idx = self.hash(&key);
+        for entry in &mut self.buckets[idx] {
+            if entry.key == key { entry.value = value; return; }
+        }
+        self.buckets[idx].push_front(Entry { key, value });
+        self.count += 1;
+    }
+
+    fn search(&self, key: &str) -> Option<&str> {
+        let idx = self.hash(key);
+        for entry in &self.buckets[idx] {
+            if entry.key == key { return Some(&entry.value); }
+        }
+        None
+    }
+
+    fn delete(&mut self, key: &str) -> bool {
+        let idx = self.hash(key);
+        let before = self.buckets[idx].len();
+        self.buckets[idx].retain(|e| e.key != key);
+        let deleted = self.buckets[idx].len() < before;
+        if deleted { self.count -= 1; }
+        deleted
+    }
+}`,
+      go: `package main
+
+type Entry struct {
+    key, value string
+    next       *Entry
+}
+
+type HashTable struct {
+    size    int
+    buckets []*Entry
+    count   int
+}
+
+func NewHashTable(size int) *HashTable {
+    return &HashTable{size: size, buckets: make([]*Entry, size)}
+}
+
+func (ht *HashTable) hash(key string) int {
+    h := 0
+    for _, c := range key {
+        h = (h + int(c)) % ht.size
+    }
+    return h
+}
+
+func (ht *HashTable) Insert(key, value string) {
+    idx := ht.hash(key)
+    for node := ht.buckets[idx]; node != nil; node = node.next {
+        if node.key == key { node.value = value; return }
+    }
+    ht.buckets[idx] = &Entry{key, value, ht.buckets[idx]}
+    ht.count++
+}
+
+func (ht *HashTable) Search(key string) (string, bool) {
+    for node := ht.buckets[ht.hash(key)]; node != nil; node = node.next {
+        if node.key == key { return node.value, true }
+    }
+    return "", false
+}
+
+func (ht *HashTable) Delete(key string) bool {
+    idx := ht.hash(key)
+    var prev *Entry
+    for node := ht.buckets[idx]; node != nil; node = node.next {
+        if node.key == key {
+            if prev != nil { prev.next = node.next } else { ht.buckets[idx] = node.next }
+            ht.count--
+            return true
+        }
+        prev = node
+    }
+    return false
 }`,
     },
   },
