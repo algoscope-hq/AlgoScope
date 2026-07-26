@@ -172,16 +172,25 @@ export default function TestCaseManager({
       <button
         type="button"
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-2 rounded-lg border border-gray-600 bg-gray-800 px-3 py-2 text-sm text-white hover:bg-gray-700"
+        aria-expanded={isOpen}
+        aria-haspopup="dialog"
+        className="flex items-center gap-2 rounded-lg border border-indigo-500 bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-md transition-all duration-150 hover:bg-indigo-500 hover:shadow-indigo-500/40 focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:ring-offset-2 focus:ring-offset-gray-900 active:scale-95"
       >
         <span aria-hidden="true">📋</span>
         Test Cases
       </button>
 
       {isOpen && (
-        <div className="absolute right-0 top-10 z-50 w-96 rounded-xl border border-gray-700 bg-gray-900 shadow-2xl">
+        <div
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="tcm-dialog-title"
+          className="absolute right-0 top-10 z-50 w-96 rounded-xl border border-gray-700 bg-gray-900 shadow-2xl"
+        >
           <div className="flex items-center justify-between border-b border-gray-700 p-4">
-            <h3 className="font-semibold text-white">Test Case Manager</h3>
+            <h3 id="tcm-dialog-title" className="font-semibold text-white">
+              Test Case Manager
+            </h3>
             <div className="flex items-center gap-2">
               <button
                 type="button"
