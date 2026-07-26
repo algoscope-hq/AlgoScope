@@ -121,6 +121,13 @@ const algorithmLinks = [
     difficulty: 'Advanced',
   },
   {
+    
+    name: 'Greedy Algorithms',
+    href: '/greedy',
+    difficulty: 'Intermediate',
+},
+  
+  {
     name: 'DP Optimization Journey',
     href: '/dp-journey',
     difficulty: 'Advanced',
