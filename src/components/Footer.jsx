@@ -225,8 +225,8 @@ const Footer = () => {
       </div>
 
       {/* Box 3: Minimalist Bottom Ribbon & Interactive Complexity Counter */}
-      <div className="mt-10 flex flex-col items-center gap-5 border-t border-slate-800 pt-6">
-        <div className="flex flex-col items-center gap-2 text-center text-xs text-slate-400">
+      <div className="mt-10 flex flex-col items-center gap-5 border-t theme-border pt-6">
+        <div className="flex flex-col items-center gap-2 text-center text-xs theme-text-muted">
           <p>
             &copy; {new Date().getFullYear()}{' '}
             <span className="theme-text-muted font-medium">AlgoScope</span>{' '}
