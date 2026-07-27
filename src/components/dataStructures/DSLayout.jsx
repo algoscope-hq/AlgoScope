@@ -9,6 +9,7 @@ import PriorityQueueIV from './priorityQueueIV'
 import DSUIV from './dsuIV'
 import TrieIV from './TrieIV'
 import HashTableIV from './HashTableIV'
+import SegmentTreeIV from './SegmentTreeIV'
 import LinkedListIV from './LinkedListIV'
 import CodePanel from '../visualizer/CodePanel'
 import { adtSources } from './adtSources'
@@ -25,6 +26,7 @@ const tabs = [
   { id: 'graph', label: 'Graph Builder' },
   { id: 'trie', label: 'Trie' },
   { id: 'hash-table', label: 'Hash Table' },
+  { id: 'segment-tree', label: 'Segment Tree' },
 ]
 
 export const DSLayout = () => {
@@ -140,6 +142,10 @@ export const DSLayout = () => {
       return adtSources.hashTable?.['hash map']?.[selectedLang] || ''
     }
 
+    if (activeTab === 'segment-tree') {
+      return adtSources.segmentTree?.['range query']?.[selectedLang] || ''
+    }
+
     return ''
   }, [activeTab, selectedLang, stackMode, treeTraversal])
 
@@ -153,6 +159,7 @@ export const DSLayout = () => {
     if (activeTab === 'linked-list') return 'Singly Linked List'
     if (activeTab === 'trie') return 'Trie (Prefix Tree)'
     if (activeTab === 'hash-table') return 'Hash Table (HashMap)'
+    if (activeTab === 'segment-tree') return 'Segment Tree'
     return 'Queue'
   }
 
@@ -236,6 +243,8 @@ export const DSLayout = () => {
 
         {activeTab === 'trie' && mode === 'solo' && <TrieIV />}
         {activeTab === 'hash-table' && mode === 'solo' && <HashTableIV />}
+
+        {activeTab === 'segment-tree' && mode === 'solo' && <SegmentTreeIV />}
 
         {activeTab === 'graph' && (
           <div className="flex items-center justify-center min-h-[300px] text-slate-500">

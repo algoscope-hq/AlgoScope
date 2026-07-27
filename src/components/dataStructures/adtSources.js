@@ -2152,4 +2152,341 @@ func (ht *HashTable) Delete(key string) bool {
 }`,
     },
   },
+  segmentTree: {
+    'range query': {
+      javascript: `class SegmentTree {
+  constructor(arr, type = 'sum') {
+    this.n = arr.length;
+    this.arr = [...arr];
+    this.type = type;
+    this.tree = Array(4 * this.n).fill(0);
+    this.build(0, 0, this.n - 1);
+  }
+
+  op(a, b) {
+    if (this.type === 'sum') return a + b;
+    if (this.type === 'min') return Math.min(a, b);
+    return Math.max(a, b);
+  }
+
+  build(node, start, end) {
+    if (start === end) { this.tree[node] = this.arr[start]; return; }
+    const mid = Math.floor((start + end) / 2);
+    this.build(2*node+1, start, mid);
+    this.build(2*node+2, mid+1, end);
+    this.tree[node] = this.op(this.tree[2*node+1], this.tree[2*node+2]);
+  }
+
+  query(node, start, end, l, r) {
+    if (r < start || end < l) return this.type === 'min' ? Infinity : this.type === 'max' ? -Infinity : 0;
+    if (l <= start && end <= r) return this.tree[node];
+    const mid = Math.floor((start + end) / 2);
+    return this.op(
+      this.query(2*node+1, start, mid, l, r),
+      this.query(2*node+2, mid+1, end, l, r)
+    );
+  }
+
+  update(node, start, end, idx, val) {
+    if (start === end) { this.arr[idx] = val; this.tree[node] = val; return; }
+    const mid = Math.floor((start + end) / 2);
+    if (idx <= mid) this.update(2*node+1, start, mid, idx, val);
+    else this.update(2*node+2, mid+1, end, idx, val);
+    this.tree[node] = this.op(this.tree[2*node+1], this.tree[2*node+2]);
+  }
+}`,
+      python: `class SegmentTree:
+    def __init__(self, arr, query_type='sum'):
+        self.n = len(arr)
+        self.arr = arr[:]
+        self.type = query_type
+        self.tree = [0] * (4 * self.n)
+        self._build(0, 0, self.n - 1)
+
+    def _op(self, a, b):
+        if self.type == 'sum': return a + b
+        if self.type == 'min': return min(a, b)
+        return max(a, b)
+
+    def _build(self, node, start, end):
+        if start == end:
+            self.tree[node] = self.arr[start]
+            return
+        mid = (start + end) // 2
+        self._build(2*node+1, start, mid)
+        self._build(2*node+2, mid+1, end)
+        self.tree[node] = self._op(self.tree[2*node+1], self.tree[2*node+2])
+
+    def query(self, l, r, node=0, start=None, end=None):
+        if start is None: start = 0
+        if end is None: end = self.n - 1
+        if r < start or end < l:
+            return float('inf') if self.type == 'min' else float('-inf') if self.type == 'max' else 0
+        if l <= start and end <= r:
+            return self.tree[node]
+        mid = (start + end) // 2
+        return self._op(
+            self.query(l, r, 2*node+1, start, mid),
+            self.query(l, r, 2*node+2, mid+1, end)
+        )
+
+    def update(self, idx, val, node=0, start=None, end=None):
+        if start is None: start = 0
+        if end is None: end = self.n - 1
+        if start == end:
+            self.arr[idx] = val
+            self.tree[node] = val
+            return
+        mid = (start + end) // 2
+        if idx <= mid: self.update(idx, val, 2*node+1, start, mid)
+        else: self.update(idx, val, 2*node+2, mid+1, end)
+        self.tree[node] = self._op(self.tree[2*node+1], self.tree[2*node+2])`,
+      cpp: `#include <vector>
+#include <algorithm>
+#include <climits>
+using namespace std;
+
+class SegmentTree {
+    int n;
+    vector<int> tree, arr;
+    string type;
+
+    int op(int a, int b) {
+        if (type == "sum") return a + b;
+        if (type == "min") return min(a, b);
+        return max(a, b);
+    }
+
+    void build(int node, int start, int end) {
+        if (start == end) { tree[node] = arr[start]; return; }
+        int mid = (start + end) / 2;
+        build(2*node+1, start, mid);
+        build(2*node+2, mid+1, end);
+        tree[node] = op(tree[2*node+1], tree[2*node+2]);
+    }
+
+public:
+    SegmentTree(vector<int>& a, string t = "sum") : n(a.size()), arr(a), type(t), tree(4*a.size()) {
+        build(0, 0, n-1);
+    }
+
+    int query(int node, int start, int end, int l, int r) {
+        if (r < start || end < l)
+            return type == "min" ? INT_MAX : type == "max" ? INT_MIN : 0;
+        if (l <= start && end <= r) return tree[node];
+        int mid = (start + end) / 2;
+        return op(query(2*node+1, start, mid, l, r),
+                  query(2*node+2, mid+1, end, l, r));
+    }
+
+    void update(int node, int start, int end, int idx, int val) {
+        if (start == end) { arr[idx] = val; tree[node] = val; return; }
+        int mid = (start + end) / 2;
+        if (idx <= mid) update(2*node+1, start, mid, idx, val);
+        else update(2*node+2, mid+1, end, idx, val);
+        tree[node] = op(tree[2*node+1], tree[2*node+2]);
+    }
+};`,
+      java: `class SegmentTree {
+    private int[] tree, arr;
+    private int n;
+    private String type;
+
+    public SegmentTree(int[] arr, String type) {
+        this.n = arr.length;
+        this.arr = arr.clone();
+        this.type = type;
+        this.tree = new int[4 * n];
+        build(0, 0, n - 1);
+    }
+
+    private int op(int a, int b) {
+        return switch (type) {
+            case "min" -> Math.min(a, b);
+            case "max" -> Math.max(a, b);
+            default -> a + b;
+        };
+    }
+
+    private void build(int node, int start, int end) {
+        if (start == end) { tree[node] = arr[start]; return; }
+        int mid = (start + end) / 2;
+        build(2*node+1, start, mid);
+        build(2*node+2, mid+1, end);
+        tree[node] = op(tree[2*node+1], tree[2*node+2]);
+    }
+
+    public int query(int node, int start, int end, int l, int r) {
+        if (r < start || end < l)
+            return type.equals("min") ? Integer.MAX_VALUE : type.equals("max") ? Integer.MIN_VALUE : 0;
+        if (l <= start && end <= r) return tree[node];
+        int mid = (start + end) / 2;
+        return op(query(2*node+1, start, mid, l, r),
+                  query(2*node+2, mid+1, end, l, r));
+    }
+
+    public void update(int node, int start, int end, int idx, int val) {
+        if (start == end) { arr[idx] = val; tree[node] = val; return; }
+        int mid = (start + end) / 2;
+        if (idx <= mid) update(2*node+1, start, mid, idx, val);
+        else update(2*node+2, mid+1, end, idx, val);
+        tree[node] = op(tree[2*node+1], tree[2*node+2]);
+    }
+}`,
+      c: `#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+#include <string.h>
+
+#define MAXN 1005
+
+int tree[4*MAXN], arr[MAXN], n;
+char type[4];
+
+int op(int a, int b) {
+    if (strcmp(type, "sum") == 0) return a + b;
+    if (strcmp(type, "min") == 0) return a < b ? a : b;
+    return a > b ? a : b;
+}
+
+void build(int node, int start, int end) {
+    if (start == end) { tree[node] = arr[start]; return; }
+    int mid = (start + end) / 2;
+    build(2*node+1, start, mid);
+    build(2*node+2, mid+1, end);
+    tree[node] = op(tree[2*node+1], tree[2*node+2]);
+}
+
+int query(int node, int start, int end, int l, int r) {
+    if (r < start || end < l)
+        return strcmp(type,"min")==0 ? INT_MAX : strcmp(type,"max")==0 ? INT_MIN : 0;
+    if (l <= start && end <= r) return tree[node];
+    int mid = (start + end) / 2;
+    return op(query(2*node+1, start, mid, l, r),
+              query(2*node+2, mid+1, end, l, r));
+}
+
+void update(int node, int start, int end, int idx, int val) {
+    if (start == end) { arr[idx] = val; tree[node] = val; return; }
+    int mid = (start + end) / 2;
+    if (idx <= mid) update(2*node+1, start, mid, idx, val);
+    else update(2*node+2, mid+1, end, idx, val);
+    tree[node] = op(tree[2*node+1], tree[2*node+2]);
+}`,
+      rust: `struct SegmentTree {
+    tree: Vec<i64>,
+    arr: Vec<i64>,
+    n: usize,
+    kind: String,
+}
+
+impl SegmentTree {
+    fn new(arr: Vec<i64>, kind: &str) -> Self {
+        let n = arr.len();
+        let mut st = SegmentTree {
+            tree: vec![0; 4 * n],
+            arr: arr.clone(),
+            n,
+            kind: kind.to_string(),
+        };
+        if n > 0 { st.build(0, 0, n - 1); }
+        st
+    }
+
+    fn op(&self, a: i64, b: i64) -> i64 {
+        match self.kind.as_str() {
+            "min" => a.min(b),
+            "max" => a.max(b),
+            _ => a + b,
+        }
+    }
+
+    fn build(&mut self, node: usize, start: usize, end: usize) {
+        if start == end { self.tree[node] = self.arr[start]; return; }
+        let mid = (start + end) / 2;
+        self.build(2*node+1, start, mid);
+        self.build(2*node+2, mid+1, end);
+        self.tree[node] = self.op(self.tree[2*node+1], self.tree[2*node+2]);
+    }
+
+    fn query(&self, node: usize, start: usize, end: usize, l: usize, r: usize) -> i64 {
+        if r < start || end < l {
+            return match self.kind.as_str() { "min" => i64::MAX, "max" => i64::MIN, _ => 0 };
+        }
+        if l <= start && end <= r { return self.tree[node]; }
+        let mid = (start + end) / 2;
+        self.op(self.query(2*node+1, start, mid, l, r),
+                self.query(2*node+2, mid+1, end, l, r))
+    }
+
+    fn update(&mut self, node: usize, start: usize, end: usize, idx: usize, val: i64) {
+        if start == end { self.arr[idx] = val; self.tree[node] = val; return; }
+        let mid = (start + end) / 2;
+        if idx <= mid { self.update(2*node+1, start, mid, idx, val); }
+        else { self.update(2*node+2, mid+1, end, idx, val); }
+        self.tree[node] = self.op(self.tree[2*node+1], self.tree[2*node+2]);
+    }
+}`,
+      go: `package main
+
+import "math"
+
+type SegmentTree struct {
+    tree []int
+    arr  []int
+    n    int
+    kind string
+}
+
+func NewSegmentTree(arr []int, kind string) *SegmentTree {
+    n := len(arr)
+    st := &SegmentTree{
+        tree: make([]int, 4*n),
+        arr:  append([]int{}, arr...),
+        n:    n,
+        kind: kind,
+    }
+    st.build(0, 0, n-1)
+    return st
+}
+
+func (st *SegmentTree) op(a, b int) int {
+    switch st.kind {
+    case "min":
+        if a < b { return a }; return b
+    case "max":
+        if a > b { return a }; return b
+    default:
+        return a + b
+    }
+}
+
+func (st *SegmentTree) build(node, start, end int) {
+    if start == end { st.tree[node] = st.arr[start]; return }
+    mid := (start + end) / 2
+    st.build(2*node+1, start, mid)
+    st.build(2*node+2, mid+1, end)
+    st.tree[node] = st.op(st.tree[2*node+1], st.tree[2*node+2])
+}
+
+func (st *SegmentTree) Query(node, start, end, l, r int) int {
+    if r < start || end < l {
+        if st.kind == "min" { return math.MaxInt32 }
+        if st.kind == "max" { return math.MinInt32 }
+        return 0
+    }
+    if l <= start && end <= r { return st.tree[node] }
+    mid := (start + end) / 2
+    return st.op(st.Query(2*node+1, start, mid, l, r),
+                 st.Query(2*node+2, mid+1, end, l, r))
+}
+
+func (st *SegmentTree) Update(node, start, end, idx, val int) {
+    if start == end { st.arr[idx] = val; st.tree[node] = val; return }
+    mid := (start + end) / 2
+    if idx <= mid { st.Update(2*node+1, start, mid, idx, val) } else { st.Update(2*node+2, mid+1, end, idx, val) }
+    st.tree[node] = st.op(st.tree[2*node+1], st.tree[2*node+2])
+}`,
+    },
+  },
 }
