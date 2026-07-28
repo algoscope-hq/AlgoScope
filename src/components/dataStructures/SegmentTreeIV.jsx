@@ -238,6 +238,10 @@ export default function SegmentTreeIV() {
             if (stRef.current && stRef.current.n > 0) {
               stRef.current = new SegmentTree(stRef.current.arr, newType)
               setHighlightedNodes([])
+              setResult({
+                type: 'insert',
+                message: `Switched to ${newType.toUpperCase()} — tree rebuilt`,
+              })
               refresh()
             }
           }}
