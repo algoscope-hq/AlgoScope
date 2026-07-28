@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import AlgoCard from './AlgoCard'
 import { Hero } from './hero/Hero'
 import { motion } from 'framer-motion'
+import { ChevronDown } from 'lucide-react'
 import { GuidedTour } from './GuidedTour'
 
 const containerVariants = {
@@ -17,6 +18,7 @@ const containerVariants = {
 import { ALGORITHMS, OPERATING_SYSTEMS } from '../data/visualizerData'
 export const Home = () => {
   const [filter, setFilter] = useState('All')
+  const [sortBy, setSortBy] = useState('default')
 
   const difficultyWeight = {
     Beginner: 1,
@@ -24,27 +26,60 @@ export const Home = () => {
     Advanced: 3,
   }
 
-  const sortItems = (a, b) => {
-    const weightA = difficultyWeight[a.difficulty]
-    const weightB = difficultyWeight[b.difficulty]
-
-    if (weightA !== weightB) {
-      return weightA - weightB
+  const getSorter = (key) => {
+    switch (key) {
+      case 'name-asc':
+        return (a, b) => a.title.localeCompare(b.title)
+      case 'name-desc':
+        return (a, b) => b.title.localeCompare(a.title)
+      case 'difficulty-asc':
+        return (a, b) => {
+          const wA = difficultyWeight[a.difficulty]
+          const wB = difficultyWeight[b.difficulty]
+          if (wA !== wB) return wA - wB
+          return a.title.localeCompare(b.title)
+        }
+      case 'difficulty-desc':
+        return (a, b) => {
+          const wA = difficultyWeight[a.difficulty]
+          const wB = difficultyWeight[b.difficulty]
+          if (wA !== wB) return wB - wA
+          return a.title.localeCompare(b.title)
+        }
+      default:
+        return (a, b) => {
+          const wA = difficultyWeight[a.difficulty]
+          const wB = difficultyWeight[b.difficulty]
+          if (wA !== wB) return wA - wB
+          return a.title.localeCompare(b.title)
+        }
     }
-    return a.title.localeCompare(b.title)
   }
 
-  const filteredAlgos = (
+  const sortAlgos = (items) => {
+    const sorter = getSorter(sortBy)
+    return [...items].sort(sorter)
+  }
+
+  const filteredAlgos = sortAlgos(
     filter === 'All'
       ? ALGORITHMS
       : ALGORITHMS.filter((algo) => algo.difficulty === filter)
-  ).sort(sortItems)
+  )
 
-  const filteredOS = (
+  const filteredOS = sortAlgos(
     filter === 'All'
       ? OPERATING_SYSTEMS
       : OPERATING_SYSTEMS.filter((os) => os.difficulty === filter)
-  ).sort(sortItems)
+  )
+
+  const sortOptions = [
+    { value: 'default', label: 'Default' },
+    { value: 'name-asc', label: 'Name (A-Z)' },
+    { value: 'name-desc', label: 'Name (Z-A)' },
+    { value: 'difficulty-asc', label: 'Difficulty (Easy-Hard)' },
+    { value: 'difficulty-desc', label: 'Difficulty (Hard-Easy)' },
+  ]
 
   return (
     <div className="theme-home relative min-h-screen w-full overflow-x-hidden selection:bg-cyan-500/30">
@@ -86,6 +121,33 @@ export const Home = () => {
                   <span className="relative">{level}</span>
                 </button>
               ))}
+            </div>
+          </div>
+
+          {/* Sort Dropdown */}
+          <div className="flex justify-end mb-4">
+            <div className="relative">
+              <select
+                value={sortBy}
+                onChange={(e) => setSortBy(e.target.value)}
+                className="appearance-none px-4 py-2 pr-10 rounded-lg text-xs font-bold cursor-pointer transition-all duration-200"
+                style={{
+                  background: 'rgba(15,23,42,0.8)',
+                  border: '1px solid rgba(51,65,85,0.6)',
+                  color: '#e2e8f0',
+                }}
+              >
+                {sortOptions.map((opt) => (
+                  <option key={opt.value} value={opt.value}>
+                    Sort: {opt.label}
+                  </option>
+                ))}
+              </select>
+              <ChevronDown
+                size={14}
+                className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none"
+                style={{ color: '#64748b' }}
+              />
             </div>
           </div>
 
