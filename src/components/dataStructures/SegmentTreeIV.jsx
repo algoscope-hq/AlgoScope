@@ -130,12 +130,15 @@ export default function SegmentTreeIV() {
   }, [])
 
   const handleBuild = () => {
-    const arr = arrayInput
-      .trim()
-      .split(/\s+/)
-      .map(Number)
-      .filter((n) => !isNaN(n))
-    if (arr.length === 0) return
+    const tokens = arrayInput.trim().split(/\s+/)
+    const arr = tokens.map(Number).filter((n) => !isNaN(n))
+    if (arr.length === 0 || arr.length !== tokens.length) {
+      setResult({
+        type: 'fail',
+        message: 'Invalid input. Enter space-separated numbers only.',
+      })
+      return
+    }
     stRef.current = new SegmentTree(arr, queryType)
     setHighlightedNodes([])
     setResult({
@@ -203,7 +206,7 @@ export default function SegmentTreeIV() {
     refresh()
     setResult({
       type: 'insert',
-      message: `Updated index ${idx} to ${val} — tree rebuilt`,
+      message: `Updated index ${idx} to ${val} — ancestors updated in O(log n)`,
     })
   }
 
@@ -229,7 +232,15 @@ export default function SegmentTreeIV() {
 
         <select
           value={queryType}
-          onChange={(e) => setQueryType(e.target.value)}
+          onChange={(e) => {
+            const newType = e.target.value
+            setQueryType(newType)
+            if (stRef.current && stRef.current.n > 0) {
+              stRef.current = new SegmentTree(stRef.current.arr, newType)
+              setHighlightedNodes([])
+              refresh()
+            }
+          }}
           className="bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-white text-sm outline-none focus:border-cyan-500"
         >
           <option value="sum">Sum</option>
@@ -272,6 +283,7 @@ export default function SegmentTreeIV() {
               type="number"
               value={rangeL}
               onChange={(e) => setRangeL(e.target.value)}
+              aria-label="Query left index"
               className="bg-slate-900 border border-slate-700 rounded-lg px-2 py-1 text-white text-sm outline-none focus:border-cyan-500 w-14"
             />
             <span className="text-xs text-slate-400">R</span>
@@ -279,6 +291,7 @@ export default function SegmentTreeIV() {
               type="number"
               value={rangeR}
               onChange={(e) => setRangeR(e.target.value)}
+              aria-label="Query right index"
               className="bg-slate-900 border border-slate-700 rounded-lg px-2 py-1 text-white text-sm outline-none focus:border-cyan-500 w-14"
             />
             <button
@@ -301,6 +314,7 @@ export default function SegmentTreeIV() {
               type="number"
               value={updateIdx}
               onChange={(e) => setUpdateIdx(e.target.value)}
+              aria-label="Update index"
               className="bg-slate-900 border border-slate-700 rounded-lg px-2 py-1 text-white text-sm outline-none focus:border-cyan-500 w-14"
             />
             <span className="text-xs text-slate-400">val</span>
@@ -308,6 +322,7 @@ export default function SegmentTreeIV() {
               type="number"
               value={updateVal}
               onChange={(e) => setUpdateVal(e.target.value)}
+              aria-label="Update value"
               className="bg-slate-900 border border-slate-700 rounded-lg px-2 py-1 text-white text-sm outline-none focus:border-cyan-500 w-14"
             />
             <button
