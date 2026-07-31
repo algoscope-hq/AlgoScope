@@ -57,7 +57,7 @@ const reJS =
 const rePY =
   /(#[^\n]*)|("(?:[^"\\]|\\.)*"|'(?:[^'\\]|\\.)*')|\b(def|return|if|elif|else|for|while|in|not|and|or|None|True|False|float|int|len|range|max|min|class|import|from|set|sum)\b|\b(\d+(?:\.\d+)?)\b|([A-Za-z_$][\w$]*)(?=\s*\()/g
 const reJAVA =
-  /(\/\/[^\n]*)|("(?:[^"\\]|\\.)*"|'(?:[^'\\]|\\.)*')|\b(public|private|protected|static|final|void|class|new|return|if|else|for|while|break|continue|import|package|int|long|double|float|boolean|char|String|Integer|extends|implements)\b|\b(Integer\.MAX_VALUE|Integer\.MIN_VALUE|Math\.max|Math\.min)\b|\b(0x[0-9a-fA-F]+|\d+(?:\.\d+)?)\b|([A-Za-z_$][\w$]*)(?=\s*\()/g
+  /(\/\/[^\n]*)|("(?:[^"\\]|\\.)*"|'(?:[^'\\]|\\.)*')|\b(public|private|protected|static|final|void|class|new|return|if|else|for|while|break|continue|import|package|extends|implements)\b|\b(int|long|double|float|boolean|char|String|Integer|Set|HashSet)\b|\b(Integer\.MAX_VALUE|Integer\.MIN_VALUE|Math\.max|Math\.min)\b|\b(0x[0-9a-fA-F]+|\d+(?:\.\d+)?)\b|([A-Za-z_$][\w$]*)(?=\s*\()/g
 
 function tokenize(line, lang) {
   const re = lang === 'py' ? rePY : lang === 'java' ? reJAVA : reJS
@@ -71,9 +71,10 @@ function tokenize(line, lang) {
       if (m[1]) out.push({ t: m[1], c: 'comment' })
       else if (m[2]) out.push({ t: m[2], c: 'string' })
       else if (m[3]) out.push({ t: m[3], c: 'keyword' })
-      else if (m[4]) out.push({ t: m[4], c: 'number' })
+      else if (m[4]) out.push({ t: m[4], c: 'type' })
       else if (m[5]) out.push({ t: m[5], c: 'number' })
-      else if (m[6]) out.push({ t: m[6], c: 'func' })
+      else if (m[6]) out.push({ t: m[6], c: 'number' })
+      else if (m[7]) out.push({ t: m[7], c: 'func' })
     } else {
       if (m[1]) out.push({ t: m[1], c: 'comment' })
       else if (m[2]) out.push({ t: m[2], c: 'string' })
@@ -655,7 +656,7 @@ const PROBLEMS = [
               'int longest(String s) {',
               '    int best = 0;',
               '    for (int i = 0; i < s.length(); i++) {',
-              '        Set<Character> seen = new HashSet<>();',
+              '        java.util.Set<Character> seen = new java.util.HashSet<>();',
               '        for (int j = i; j < s.length(); j++) {',
               '            if (seen.contains(s.charAt(j))) break;',
               '            seen.add(s.charAt(j));',
@@ -712,7 +713,7 @@ const PROBLEMS = [
           java: {
             src: [
               'int longest(String s) {',
-              '    Set<Character> seen = new HashSet<>();',
+              '    java.util.Set<Character> seen = new java.util.HashSet<>();',
               '    int l = 0, best = 0;',
               '    for (int r = 0; r < s.length(); r++) {',
               '        while (seen.contains(s.charAt(r))) {',
