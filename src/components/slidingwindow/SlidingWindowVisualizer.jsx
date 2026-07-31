@@ -42,6 +42,7 @@ const C = {
     keyword: '#ff7b9c',
     number: '#ff9e64',
     func: '#7aa2f7',
+    type: '#e0af68',
   },
 }
 
@@ -55,20 +56,31 @@ const reJS =
   /(\/\/[^\n]*)|("(?:[^"\\]|\\.)*"|'(?:[^'\\]|\\.)*'|`[^`]*`)|\b(function|return|let|const|var|if|else|for|while|of|in|new|class|typeof|Infinity|Math|true|false|null)\b|\b(0x[0-9a-fA-F]+|\d+(?:\.\d+)?)\b|([A-Za-z_$][\w$]*)(?=\s*\()/g
 const rePY =
   /(#[^\n]*)|("(?:[^"\\]|\\.)*"|'(?:[^'\\]|\\.)*')|\b(def|return|if|elif|else|for|while|in|not|and|or|None|True|False|float|int|len|range|max|min|class|import|from|set|sum)\b|\b(\d+(?:\.\d+)?)\b|([A-Za-z_$][\w$]*)(?=\s*\()/g
+const reJAVA =
+  /(\/\/[^\n]*)|("(?:[^"\\]|\\.)*"|'(?:[^'\\]|\\.)*')|\b(public|private|protected|static|final|void|class|new|return|if|else|for|while|break|continue|import|package|int|long|double|float|boolean|char|String|Integer|extends|implements)\b|\b(Integer\.MAX_VALUE|Integer\.MIN_VALUE|Math\.max|Math\.min)\b|\b(0x[0-9a-fA-F]+|\d+(?:\.\d+)?)\b|([A-Za-z_$][\w$]*)(?=\s*\()/g
 
 function tokenize(line, lang) {
-  const re = lang === 'py' ? rePY : reJS
+  const re = lang === 'py' ? rePY : lang === 'java' ? reJAVA : reJS
   re.lastIndex = 0
   const out = []
   let last = 0
   let m
   while ((m = re.exec(line))) {
     if (m.index > last) out.push({ t: line.slice(last, m.index) })
-    if (m[1]) out.push({ t: m[1], c: 'comment' })
-    else if (m[2]) out.push({ t: m[2], c: 'string' })
-    else if (m[3]) out.push({ t: m[3], c: 'keyword' })
-    else if (m[4]) out.push({ t: m[4], c: 'number' })
-    else if (m[5]) out.push({ t: m[5], c: 'func' })
+    if (lang === 'java') {
+      if (m[1]) out.push({ t: m[1], c: 'comment' })
+      else if (m[2]) out.push({ t: m[2], c: 'string' })
+      else if (m[3]) out.push({ t: m[3], c: 'keyword' })
+      else if (m[4]) out.push({ t: m[4], c: 'number' })
+      else if (m[5]) out.push({ t: m[5], c: 'number' })
+      else if (m[6]) out.push({ t: m[6], c: 'func' })
+    } else {
+      if (m[1]) out.push({ t: m[1], c: 'comment' })
+      else if (m[2]) out.push({ t: m[2], c: 'string' })
+      else if (m[3]) out.push({ t: m[3], c: 'keyword' })
+      else if (m[4]) out.push({ t: m[4], c: 'number' })
+      else if (m[5]) out.push({ t: m[5], c: 'func' })
+    }
     last = re.lastIndex
     if (m.index === re.lastIndex) re.lastIndex++
   }
@@ -522,6 +534,20 @@ const PROBLEMS = [
             ],
             map: { outer: 3, scan: 4, done: 6 },
           },
+          java: {
+            src: [
+              'int maxSum(int[] arr, int k) {',
+              '    int best = Integer.MIN_VALUE;',
+              '    for (int i = 0; i + k <= arr.length; i++) {',
+              '        int sum = 0;',
+              '        for (int j = i; j < i + k; j++) sum += arr[j];',
+              '        best = Math.max(best, sum);',
+              '    }',
+              '    return best;',
+              '}',
+            ],
+            map: { outer: 3, scan: 5, done: 8 },
+          },
         },
       },
       slide: {
@@ -557,6 +583,21 @@ const PROBLEMS = [
               '    return best',
             ],
             map: { build: 2, slide: 5, done: 7 },
+          },
+          java: {
+            src: [
+              'int maxSum(int[] arr, int k) {',
+              '    int sum = 0;',
+              '    for (int i = 0; i < k; i++) sum += arr[i];',
+              '    int best = sum;',
+              '    for (int r = k; r < arr.length; r++) {',
+              '        sum += arr[r] - arr[r - k];',
+              '        best = Math.max(best, sum);',
+              '    }',
+              '    return best;',
+              '}',
+            ],
+            map: { build: 3, slide: 6, done: 9 },
           },
         },
       },
@@ -609,6 +650,23 @@ const PROBLEMS = [
             ],
             map: { outer: 3, check: 6, done: 10 },
           },
+          java: {
+            src: [
+              'int longest(String s) {',
+              '    int best = 0;',
+              '    for (int i = 0; i < s.length(); i++) {',
+              '        Set<Character> seen = new HashSet<>();',
+              '        for (int j = i; j < s.length(); j++) {',
+              '            if (seen.contains(s.charAt(j))) break;',
+              '            seen.add(s.charAt(j));',
+              '            best = Math.max(best, j - i + 1);',
+              '        }',
+              '    }',
+              '    return best;',
+              '}',
+            ],
+            map: { outer: 3, check: 6, done: 11 },
+          },
         },
       },
       slide: {
@@ -650,6 +708,24 @@ const PROBLEMS = [
               '    return best',
             ],
             map: { init: 2, shrink: 6, expand: 8, done: 10 },
+          },
+          java: {
+            src: [
+              'int longest(String s) {',
+              '    Set<Character> seen = new HashSet<>();',
+              '    int l = 0, best = 0;',
+              '    for (int r = 0; r < s.length(); r++) {',
+              '        while (seen.contains(s.charAt(r))) {',
+              '            seen.remove(s.charAt(l));',
+              '            l++;',
+              '        }',
+              '        seen.add(s.charAt(r));',
+              '        best = Math.max(best, r - l + 1);',
+              '    }',
+              '    return best;',
+              '}',
+            ],
+            map: { init: 2, shrink: 6, expand: 9, done: 12 },
           },
         },
       },
@@ -708,6 +784,25 @@ const PROBLEMS = [
             ],
             map: { outer: 3, inner: 6, done: 10 },
           },
+          java: {
+            src: [
+              'int minLen(int[] arr, int target) {',
+              '    int best = Integer.MAX_VALUE;',
+              '    for (int i = 0; i < arr.length; i++) {',
+              '        int sum = 0;',
+              '        for (int j = i; j < arr.length; j++) {',
+              '            sum += arr[j];',
+              '            if (sum >= target) {',
+              '                best = Math.min(best, j - i + 1);',
+              '                break;',
+              '            }',
+              '        }',
+              '    }',
+              '    return best == Integer.MAX_VALUE ? 0 : best;',
+              '}',
+            ],
+            map: { outer: 3, inner: 6, done: 13 },
+          },
         },
       },
       slide: {
@@ -748,6 +843,23 @@ const PROBLEMS = [
               "    return 0 if best == float('inf') else best",
             ],
             map: { init: 3, expand: 5, shrink: 7, done: 11 },
+          },
+          java: {
+            src: [
+              'int minLen(int[] arr, int target) {',
+              '    int l = 0, sum = 0, best = Integer.MAX_VALUE;',
+              '    for (int r = 0; r < arr.length; r++) {',
+              '        sum += arr[r];',
+              '        while (sum >= target) {',
+              '            best = Math.min(best, r - l + 1);',
+              '            sum -= arr[l];',
+              '            l++;',
+              '        }',
+              '    }',
+              '    return best == Integer.MAX_VALUE ? 0 : best;',
+              '}',
+            ],
+            map: { init: 2, expand: 4, shrink: 6, done: 11 },
           },
         },
       },
@@ -904,6 +1016,8 @@ export default function SlidingWindowVisualizer() {
     gap: 6,
     ...extra,
   })
+
+  const fileExt = lang === 'py' ? 'py' : lang === 'java' ? 'java' : 'js'
 
   return (
     <div
@@ -1264,10 +1378,10 @@ export default function SlidingWindowVisualizer() {
                     color: C.muted,
                   }}
                 >
-                  slidingWindow.{lang === 'py' ? 'py' : 'js'}
+                  slidingWindow.{fileExt}
                 </span>
                 <div style={{ display: 'flex', gap: 4 }}>
-                  {['js', 'py'].map((l) => (
+                  {['js', 'py', 'java'].map((l) => (
                     <button
                       key={l}
                       onClick={() => setLang(l)}
