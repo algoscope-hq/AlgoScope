@@ -606,6 +606,54 @@ export const Navbar = () => {
                   <SearchBar onOpen={closeExploreMenu} />
                 </div>
 
+                {/* Quick Links */}
+                <div>
+                  <h3 className="text-xs font-semibold uppercase tracking-widest text-slate-500 mb-3 px-2">
+                    Quick Access
+                  </h3>
+                  <ul className="space-y-1">
+                    <li>
+                      <Link
+                        to="/favorites"
+                        onClick={() => setOpen(false)}
+                        className={`block rounded-lg px-4 py-2.5 text-sm transition-all duration-200 border-l-2 ${
+                          pathname === '/favorites'
+                            ? 'bg-indigo-50/80 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-300 border-indigo-600 dark:border-indigo-500 font-semibold'
+                            : 'text-slate-600 dark:text-slate-400 border-transparent hover:bg-slate-100 dark:hover:bg-slate-900 hover:text-slate-900 dark:hover:text-slate-200 hover:border-slate-300 dark:hover:border-slate-700'
+                        }`}
+                      >
+                        Favorites
+                      </Link>
+                    </li>
+                    <li>
+                      <Link
+                        to="/practice"
+                        onClick={() => setOpen(false)}
+                        className={`block rounded-lg px-4 py-2.5 text-sm transition-all duration-200 border-l-2 ${
+                          pathname === '/practice'
+                            ? 'bg-indigo-50/80 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-300 border-indigo-600 dark:border-indigo-500 font-semibold'
+                            : 'text-slate-600 dark:text-slate-400 border-transparent hover:bg-slate-100 dark:hover:bg-slate-900 hover:text-slate-900 dark:hover:text-slate-200 hover:border-slate-300 dark:hover:border-slate-700'
+                        }`}
+                      >
+                        Practice
+                      </Link>
+                    </li>
+                    <li>
+                      <Link
+                        to="/challenge"
+                        onClick={() => setOpen(false)}
+                        className={`block rounded-lg px-4 py-2.5 text-sm transition-all duration-200 border-l-2 ${
+                          pathname === '/challenge'
+                            ? 'bg-indigo-50/80 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-300 border-indigo-600 dark:border-indigo-500 font-semibold'
+                            : 'text-slate-600 dark:text-slate-400 border-transparent hover:bg-slate-100 dark:hover:bg-slate-900 hover:text-slate-900 dark:hover:text-slate-200 hover:border-slate-300 dark:hover:border-slate-700'
+                        }`}
+                      >
+                        Challenge
+                      </Link>
+                    </li>
+                  </ul>
+                </div>
+
                 {/* Nav list */}
                 <div>
                   <h3 className="text-xs font-semibold uppercase tracking-widest text-slate-500 mb-3 px-2">
