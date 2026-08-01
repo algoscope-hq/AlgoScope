@@ -111,7 +111,7 @@ const Footer = () => {
                 href="https://github.com/algoscope-hq/AlgoScope.git"
                 target="_blank"
                 rel="noreferrer"
-                className="w-9 h-9 theme-media-surface border theme-border rounded-lg flex items-center justify-center theme-text-muted hover:theme-text-strong transition-all"
+                className="w-9 h-9 theme-media-surface border theme-border rounded-lg flex items-center justify-center theme-text-muted hover:theme-text-strong transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-900"
                 whileHover={{ scale: 1.05, y: -2 }}
               >
                 <img
@@ -124,7 +124,7 @@ const Footer = () => {
                 href="https://discord.gg/Yj43j7YV9T"
                 target="_blank"
                 rel="noreferrer"
-                className="w-9 h-9 theme-media-surface border theme-border rounded-lg flex items-center justify-center theme-text-muted hover:text-[#5865F2] hover:bg-[#5865F2]/10 hover:border-[#5865F2]/20 transition-all"
+                className="w-9 h-9 theme-media-surface border theme-border rounded-lg flex items-center justify-center theme-text-muted hover:text-[#5865F2] hover:bg-[#5865F2]/10 hover:border-[#5865F2]/20 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-900"
                 whileHover={{ scale: 1.05, y: -2 }}
               >
                 <svg
@@ -142,7 +142,7 @@ const Footer = () => {
                 rel="noreferrer"
                 title="Aditya Paul on LinkedIn"
                 aria-label="Aditya Paul on LinkedIn"
-                className="w-9 h-9 theme-media-surface border theme-border rounded-lg flex items-center justify-center theme-text-muted hover:text-[#0A66C2] hover:bg-[#0A66C2]/10 hover:border-[#0A66C2]/20 transition-all"
+                className="w-9 h-9 theme-media-surface border theme-border rounded-lg flex items-center justify-center theme-text-muted hover:text-[#0A66C2] hover:bg-[#0A66C2]/10 hover:border-[#0A66C2]/20 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-900"
                 whileHover={{ scale: 1.05, y: -2 }}
               >
                 <svg
@@ -160,7 +160,7 @@ const Footer = () => {
                 rel="noreferrer"
                 title="Bratik Mukherjee on LinkedIn"
                 aria-label="Bratik Mukherjee on LinkedIn"
-                className="w-9 h-9 theme-media-surface border theme-border rounded-lg flex items-center justify-center theme-text-muted hover:text-[#0A66C2] hover:bg-[#0A66C2]/10 hover:border-[#0A66C2]/20 transition-all"
+                className="w-9 h-9 theme-media-surface border theme-border rounded-lg flex items-center justify-center theme-text-muted hover:text-[#0A66C2] hover:bg-[#0A66C2]/10 hover:border-[#0A66C2]/20 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-900"
                 whileHover={{ scale: 1.05, y: -2 }}
               >
                 <svg
@@ -176,7 +176,7 @@ const Footer = () => {
             <Link
               to="/about"
               onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-              className="text-xs theme-text-muted hover:theme-text-strong font-medium transition-colors"
+              className="text-xs theme-text-muted hover:theme-text-strong font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-900"
             >
               About Project &rarr;
             </Link>
@@ -194,7 +194,7 @@ const Footer = () => {
                 key={i}
                 to={algo.path}
                 onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-                className={`group relative theme-media-surface border theme-border ${borderHoverClass} rounded-xl p-5 flex flex-col justify-between transition-all duration-300 transform hover:-translate-y-0.5`}
+                className={`group relative theme-media-surface border theme-border ${borderHoverClass} rounded-xl p-5 flex flex-col justify-between transition-all duration-300 transform hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-900`}
               >
                 <div className="space-y-2">
                   <div className="flex justify-between items-start gap-2">
@@ -238,7 +238,7 @@ const Footer = () => {
           <div className="text-[11px] theme-text-subtle">
             Maintained by{' '}
             <a
-              className="font-semibold text-cyan-400 transition hover:text-cyan-300"
+              className="font-semibold text-cyan-400 transition hover:text-cyan-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-900"
               href="https://github.com/Bimbok"
               target="_blank"
               rel="noreferrer"
@@ -248,7 +248,7 @@ const Footer = () => {
             {' & '}
             <a
               target="_blank"
-              className="font-semibold text-cyan-400 transition hover:text-cyan-300"
+              className="font-semibold text-cyan-400 transition hover:text-cyan-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-900"
               href="https://github.com/adityapaul26"
               rel="noreferrer"
             >
