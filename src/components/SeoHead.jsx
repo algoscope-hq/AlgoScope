@@ -177,9 +177,7 @@ export default function SeoHead() {
         description = `Compare different operations and implementation patterns for ${
           formattedType === 'Data Structure' ? 'various' : formattedType
         } data structures side-by-side.`
-        title = `${formattedType} Comparison | AlgoScope`
-        description = `Compare different operations and implementation patterns for ${formattedType === 'Data Structure' ? 'various' : formattedType} data structures side-by-side.`
-      }
+        
     }
     // Algorithm-specific logic (Solo Mode or specific algo)
     else if (algo) {
