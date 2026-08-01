@@ -470,7 +470,7 @@ export const Navbar = () => {
               data-tour="github-btn"
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center gap-2 border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/40 hover:bg-slate-100 dark:hover:bg-slate-800/80 text-slate-700 dark:text-slate-200 rounded-xl px-4 py-1.5 text-sm font-medium transition-all duration-300 shadow-md active:scale-95"
+              className="flex items-center gap-2 border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/40 hover:bg-slate-100 dark:hover:bg-slate-800/80 text-slate-700 dark:text-slate-200 rounded-xl px-6 py-2 text-sm font-medium transition-all duration-300 shadow-md active:scale-95"
             >
               <img
                 src={githubIcon}
