@@ -674,13 +674,12 @@ const SearchBar = ({ onOpen }) => {
       {/* Search Modal */}
       <AnimatePresence>
         {isModalOpen && (
-          <div className="fixed inset-0 z-[100] flex items-start justify-center pt-20 px-4">
+          <div className="fixed inset-0 z-[100] flex items-start justify-center pt-20 px-4" onClick={handleCloseModal}>
             {/* Backdrop */}
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              onClick={handleCloseModal}
               className="fixed inset-0 bg-slate-950/80 backdrop-blur-sm"
             />
 
@@ -690,6 +689,7 @@ const SearchBar = ({ onOpen }) => {
               role="dialog"
               aria-modal="true"
               aria-labelledby="search-dialog-title"
+              onClick={(e) => e.stopPropagation()}
               initial={{ opacity: 0, scale: 0.95, y: -20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: -20 }}
