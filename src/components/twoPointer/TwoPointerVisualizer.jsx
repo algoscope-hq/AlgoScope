@@ -1266,7 +1266,7 @@ export default function TwoPointerVisualizer() {
   }[pk]
 
   return (
-    <div style={{ fontFamily: "'IBM Plex Sans',sans-serif", color: '#c9d1d9' }}>
+    <div className="bg-slate-50 dark:bg-[#07090e] text-slate-900 dark:text-[#c9d1d9] transition-colors duration-300 min-h-screen" style={{ fontFamily: "'IBM Plex Sans',sans-serif" }}>
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap');
         .tp-viz ::-webkit-scrollbar{width:3px;height:3px}

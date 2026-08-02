@@ -952,12 +952,10 @@ export default function SlidingWindowVisualizer() {
 
   return (
     <div
+      className="bg-slate-50 dark:bg-[#0a0a0f] text-slate-900 dark:text-[#e6eaf2] transition-colors duration-300 min-h-screen"
       style={{
-        background: `radial-gradient(1200px 600px at 70% -10%, #15131f 0%, ${C.bg} 55%)`,
-        minHeight: '100%',
         padding: '22px 18px 32px',
         fontFamily: SANS,
-        color: C.text,
       }}
     >
       <style>{`

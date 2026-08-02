@@ -293,3 +293,5 @@ export const DSLayout = () => {
     </div>
   )
 }
+
+export default DSLayout
