@@ -45,12 +45,21 @@ describe('Challenge Questions Bank', () => {
   })
 
   it('picks question batches correctly', () => {
-    const batch = pickQuestionsBatch({ category: 'all', difficulty: 'all', count: 10 })
+    const batch = pickQuestionsBatch({
+      category: 'all',
+      difficulty: 'all',
+      count: 10,
+    })
     expect(batch.length).toBe(10)
   })
 
   it('supports adaptive question picking mode', () => {
-    const adaptiveBatch = pickQuestionsBatch({ category: 'all', difficulty: 'all', count: 10, adaptive: true })
+    const adaptiveBatch = pickQuestionsBatch({
+      category: 'all',
+      difficulty: 'all',
+      count: 10,
+      adaptive: true,
+    })
     expect(adaptiveBatch.length).toBe(10)
   })
 })

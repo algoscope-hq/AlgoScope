@@ -116,7 +116,12 @@ export default function ChallengeVisualizer() {
   }, [index, isAnswered, showResults, timerEnabled, current, handleTimeOut])
 
   // ── Start / Restart Quiz ─────────────────────────────────────────────────
-  const startNewQuiz = (cat = selectedCategory, diff = selectedDifficulty, cnt = questionCount, adapt = adaptiveMode) => {
+  const startNewQuiz = (
+    cat = selectedCategory,
+    diff = selectedDifficulty,
+    cnt = questionCount,
+    adapt = adaptiveMode
+  ) => {
     if (timerRef.current) clearInterval(timerRef.current)
 
     const nextBatch = pickQuestionsBatch({
@@ -170,7 +175,8 @@ export default function ChallengeVisualizer() {
       setCorrect((c) => c + 1)
 
       // Streak multiplier: 1x, 1.5x (3+), 2x (5+), 3x (8+)
-      const multiplier = newStreak >= 8 ? 3 : newStreak >= 5 ? 2 : newStreak >= 3 ? 1.5 : 1
+      const multiplier =
+        newStreak >= 8 ? 3 : newStreak >= 5 ? 2 : newStreak >= 3 ? 1.5 : 1
       const basePoints = Math.round(10 * multiplier)
 
       // Speed Bonus
@@ -234,7 +240,10 @@ export default function ChallengeVisualizer() {
       }
 
       try {
-        localStorage.setItem('algoscope-challenge-stats', JSON.stringify(updated))
+        localStorage.setItem(
+          'algoscope-challenge-stats',
+          JSON.stringify(updated)
+        )
       } catch (err) {
         console.error('Failed to save challenge stats:', err)
       }
@@ -250,7 +259,13 @@ export default function ChallengeVisualizer() {
     const map = {}
     userAnswers.forEach((ans) => {
       const cat = ans.question.categoryLabel || ans.question.category
-      if (!map[cat]) map[cat] = { total: 0, correct: 0, link: ans.question.visualizerLink, name: ans.question.visualizerName }
+      if (!map[cat])
+        map[cat] = {
+          total: 0,
+          correct: 0,
+          link: ans.question.visualizerLink,
+          name: ans.question.visualizerName,
+        }
       map[cat].total += 1
       if (ans.isCorrect) map[cat].correct += 1
     })
@@ -269,7 +284,9 @@ export default function ChallengeVisualizer() {
     return categoryPerformance.filter((c) => c.percentage < 100)
   }, [categoryPerformance])
 
-  const progressPct = Math.round(((index + 1) / Math.max(1, questions.length)) * 100)
+  const progressPct = Math.round(
+    ((index + 1) / Math.max(1, questions.length)) * 100
+  )
 
   // ─────────────────────────────────────────────────────────────────────────
   // RENDER: Quiz Complete Screen
@@ -363,7 +380,9 @@ export default function ChallengeVisualizer() {
                     className="flex items-center justify-between p-3 rounded-xl bg-slate-900/80 border border-slate-800"
                   >
                     <div>
-                      <p className="text-xs font-semibold text-slate-200">{item.category}</p>
+                      <p className="text-xs font-semibold text-slate-200">
+                        {item.category}
+                      </p>
                       <p className="text-[11px] text-slate-400">
                         {item.correct} / {item.total} correct
                       </p>
@@ -374,8 +393,8 @@ export default function ChallengeVisualizer() {
                           item.percentage >= 80
                             ? 'text-emerald-400'
                             : item.percentage >= 50
-                            ? 'text-amber-400'
-                            : 'text-rose-400'
+                              ? 'text-amber-400'
+                              : 'text-rose-400'
                         }`}
                       >
                         {item.percentage}%
@@ -402,7 +421,8 @@ export default function ChallengeVisualizer() {
                 💡 Recommended Visualizers for Practice
               </h3>
               <p className="text-xs text-slate-300 mb-4">
-                Brush up on these topics using AlgoScope interactive visualizers:
+                Brush up on these topics using AlgoScope interactive
+                visualizers:
               </p>
               <div className="flex flex-wrap gap-2">
                 {recommendations.map((rec) => (
@@ -412,7 +432,9 @@ export default function ChallengeVisualizer() {
                     className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold bg-cyan-500/20 text-cyan-200 border border-cyan-500/40 hover:bg-cyan-500/30 transition-all"
                   >
                     <span>{rec.category}</span>
-                    <span className="text-[10px] text-cyan-400">({rec.visualizerName}) →</span>
+                    <span className="text-[10px] text-cyan-400">
+                      ({rec.visualizerName}) →
+                    </span>
                   </Link>
                 ))}
               </div>
@@ -449,7 +471,11 @@ export default function ChallengeVisualizer() {
                             : 'bg-rose-500/20 text-rose-300'
                         }`}
                       >
-                        {isRight ? '✅ Correct' : ans.isTimeout ? '⏱️ Timeout' : '❌ Wrong'}
+                        {isRight
+                          ? '✅ Correct'
+                          : ans.isTimeout
+                            ? '⏱️ Timeout'
+                            : '❌ Wrong'}
                       </span>
                     </div>
 
@@ -461,7 +487,10 @@ export default function ChallengeVisualizer() {
                     </p>
 
                     <p className="text-slate-300 bg-slate-900/60 p-2.5 rounded-lg border border-white/5">
-                      <span className="font-bold text-slate-200">Explanation:</span> {q.explanation}
+                      <span className="font-bold text-slate-200">
+                        Explanation:
+                      </span>{' '}
+                      {q.explanation}
                     </p>
                   </div>
                 )
@@ -494,7 +523,9 @@ export default function ChallengeVisualizer() {
   // ─────────────────────────────────────────────────────────────────────────
   // RENDER: Active Quiz Screen
   // ─────────────────────────────────────────────────────────────────────────
-  const currentDiff = DIFFICULTIES.find((d) => d.id === (current?.difficulty || 'medium'))
+  const currentDiff = DIFFICULTIES.find(
+    (d) => d.id === (current?.difficulty || 'medium')
+  )
 
   return (
     <div className="flex flex-col p-2 sm:p-4 lg:p-5 mx-auto max-w-5xl">
@@ -502,7 +533,9 @@ export default function ChallengeVisualizer() {
       <div className="mb-6 rounded-2xl border border-slate-800 bg-slate-900/80 p-4 shadow-xl backdrop-blur-md flex flex-wrap items-center justify-between gap-4">
         {/* Category Selector */}
         <div className="flex flex-wrap items-center gap-2">
-          <label className="text-xs font-bold text-slate-400 uppercase tracking-wider">Category:</label>
+          <label className="text-xs font-bold text-slate-400 uppercase tracking-wider">
+            Category:
+          </label>
           <select
             value={selectedCategory}
             onChange={(e) => {
@@ -522,7 +555,9 @@ export default function ChallengeVisualizer() {
 
         {/* Difficulty Selector */}
         <div className="flex flex-wrap items-center gap-2">
-          <label className="text-xs font-bold text-slate-400 uppercase tracking-wider">Level:</label>
+          <label className="text-xs font-bold text-slate-400 uppercase tracking-wider">
+            Level:
+          </label>
           <select
             value={selectedDifficulty}
             onChange={(e) => {
@@ -542,13 +577,20 @@ export default function ChallengeVisualizer() {
 
         {/* Question Count Selector */}
         <div className="flex flex-wrap items-center gap-2">
-          <label className="text-xs font-bold text-slate-400 uppercase tracking-wider">Count:</label>
+          <label className="text-xs font-bold text-slate-400 uppercase tracking-wider">
+            Count:
+          </label>
           <select
             value={questionCount}
             onChange={(e) => {
               const cnt = Number(e.target.value)
               setQuestionCount(cnt)
-              startNewQuiz(selectedCategory, selectedDifficulty, cnt, adaptiveMode)
+              startNewQuiz(
+                selectedCategory,
+                selectedDifficulty,
+                cnt,
+                adaptiveMode
+              )
             }}
             className="bg-slate-950 text-slate-100 border border-slate-700 text-xs rounded-xl px-3 py-2 font-semibold focus:outline-none focus:border-cyan-500"
           >
@@ -568,7 +610,12 @@ export default function ChallengeVisualizer() {
               onChange={(e) => {
                 const adapt = e.target.checked
                 setAdaptiveMode(adapt)
-                startNewQuiz(selectedCategory, selectedDifficulty, questionCount, adapt)
+                startNewQuiz(
+                  selectedCategory,
+                  selectedDifficulty,
+                  questionCount,
+                  adapt
+                )
               }}
               className="rounded accent-cyan-500 h-4 w-4"
             />
@@ -609,7 +656,9 @@ export default function ChallengeVisualizer() {
 
             {/* Score Display */}
             <div className="flex flex-col items-center bg-slate-800/80 px-4 py-1.5 rounded-xl border border-slate-700 shadow-inner">
-              <span className="text-[9px] text-slate-400 uppercase tracking-widest font-bold">Score</span>
+              <span className="text-[9px] text-slate-400 uppercase tracking-widest font-bold">
+                Score
+              </span>
               <span className="text-xl font-bold text-cyan-400 drop-shadow-[0_0_8px_rgba(34,211,238,0.5)]">
                 {score}
               </span>
@@ -617,16 +666,18 @@ export default function ChallengeVisualizer() {
 
             {/* Streak Combo Display */}
             <div className="flex flex-col items-center bg-slate-800/80 px-4 py-1.5 rounded-xl border border-slate-700 shadow-inner">
-              <span className="text-[9px] text-slate-400 uppercase tracking-widest font-bold">Streak</span>
+              <span className="text-[9px] text-slate-400 uppercase tracking-widest font-bold">
+                Streak
+              </span>
               <span
                 className={`text-xl font-bold ${
                   streak >= 8
                     ? 'text-rose-400 drop-shadow-[0_0_12px_rgba(244,63,94,0.9)] animate-bounce'
                     : streak >= 5
-                    ? 'text-orange-400 drop-shadow-[0_0_10px_rgba(249,115,22,0.8)]'
-                    : streak >= 3
-                    ? 'text-amber-400'
-                    : 'text-slate-300'
+                      ? 'text-orange-400 drop-shadow-[0_0_10px_rgba(249,115,22,0.8)]'
+                      : streak >= 3
+                        ? 'text-amber-400'
+                        : 'text-slate-300'
                 }`}
               >
                 {streak} 🔥
@@ -636,8 +687,12 @@ export default function ChallengeVisualizer() {
             {/* High Score Badge */}
             {stats.highScore > 0 && (
               <div className="hidden sm:flex flex-col items-center bg-slate-800/50 px-3 py-1.5 rounded-xl border border-slate-800 text-[10px]">
-                <span className="text-slate-400 uppercase tracking-widest font-semibold">Best</span>
-                <span className="font-bold text-amber-300">{stats.highScore} pts</span>
+                <span className="text-slate-400 uppercase tracking-widest font-semibold">
+                  Best
+                </span>
+                <span className="font-bold text-amber-300">
+                  {stats.highScore} pts
+                </span>
               </div>
             )}
           </div>
@@ -656,14 +711,24 @@ export default function ChallengeVisualizer() {
           <div className="mb-6">
             <div className="flex items-center justify-between text-xs font-bold mb-1">
               <span className="text-slate-400">Time Remaining:</span>
-              <span className={timeLeft <= 5 ? 'text-rose-400 animate-pulse font-black' : 'text-cyan-400'}>
+              <span
+                className={
+                  timeLeft <= 5
+                    ? 'text-rose-400 animate-pulse font-black'
+                    : 'text-cyan-400'
+                }
+              >
                 {timeLeft}s
               </span>
             </div>
             <div className="w-full bg-slate-800 h-2 rounded-full overflow-hidden border border-slate-700">
               <motion.div
                 className={`h-full ${
-                  timeLeft <= 5 ? 'bg-rose-500' : timeLeft <= 8 ? 'bg-amber-500' : 'bg-cyan-500'
+                  timeLeft <= 5
+                    ? 'bg-rose-500'
+                    : timeLeft <= 8
+                      ? 'bg-amber-500'
+                      : 'bg-cyan-500'
                 }`}
                 initial={{ width: '100%' }}
                 animate={{ width: `${(timeLeft / TIMER_SECONDS) * 100}%` }}
@@ -680,7 +745,8 @@ export default function ChallengeVisualizer() {
           </span>
           <span
             className={`px-2.5 py-1 rounded-lg text-[10px] font-bold uppercase tracking-wider border ${
-              currentDiff?.color || 'text-slate-300 bg-slate-800 border-slate-700'
+              currentDiff?.color ||
+              'text-slate-300 bg-slate-800 border-slate-700'
             }`}
           >
             {current.difficulty}
@@ -698,7 +764,11 @@ export default function ChallengeVisualizer() {
             <SyntaxHighlighter
               language={current.codeLanguage || 'javascript'}
               style={vscDarkPlus}
-              customStyle={{ margin: 0, padding: '1rem', background: '#090d16' }}
+              customStyle={{
+                margin: 0,
+                padding: '1rem',
+                background: '#090d16',
+              }}
             >
               {current.codeSnippet}
             </SyntaxHighlighter>
@@ -723,7 +793,8 @@ export default function ChallengeVisualizer() {
                   btnClasses =
                     'border-rose-500 bg-rose-500/20 text-rose-200 shadow-[0_0_15px_rgba(244,63,94,0.25)]'
                 } else {
-                  btnClasses = 'border-slate-800 bg-slate-900/40 text-slate-500 opacity-60'
+                  btnClasses =
+                    'border-slate-800 bg-slate-900/40 text-slate-500 opacity-60'
                 }
               }
 
@@ -747,8 +818,12 @@ export default function ChallengeVisualizer() {
                     </span>
                     <span>{opt}</span>
                   </span>
-                  {isAnswered && isCorrect && <span className="text-xl">✅</span>}
-                  {isAnswered && isSelected && !isCorrect && <span className="text-xl">❌</span>}
+                  {isAnswered && isCorrect && (
+                    <span className="text-xl">✅</span>
+                  )}
+                  {isAnswered && isSelected && !isCorrect && (
+                    <span className="text-xl">❌</span>
+                  )}
                 </motion.button>
               )
             })}
@@ -776,7 +851,11 @@ export default function ChallengeVisualizer() {
                     <span>Correct Answer! 🎉</span>
                     {streak >= 3 && (
                       <span className="text-xs font-extrabold px-2 py-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-500/40">
-                        {streak >= 8 ? '3x UNSTOPPABLE' : streak >= 5 ? '2x COMBO' : '1.5x STREAK'}
+                        {streak >= 8
+                          ? '3x UNSTOPPABLE'
+                          : streak >= 5
+                            ? '2x COMBO'
+                            : '1.5x STREAK'}
                       </span>
                     )}
                   </>
@@ -789,7 +868,8 @@ export default function ChallengeVisualizer() {
 
               {/* Explanation Text */}
               <div className="text-xs sm:text-sm text-slate-300 bg-slate-950/60 border border-white/10 rounded-xl p-4 leading-relaxed">
-                <span className="font-bold text-white">Explanation:</span> {current.explanation}
+                <span className="font-bold text-white">Explanation:</span>{' '}
+                {current.explanation}
               </div>
 
               {/* Practice Link + Next Button */}
