@@ -1,4 +1,5 @@
-import React, { useState, useMemo } from 'react'
+import React, { useMemo, useState } from 'react'
+import { usePersistedState } from '../../lib/usePersistedState'
 import { useSearchParams } from 'react-router-dom'
 import SpeedSlider from '../SpeedSlider.jsx'
 import CodePanel from '../visualizer/CodePanel'
@@ -155,7 +156,7 @@ const STATE_STYLE_PRESETS = {
 export default function Visualizer() {
   const [searchParams, setSearchParams] = useSearchParams()
   const [baseArray, setBaseArray] = useState([50, 120, 70, 30, 200, 90, 160])
-  const [speed, setSpeed] = useState(1)
+  const [speed, setSpeed] = usePersistedState('algo-speed-sorting', 1)
   const [language, setLanguage] = useState('javascript')
   const [algorithmType, setAlgorithmType] = useState('simple')
   const [customInput, setCustomInput] = useState('')

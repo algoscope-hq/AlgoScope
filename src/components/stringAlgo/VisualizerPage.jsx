@@ -1,4 +1,5 @@
-import React, { useEffect, useMemo, useState } from 'react'
+import React, { useEffect, useMemo } from 'react'
+import { usePersistedState } from '../../lib/usePersistedState'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useSearchParams } from 'react-router-dom'
 import SpeedSlider from '../SpeedSlider'
@@ -41,7 +42,7 @@ function SoloMode() {
   const [patternInput, setPatternInput] = useState(DEFAULTS[initialAlgo].pattern)
   const [activeText, setActiveText] = useState('')
   const [activePattern, setActivePattern] = useState('')
-  const [speed, setSpeed] = useState(1)
+  const [speed, setSpeed] = usePersistedState('algo-speed-string', 1)
   const [language, setLanguage] = useState('javascript')
 
   useEffect(() => {
