@@ -247,7 +247,7 @@ export const Navbar = () => {
             <SearchBar onOpen={closeExploreMenu} />
           </div>
 
-          <div className="hidden md:flex items-center gap-6">
+          <div className="hidden md:flex items-center gap-3 lg:gap-4">
             <ul
               className="flex items-center gap-1 relative"
               onMouseLeave={() => setHoveredTab(null)}
@@ -277,7 +277,7 @@ export const Navbar = () => {
                     setHoveredTab('explore')
                   }}
                   onKeyDown={handleExploreKeyDown}
-                  className={`relative text-sm font-medium px-4 py-1.5 rounded-lg transition-all duration-300 z-10 cursor-pointer ${
+                  className={`relative text-sm font-medium px-3 py-1.5 rounded-lg transition-all duration-300 z-10 cursor-pointer ${
                     isExploreActive
                       ? 'text-indigo-600 dark:text-indigo-300 font-semibold'
                       : 'text-slate-400 hover:text-slate-900 dark:hover:text-slate-100'
@@ -299,7 +299,7 @@ export const Navbar = () => {
                 <div
                   id="desktop-explore-menu"
                   role="menu"
-                  className={`absolute left-0 top-full mt-3 py-2 w-64 rounded-2xl border border-slate-200/80 dark:border-slate-800/80 bg-white dark:bg-slate-950 p-2 shadow-2xl backdrop-blur-2xl transition-all duration-300 z-50 ${
+                  className={`absolute left-0 top-full mt-3 py-2 w-64 max-h-[70vh] overflow-y-auto rounded-2xl border border-slate-200/80 dark:border-slate-800/80 bg-white dark:bg-slate-950 p-2 shadow-2xl backdrop-blur-2xl transition-all duration-300 z-50 ${
                     isExploreMenuOpen
                       ? 'visible opacity-100 translate-y-0'
                       : 'invisible opacity-0 translate-y-2'
@@ -353,33 +353,6 @@ export const Navbar = () => {
                 </div>
               </li>
 
-              {/* Top Level Link: Practice */}
-              <li
-                className="relative py-1.5"
-                onMouseEnter={() => setHoveredTab('favorites')}
-              >
-                <Link
-                  to="/favorites"
-                  data-tour="favorites-nav"
-                  className={`relative text-sm font-medium px-4 py-1.5 rounded-lg transition-all duration-300 z-10 ${
-                    pathname === '/favorites'
-                      ? 'text-indigo-600 dark:text-indigo-300 font-semibold'
-                      : 'text-slate-400 hover:text-slate-900 dark:hover:text-slate-100'
-                  }`}
-                >
-                  Favorites
-                </Link>
-                {hoveredTab === 'favorites' && (
-                  <motion.div
-                    layoutId="nav-hover-pill"
-                    className="absolute inset-0 bg-slate-200/50 dark:bg-slate-900/60 border border-slate-300/30 dark:border-slate-800/50 rounded-lg -z-0"
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                    transition={{ type: 'spring', stiffness: 350, damping: 28 }}
-                  />
-                )}
-              </li>
               {/* Top Level Link: Concepts */}
               <li
                 className="relative py-1.5"
@@ -387,7 +360,7 @@ export const Navbar = () => {
               >
                 <Link
                   to="/concepts"
-                  className={`relative text-sm font-medium px-4 py-1.5 rounded-lg transition-all duration-300 z-10 ${
+                  className={`relative text-sm font-medium px-3 py-1.5 rounded-lg transition-all duration-300 z-10 ${
                     pathname === '/concepts'
                       ? 'text-indigo-600 dark:text-indigo-300 font-semibold'
                       : 'text-slate-400 hover:text-slate-900 dark:hover:text-slate-100'
@@ -407,6 +380,7 @@ export const Navbar = () => {
                 )}
               </li>
 
+              {/* Top Level Link: Practice */}
               <li
                 className="relative py-1.5"
                 onMouseEnter={() => setHoveredTab('practice')}
@@ -414,7 +388,7 @@ export const Navbar = () => {
                 <Link
                   to="/practice"
                   data-tour="practice-nav"
-                  className={`relative text-sm font-medium px-4 py-1.5 rounded-lg transition-all duration-300 z-10 ${
+                  className={`relative text-sm font-medium px-3 py-1.5 rounded-lg transition-all duration-300 z-10 ${
                     pathname === '/practice'
                       ? 'text-indigo-600 dark:text-indigo-300 font-semibold'
                       : 'text-slate-400 hover:text-slate-900 dark:hover:text-slate-100'
@@ -442,7 +416,7 @@ export const Navbar = () => {
                 <Link
                   to="/challenge"
                   data-tour="challenge-nav"
-                  className={`relative text-sm font-medium px-4 py-1.5 rounded-lg transition-all duration-300 z-10 ${
+                  className={`relative text-sm font-medium px-3 py-1.5 rounded-lg transition-all duration-300 z-10 ${
                     pathname === '/challenge'
                       ? 'text-indigo-600 dark:text-indigo-300 font-semibold'
                       : 'text-slate-400 hover:text-slate-900 dark:hover:text-slate-100'
@@ -451,6 +425,34 @@ export const Navbar = () => {
                   Challenge
                 </Link>
                 {hoveredTab === 'challenge' && (
+                  <motion.div
+                    layoutId="nav-hover-pill"
+                    className="absolute inset-0 bg-slate-200/50 dark:bg-slate-900/60 border border-slate-300/30 dark:border-slate-800/50 rounded-lg -z-0"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ type: 'spring', stiffness: 350, damping: 28 }}
+                  />
+                )}
+              </li>
+
+              {/* Top Level Link: Favorites */}
+              <li
+                className="relative py-1.5"
+                onMouseEnter={() => setHoveredTab('favorites')}
+              >
+                <Link
+                  to="/favorites"
+                  data-tour="favorites-nav"
+                  className={`relative text-sm font-medium px-3 py-1.5 rounded-lg transition-all duration-300 z-10 ${
+                    pathname === '/favorites'
+                      ? 'text-indigo-600 dark:text-indigo-300 font-semibold'
+                      : 'text-slate-400 hover:text-slate-900 dark:hover:text-slate-100'
+                  }`}
+                >
+                  Favorites
+                </Link>
+                {hoveredTab === 'favorites' && (
                   <motion.div
                     layoutId="nav-hover-pill"
                     className="absolute inset-0 bg-slate-200/50 dark:bg-slate-900/60 border border-slate-300/30 dark:border-slate-800/50 rounded-lg -z-0"
@@ -470,20 +472,20 @@ export const Navbar = () => {
               data-tour="github-btn"
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center gap-2 border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/40 hover:bg-slate-100 dark:hover:bg-slate-800/80 text-slate-700 dark:text-slate-200 rounded-xl px-4 py-1.5 text-sm font-medium transition-all duration-300 shadow-md active:scale-95"
+              aria-label="GitHub Repository"
+              title="GitHub Repository"
+              className="h-10 w-10 inline-flex items-center justify-center rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/40 hover:bg-slate-100 dark:hover:bg-slate-800/80 text-slate-700 dark:text-slate-200 transition-all duration-300 shadow-md active:scale-95"
             >
               <img
                 src={githubIcon}
-                alt="Github Repository Link"
+                alt="GitHub"
                 className="w-5 h-5 dark:invert-0 invert"
               />
-
-              <span>Github</span>
             </a>
 
             <div
               data-tour="profile-nav"
-              className="flex items-center gap-4 border-l border-slate-200 dark:border-slate-800/80 pl-6"
+              className="flex items-center gap-3 border-l border-slate-200 dark:border-slate-800/80 pl-3 lg:pl-4"
             >
               {HAS_CLERK ? (
                 <>
