@@ -1061,7 +1061,12 @@ function CodePanel({ code, activeLine, lang, setLang, accent }) {
   )
 }
 
-const VALID_PROBLEMS = ['fibonacci', 'climbingStairs', 'houseRobber', 'coinChange']
+const VALID_PROBLEMS = [
+  'fibonacci',
+  'climbingStairs',
+  'houseRobber',
+  'coinChange',
+]
 const VALID_APPROACHES = ['recursion', 'memo', 'tab', 'space']
 
 export default function DPVisualizer() {
@@ -1069,8 +1074,12 @@ export default function DPVisualizer() {
   const initialProb = searchParams.get('problem') || searchParams.get('algo')
   const initialAppr = searchParams.get('approach')
 
-  const [pk, setPk] = useState(VALID_PROBLEMS.includes(initialProb) ? initialProb : 'fibonacci')
-  const [ap, setAp] = useState(VALID_APPROACHES.includes(initialAppr) ? initialAppr : 'recursion')
+  const [pk, setPk] = useState(
+    VALID_PROBLEMS.includes(initialProb) ? initialProb : 'fibonacci'
+  )
+  const [ap, setAp] = useState(
+    VALID_APPROACHES.includes(initialAppr) ? initialAppr : 'recursion'
+  )
   const [n, setN] = useState(6)
   const [step, setStep] = useState(0)
   const [playing, setPlaying] = useState(false)
@@ -1078,20 +1087,28 @@ export default function DPVisualizer() {
   const [lang, setLang] = useState('js')
   const timer = useRef(null)
 
-  useEffect(() => {
-    const probParam = searchParams.get('problem') || searchParams.get('algo')
-    const apprParam = searchParams.get('approach')
+  const probParam = searchParams.get('problem') || searchParams.get('algo')
+  const apprParam = searchParams.get('approach')
+  const [prevProbParam, setPrevProbParam] = useState(probParam)
+  const [prevApprParam, setPrevApprParam] = useState(apprParam)
+
+  if (probParam !== prevProbParam) {
+    setPrevProbParam(probParam)
     if (VALID_PROBLEMS.includes(probParam) && probParam !== pk) {
       setPk(probParam)
       setStep(0)
       setPlaying(false)
     }
+  }
+
+  if (apprParam !== prevApprParam) {
+    setPrevApprParam(apprParam)
     if (VALID_APPROACHES.includes(apprParam) && apprParam !== ap) {
       setAp(apprParam)
       setStep(0)
       setPlaying(false)
     }
-  }, [searchParams])
+  }
 
   const handleSetPk = (newPk) => {
     setPk(newPk)

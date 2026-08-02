@@ -54,13 +54,16 @@ export default function CPUSchedulingPage() {
     return VALID_ALGORITHMS.includes(saved) ? saved : 'fcfs'
   })
 
-  useEffect(() => {
-    const a = (searchParams.get('algo') || '').toLowerCase()
-    const targetAlgo = CPU_ALGO_MAP[a]
+  const paramFromUrl = (searchParams.get('algo') || '').toLowerCase()
+  const [prevParamFromUrl, setPrevParamFromUrl] = useState(paramFromUrl)
+
+  if (paramFromUrl !== prevParamFromUrl) {
+    setPrevParamFromUrl(paramFromUrl)
+    const targetAlgo = CPU_ALGO_MAP[paramFromUrl]
     if (targetAlgo && targetAlgo !== selectedAlgorithm) {
       setSelectedAlgorithm(targetAlgo)
     }
-  }, [searchParams])
+  }
 
   const handleSelectAlgorithm = (algo) => {
     setSelectedAlgorithm(algo)

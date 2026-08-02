@@ -129,7 +129,8 @@ export const ALGORITHMS = [
   {
     id: 'kadane-algorithm',
     title: "Kadane's Algorithm",
-    description: 'Maximum Subarray Sum visualization with O(n) dynamic state tracking.',
+    description:
+      'Maximum Subarray Sum visualization with O(n) dynamic state tracking.',
     color: 'theme-card border-pink-500/30 hover:border-pink-400',
     link: '/kadane',
     difficulty: 'Intermediate',

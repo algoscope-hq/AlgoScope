@@ -15,8 +15,14 @@ export const ConceptsOverview = () => {
 
   const allConcepts = useMemo(() => {
     return [
-      ...ALGORITHMS.map((item) => ({ ...item, category: 'Algorithms & Data Structures' })),
-      ...OPERATING_SYSTEMS.map((item) => ({ ...item, category: 'Operating Systems' })),
+      ...ALGORITHMS.map((item) => ({
+        ...item,
+        category: 'Algorithms & Data Structures',
+      })),
+      ...OPERATING_SYSTEMS.map((item) => ({
+        ...item,
+        category: 'Operating Systems',
+      })),
     ]
   }, [])
 
@@ -42,7 +48,8 @@ export const ConceptsOverview = () => {
       algo: ALGORITHMS.length,
       os: OPERATING_SYSTEMS.length,
       beginner: allConcepts.filter((i) => i.difficulty === 'Beginner').length,
-      intermediate: allConcepts.filter((i) => i.difficulty === 'Intermediate').length,
+      intermediate: allConcepts.filter((i) => i.difficulty === 'Intermediate')
+        .length,
       advanced: allConcepts.filter((i) => i.difficulty === 'Advanced').length,
     }
   }, [allConcepts])
@@ -59,7 +66,8 @@ export const ConceptsOverview = () => {
             Algorithm & Systems Concepts
           </h1>
           <p className="max-w-2xl mx-auto text-base sm:text-lg theme-text-subtle">
-            Explore interactive visualizers, data structures, complexity theory, and operating system policies — all organized in one master index.
+            Explore interactive visualizers, data structures, complexity theory,
+            and operating system policies — all organized in one master index.
           </p>
         </div>
 
@@ -93,10 +101,16 @@ export const ConceptsOverview = () => {
           <div className="flex flex-wrap items-center gap-1.5 w-full md:w-auto">
             {[
               { id: 'All', label: `All (${counts.all})` },
-              { id: 'Algorithms & Data Structures', label: `Algorithms (${counts.algo})` },
+              {
+                id: 'Algorithms & Data Structures',
+                label: `Algorithms (${counts.algo})`,
+              },
               { id: 'Operating Systems', label: `OS (${counts.os})` },
               { id: 'Beginner', label: `Beginner (${counts.beginner})` },
-              { id: 'Intermediate', label: `Intermediate (${counts.intermediate})` },
+              {
+                id: 'Intermediate',
+                label: `Intermediate (${counts.intermediate})`,
+              },
               { id: 'Advanced', label: `Advanced (${counts.advanced})` },
             ].map((tab) => (
               <button
@@ -115,7 +129,10 @@ export const ConceptsOverview = () => {
         </div>
 
         {/* Concept Cards Grid */}
-        <motion.div layout className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        <motion.div
+          layout
+          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"
+        >
           <AnimatePresence>
             {filteredConcepts.map((item) => (
               <motion.div
@@ -133,11 +150,14 @@ export const ConceptsOverview = () => {
                   <div>
                     <div className="flex items-center justify-between gap-2 mb-3">
                       <span className="text-[10px] font-mono uppercase tracking-wider text-indigo-400 font-semibold">
-                        {item.category === 'Operating Systems' ? 'Systems' : 'Algorithm'}
+                        {item.category === 'Operating Systems'
+                          ? 'Systems'
+                          : 'Algorithm'}
                       </span>
                       <span
                         className={`shrink-0 text-[10px] font-semibold px-2.5 py-0.5 rounded-full border ${
-                          difficultyColor[item.difficulty] || 'text-slate-400 border-slate-600/40'
+                          difficultyColor[item.difficulty] ||
+                          'text-slate-400 border-slate-600/40'
                         }`}
                       >
                         {item.difficulty}
@@ -176,7 +196,9 @@ export const ConceptsOverview = () => {
 
         {filteredConcepts.length === 0 && (
           <div className="text-center py-16 bg-slate-900/40 rounded-2xl border border-slate-800/60 mt-4">
-            <p className="text-base text-slate-400 mb-2">No concepts found matching "{searchQuery}"</p>
+            <p className="text-base text-slate-400 mb-2">
+              No concepts found matching &quot;{searchQuery}&quot;
+            </p>
             <button
               onClick={() => {
                 setSearchQuery('')

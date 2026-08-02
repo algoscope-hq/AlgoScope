@@ -75,7 +75,8 @@ const pageMetadata = {
       'Visualize string matching algorithms step-by-step. Master KMP (Knuth-Morris-Pratt), Rabin-Karp, Z-Algorithm, Naive Search, and Trie structures.',
   },
   '/dynamic-programming': {
-    title: 'Dynamic Programming Visualizer (Memoization & Tabulation) | AlgoScope',
+    title:
+      'Dynamic Programming Visualizer (Memoization & Tabulation) | AlgoScope',
     description:
       'Learn Dynamic Programming interactively. Visualize 1D and 2D DP grids, recursion tree pruning, memoization tables, and space optimization.',
   },
@@ -228,11 +229,13 @@ export default function SeoHead() {
         description =
           'Learn the Longest Common Subsequence (LCS) algorithm visually in dynamic programming. Understand 2D DP table construction, character match transitions, and path traceback.'
       } else if (problemKey === 'knapsack') {
-        title = '0/1 Knapsack Problem Visualizer (Dynamic Programming) | AlgoScope'
+        title =
+          '0/1 Knapsack Problem Visualizer (Dynamic Programming) | AlgoScope'
         description =
           'Master the 0/1 Knapsack problem step-by-step. Visualize weight vs capacity dynamic programming grids, item inclusion/exclusion decisions, and optimal value maximization.'
       } else if (problemKey === 'coin-change' || problemKey === 'coinchange') {
-        title = 'Coin Change Problem Visualizer (Dynamic Programming) | AlgoScope'
+        title =
+          'Coin Change Problem Visualizer (Dynamic Programming) | AlgoScope'
         description =
           'Visualize the Coin Change algorithm with 1D dynamic programming arrays. Track min coin combinations, subproblem optimal substructure, and step-by-step state transitions.'
       } else if (problemKey === 'lis') {
@@ -242,16 +245,24 @@ export default function SeoHead() {
       }
     } else if (pathname === '/dp-journey') {
       const approach = searchParams.get('approach')
-      const approachText = approach ? ` (${formatLabel(approach)} approach)` : ''
+      const approachText = approach
+        ? ` (${formatLabel(approach)} approach)`
+        : ''
       if (problemKey === 'fibonacci') {
         title = `Fibonacci DP Optimization${approachText} | AlgoScope`
         description =
           'Trace Fibonacci sequence optimizations step-by-step: Exponential O(2^n) recursion tree vs O(n) memoization, DP tabulation, and O(1) space optimization.'
-      } else if (problemKey === 'climbingstairs' || problemKey === 'climbing-stairs') {
+      } else if (
+        problemKey === 'climbingstairs' ||
+        problemKey === 'climbing-stairs'
+      ) {
         title = `Climbing Stairs DP Visualizer${approachText} | AlgoScope`
         description =
           'Solve the Climbing Stairs problem using Dynamic Programming. Visualize step combinations, recurrence relations, and space-optimized Fibonacci-like states.'
-      } else if (problemKey === 'houserobber' || problemKey === 'house-robber') {
+      } else if (
+        problemKey === 'houserobber' ||
+        problemKey === 'house-robber'
+      ) {
         title = `House Robber DP Visualizer${approachText} | AlgoScope`
         description =
           'Visualize the House Robber problem step-by-step. Learn dynamic decision making between robbing current house vs skipping adjacent houses for maximum profit.'
@@ -262,12 +273,16 @@ export default function SeoHead() {
       }
     } else if (pathname === '/sliding-window') {
       const approach = searchParams.get('approach')
-      const approachText = approach === 'brute' ? ' (Brute Force)' : ' (Sliding Window)'
+      const approachText =
+        approach === 'brute' ? ' (Brute Force)' : ' (Sliding Window)'
       if (problemKey === 'maxsum' || problemKey === 'maxsubarray') {
         title = `Max Sum Subarray of Size K${approachText} | AlgoScope`
         description =
           'Visualize Maximum Sum Subarray of fixed size K. See window expansion, element addition/subtraction, and O(n) linear sliding window performance.'
-      } else if (problemKey === 'longestsubstr' || problemKey === 'longestsubstring') {
+      } else if (
+        problemKey === 'longestsubstr' ||
+        problemKey === 'longestsubstring'
+      ) {
         title = `Longest Substring Without Repeating Characters${approachText} | AlgoScope`
         description =
           'Master Longest Substring Without Repeating Characters visually. Track expanding right pointer, contracting left pointer, and character set frequency.'
@@ -281,7 +296,11 @@ export default function SeoHead() {
           'Visualize Maximum Vowels in Substring of size K using sliding window. Track vowel count updates in O(n) time.'
       }
     } else if (pathname === '/two-pointer') {
-      if (problemKey === 'twosum' || problemKey === 'two_sum' || problemKey === 'two-sum') {
+      if (
+        problemKey === 'twosum' ||
+        problemKey === 'two_sum' ||
+        problemKey === 'two-sum'
+      ) {
         title = 'Two Sum (Sorted Array) Two Pointer Visualizer | AlgoScope'
         description =
           'Solve Two Sum on sorted arrays using two converging pointers. Watch L and R pointers adjust based on target sum in O(n) time and O(1) space.'
@@ -303,15 +322,27 @@ export default function SeoHead() {
         title = 'Largest Rectangle in Histogram (Monotonic Stack) | AlgoScope'
         description =
           'Visualize Largest Rectangle in Histogram using a monotonic stack. See bar height comparisons, stack push/pop operations, and max area calculation.'
-      } else if (problemKey === 'nextgreater' || problemKey === 'next_greater' || problemKey === 'next-greater') {
+      } else if (
+        problemKey === 'nextgreater' ||
+        problemKey === 'next_greater' ||
+        problemKey === 'next-greater'
+      ) {
         title = 'Next Greater Element (Monotonic Stack) | AlgoScope'
         description =
           'Master Next Greater Element algorithm step-by-step using a monotonic decreasing stack. See element traversal and answer array updates.'
-      } else if (problemKey === 'dailytemp' || problemKey === 'daily_temp' || problemKey === 'daily-temp') {
+      } else if (
+        problemKey === 'dailytemp' ||
+        problemKey === 'daily_temp' ||
+        problemKey === 'daily-temp'
+      ) {
         title = 'Daily Temperatures (Monotonic Stack) | AlgoScope'
         description =
           'Solve Daily Temperatures problem visually. Track index differences and monotonic stack state for waiting days calculation.'
-      } else if (problemKey === 'maximalrectangle' || problemKey === 'maximal_rectangle' || problemKey === 'maximal-rectangle') {
+      } else if (
+        problemKey === 'maximalrectangle' ||
+        problemKey === 'maximal_rectangle' ||
+        problemKey === 'maximal-rectangle'
+      ) {
         title = 'Maximal Rectangle in Binary Matrix | AlgoScope'
         description =
           'Visualize Maximal Rectangle in a binary matrix. Learn row-by-row histogram reduction and monotonic stack evaluation.'
@@ -366,18 +397,26 @@ export default function SeoHead() {
         description =
           'Master Shortest Job First (SJF) non-preemptive CPU scheduling visually. See process execution ordering by shortest burst time.'
       } else if (problemKey === 'srtf') {
-        title = 'Shortest Remaining Time First (SRTF) CPU Scheduling | AlgoScope'
+        title =
+          'Shortest Remaining Time First (SRTF) CPU Scheduling | AlgoScope'
         description =
           'Visualize SRTF preemptive CPU scheduling with dynamic burst updates, process preemption, and Gantt chart execution.'
       } else if (problemKey === 'priority') {
         title = 'Priority CPU Scheduling Visualizer | AlgoScope'
         description =
           'Learn Priority CPU scheduling visually. Track process priority queues, preemption logic, and execution metrics.'
-      } else if (problemKey === 'rr' || problemKey === 'roundrobin' || problemKey === 'round-robin') {
+      } else if (
+        problemKey === 'rr' ||
+        problemKey === 'roundrobin' ||
+        problemKey === 'round-robin'
+      ) {
         title = 'Round Robin (RR) CPU Scheduling Visualizer | AlgoScope'
         description =
           'Visualize Round Robin CPU scheduling with time quantum slices, ready queue rotation, and context switching Gantt charts.'
-      } else if (problemKey === 'multilevelqueue' || problemKey === 'multilevel-queue') {
+      } else if (
+        problemKey === 'multilevelqueue' ||
+        problemKey === 'multilevel-queue'
+      ) {
         title = 'Multilevel Queue CPU Scheduling Visualizer | AlgoScope'
         description =
           'Understand Multilevel Queue CPU scheduling across high and low priority queues with preemptive time-slicing.'

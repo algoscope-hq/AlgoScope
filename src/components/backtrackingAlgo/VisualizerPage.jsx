@@ -1,4 +1,3 @@
-import { useEffect } from 'react'
 import React, { useMemo, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useSearchParams } from 'react-router-dom'
@@ -134,12 +133,21 @@ export default function VisualizerPage() {
 // Solo Mode
 // ─────────────────────────────────────────────────────────────
 
-const VALID_BT_ALGOS = ['nqueens', 'sudoku', 'maze', 'knight', 'graph-coloring', 'hanoi']
+const VALID_BT_ALGOS = [
+  'nqueens',
+  'sudoku',
+  'maze',
+  'knight',
+  'graph-coloring',
+  'hanoi',
+]
 
 function SoloMode() {
   const [searchParams, setSearchParams] = useSearchParams()
   const algoFromUrl = searchParams.get('algo')
-  const initialAlgo = VALID_BT_ALGOS.includes(algoFromUrl) ? algoFromUrl : 'nqueens'
+  const initialAlgo = VALID_BT_ALGOS.includes(algoFromUrl)
+    ? algoFromUrl
+    : 'nqueens'
 
   const [algo, setAlgo] = useState(initialAlgo)
   const [boardSize, setBoardSize] = useState(6)
@@ -150,13 +158,14 @@ function SoloMode() {
   const [colorK, setColorK] = useState(3)
   const [preset, setPreset] = useState('Petersen-like')
 
-  useEffect(() => {
-    const a = searchParams.get('algo')
-    if (VALID_BT_ALGOS.includes(a) && a !== algo) {
-      setAlgo(a)
+  const [prevAlgoFromUrl, setPrevAlgoFromUrl] = useState(algoFromUrl)
+  if (algoFromUrl !== prevAlgoFromUrl) {
+    setPrevAlgoFromUrl(algoFromUrl)
+    if (VALID_BT_ALGOS.includes(algoFromUrl) && algoFromUrl !== algo) {
+      setAlgo(algoFromUrl)
       setTrigger(0)
     }
-  }, [searchParams])
+  }
 
   const handleVisualize = () => setTrigger((t) => t + 1)
   const handleReset = () => setTrigger(0)

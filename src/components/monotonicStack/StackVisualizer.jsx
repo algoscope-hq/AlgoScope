@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react'
+import React, { useState, useMemo } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import SpeedSlider from '../SpeedSlider.jsx'
 import CodePanel from '../visualizer/CodePanel'
@@ -71,7 +71,12 @@ const STACK_ALIAS_MAP = {
 
 export default function StackVisualizer() {
   const [searchParams, setSearchParams] = useSearchParams()
-  const rawMode = (searchParams.get('problem') || searchParams.get('mode') || searchParams.get('algo') || '').toLowerCase()
+  const rawMode = (
+    searchParams.get('problem') ||
+    searchParams.get('mode') ||
+    searchParams.get('algo') ||
+    ''
+  ).toLowerCase()
   const initialMode = STACK_ALIAS_MAP[rawMode] || 'histogram'
 
   const [mode, setMode] = useState(initialMode)
@@ -89,17 +94,6 @@ export default function StackVisualizer() {
     ['1', '0', '0', '1', '0'],
   ])
 
-  useEffect(() => {
-    const param = (searchParams.get('problem') || searchParams.get('mode') || searchParams.get('algo') || '').toLowerCase()
-    const targetMode = STACK_ALIAS_MAP[param]
-    if (targetMode && targetMode !== mode) {
-      setMode(targetMode)
-      clearPlayback()
-      setCustomInput('')
-      setInputError('')
-    }
-  }, [searchParams])
-
   const {
     currentStep,
     currentStepIndex,
@@ -115,6 +109,25 @@ export default function StackVisualizer() {
     stepForward,
     stepBackward,
   } = useStepPlayback({ speed })
+
+  const paramFromUrl = (
+    searchParams.get('problem') ||
+    searchParams.get('mode') ||
+    searchParams.get('algo') ||
+    ''
+  ).toLowerCase()
+  const [prevParamFromUrl, setPrevParamFromUrl] = useState(paramFromUrl)
+
+  if (paramFromUrl !== prevParamFromUrl) {
+    setPrevParamFromUrl(paramFromUrl)
+    const targetMode = STACK_ALIAS_MAP[paramFromUrl]
+    if (targetMode && targetMode !== mode) {
+      setMode(targetMode)
+      clearPlayback()
+      setCustomInput('')
+      setInputError('')
+    }
+  }
 
   const handleModeSwitch = (newMode) => {
     if (newMode === mode) return

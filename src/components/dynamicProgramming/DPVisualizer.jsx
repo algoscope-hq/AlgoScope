@@ -696,7 +696,11 @@ const ALGO_TO_PARAM = {
 // ─── Main Component ───────────────────────────────────────────────────────────
 export default function DPVisualizer() {
   const [searchParams, setSearchParams] = useSearchParams()
-  const rawParam = (searchParams.get('problem') || searchParams.get('algo') || '').toLowerCase()
+  const rawParam = (
+    searchParams.get('problem') ||
+    searchParams.get('algo') ||
+    ''
+  ).toLowerCase()
   const initialAlgo = ALGO_MAP[rawParam] || 'LCS'
 
   const [algo, setAlgo] = useState(initialAlgo)
@@ -711,9 +715,16 @@ export default function DPVisualizer() {
   const [inputError, setInputError] = useState('')
   const intervalRef = useRef(null)
 
-  useEffect(() => {
-    const param = (searchParams.get('problem') || searchParams.get('algo') || '').toLowerCase()
-    const targetAlgo = ALGO_MAP[param]
+  const paramFromUrl = (
+    searchParams.get('problem') ||
+    searchParams.get('algo') ||
+    ''
+  ).toLowerCase()
+  const [prevParamFromUrl, setPrevParamFromUrl] = useState(paramFromUrl)
+
+  if (paramFromUrl !== prevParamFromUrl) {
+    setPrevParamFromUrl(paramFromUrl)
+    const targetAlgo = ALGO_MAP[paramFromUrl]
     if (targetAlgo && targetAlgo !== algo) {
       setAlgo(targetAlgo)
       setInputs(DEFAULT_INPUTS[targetAlgo])
@@ -723,7 +734,7 @@ export default function DPVisualizer() {
       setPlaying(false)
       setInputError('')
     }
-  }, [searchParams])
+  }
 
   const updateInputs = useCallback((updater) => {
     setInputError('')

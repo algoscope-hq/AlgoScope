@@ -25,9 +25,7 @@ const MathTheory = lazy(
 const ShortestPathPage = lazy(
   () => import('./components/shortestPathAlgo/ShortestPathPage')
 )
-const DSLayout = lazy(
-  () => import('./components/dataStructures/DSLayout')
-)
+const DSLayout = lazy(() => import('./components/dataStructures/DSLayout'))
 const ArrayVisualizerPage = lazy(
   () => import('./components/arraySearch/VisualizerPage')
 )

@@ -590,7 +590,11 @@ export const Navbar = () => {
                       onClick={() => setOpen(false)}
                       className="flex items-center gap-2"
                     >
-                      <img src={logo} alt="AlgoScope Logo" className="w-8 h-8" />
+                      <img
+                        src={logo}
+                        alt="AlgoScope Logo"
+                        className="w-8 h-8"
+                      />
                       <span className="text-xl font-bold tracking-tighter text-slate-900 dark:text-white logo-font">
                         AlgoScope
                       </span>
@@ -608,7 +612,12 @@ export const Navbar = () => {
                   <div className="flex-grow overflow-y-auto space-y-6 pr-2">
                     {/* Search */}
                     <div className="w-full">
-                      <SearchBar onOpen={() => { closeExploreMenu(); setOpen(false); }} />
+                      <SearchBar
+                        onOpen={() => {
+                          closeExploreMenu()
+                          setOpen(false)
+                        }}
+                      />
                     </div>
 
                     {/* Nav list */}

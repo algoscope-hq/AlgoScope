@@ -1199,7 +1199,11 @@ const TP_ALIAS_MAP = {
    ═══════════════════════════════════════════ */
 export default function TwoPointerVisualizer() {
   const [searchParams, setSearchParams] = useSearchParams()
-  const rawProb = (searchParams.get('problem') || searchParams.get('algo') || '').toLowerCase()
+  const rawProb = (
+    searchParams.get('problem') ||
+    searchParams.get('algo') ||
+    ''
+  ).toLowerCase()
   const initialPk = TP_ALIAS_MAP[rawProb] || 'twoSum'
 
   const [pk, setPk] = useState(initialPk)
@@ -1209,15 +1213,22 @@ export default function TwoPointerVisualizer() {
   const [lang, setLang] = useState('js')
   const timer = useRef(null)
 
-  useEffect(() => {
-    const probParam = (searchParams.get('problem') || searchParams.get('algo') || '').toLowerCase()
+  const probParam = (
+    searchParams.get('problem') ||
+    searchParams.get('algo') ||
+    ''
+  ).toLowerCase()
+  const [prevProbParam, setPrevProbParam] = useState(probParam)
+
+  if (probParam !== prevProbParam) {
+    setPrevProbParam(probParam)
     const targetPk = TP_ALIAS_MAP[probParam]
     if (targetPk && targetPk !== pk) {
       setPk(targetPk)
       setStep(0)
       setPlaying(false)
     }
-  }, [searchParams])
+  }
 
   const handleSelectProblem = (newPk) => {
     setPk(newPk)
@@ -1266,7 +1277,10 @@ export default function TwoPointerVisualizer() {
   }[pk]
 
   return (
-    <div className="bg-slate-50 dark:bg-[#07090e] text-slate-900 dark:text-[#c9d1d9] transition-colors duration-300 min-h-screen" style={{ fontFamily: "'IBM Plex Sans',sans-serif" }}>
+    <div
+      className="bg-slate-50 dark:bg-[#07090e] text-slate-900 dark:text-[#c9d1d9] transition-colors duration-300 min-h-screen"
+      style={{ fontFamily: "'IBM Plex Sans',sans-serif" }}
+    >
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap');
         .tp-viz ::-webkit-scrollbar{width:3px;height:3px}

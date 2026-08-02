@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react'
+import React, { useMemo, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useSearchParams } from 'react-router-dom'
 import SpeedSlider from '../SpeedSlider'
@@ -38,15 +38,20 @@ function SoloMode() {
 
   const [algorithm, setAlgorithm] = useState(initialAlgo)
   const [textInput, setTextInput] = useState(DEFAULTS[initialAlgo].text)
-  const [patternInput, setPatternInput] = useState(DEFAULTS[initialAlgo].pattern)
+  const [patternInput, setPatternInput] = useState(
+    DEFAULTS[initialAlgo].pattern
+  )
   const [activeText, setActiveText] = useState('')
   const [activePattern, setActivePattern] = useState('')
   const [speed, setSpeed] = useState(1)
   const [language, setLanguage] = useState('javascript')
 
-  useEffect(() => {
-    const a = (searchParams.get('algo') || '').toLowerCase()
-    const targetAlgo = VALID_STRING_ALGOS[a]
+  const paramFromUrl = (searchParams.get('algo') || '').toLowerCase()
+  const [prevParamFromUrl, setPrevParamFromUrl] = useState(paramFromUrl)
+
+  if (paramFromUrl !== prevParamFromUrl) {
+    setPrevParamFromUrl(paramFromUrl)
+    const targetAlgo = VALID_STRING_ALGOS[paramFromUrl]
     if (targetAlgo && targetAlgo !== algorithm) {
       setAlgorithm(targetAlgo)
       setTextInput(DEFAULTS[targetAlgo].text)
@@ -54,7 +59,7 @@ function SoloMode() {
       setActiveText('')
       setActivePattern('')
     }
-  }, [searchParams])
+  }
 
   const handleAlgorithmChange = (algo) => {
     setAlgorithm(algo)

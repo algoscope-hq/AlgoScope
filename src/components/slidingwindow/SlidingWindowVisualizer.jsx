@@ -828,7 +828,11 @@ const PROB_IDS = ['maxsum', 'longestsubstr', 'minlen', 'maxvowels']
 /* ============================================================= component */
 export default function SlidingWindowVisualizer() {
   const [searchParams, setSearchParams] = useSearchParams()
-  const rawProb = (searchParams.get('problem') || searchParams.get('algo') || '').toLowerCase()
+  const rawProb = (
+    searchParams.get('problem') ||
+    searchParams.get('algo') ||
+    ''
+  ).toLowerCase()
   const initialProbIdx = PROB_MAP[rawProb] !== undefined ? PROB_MAP[rawProb] : 0
   const rawAppr = searchParams.get('approach')
   const initialAppr = rawAppr === 'brute' ? 'brute' : 'slide'
@@ -842,17 +846,29 @@ export default function SlidingWindowVisualizer() {
   const [copied, setCopied] = useState(false)
   const [seed, setSeed] = useState(0) // bump to re-randomize
 
-  useEffect(() => {
-    const probParam = (searchParams.get('problem') || searchParams.get('algo') || '').toLowerCase()
-    const apprParam = searchParams.get('approach')
+  const probParam = (
+    searchParams.get('problem') ||
+    searchParams.get('algo') ||
+    ''
+  ).toLowerCase()
+  const apprParam = searchParams.get('approach')
+  const [prevProbParam, setPrevProbParam] = useState(probParam)
+  const [prevApprParam, setPrevApprParam] = useState(apprParam)
+
+  if (probParam !== prevProbParam || apprParam !== prevApprParam) {
+    setPrevProbParam(probParam)
+    setPrevApprParam(apprParam)
     const targetIdx = PROB_MAP[probParam]
     if (targetIdx !== undefined && targetIdx !== pIdx) {
       setPIdx(targetIdx)
     }
-    if ((apprParam === 'brute' || apprParam === 'slide') && apprParam !== appr) {
+    if (
+      (apprParam === 'brute' || apprParam === 'slide') &&
+      apprParam !== appr
+    ) {
       setAppr(apprParam)
     }
-  }, [searchParams])
+  }
 
   const handleSelectProblem = (idx) => {
     setPIdx(idx)
