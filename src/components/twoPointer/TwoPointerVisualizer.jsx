@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef, useMemo } from 'react'
+import { useSearchParams } from 'react-router-dom'
 
 /* ═══════════════════════════════════════════
    CONSTANTS
@@ -1183,16 +1184,49 @@ function Leg({ c, l }) {
   )
 }
 
+const VALID_TP_PROBLEMS = ['twoSum', 'container', 'palindrome', 'trapping']
+const TP_ALIAS_MAP = {
+  twosum: 'twoSum',
+  two_sum: 'twoSum',
+  'two-sum': 'twoSum',
+  container: 'container',
+  palindrome: 'palindrome',
+  trapping: 'trapping',
+}
+
 /* ═══════════════════════════════════════════
    MAIN COMPONENT
    ═══════════════════════════════════════════ */
 export default function TwoPointerVisualizer() {
-  const [pk, setPk] = useState('twoSum')
+  const [searchParams, setSearchParams] = useSearchParams()
+  const rawProb = (searchParams.get('problem') || searchParams.get('algo') || '').toLowerCase()
+  const initialPk = TP_ALIAS_MAP[rawProb] || 'twoSum'
+
+  const [pk, setPk] = useState(initialPk)
   const [step, setStep] = useState(0)
   const [playing, setPlaying] = useState(false)
   const [speed, setSpeed] = useState(900)
   const [lang, setLang] = useState('js')
   const timer = useRef(null)
+
+  useEffect(() => {
+    const probParam = (searchParams.get('problem') || searchParams.get('algo') || '').toLowerCase()
+    const targetPk = TP_ALIAS_MAP[probParam]
+    if (targetPk && targetPk !== pk) {
+      setPk(targetPk)
+      setStep(0)
+      setPlaying(false)
+    }
+  }, [searchParams])
+
+  const handleSelectProblem = (newPk) => {
+    setPk(newPk)
+    setStep(0)
+    setPlaying(false)
+    const newParams = new URLSearchParams(searchParams)
+    newParams.set('problem', newPk)
+    setSearchParams(newParams)
+  }
 
   const prob = PROBLEMS[pk]
   const accent = prob.accent
@@ -1283,11 +1317,7 @@ export default function TwoPointerVisualizer() {
             {Object.entries(PROBLEMS).map(([k, p]) => (
               <button
                 key={k}
-                onClick={() => {
-                  setPk(k)
-                  setStep(0)
-                  setPlaying(false)
-                }}
+                onClick={() => handleSelectProblem(k)}
                 style={{
                   padding: '6px 14px',
                   borderRadius: 7,

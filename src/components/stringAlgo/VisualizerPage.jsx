@@ -23,15 +23,38 @@ const TITLES = {
   zalgorithm: 'Z-Algorithm Implementation',
 }
 
-// ─── Solo visualizer (extracted from original VisualizerPage) ─────────────────
+const VALID_STRING_ALGOS = {
+  kmp: 'kmp',
+  rabinkarp: 'rabinkarp',
+  'rabin-karp': 'rabinkarp',
+  zalgorithm: 'zalgorithm',
+  'z-algorithm': 'zalgorithm',
+}
+
 function SoloMode() {
-  const [algorithm, setAlgorithm] = useState('kmp')
-  const [textInput, setTextInput] = useState(DEFAULTS.kmp.text)
-  const [patternInput, setPatternInput] = useState(DEFAULTS.kmp.pattern)
+  const [searchParams, setSearchParams] = useSearchParams()
+  const algoFromUrl = (searchParams.get('algo') || '').toLowerCase()
+  const initialAlgo = VALID_STRING_ALGOS[algoFromUrl] || 'kmp'
+
+  const [algorithm, setAlgorithm] = useState(initialAlgo)
+  const [textInput, setTextInput] = useState(DEFAULTS[initialAlgo].text)
+  const [patternInput, setPatternInput] = useState(DEFAULTS[initialAlgo].pattern)
   const [activeText, setActiveText] = useState('')
   const [activePattern, setActivePattern] = useState('')
   const [speed, setSpeed] = useState(1)
   const [language, setLanguage] = useState('javascript')
+
+  useEffect(() => {
+    const a = (searchParams.get('algo') || '').toLowerCase()
+    const targetAlgo = VALID_STRING_ALGOS[a]
+    if (targetAlgo && targetAlgo !== algorithm) {
+      setAlgorithm(targetAlgo)
+      setTextInput(DEFAULTS[targetAlgo].text)
+      setPatternInput(DEFAULTS[targetAlgo].pattern)
+      setActiveText('')
+      setActivePattern('')
+    }
+  }, [searchParams])
 
   const handleAlgorithmChange = (algo) => {
     setAlgorithm(algo)
@@ -39,6 +62,10 @@ function SoloMode() {
     setPatternInput(DEFAULTS[algo].pattern)
     setActiveText('')
     setActivePattern('')
+
+    const newParams = new URLSearchParams(searchParams)
+    newParams.set('algo', algo)
+    setSearchParams(newParams)
   }
 
   const handleVisualize = () => {
@@ -132,9 +159,6 @@ function SoloMode() {
 
 // ─── Page root with Solo / Compare tabs ───────────────────────────────────────
 export default function VisualizerPage() {
-  useEffect(() => {
-    document.title = 'String Algorithms | AlgoScope'
-  }, [])
   const [searchParams, setSearchParams] = useSearchParams()
   const activeTab = searchParams.get('mode') === 'compare' ? 'compare' : 'solo'
 

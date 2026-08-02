@@ -1,4 +1,5 @@
-import React, { useState, useMemo } from 'react'
+import React, { useState, useEffect, useMemo } from 'react'
+import { useSearchParams } from 'react-router-dom'
 import SpeedSlider from '../SpeedSlider.jsx'
 import CodePanel from '../visualizer/CodePanel'
 import { useStepPlayback } from '../visualizer/useStepPlayback'
@@ -55,8 +56,25 @@ const SAMPLE_CASES = {
   ],
 }
 
+const STACK_ALIAS_MAP = {
+  histogram: 'histogram',
+  nextgreater: 'nextGreater',
+  next_greater: 'nextGreater',
+  'next-greater': 'nextGreater',
+  dailytemp: 'dailyTemp',
+  daily_temp: 'dailyTemp',
+  'daily-temp': 'dailyTemp',
+  maximalrectangle: 'maximalRectangle',
+  maximal_rectangle: 'maximalRectangle',
+  'maximal-rectangle': 'maximalRectangle',
+}
+
 export default function StackVisualizer() {
-  const [mode, setMode] = useState('histogram')
+  const [searchParams, setSearchParams] = useSearchParams()
+  const rawMode = (searchParams.get('problem') || searchParams.get('mode') || searchParams.get('algo') || '').toLowerCase()
+  const initialMode = STACK_ALIAS_MAP[rawMode] || 'histogram'
+
+  const [mode, setMode] = useState(initialMode)
   const [speed, setSpeed] = useState(1)
   const [language, setLanguage] = useState('javascript')
   const [isStepMode, setIsStepMode] = useState(false)
@@ -70,6 +88,17 @@ export default function StackVisualizer() {
     ['1', '1', '1', '1', '1'],
     ['1', '0', '0', '1', '0'],
   ])
+
+  useEffect(() => {
+    const param = (searchParams.get('problem') || searchParams.get('mode') || searchParams.get('algo') || '').toLowerCase()
+    const targetMode = STACK_ALIAS_MAP[param]
+    if (targetMode && targetMode !== mode) {
+      setMode(targetMode)
+      clearPlayback()
+      setCustomInput('')
+      setInputError('')
+    }
+  }, [searchParams])
 
   const {
     currentStep,
@@ -93,6 +122,9 @@ export default function StackVisualizer() {
     clearPlayback()
     setCustomInput('')
     setInputError('')
+    const newParams = new URLSearchParams(searchParams)
+    newParams.set('problem', newMode)
+    setSearchParams(newParams)
   }
 
   const handleVisualize = () => {

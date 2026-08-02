@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react'
+import { useSearchParams } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
   runFCFS,
@@ -16,7 +17,24 @@ const DEFAULT_PROCESSES = [
   { id: 'p3', pid: 'P3', arrivalTime: 2, burstTime: 8, priority: 3 },
 ]
 
+const CPU_ALGO_MAP = {
+  fcfs: 'fcfs',
+  sjf: 'sjf',
+  srtf: 'srtf',
+  priority: 'priority',
+  rr: 'roundRobin',
+  roundrobin: 'roundRobin',
+  'round-robin': 'roundRobin',
+  roundRobin: 'roundRobin',
+  multilevelqueue: 'multilevelQueue',
+  multilevelQueue: 'multilevelQueue',
+}
+
 export default function CPUSchedulingPage() {
+  const [searchParams, setSearchParams] = useSearchParams()
+  const algoFromUrl = (searchParams.get('algo') || '').toLowerCase()
+  const initialAlgoFromUrl = CPU_ALGO_MAP[algoFromUrl]
+
   const [processes, setProcesses] = useState(() =>
     DEFAULT_PROCESSES.map((p) => ({ ...p }))
   )
@@ -31,9 +49,26 @@ export default function CPUSchedulingPage() {
   ]
 
   const [selectedAlgorithm, setSelectedAlgorithm] = useState(() => {
+    if (initialAlgoFromUrl) return initialAlgoFromUrl
     const saved = localStorage.getItem('cpu-selected-algorithm')
     return VALID_ALGORITHMS.includes(saved) ? saved : 'fcfs'
   })
+
+  useEffect(() => {
+    const a = (searchParams.get('algo') || '').toLowerCase()
+    const targetAlgo = CPU_ALGO_MAP[a]
+    if (targetAlgo && targetAlgo !== selectedAlgorithm) {
+      setSelectedAlgorithm(targetAlgo)
+    }
+  }, [searchParams])
+
+  const handleSelectAlgorithm = (algo) => {
+    setSelectedAlgorithm(algo)
+    localStorage.setItem('cpu-selected-algorithm', algo)
+    const newParams = new URLSearchParams(searchParams)
+    newParams.set('algo', algo)
+    setSearchParams(newParams)
+  }
 
   const [simulationStatus, setSimulationStatus] = useState('Not Started')
   const [ganttData, setGanttData] = useState([])
@@ -375,7 +410,7 @@ export default function CPUSchedulingPage() {
   }
 
   const handleAlgorithmChange = (e) => {
-    setSelectedAlgorithm(e.target.value)
+    handleSelectAlgorithm(e.target.value)
     if (!algorithmChanged) {
       setAlgorithmChanged(true)
       setStep1Completed(true)

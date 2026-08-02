@@ -15,9 +15,6 @@ import { getBacktrackingSource } from '../../algorithms/backtracking/backtrackin
 import { useKeyboardShortcuts } from '../visualizer/useKeyboardShortcuts'
 
 export default function VisualizerPage() {
-  useEffect(() => {
-    document.title = 'Backtracking | AlgoScope'
-  }, [])
   const [searchParams, setSearchParams] = useSearchParams()
   const activeTab = searchParams.get('mode') === 'compare' ? 'compare' : 'solo'
 
@@ -137,8 +134,14 @@ export default function VisualizerPage() {
 // Solo Mode
 // ─────────────────────────────────────────────────────────────
 
+const VALID_BT_ALGOS = ['nqueens', 'sudoku', 'maze', 'knight', 'graph-coloring', 'hanoi']
+
 function SoloMode() {
-  const [algo, setAlgo] = useState('nqueens')
+  const [searchParams, setSearchParams] = useSearchParams()
+  const algoFromUrl = searchParams.get('algo')
+  const initialAlgo = VALID_BT_ALGOS.includes(algoFromUrl) ? algoFromUrl : 'nqueens'
+
+  const [algo, setAlgo] = useState(initialAlgo)
   const [boardSize, setBoardSize] = useState(6)
   const [diskCount, setDiskCount] = useState(4)
   const [speed, setSpeed] = useState(1)
@@ -146,6 +149,14 @@ function SoloMode() {
   const [trigger, setTrigger] = useState(0)
   const [colorK, setColorK] = useState(3)
   const [preset, setPreset] = useState('Petersen-like')
+
+  useEffect(() => {
+    const a = searchParams.get('algo')
+    if (VALID_BT_ALGOS.includes(a) && a !== algo) {
+      setAlgo(a)
+      setTrigger(0)
+    }
+  }, [searchParams])
 
   const handleVisualize = () => setTrigger((t) => t + 1)
   const handleReset = () => setTrigger(0)
@@ -160,6 +171,9 @@ function SoloMode() {
   const handleAlgoChange = (a) => {
     setAlgo(a)
     setTrigger(0)
+    const newParams = new URLSearchParams(searchParams)
+    newParams.set('algo', a)
+    setSearchParams(newParams)
   }
 
   const currentSource = useMemo(
