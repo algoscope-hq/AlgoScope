@@ -1,4 +1,5 @@
 import React, { useState, useMemo, useEffect, useRef } from 'react'
+import { createPortal } from 'react-dom'
 import { useNavigate } from 'react-router-dom'
 import Fuse from 'fuse.js'
 import { motion, AnimatePresence } from 'framer-motion'
@@ -790,8 +791,7 @@ const SearchBar = ({ onOpen }) => {
   const openModal = React.useCallback(() => {
     previousFocusRef.current = document.activeElement
     setIsModalOpen(true)
-    onOpen?.()
-  }, [onOpen])
+  }, [])
 
   const handleCloseModal = React.useCallback(() => {
     setIsModalOpen(false)
@@ -815,8 +815,9 @@ const SearchBar = ({ onOpen }) => {
     (route) => {
       navigate(route)
       handleCloseModal()
+      onOpen?.()
     },
-    [handleCloseModal, navigate]
+    [handleCloseModal, navigate, onOpen]
   )
 
   // Handle Keyboard Shortcuts
@@ -935,200 +936,204 @@ const SearchBar = ({ onOpen }) => {
         </div>
       </button>
 
-      {/* Search Modal */}
-      <AnimatePresence>
-        {isModalOpen && (
-          <div className="fixed inset-0 z-[100] flex items-start justify-center pt-20 px-4">
-            {/* Backdrop */}
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              onClick={handleCloseModal}
-              className="fixed inset-0 bg-slate-950/80 backdrop-blur-sm"
-            />
-
-            {/* Modal Content */}
-            <motion.div
-              ref={modalRef}
-              role="dialog"
-              aria-modal="true"
-              aria-labelledby="search-dialog-title"
-              initial={{ opacity: 0, scale: 0.95, y: -20 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.95, y: -20 }}
-              className="relative w-full max-w-2xl bg-slate-900 border border-slate-700 rounded-2xl shadow-2xl overflow-hidden"
-            >
-              <div className="relative group p-4 border-b border-slate-800">
-                <h2 id="search-dialog-title" className="sr-only">
-                  Search algorithms
-                </h2>
-                <div className="absolute inset-y-0 left-7 flex items-center pointer-events-none">
-                  <svg
-                    className="w-5 h-5 text-slate-400 group-focus-within:text-cyan-400 transition-colors duration-300"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                    aria-hidden="true"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-                    />
-                  </svg>
-                </div>
-                <input
-                  ref={inputRef}
-                  type="text"
-                  value={query}
-                  onChange={handleSearch}
-                  className="w-full bg-transparent text-slate-200 text-lg block pl-12 pr-24 py-2 outline-none"
-                  placeholder="Search algorithms..."
+      {/* Search Modal (Portaled to document.body) */}
+      {typeof document !== 'undefined' &&
+        createPortal(
+          <AnimatePresence>
+            {isModalOpen && (
+              <div className="fixed inset-0 z-[200] flex items-start justify-center pt-16 sm:pt-20 px-4">
+                {/* Backdrop */}
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  onClick={handleCloseModal}
+                  className="fixed inset-0 bg-slate-950/80 backdrop-blur-sm"
                 />
-                <div className="absolute right-4 top-1/2 -translate-y-1/2 flex items-center gap-3">
-                  {/* Sort Dropdown */}
-                  {results.length > 0 && (
-                    <select
-                      value={sortBy}
-                      onChange={(e) => {
-                        setSortBy(e.target.value)
-                        const searchResults = fuse.search(query)
-                        const sortedResults = [...searchResults].sort(
-                          (a, b) => {
-                            if (e.target.value === 'name') {
-                              return a.item.name.localeCompare(b.item.name)
-                            } else if (e.target.value === 'category') {
-                              return a.item.category.localeCompare(
-                                b.item.category
-                              )
-                            }
-                            return 0
-                          }
-                        )
-                        setResults(sortedResults)
-                      }}
-                      className="bg-slate-800 border border-slate-600 text-slate-300 text-xs px-2 py-1 rounded-lg cursor-pointer outline-none"
-                      aria-label="Sort results"
-                    >
-                      <option value="relevance">Relevance</option>
-                      <option value="name">Name</option>
-                      <option value="category">Category</option>
-                    </select>
-                  )}
 
-                  {/* Close Button */}
-                  <button
-                    onClick={handleCloseModal}
-                    className="p-1.5 rounded-lg text-slate-500 hover:text-white hover:bg-white/10 transition-all duration-200"
-                    aria-label="Close search"
-                  >
-                    <svg
-                      className="w-5 h-5"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M6 18L18 6M6 6l12 12"
-                      />
-                    </svg>
-                  </button>
-                </div>
-              </div>
-
-              {/* Results */}
-              <div className="max-h-[60vh] overflow-y-auto p-2">
-                {results.length > 0 ? (
-                  <ul className="space-y-1">
-                    {results.map((result, index) => (
-                      <li
-                        key={result.item.id}
-                        onClick={() => handleSelect(result.item.route)}
-                        onMouseEnter={() => setSelectedIndex(index)}
-                        className={`flex items-center justify-between px-4 py-3 cursor-pointer rounded-xl transition-all ${
-                          index === selectedIndex
-                            ? 'bg-indigo-500/20 text-indigo-300 ring-1 ring-indigo-500/30'
-                            : 'text-slate-400 hover:bg-slate-800/50'
-                        }`}
+                {/* Modal Content */}
+                <motion.div
+                  ref={modalRef}
+                  role="dialog"
+                  aria-modal="true"
+                  aria-labelledby="search-dialog-title"
+                  initial={{ opacity: 0, scale: 0.95, y: -20 }}
+                  animate={{ opacity: 1, scale: 1, y: 0 }}
+                  exit={{ opacity: 0, scale: 0.95, y: -20 }}
+                  className="relative w-full max-w-2xl bg-slate-900 border border-slate-700 rounded-2xl shadow-2xl overflow-hidden z-10"
+                >
+                  <div className="relative group p-4 border-b border-slate-800">
+                    <h2 id="search-dialog-title" className="sr-only">
+                      Search algorithms
+                    </h2>
+                    <div className="absolute inset-y-0 left-7 flex items-center pointer-events-none">
+                      <svg
+                        className="w-5 h-5 text-slate-400 group-focus-within:text-cyan-400 transition-colors duration-300"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                        aria-hidden="true"
                       >
-                        <div className="flex flex-col">
-                          <span className="text-base font-medium">
-                            {result.item.name}
-                          </span>
-                          <span className="text-xs uppercase tracking-wider text-slate-500">
-                            {result.item.category}
-                          </span>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          {index === selectedIndex && (
-                            <span className="text-[10px] text-slate-500 border border-slate-700 px-1 rounded bg-slate-800">
-                              {isMac ? 'Return' : 'Enter'}
-                            </span>
-                          )}
-                          <svg
-                            className={`w-4 h-4 transition-transform ${
-                              index === selectedIndex
-                                ? 'text-indigo-400 translate-x-1'
-                                : 'text-slate-600'
-                            }`}
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            stroke="currentColor"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth={2}
-                              d="M9 5l7 7-7 7"
-                            />
-                          </svg>
-                        </div>
-                      </li>
-                    ))}
-                  </ul>
-                ) : query ? (
-                  <div className="p-8 text-center text-slate-500">
-                    No results found for &quot;{query}&quot;
-                  </div>
-                ) : (
-                  <div className="p-8 text-center text-slate-500">
-                    Type to start searching...
-                  </div>
-                )}
-              </div>
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                        />
+                      </svg>
+                    </div>
+                    <input
+                      ref={inputRef}
+                      type="text"
+                      value={query}
+                      onChange={handleSearch}
+                      className="w-full bg-transparent text-slate-200 text-lg block pl-12 pr-24 py-2 outline-none"
+                      placeholder="Search algorithms..."
+                    />
+                    <div className="absolute right-4 top-1/2 -translate-y-1/2 flex items-center gap-3">
+                      {/* Sort Dropdown */}
+                      {results.length > 0 && (
+                        <select
+                          value={sortBy}
+                          onChange={(e) => {
+                            setSortBy(e.target.value)
+                            const searchResults = fuse.search(query)
+                            const sortedResults = [...searchResults].sort(
+                              (a, b) => {
+                                if (e.target.value === 'name') {
+                                  return a.item.name.localeCompare(b.item.name)
+                                } else if (e.target.value === 'category') {
+                                  return a.item.category.localeCompare(
+                                    b.item.category
+                                  )
+                                }
+                                return 0
+                              }
+                            )
+                            setResults(sortedResults)
+                          }}
+                          className="bg-slate-800 border border-slate-600 text-slate-300 text-xs px-2 py-1 rounded-lg cursor-pointer outline-none"
+                          aria-label="Sort results"
+                        >
+                          <option value="relevance">Relevance</option>
+                          <option value="name">Name</option>
+                          <option value="category">Category</option>
+                        </select>
+                      )}
 
-              {/* Footer */}
-              <div className="p-4 border-t border-slate-800 flex items-center justify-between text-[10px] text-slate-500 uppercase tracking-widest bg-slate-950/20">
-                <div className="flex gap-4">
-                  <span className="flex items-center gap-1">
-                    <kbd className="px-1.5 py-0.5 border border-slate-700 rounded bg-slate-800">
-                      ↑↓
-                    </kbd>{' '}
-                    Navigate
-                  </span>
-                  <span className="flex items-center gap-1">
-                    <kbd className="px-1.5 py-0.5 border border-slate-700 rounded bg-slate-800">
-                      {isMac ? 'Return' : 'Enter'}
-                    </kbd>{' '}
-                    Select
-                  </span>
-                </div>
-                <span className="flex items-center gap-1">
-                  <kbd className="px-1.5 py-0.5 border border-slate-700 rounded bg-slate-800">
-                    Esc
-                  </kbd>{' '}
-                  Close
-                </span>
+                      {/* Close Button */}
+                      <button
+                        onClick={handleCloseModal}
+                        className="p-1.5 rounded-lg text-slate-500 hover:text-white hover:bg-white/10 transition-all duration-200"
+                        aria-label="Close search"
+                      >
+                        <svg
+                          className="w-5 h-5"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M6 18L18 6M6 6l12 12"
+                          />
+                        </svg>
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Results */}
+                  <div className="max-h-[60vh] overflow-y-auto p-2">
+                    {results.length > 0 ? (
+                      <ul className="space-y-1">
+                        {results.map((result, index) => (
+                          <li
+                            key={result.item.id}
+                            onClick={() => handleSelect(result.item.route)}
+                            onMouseEnter={() => setSelectedIndex(index)}
+                            className={`flex items-center justify-between px-4 py-3 cursor-pointer rounded-xl transition-all ${
+                              index === selectedIndex
+                                ? 'bg-indigo-500/20 text-indigo-300 ring-1 ring-indigo-500/30'
+                                : 'text-slate-400 hover:bg-slate-800/50'
+                            }`}
+                          >
+                            <div className="flex flex-col">
+                              <span className="text-base font-medium">
+                                {result.item.name}
+                              </span>
+                              <span className="text-xs uppercase tracking-wider text-slate-500">
+                                {result.item.category}
+                              </span>
+                            </div>
+                            <div className="flex items-center gap-2">
+                              {index === selectedIndex && (
+                                <span className="text-[10px] text-slate-500 border border-slate-700 px-1 rounded bg-slate-800">
+                                  {isMac ? 'Return' : 'Enter'}
+                                </span>
+                              )}
+                              <svg
+                                className={`w-4 h-4 transition-transform ${
+                                  index === selectedIndex
+                                    ? 'text-indigo-400 translate-x-1'
+                                    : 'text-slate-600'
+                                }`}
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke="currentColor"
+                              >
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  strokeWidth={2}
+                                  d="M9 5l7 7-7 7"
+                                />
+                              </svg>
+                            </div>
+                          </li>
+                        ))}
+                      </ul>
+                    ) : query ? (
+                      <div className="p-8 text-center text-slate-500">
+                        No results found for &quot;{query}&quot;
+                      </div>
+                    ) : (
+                      <div className="p-8 text-center text-slate-500">
+                        Type to start searching...
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Footer */}
+                  <div className="p-4 border-t border-slate-800 flex items-center justify-between text-[10px] text-slate-500 uppercase tracking-widest bg-slate-950/20">
+                    <div className="flex gap-4">
+                      <span className="flex items-center gap-1">
+                        <kbd className="px-1.5 py-0.5 border border-slate-700 rounded bg-slate-800">
+                          ↑↓
+                        </kbd>{' '}
+                        Navigate
+                      </span>
+                      <span className="flex items-center gap-1">
+                        <kbd className="px-1.5 py-0.5 border border-slate-700 rounded bg-slate-800">
+                          {isMac ? 'Return' : 'Enter'}
+                        </kbd>{' '}
+                        Select
+                      </span>
+                    </div>
+                    <span className="flex items-center gap-1">
+                      <kbd className="px-1.5 py-0.5 border border-slate-700 rounded bg-slate-800">
+                        Esc
+                      </kbd>{' '}
+                      Close
+                    </span>
+                  </div>
+                </motion.div>
               </div>
-            </motion.div>
-          </div>
+            )}
+          </AnimatePresence>,
+          document.body
         )}
-      </AnimatePresence>
     </>
   )
 }
