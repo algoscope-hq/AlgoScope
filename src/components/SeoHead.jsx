@@ -481,11 +481,11 @@ export default function SeoHead() {
           title = "Dijkstra's Shortest Path Visualizer | AlgoScope"
           description =
             "Visualize Dijkstra's algorithm for finding the shortest paths between nodes in a weighted graph with real-time distance updates."
-        } else if (algo === 'bellman-ford') {
+        } else if (algo === 'bellmanford') {
           title = 'Bellman-Ford Algorithm Visualizer | AlgoScope'
           description =
             'Visualize the Bellman-Ford algorithm step-by-step. Learn how edge relaxation detects negative weight cycles in graphs.'
-        } else if (algo === 'floyd-warshall') {
+        } else if (algo === 'floydwarshall') {
           title = 'Floyd-Warshall All-Pairs Shortest Path | AlgoScope'
           description =
             'Visualize the Floyd-Warshall dynamic programming algorithm for all-pairs shortest paths on graph adjacency matrices.'

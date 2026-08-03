@@ -136,10 +136,10 @@ const ALGORITHMS = [
     ],
   },
   {
-    id: 'bellman-ford',
+    id: 'bellmanford',
     name: 'Bellman-Ford Algorithm',
     category: 'Shortest Path',
-    route: '/spath?algo=bellman-ford',
+    route: '/spath?algo=bellmanford',
     keywords: [
       'bellman ford',
       'negative weights',
@@ -148,18 +148,11 @@ const ALGORITHMS = [
     ],
   },
   {
-    id: 'floyd-warshall',
+    id: 'floydwarshall',
     name: 'Floyd-Warshall Algorithm',
     category: 'Shortest Path',
-    route: '/spath?algo=floyd-warshall',
+    route: '/spath?algo=floydwarshall',
     keywords: ['floyd warshall', 'all pairs shortest path', 'matrix', 'dp'],
-  },
-  {
-    id: 'a-star',
-    name: 'A* Search Algorithm',
-    category: 'Shortest Path',
-    route: '/spath?algo=a-star',
-    keywords: ['a star', 'a*', 'heuristic', 'pathfinding', 'grid search'],
   },
   {
     id: 'prim',
