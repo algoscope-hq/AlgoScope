@@ -1,6 +1,6 @@
 import React, { lazy, Suspense } from 'react'
 import { createBrowserRouter, RouterProvider, Navigate } from 'react-router-dom'
-import { SignedIn, SignedOut, RedirectToSignIn } from '@clerk/clerk-react'
+import { SignIn, SignedIn, SignedOut, RedirectToSignIn } from '@clerk/clerk-react'
 
 const ConceptsOverview = lazy(
   () => import('./components/concepts/ConceptsOverview')
@@ -147,6 +147,25 @@ const router = createBrowserRouter([
     element: (
       <AppLayout>
         <AboutAlgoScope />
+      </AppLayout>
+    ),
+  },
+  {
+    path: '/sign-in',
+    element: (
+      <AppLayout>
+        {HAS_CLERK ? (
+          <SignIn path="/sign-in" routing="path" />
+        ) : (
+          <div className="mx-auto max-w-xl rounded-[28px] border border-slate-200/80 bg-white/90 p-10 text-center shadow-[0_20px_70px_-24px_rgba(15,23,42,0.28)] dark:border-slate-800/80 dark:bg-slate-950/90">
+            <h1 className="mb-4 text-3xl font-semibold text-slate-900 dark:text-white">
+              Authentication not configured
+            </h1>
+            <p className="text-sm leading-6 text-slate-600 dark:text-slate-400">
+              Please set `VITE_CLERK_PUBLISHABLE_KEY` in your environment to enable login and access the authentication flow.
+            </p>
+          </div>
+        )}
       </AppLayout>
     ),
   },

@@ -1,17 +1,13 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { createPortal } from 'react-dom'
 import { Link, useLocation } from 'react-router-dom'
-import {
-  SignedIn,
-  SignedOut,
-  SignInButton,
-  UserButton,
-} from '@clerk/clerk-react'
+import { SignedIn, SignedOut, UserButton } from '@clerk/clerk-react'
 import { dark } from '@clerk/themes'
 import { X } from 'lucide-react'
 
 const HAS_CLERK = Boolean(import.meta.env.VITE_CLERK_PUBLISHABLE_KEY)
 import { motion, AnimatePresence } from 'framer-motion'
+import { getNavLinkClasses } from './navbarLinkStyles'
 
 import githubIcon from '../assets/github-mark-white.svg'
 import logo from '../assets/logo2.png'
@@ -223,19 +219,19 @@ export const Navbar = () => {
   }
 
   return (
-    <header className="theme-navbar sticky top-4 z-50 max-w-7xl mx-auto backdrop-blur-xl rounded-2xl px-6 py-2 w-full transition-all duration-500 shadow-lg hover:border-slate-400/50 dark:!bg-slate-950/70 dark:!border dark:!border-slate-800/80 dark:hover:!border-indigo-500/30 dark:!shadow-[0_0_30px_rgba(99,102,241,0.05)] dark:hover:!shadow-[0_0_40px_rgba(99,102,241,0.15)]">
-      <div className="w-full">
-        <div className="flex h-14 items-center justify-between relative">
+    <header className="sticky top-3 z-50 mx-auto mb-6 w-full max-w-7xl px-3 py-2 sm:px-4 lg:px-6">
+      <div className="theme-navbar rounded-[28px] border border-slate-200/80 bg-white/75 px-3.5 py-3 shadow-[0_20px_70px_-24px_rgba(15,23,42,0.28)] backdrop-blur-2xl transition-all duration-300 dark:border-slate-800/80 dark:bg-slate-950/75 dark:shadow-[0_20px_70px_-24px_rgba(2,6,23,0.55)]">
+        <div className="relative flex min-h-14 items-center justify-between gap-3">
           <Link
             to="/"
             data-tour="logo-brand"
-            className="flex flex-row text-xl font-semibold tracking-tight group"
+            className="group flex min-w-0 flex-row items-center gap-3 text-xl font-semibold tracking-tight"
           >
-            <div className="w-10 h-10 m-auto rounded flex items-center justify-center mr-3 transition-transform group-hover:scale-110">
-              <img src={logo} alt="AlgoScope Logo" className="w-8 h-8" />
+            <div className="flex h-11 w-11 items-center justify-center rounded-2xl border border-slate-200/70 bg-gradient-to-br from-indigo-500/15 via-white to-cyan-400/20 shadow-sm transition-all duration-300 group-hover:-translate-y-0.5 group-hover:scale-105 group-hover:shadow-md dark:border-slate-800/70 dark:from-indigo-500/20 dark:via-slate-900/70 dark:to-cyan-400/10">
+              <img src={logo} alt="AlgoScope Logo" className="h-8 w-8" />
             </div>
 
-            <span className="mt-1 text-2xl theme-text-strong font-bold tracking-tighter logo-font">
+            <span className="text-[1.3rem] font-semibold tracking-[-0.03em] text-slate-900 transition-colors duration-300 group-hover:text-indigo-600 dark:text-white dark:group-hover:text-indigo-300 logo-font">
               AlgoScope
             </span>
           </Link>
@@ -243,14 +239,14 @@ export const Navbar = () => {
           {/* Desktop Search */}
           <div
             data-tour="search-bar"
-            className="hidden md:flex flex-1 justify-center max-w-xs mx-4 z-10"
+            className="hidden flex-1 justify-center md:flex md:max-w-sm lg:max-w-md xl:max-w-lg"
           >
             <SearchBar onOpen={closeExploreMenu} />
           </div>
 
-          <div className="hidden md:flex items-center gap-3 lg:gap-4">
+          <div className="hidden md:flex items-center gap-2 lg:gap-3">
             <ul
-              className="flex items-center gap-1 relative"
+              className="flex items-center gap-1 rounded-full border border-slate-200/80 bg-slate-50/80 p-1.5 shadow-[inset_0_1px_0_rgba(255,255,255,0.7)] dark:border-slate-800/80 dark:bg-slate-900/70"
               onMouseLeave={() => setHoveredTab(null)}
             >
               {/* Explore Trigger */}
@@ -278,18 +274,14 @@ export const Navbar = () => {
                     setHoveredTab('explore')
                   }}
                   onKeyDown={handleExploreKeyDown}
-                  className={`relative text-sm font-medium px-3 py-1.5 rounded-lg transition-all duration-300 z-10 cursor-pointer ${
-                    isExploreActive
-                      ? 'text-indigo-600 dark:text-indigo-300 font-semibold'
-                      : 'text-slate-400 hover:text-slate-900 dark:hover:text-slate-100'
-                  }`}
+                  className={`relative z-10 cursor-pointer ${getNavLinkClasses({ isActive: isExploreActive, isDark: isDark })}`}
                 >
                   Explore
                 </button>
                 {isExploreMenuOpen && (
                   <motion.div
                     layoutId="nav-hover-pill"
-                    className="absolute inset-0 bg-slate-200/50 dark:bg-slate-900/60 border border-slate-300/30 dark:border-slate-800/50 rounded-lg -z-0"
+                      className="absolute inset-0 rounded-full border border-slate-300/30 bg-slate-200/70 dark:border-slate-800/50 dark:bg-slate-900/70 -z-0"
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
@@ -300,7 +292,7 @@ export const Navbar = () => {
                 <div
                   id="desktop-explore-menu"
                   role="menu"
-                  className={`absolute left-0 top-full mt-3 py-2 w-64 max-h-[70vh] overflow-y-auto rounded-2xl border border-slate-200/80 dark:border-slate-800/80 bg-white dark:bg-slate-950 p-2 shadow-2xl backdrop-blur-2xl transition-all duration-300 z-50 ${
+                  className={`absolute left-0 top-full mt-3 w-72 max-h-[70vh] overflow-y-auto rounded-3xl border border-slate-200/80 bg-white/95 p-2 shadow-[0_20px_70px_rgba(15,23,42,0.16)] backdrop-blur-2xl transition-all duration-300 z-50 dark:border-slate-800/80 dark:bg-slate-950/95 ${
                     isExploreMenuOpen
                       ? 'visible opacity-100 translate-y-0'
                       : 'invisible opacity-0 translate-y-2'
@@ -312,10 +304,10 @@ export const Navbar = () => {
                       to={link.href}
                       role="menuitem"
                       onClick={closeExploreMenu}
-                      className={`block rounded-lg px-4 py-2 text-sm transition-all duration-200 border-l-2 ${
+                      className={`block rounded-2xl border-l-2 px-4 py-2.5 text-sm transition-all duration-200 ${
                         pathname === link.href
-                          ? 'bg-indigo-50/80 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-300 border-indigo-600 dark:border-indigo-500 font-medium'
-                          : 'text-slate-600 dark:text-slate-400 border-transparent hover:bg-slate-100 dark:hover:bg-slate-900 hover:text-slate-900 dark:hover:text-slate-200 hover:border-slate-300 dark:hover:border-slate-700'
+                          ? 'border-indigo-600 bg-indigo-50/80 font-semibold text-indigo-600 dark:border-indigo-500 dark:bg-indigo-500/10 dark:text-indigo-300'
+                          : 'border-transparent text-slate-600 hover:border-slate-300 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-400 dark:hover:border-slate-700 dark:hover:bg-slate-900 dark:hover:text-slate-200'
                       }`}
                     >
                       {link.name}
@@ -361,11 +353,10 @@ export const Navbar = () => {
               >
                 <Link
                   to="/concepts"
-                  className={`relative text-sm font-medium px-3 py-1.5 rounded-lg transition-all duration-300 z-10 ${
-                    pathname === '/concepts'
-                      ? 'text-indigo-600 dark:text-indigo-300 font-semibold'
-                      : 'text-slate-400 hover:text-slate-900 dark:hover:text-slate-100'
-                  }`}
+                  className={getNavLinkClasses({
+                    isActive: pathname === '/concepts',
+                    isDark: isDark,
+                  })}
                 >
                   Concepts
                 </Link>
@@ -389,11 +380,10 @@ export const Navbar = () => {
                 <Link
                   to="/practice"
                   data-tour="practice-nav"
-                  className={`relative text-sm font-medium px-3 py-1.5 rounded-lg transition-all duration-300 z-10 ${
-                    pathname === '/practice'
-                      ? 'text-indigo-600 dark:text-indigo-300 font-semibold'
-                      : 'text-slate-400 hover:text-slate-900 dark:hover:text-slate-100'
-                  }`}
+                  className={getNavLinkClasses({
+                    isActive: pathname === '/practice',
+                    isDark: isDark,
+                  })}
                 >
                   Practice
                 </Link>
@@ -417,11 +407,10 @@ export const Navbar = () => {
                 <Link
                   to="/challenge"
                   data-tour="challenge-nav"
-                  className={`relative text-sm font-medium px-3 py-1.5 rounded-lg transition-all duration-300 z-10 ${
-                    pathname === '/challenge'
-                      ? 'text-indigo-600 dark:text-indigo-300 font-semibold'
-                      : 'text-slate-400 hover:text-slate-900 dark:hover:text-slate-100'
-                  }`}
+                  className={getNavLinkClasses({
+                    isActive: pathname === '/challenge',
+                    isDark: isDark,
+                  })}
                 >
                   Challenge
                 </Link>
@@ -445,11 +434,10 @@ export const Navbar = () => {
                 <Link
                   to="/favorites"
                   data-tour="favorites-nav"
-                  className={`relative text-sm font-medium px-3 py-1.5 rounded-lg transition-all duration-300 z-10 ${
-                    pathname === '/favorites'
-                      ? 'text-indigo-600 dark:text-indigo-300 font-semibold'
-                      : 'text-slate-400 hover:text-slate-900 dark:hover:text-slate-100'
-                  }`}
+                  className={getNavLinkClasses({
+                    isActive: pathname === '/favorites',
+                    isDark: isDark,
+                  })}
                 >
                   Favorites
                 </Link>
@@ -475,7 +463,7 @@ export const Navbar = () => {
               rel="noopener noreferrer"
               aria-label="GitHub Repository"
               title="GitHub Repository"
-              className="h-10 w-10 inline-flex items-center justify-center rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/40 hover:bg-slate-100 dark:hover:bg-slate-800/80 text-slate-700 dark:text-slate-200 transition-all duration-300 shadow-md active:scale-95"
+              className="inline-flex h-10 w-10 items-center justify-center rounded-2xl border border-slate-200/80 bg-white/80 text-slate-700 shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:bg-slate-50 hover:shadow-md active:scale-95 dark:border-slate-800/80 dark:bg-slate-900/70 dark:text-slate-200 dark:hover:bg-slate-800/80"
             >
               <img
                 src={githubIcon}
@@ -491,15 +479,13 @@ export const Navbar = () => {
               {HAS_CLERK ? (
                 <>
                   <SignedOut>
-                    <SignInButton
-                      mode="modal"
-                      appearance={{ baseTheme: isDark ? dark : undefined }}
+                    <Link
+                      to="/sign-in"
+                      className="theme-button-primary relative group overflow-hidden rounded-full border border-slate-200/80 bg-white/90 px-5 py-2 text-sm font-semibold text-slate-700 shadow-[0_8px_24px_rgba(15,23,42,0.08)] transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_12px_30px_rgba(79,70,229,0.16)] active:scale-95 dark:border-slate-700/70 dark:bg-slate-900/70 dark:text-slate-200"
                     >
-                      <button className="theme-button-primary relative group overflow-hidden rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/40 hover:bg-slate-100 dark:hover:bg-slate-800/80 text-slate-700 dark:text-slate-200 px-6 py-2 text-sm font-bold transition-all duration-300 shadow-md active:scale-95">
-                        <span className="relative z-10">Sign In</span>
-                        <div className="absolute inset-0 bg-gradient-to-r from-indigo-600/20 to-purple-600/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                      </button>
-                    </SignInButton>
+                      <span className="relative z-10">Sign In</span>
+                      <div className="absolute inset-0 bg-gradient-to-r from-indigo-600/20 to-purple-600/20 opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+                    </Link>
                   </SignedOut>
 
                   <SignedIn>
@@ -514,15 +500,13 @@ export const Navbar = () => {
                   </SignedIn>
                 </>
               ) : (
-                <>
-                  <button
-                    title="Auth not configured"
-                    disabled
-                    className="theme-button-primary relative group overflow-hidden rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/40 text-slate-700 dark:text-slate-200 px-6 py-2 text-sm font-bold transition-all duration-300 shadow-md opacity-50 cursor-not-allowed"
-                  >
-                    Sign In
-                  </button>
-                </>
+                <Link
+                  to="/sign-in"
+                  className="theme-button-primary relative group overflow-hidden rounded-full border border-slate-200/80 bg-white/90 px-5 py-2 text-sm font-semibold text-slate-700 shadow-[0_8px_24px_rgba(15,23,42,0.08)] transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_12px_30px_rgba(79,70,229,0.16)] active:scale-95 dark:border-slate-700/70 dark:bg-slate-900/70 dark:text-slate-200"
+                >
+                  <span className="relative z-10">Sign In</span>
+                  <div className="absolute inset-0 bg-gradient-to-r from-indigo-600/20 to-purple-600/20 opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+                </Link>
               )}
             </div>
           </div>
@@ -550,7 +534,7 @@ export const Navbar = () => {
               aria-expanded={open}
               onClick={() => setOpen((o) => !o)}
               animate={open ? 'open' : 'closed'}
-              className="inline-flex flex-col items-center justify-center gap-1 rounded-lg p-2 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 transition-colors"
+              className="inline-flex flex-col items-center justify-center gap-1 rounded-2xl border border-slate-200/80 bg-white/80 p-2.5 text-slate-600 shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:bg-slate-50 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-indigo-500/20 dark:border-slate-800/80 dark:bg-slate-900/70 dark:text-slate-300 dark:hover:bg-slate-800/80"
             >
               <Line variants={topVariants} />
               <Line variants={middleVariants} />
@@ -581,7 +565,7 @@ export const Navbar = () => {
                   animate={{ x: 0 }}
                   exit={{ x: '100%' }}
                   transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-                  className="fixed top-0 right-0 bottom-0 w-80 max-w-[85vw] bg-white dark:bg-slate-950 border-l border-slate-200 dark:border-slate-800/80 p-6 shadow-2xl backdrop-blur-2xl z-[110] md:hidden flex flex-col"
+                  className="fixed top-0 right-0 bottom-0 w-[92vw] max-w-[22rem] rounded-l-[28px] border-l border-slate-200/80 bg-white/95 p-6 shadow-[0_24px_80px_rgba(15,23,42,0.18)] backdrop-blur-2xl z-[110] md:hidden flex flex-col dark:border-slate-800/80 dark:bg-slate-950/95"
                 >
                   {/* Drawer Header */}
                   <div className="flex items-center justify-between mb-6 pb-4 border-b border-slate-200 dark:border-slate-800/80">
@@ -602,7 +586,7 @@ export const Navbar = () => {
                     <button
                       type="button"
                       onClick={() => setOpen(false)}
-                      className="p-1 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-900 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors"
+                      className="rounded-2xl p-1.5 text-slate-500 transition-colors hover:bg-slate-100 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-900 dark:hover:text-white"
                     >
                       <X className="w-6 h-6" />
                     </button>
@@ -631,10 +615,10 @@ export const Navbar = () => {
                             <Link
                               to={link.href}
                               onClick={() => setOpen(false)}
-                              className={`block rounded-lg px-4 py-2.5 text-sm transition-all duration-200 border-l-2 ${
+                              className={`block rounded-2xl border-l-2 px-4 py-2.5 text-sm transition-all duration-200 ${
                                 pathname === link.href
-                                  ? 'bg-indigo-50/80 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-300 border-indigo-600 dark:border-indigo-500 font-semibold'
-                                  : 'text-slate-600 dark:text-slate-400 border-transparent hover:bg-slate-100 dark:hover:bg-slate-900 hover:text-slate-900 dark:hover:text-slate-200 hover:border-slate-300 dark:hover:border-slate-700'
+                                  ? 'border-indigo-600 bg-indigo-50/80 font-semibold text-indigo-600 dark:border-indigo-500 dark:bg-indigo-500/10 dark:text-indigo-300'
+                                  : 'border-transparent text-slate-600 hover:border-slate-300 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-400 dark:hover:border-slate-700 dark:hover:bg-slate-900 dark:hover:text-slate-200'
                               }`}
                             >
                               {link.name}
@@ -649,21 +633,19 @@ export const Navbar = () => {
                   <div className="mt-6 pt-4 border-t border-slate-200 dark:border-slate-800/80 space-y-3">
                     {HAS_CLERK ? (
                       <SignedOut>
-                        <SignInButton
-                          mode="modal"
-                          appearance={{ baseTheme: isDark ? dark : undefined }}
-                        >
-                          <button className="w-full relative group overflow-hidden rounded-xl bg-indigo-600 px-4 py-2.5 text-sm font-semibold text-white transition-all duration-300 active:scale-[0.98]">
-                            <span className="relative z-10">Sign In</span>
-                            <div className="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                          </button>
-                        </SignInButton>
-                      </SignedOut>
+                      <Link
+                        to="/sign-in"
+                        className="group relative flex w-full overflow-hidden rounded-2xl bg-indigo-600 px-4 py-2.5 text-sm font-semibold text-white transition-all duration-300 active:scale-[0.98]"
+                      >
+                        <span className="relative z-10">Sign In</span>
+                        <div className="absolute inset-0 bg-white/10 opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+                      </Link>
+                    </SignedOut>
                     ) : (
                       <button
                         title="Auth not configured"
                         disabled
-                        className="w-full rounded-xl bg-slate-100 dark:bg-slate-900 px-4 py-2.5 text-sm font-semibold text-slate-500 border border-slate-200 dark:border-slate-800 transition-all duration-300 opacity-50 cursor-not-allowed"
+                        className="w-full rounded-2xl border border-slate-200 bg-slate-100 px-4 py-2.5 text-sm font-semibold text-slate-500 opacity-50 transition-all duration-300 cursor-not-allowed dark:border-slate-800 dark:bg-slate-900"
                       >
                         Sign In
                       </button>
@@ -674,7 +656,7 @@ export const Navbar = () => {
                       target="_blank"
                       rel="noopener noreferrer"
                       onClick={() => setOpen(false)}
-                      className="flex items-center justify-center gap-2 w-full rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 px-4 py-2.5 text-sm font-semibold text-slate-700 dark:text-slate-200 transition-all duration-300 shadow-md active:scale-95"
+                      className="flex w-full items-center justify-center gap-2 rounded-2xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm font-semibold text-slate-700 shadow-sm transition-all duration-300 hover:bg-slate-100 active:scale-95 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200 dark:hover:bg-slate-800"
                     >
                       <img
                         src={githubIcon}
