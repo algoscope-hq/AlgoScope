@@ -106,7 +106,11 @@ export const CanvasSearching = ({
         const options = {
           physics: {
             enabled: false,
-            stabilization: { enabled: true, iterations: 100, updateInterval: 25 },
+            stabilization: {
+              enabled: true,
+              iterations: 100,
+              updateInterval: 25,
+            },
           },
           nodes: {
             shape: 'dot',

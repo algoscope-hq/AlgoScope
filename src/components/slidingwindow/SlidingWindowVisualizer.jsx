@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react'
+import { useSearchParams } from 'react-router-dom'
 
 /**
  * SlidingWindowVisualizer
@@ -812,16 +813,76 @@ function Tab({ active, accent, children, onClick }) {
   )
 }
 
+const PROB_MAP = {
+  maxsum: 0,
+  maxsubarray: 0,
+  longestsubstr: 1,
+  longestsubstring: 1,
+  minlen: 2,
+  minsubarraylen: 2,
+  maxvowels: 3,
+}
+
+const PROB_IDS = ['maxsum', 'longestsubstr', 'minlen', 'maxvowels']
+
 /* ============================================================= component */
 export default function SlidingWindowVisualizer() {
-  const [pIdx, setPIdx] = useState(0)
-  const [appr, setAppr] = useState('slide')
+  const [searchParams, setSearchParams] = useSearchParams()
+  const rawProb = (
+    searchParams.get('problem') ||
+    searchParams.get('algo') ||
+    ''
+  ).toLowerCase()
+  const initialProbIdx = PROB_MAP[rawProb] !== undefined ? PROB_MAP[rawProb] : 0
+  const rawAppr = searchParams.get('approach')
+  const initialAppr = rawAppr === 'brute' ? 'brute' : 'slide'
+
+  const [pIdx, setPIdx] = useState(initialProbIdx)
+  const [appr, setAppr] = useState(initialAppr)
   const [lang, setLang] = useState('js')
   const [step, setStep] = useState(0)
   const [playing, setPlaying] = useState(false)
   const [sliderVal, setSliderVal] = useState(650)
   const [copied, setCopied] = useState(false)
   const [seed, setSeed] = useState(0) // bump to re-randomize
+
+  const probParam = (
+    searchParams.get('problem') ||
+    searchParams.get('algo') ||
+    ''
+  ).toLowerCase()
+  const apprParam = searchParams.get('approach')
+  const [prevProbParam, setPrevProbParam] = useState(probParam)
+  const [prevApprParam, setPrevApprParam] = useState(apprParam)
+
+  if (probParam !== prevProbParam || apprParam !== prevApprParam) {
+    setPrevProbParam(probParam)
+    setPrevApprParam(apprParam)
+    const targetIdx = PROB_MAP[probParam]
+    if (targetIdx !== undefined && targetIdx !== pIdx) {
+      setPIdx(targetIdx)
+    }
+    if (
+      (apprParam === 'brute' || apprParam === 'slide') &&
+      apprParam !== appr
+    ) {
+      setAppr(apprParam)
+    }
+  }
+
+  const handleSelectProblem = (idx) => {
+    setPIdx(idx)
+    const newParams = new URLSearchParams(searchParams)
+    newParams.set('problem', PROB_IDS[idx] || 'maxsum')
+    setSearchParams(newParams)
+  }
+
+  const handleSelectApproach = (aKey) => {
+    setAppr(aKey)
+    const newParams = new URLSearchParams(searchParams)
+    newParams.set('approach', aKey)
+    setSearchParams(newParams)
+  }
 
   const problem = PROBLEMS[pIdx]
   const approach = problem.approaches[appr]
@@ -907,12 +968,10 @@ export default function SlidingWindowVisualizer() {
 
   return (
     <div
+      className="bg-slate-50 dark:bg-[#0a0a0f] text-slate-900 dark:text-[#e6eaf2] transition-colors duration-300 min-h-screen"
       style={{
-        background: `radial-gradient(1200px 600px at 70% -10%, #15131f 0%, ${C.bg} 55%)`,
-        minHeight: '100%',
         padding: '22px 18px 32px',
         fontFamily: SANS,
-        color: C.text,
       }}
     >
       <style>{`
@@ -958,7 +1017,7 @@ export default function SlidingWindowVisualizer() {
               key={p.id}
               active={i === pIdx}
               accent={C.pink}
-              onClick={() => setPIdx(i)}
+              onClick={() => handleSelectProblem(i)}
             >
               {p.label}
             </Tab>
@@ -976,14 +1035,14 @@ export default function SlidingWindowVisualizer() {
           <Tab
             active={appr === 'brute'}
             accent={C.red}
-            onClick={() => setAppr('brute')}
+            onClick={() => handleSelectApproach('brute')}
           >
             Brute Force
           </Tab>
           <Tab
             active={appr === 'slide'}
             accent={C.emerald}
-            onClick={() => setAppr('slide')}
+            onClick={() => handleSelectApproach('slide')}
           >
             Sliding Window
           </Tab>
@@ -1404,14 +1463,14 @@ export default function SlidingWindowVisualizer() {
                 name="Brute"
                 t={problem.approaches.brute.time}
                 s={problem.approaches.brute.space}
-                onClick={() => setAppr('brute')}
+                onClick={() => handleSelectApproach('brute')}
               />
               <ApproachRow
                 active={appr === 'slide'}
                 name="Window"
                 t={problem.approaches.slide.time}
                 s={problem.approaches.slide.space}
-                onClick={() => setAppr('slide')}
+                onClick={() => handleSelectApproach('slide')}
               />
             </Panel>
           </div>

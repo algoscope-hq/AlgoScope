@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef, useMemo } from 'react'
+import { useSearchParams } from 'react-router-dom'
 
 /* ═══════════════════════════════════════════
    CONSTANTS
@@ -1183,16 +1184,60 @@ function Leg({ c, l }) {
   )
 }
 
+const VALID_TP_PROBLEMS = ['twoSum', 'container', 'palindrome', 'trapping']
+const TP_ALIAS_MAP = {
+  twosum: 'twoSum',
+  two_sum: 'twoSum',
+  'two-sum': 'twoSum',
+  container: 'container',
+  palindrome: 'palindrome',
+  trapping: 'trapping',
+}
+
 /* ═══════════════════════════════════════════
    MAIN COMPONENT
    ═══════════════════════════════════════════ */
 export default function TwoPointerVisualizer() {
-  const [pk, setPk] = useState('twoSum')
+  const [searchParams, setSearchParams] = useSearchParams()
+  const rawProb = (
+    searchParams.get('problem') ||
+    searchParams.get('algo') ||
+    ''
+  ).toLowerCase()
+  const initialPk = TP_ALIAS_MAP[rawProb] || 'twoSum'
+
+  const [pk, setPk] = useState(initialPk)
   const [step, setStep] = useState(0)
   const [playing, setPlaying] = useState(false)
   const [speed, setSpeed] = useState(900)
   const [lang, setLang] = useState('js')
   const timer = useRef(null)
+
+  const probParam = (
+    searchParams.get('problem') ||
+    searchParams.get('algo') ||
+    ''
+  ).toLowerCase()
+  const [prevProbParam, setPrevProbParam] = useState(probParam)
+
+  if (probParam !== prevProbParam) {
+    setPrevProbParam(probParam)
+    const targetPk = TP_ALIAS_MAP[probParam]
+    if (targetPk && targetPk !== pk) {
+      setPk(targetPk)
+      setStep(0)
+      setPlaying(false)
+    }
+  }
+
+  const handleSelectProblem = (newPk) => {
+    setPk(newPk)
+    setStep(0)
+    setPlaying(false)
+    const newParams = new URLSearchParams(searchParams)
+    newParams.set('problem', newPk)
+    setSearchParams(newParams)
+  }
 
   const prob = PROBLEMS[pk]
   const accent = prob.accent
@@ -1232,7 +1277,10 @@ export default function TwoPointerVisualizer() {
   }[pk]
 
   return (
-    <div style={{ fontFamily: "'IBM Plex Sans',sans-serif", color: '#c9d1d9' }}>
+    <div
+      className="bg-slate-50 dark:bg-[#07090e] text-slate-900 dark:text-[#c9d1d9] transition-colors duration-300 min-h-screen"
+      style={{ fontFamily: "'IBM Plex Sans',sans-serif" }}
+    >
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap');
         .tp-viz ::-webkit-scrollbar{width:3px;height:3px}
@@ -1283,11 +1331,7 @@ export default function TwoPointerVisualizer() {
             {Object.entries(PROBLEMS).map(([k, p]) => (
               <button
                 key={k}
-                onClick={() => {
-                  setPk(k)
-                  setStep(0)
-                  setPlaying(false)
-                }}
+                onClick={() => handleSelectProblem(k)}
                 style={{
                   padding: '6px 14px',
                   borderRadius: 7,

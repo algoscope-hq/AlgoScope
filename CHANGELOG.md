@@ -5,6 +5,205 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.14.0] - 2026-07-26
+
+### Added
+
+- add Trie (Prefix Tree) visualizer to Abstract Data Types
+- remember selected CPU scheduling algorithm after refresh
+- add minimize/expand toggle to My Notes panel
+- add automatic issue assignment workflow and format codebase
+- add Concepts overview page and search bar data updates
+- add missing difficulty badge to Guess the Algorithm card
+- updated search bar
+- sorted all the algos according to difficulty.
+
+### Fixed
+
+- remove unused isLeaf var and store trie snapshot in state
+- store Trie in useRef and add bounds checking with startsWith to C implementation
+- complete dialog semantics for Test Cases panel (#615)
+- improve contrast and accessibility of Test Cases button (#615)
+- validate persisted CPU scheduling algorithm
+- correct Bubble Sort swap step message values
+- small bugs
+- batch bug fixes for code exec guard, search icon, drag leave, signup modal, test validation
+- correct linked list route param in search bar
+- improve hover transition duration and normalize card heights (#725, #727)
+- add FRONTEND_URL to .env.example (closes #642)
+- shorten two pointers description and mention the important question
+- add missing id fields and fix syntax error
+- move visualizer data to shared module to break circular import
+- compute visualizer count dynamically instead of hardcoded 9+ (closes #698)
+
+### 📂 Changed Files
+
+```
+- 📁 **.github/**
+  - 📁 **workflows/**
+    - ➕ issue-comment-assign.yml
+- 📁 **src/**
+  - 📁 **algorithms/**
+    - 📁 **greedy/**
+      - ❌ fractionalKnapsackSteps.js
+      - ❌ greedySources.js
+      - ❌ huffmanCodingSteps.js
+    - 📁 **monotonicStack/**
+      - ➕ largestRectangleSteps.js
+      - ➕ maximalRectangleSteps.js
+    - 📁 **sorting/**
+      - ✏️ bubbleSortSteps.js
+    - 📁 **trees/**
+      - ❌ avlTree.js
+      - ❌ segmentTree.js
+      - ❌ trie.js
+  - 📁 **components/**
+    - 📁 **advancedTrees/**
+      - ❌ AVLTreeVisualizer.jsx
+      - ❌ BinaryTreeWithTrie.jsx
+      - ❌ SegmentTreeVisualizer.jsx
+      - ❌ TrieVisualizer.jsx
+    - 📁 **concepts/**
+      - ➕ ConceptsOverview.jsx
+    - 📁 **dataStructures/**
+      - ✏️ adtSources.js
+      - ✏️ DSLayout.jsx
+      - ➕ TrieIV.jsx
+    - 📁 **greedyAlgo/**
+      - ❌ GreedyAlgorithmCard.jsx
+      - ❌ GreedyBlock.jsx
+      - ❌ HuffmanVisualizer.jsx
+      - ❌ KnapsackVisualizer.jsx
+      - ❌ VisualizerPage.jsx
+    - 📁 **hero/**
+      - ✏️ Hero.jsx
+    - 📁 **monotonicStack/**
+      - ➕ StackVisualizer.jsx
+      - ➕ StackVisualizerPage.jsx
+    - 📁 **notes/**
+      - ✏️ AlgorithmNotes.jsx
+    - 📁 **operatingSystems/**
+      - ✏️ CPUSchedulingPage.jsx
+    - 📁 **shortestPathAlgo/**
+      - ✏️ GridVisualizer.jsx
+    - 📁 **testCaseManager/**
+      - ✏️ TestCaseManager.jsx
+    - 📁 **visualizer/**
+      - ✏️ useStepPlayback.js
+    - ✏️ AlgoCard.jsx
+    - ✏️ Home.jsx
+    - ✏️ Navbar.jsx
+    - ✏️ PracticePage.jsx
+    - ✏️ SearchBar.jsx
+  - 📁 **data/**
+    - ✏️ complexityMap.js
+    - ✏️ difficultyMap.js
+    - ➕ visualizerData.js
+  - 📁 **lib/**
+    - ✏️ testCaseStore.js
+    - ✏️ testCaseStore.test.js
+  - 📁 **pages/**
+    - ❌ AdvancedTreesPage.jsx
+  - ✏️ App.jsx
+  - ✏️ main.jsx
+- ✏️ .env.example
+- ✏️ CHANGELOG.md
+- ✏️ eslint.config.js
+- ✏️ package-lock.json
+- ✏️ package.json
+```
+
+## [1.13.0] - 2026-06-18
+
+### Added
+
+- expand MCQ bank and prevent repeated questions on restart
+- add Linked List visualization module (closes #649)
+- add RR, Priority, SRTF and MLQ scheduling algorithms
+- advanced trees visualizer improvements and lint fixes
+
+### Fixed
+
+- format & lint
+- address CodeRabbit review comments on picker logic and useRef
+- correct array search algorithm names in global search
+- format App.jsx, Home.jsx, and CanvasSearching.jsx with LF endOfLine
+- import TwoPointerVisualizerPage and format code style
+- remove overly broad src/\*_/_.js pattern from ignores
+- format & lint
+- format & lint
+- format & lint
+- highlight navbar Explore button when on algorithm sub-pages
+- hide overlapping data dots on complexity graph
+- add docstrings to LinkedListIV and complete C/Rust snippets in adtSources
+- close explore dropdown when search modal opens
+- synchronize playback timers
+- address CodeRabbit scheduling review comments
+- format step playback hook and exclude nested dist in eslint config
+- remove unused setVersion and clean up TrieVisualizer
+
+### Changed
+
+- lazy load vis-network to reduce render-blocking resources
+- memoize closeExploreMenu with useCallback
+
+### 📂 Changed Files
+
+```
+- 📁 **src/**
+  - 📁 **algorithms/**
+    - 📁 **greedy/**
+      - ➕ fractionalKnapsackSteps.js
+      - ➕ greedySources.js
+      - ➕ huffmanCodingSteps.js
+    - 📁 **trees/**
+      - ➕ avlTree.js
+      - ➕ segmentTree.js
+      - ➕ trie.js
+  - 📁 **components/**
+    - 📁 **advancedTrees/**
+      - ➕ AVLTreeVisualizer.jsx
+      - ➕ BinaryTreeWithTrie.jsx
+      - ➕ SegmentTreeVisualizer.jsx
+      - ➕ TrieVisualizer.jsx
+    - 📁 **challenge/**
+      - ✏️ ChallengeVisualizer.jsx
+    - 📁 **dataStructures/**
+      - ✏️ adtSources.js
+      - ✏️ DSLayout.jsx
+      - ➕ LinkedListIV.jsx
+    - 📁 **greedyAlgo/**
+      - ➕ GreedyAlgorithmCard.jsx
+      - ➕ GreedyBlock.jsx
+      - ➕ HuffmanVisualizer.jsx
+      - ➕ KnapsackVisualizer.jsx
+      - ➕ VisualizerPage.jsx
+    - 📁 **operatingSystems/**
+      - ✏️ cpuSchedulingAlgorithms.js
+      - ➕ cpuSchedulingData.js
+      - ✏️ CPUSchedulingPage.jsx
+    - 📁 **searchAlgo/**
+      - ✏️ CanvasSearching.jsx
+    - 📁 **visualizer/**
+      - ✏️ useStepPlayback.js
+    - ✏️ ComplexityGraph.jsx
+    - ✏️ Home.jsx
+    - ✏️ Navbar.jsx
+    - ✏️ SearchBar.jsx
+  - 📁 **data/**
+    - ✏️ complexityMap.js
+  - 📁 **pages/**
+    - ➕ AdvancedTreesPage.jsx
+  - ✏️ App.jsx
+  - ✏️ main.jsx
+- ✏️ CHANGELOG.md
+- ✏️ eslint.config.js
+- ✏️ index.html
+- ✏️ package-lock.json
+- ✏️ package.json
+- ✏️ README.md
+```
+
 ## [1.12.0] - 2026-06-13
 
 ### Added

@@ -233,6 +233,8 @@ export function generateBubbleSortSteps(inputArray) {
       )
 
       if (arr[j] > arr[j + 1]) {
+        const valA = arr[j]
+        const valB = arr[j + 1]
         ;[arr[j], arr[j + 1]] = [arr[j + 1], arr[j]]
 
         steps.push(
@@ -242,7 +244,7 @@ export function generateBubbleSortSteps(inputArray) {
             array: arr,
             indices: [j, j + 1],
             sortedIndices: [...sortedIndices],
-            message: `Swap ${arr[j + 1]} and ${arr[j]}.`,
+            message: `Swap ${valA} and ${valB}.`,
             variables: { i, j, n },
             duration: 850,
           })

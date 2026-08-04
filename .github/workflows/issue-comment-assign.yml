@@ -1,0 +1,126 @@
+name: Issue Assignment Request
+
+on:
+  issue_comment:
+    types: [created]
+
+permissions:
+  issues: write
+
+concurrency:
+  group: issue-comment-assign-${{ github.event.issue.number }}
+  cancel-in-progress: false
+
+jobs:
+  request-assignment:
+    if: |
+      github.event.issue.pull_request == null &&
+      github.event.issue.state == 'open' &&
+      github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Respond to assignment request
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const issue = context.payload.issue;
+            const comment = context.payload.comment;
+            const owner = context.repo.owner;
+            const repo = context.repo.repo;
+            const issue_number = issue.number;
+            const username = comment.user.login;
+
+            function isAssignmentRequest(text) {
+              const normalized = (text || '')
+                .toLowerCase()
+                .replace(/\s+/g, ' ')
+                .trim();
+
+              const requestPatterns = [
+                /^-assign$/,
+                /^\/assign$/,
+                /\bassign me\b/,
+                /\bassign it to me\b/,
+                /\bassign this issue to me\b/,
+                /\bplease assign\b/,
+                /\bcan you assign\b/,
+                /\bcould you assign\b/,
+                /\bkindly assign\b/,
+                /\bi want to work on this\b/,
+                /\bi would like to work on this\b/,
+                /\bi'd like to work on this\b/,
+                /\bcan i work on this\b/,
+                /\bmay i work on this\b/,
+                /\bi am interested in working on this\b/,
+                /\bi'm interested in working on this\b/
+              ];
+
+              return requestPatterns.some(pattern => pattern.test(normalized));
+            }
+
+            if (!isAssignmentRequest(comment.body)) {
+              return;
+            }
+
+            // Check if issue is already assigned
+            if ((issue.assignees || []).length > 0) {
+              if (issue.assignees.some(a => a.login.toLowerCase() === username.toLowerCase())) {
+                return; // requester is already the assignee, nothing to do
+              }
+              const assigned = issue.assignees.map(assignee => `@${assignee.login}`).join(', ');
+              await github.rest.issues.createComment({
+                owner,
+                repo,
+                issue_number,
+                body: `## 👥 Issue Already Assigned\n\n> [!WARNING]\n> This issue already has an assignee — please do not start work unless a maintainer reassigns it to you.\n\nHey @${username}! 👋 Thanks for offering to help.\n\nThis issue is currently assigned to ${assigned}. Your interest is noted and visible to maintainers.\n\nWhile you wait, feel free to explore other open issues — we'd love to have your contribution elsewhere! 🚀\n\n---\n<sub>🤖 AlgoScope Automation</sub>`
+              });
+              return;
+            }
+
+            // Check if the user is already assigned to any other open issues
+            try {
+              const assignedIssues = await github.rest.issues.listForRepo({
+                owner,
+                repo,
+                state: 'open',
+                assignee: username
+              });
+
+              const activeIssues = (assignedIssues.data || []).filter(item => !item.pull_request);
+
+              if (activeIssues.length > 0) {
+                const issueLinks = activeIssues.map(item => `#${item.number}`).join(', ');
+                await github.rest.issues.createComment({
+                  owner,
+                  repo,
+                  issue_number,
+                  body: `## ⚠️ Assignment Request Denied\n\n> [!WARNING]\n> According to our **[Issue Claiming Policy](CONTRIBUTING.md#issue-claiming-policy)**, contributors may claim only **1 active issue at a time**.\n\nHey @${username}! 👋 Thanks for volunteering.\n\nHowever, you are currently assigned to open issue(s): ${issueLinks}.\n\nPlease complete your active issue(s) or ask a maintainer to unassign you before requesting a new assignment. Thank you! 🚀\n\n---\n<sub>🤖 AlgoScope Automation</sub>`
+                });
+                return;
+              }
+            } catch (error) {
+              console.log('Error checking assigned issues:', error);
+              await github.rest.issues.createComment({
+                owner,
+                repo,
+                issue_number,
+                body: `⚠️ Could not verify your current assignments due to an error. Please try again shortly.`
+              });
+              return;
+            }
+
+            // Assign the user
+            await github.rest.issues.addAssignees({
+              owner,
+              repo,
+              issue_number,
+              assignees: [username]
+            });
+
+            await github.rest.issues.createComment({
+              owner,
+              repo,
+              issue_number,
+              body: `## 🎉 Issue Assigned!\n\nHey @${username}! 🎉 You have been successfully assigned to this issue.\n\nAccording to our **[Issue Claiming Policy](CONTRIBUTING.md#issue-claiming-policy)**:\n- Please submit your pull request within **2–3 days**.\n- If no progress or update is provided, this issue may be reassigned.\n\nHappy coding! 🚀\n\n---\n<sub>🤖 AlgoScope Automation</sub>`
+            });

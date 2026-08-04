@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef, useMemo } from 'react'
+import { useSearchParams } from 'react-router-dom'
 
 /* ═══════════════════════════════════════════
    CODE TEMPLATES PER APPROACH
@@ -1060,18 +1061,72 @@ function CodePanel({ code, activeLine, lang, setLang, accent }) {
   )
 }
 
-/* ═══════════════════════════════════════════
-   MAIN
-   ═══════════════════════════════════════════ */
+const VALID_PROBLEMS = [
+  'fibonacci',
+  'climbingStairs',
+  'houseRobber',
+  'coinChange',
+]
+const VALID_APPROACHES = ['recursion', 'memo', 'tab', 'space']
+
 export default function DPVisualizer() {
-  const [pk, setPk] = useState('fibonacci')
-  const [ap, setAp] = useState('recursion')
+  const [searchParams, setSearchParams] = useSearchParams()
+  const initialProb = searchParams.get('problem') || searchParams.get('algo')
+  const initialAppr = searchParams.get('approach')
+
+  const [pk, setPk] = useState(
+    VALID_PROBLEMS.includes(initialProb) ? initialProb : 'fibonacci'
+  )
+  const [ap, setAp] = useState(
+    VALID_APPROACHES.includes(initialAppr) ? initialAppr : 'recursion'
+  )
   const [n, setN] = useState(6)
   const [step, setStep] = useState(0)
   const [playing, setPlaying] = useState(false)
   const [speed, setSpeed] = useState(650)
   const [lang, setLang] = useState('js')
   const timer = useRef(null)
+
+  const probParam = searchParams.get('problem') || searchParams.get('algo')
+  const apprParam = searchParams.get('approach')
+  const [prevProbParam, setPrevProbParam] = useState(probParam)
+  const [prevApprParam, setPrevApprParam] = useState(apprParam)
+
+  if (probParam !== prevProbParam) {
+    setPrevProbParam(probParam)
+    if (VALID_PROBLEMS.includes(probParam) && probParam !== pk) {
+      setPk(probParam)
+      setStep(0)
+      setPlaying(false)
+    }
+  }
+
+  if (apprParam !== prevApprParam) {
+    setPrevApprParam(apprParam)
+    if (VALID_APPROACHES.includes(apprParam) && apprParam !== ap) {
+      setAp(apprParam)
+      setStep(0)
+      setPlaying(false)
+    }
+  }
+
+  const handleSetPk = (newPk) => {
+    setPk(newPk)
+    setStep(0)
+    setPlaying(false)
+    const newParams = new URLSearchParams(searchParams)
+    newParams.set('problem', newPk)
+    setSearchParams(newParams)
+  }
+
+  const handleSetAp = (newAp) => {
+    setAp(newAp)
+    setStep(0)
+    setPlaying(false)
+    const newParams = new URLSearchParams(searchParams)
+    newParams.set('approach', newAp)
+    setSearchParams(newParams)
+  }
 
   const prob = PROBLEMS[pk]
   const accent = APPROACHES.find((a) => a.id === ap)?.accent || '#818cf8'
@@ -1163,10 +1218,8 @@ export default function DPVisualizer() {
               <button
                 key={k}
                 onClick={() => {
-                  setPk(k)
+                  handleSetPk(k)
                   setN(PROBLEMS[k].defaultN)
-                  setStep(0)
-                  setPlaying(false)
                 }}
                 style={{
                   padding: '6px 14px',
@@ -1201,9 +1254,7 @@ export default function DPVisualizer() {
               <button
                 key={a.id}
                 onClick={() => {
-                  setAp(a.id)
-                  setStep(0)
-                  setPlaying(false)
+                  handleSetAp(a.id)
                 }}
                 style={{
                   padding: '6px 12px',

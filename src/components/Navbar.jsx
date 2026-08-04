@@ -1,4 +1,5 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useCallback } from 'react'
+import { createPortal } from 'react-dom'
 import { Link, useLocation } from 'react-router-dom'
 import {
   SignedIn,
@@ -6,6 +7,7 @@ import {
   SignInButton,
   UserButton,
 } from '@clerk/clerk-react'
+import { dark } from '@clerk/themes'
 import { X } from 'lucide-react'
 
 const HAS_CLERK = Boolean(import.meta.env.VITE_CLERK_PUBLISHABLE_KEY)
@@ -124,12 +126,6 @@ const algorithmLinks = [
     href: '/dp-journey',
     difficulty: 'Advanced',
   },
-  { name: 'Practice Sandbox', href: '/practice', difficulty: 'Intermediate' },
-  {
-    name: 'Guess the Algorithm',
-    href: '/challenge',
-    difficulty: 'Intermediate',
-  },
   {
     name: 'Sliding Window',
     href: '/sliding-window',
@@ -140,6 +136,22 @@ const algorithmLinks = [
     href: '/two-pointer',
     difficulty: 'Advanced',
   },
+  {
+    name: 'Greedy Algorithms',
+    href: '/greedy',
+    difficulty: 'Intermediate',
+  },
+  {
+    name: 'Monotonic Stack',
+    href: '/monotonic-stack',
+    difficulty: 'Advanced',
+  },
+  { name: 'Practice Sandbox', href: '/practice', difficulty: 'Intermediate' },
+  {
+    name: 'Guess the Algorithm',
+    href: '/challenge',
+    difficulty: 'Intermediate',
+  },
 ]
 
 export const Navbar = () => {
@@ -147,6 +159,7 @@ export const Navbar = () => {
   const [hoveredTab, setHoveredTab] = useState(null)
   const [exploreOpen, setExploreOpen] = useState(false)
   const exploreButtonRef = useRef(null)
+  const { isDark } = useTheme()
 
   const { pathname } = useLocation()
   const isExploreMenuOpen = hoveredTab === 'explore' || exploreOpen
@@ -186,10 +199,10 @@ export const Navbar = () => {
     localStorage.setItem('algo-history', JSON.stringify(history))
   }, [history])
 
-  const closeExploreMenu = () => {
+  const closeExploreMenu = useCallback(() => {
     setExploreOpen(false)
     setHoveredTab((current) => (current === 'explore' ? null : current))
-  }
+  }, [])
 
   const handleExploreKeyDown = (event) => {
     if (event.key === 'Enter' || event.key === ' ') {
@@ -232,10 +245,10 @@ export const Navbar = () => {
             data-tour="search-bar"
             className="hidden md:flex flex-1 justify-center max-w-xs mx-4 z-10"
           >
-            <SearchBar />
+            <SearchBar onOpen={closeExploreMenu} />
           </div>
 
-          <div className="hidden md:flex items-center gap-6">
+          <div className="hidden md:flex items-center gap-3 lg:gap-4">
             <ul
               className="flex items-center gap-1 relative"
               onMouseLeave={() => setHoveredTab(null)}
@@ -265,7 +278,7 @@ export const Navbar = () => {
                     setHoveredTab('explore')
                   }}
                   onKeyDown={handleExploreKeyDown}
-                  className={`relative text-sm font-medium px-4 py-1.5 rounded-lg transition-all duration-300 z-10 cursor-pointer ${
+                  className={`relative text-sm font-medium px-3 py-1.5 rounded-lg transition-all duration-300 z-10 cursor-pointer ${
                     isExploreActive
                       ? 'text-indigo-600 dark:text-indigo-300 font-semibold'
                       : 'text-slate-400 hover:text-slate-900 dark:hover:text-slate-100'
@@ -287,7 +300,7 @@ export const Navbar = () => {
                 <div
                   id="desktop-explore-menu"
                   role="menu"
-                  className={`absolute left-0 top-full mt-3 py-2 w-64 rounded-2xl border border-slate-200/80 dark:border-slate-800/80 bg-white dark:bg-slate-950 p-2 shadow-2xl backdrop-blur-2xl transition-all duration-300 z-50 ${
+                  className={`absolute left-0 top-full mt-3 py-2 w-64 max-h-[70vh] overflow-y-auto rounded-2xl border border-slate-200/80 dark:border-slate-800/80 bg-white dark:bg-slate-950 p-2 shadow-2xl backdrop-blur-2xl transition-all duration-300 z-50 ${
                     isExploreMenuOpen
                       ? 'visible opacity-100 translate-y-0'
                       : 'invisible opacity-0 translate-y-2'
@@ -341,23 +354,22 @@ export const Navbar = () => {
                 </div>
               </li>
 
-              {/* Top Level Link: Practice */}
+              {/* Top Level Link: Concepts */}
               <li
                 className="relative py-1.5"
-                onMouseEnter={() => setHoveredTab('favorites')}
+                onMouseEnter={() => setHoveredTab('concepts')}
               >
                 <Link
-                  to="/favorites"
-                  data-tour="favorites-nav"
-                  className={`relative text-sm font-medium px-4 py-1.5 rounded-lg transition-all duration-300 z-10 ${
-                    pathname === '/favorites'
+                  to="/concepts"
+                  className={`relative text-sm font-medium px-3 py-1.5 rounded-lg transition-all duration-300 z-10 ${
+                    pathname === '/concepts'
                       ? 'text-indigo-600 dark:text-indigo-300 font-semibold'
                       : 'text-slate-400 hover:text-slate-900 dark:hover:text-slate-100'
                   }`}
                 >
-                  Favorites
+                  Concepts
                 </Link>
-                {hoveredTab === 'favorites' && (
+                {hoveredTab === 'concepts' && (
                   <motion.div
                     layoutId="nav-hover-pill"
                     className="absolute inset-0 bg-slate-200/50 dark:bg-slate-900/60 border border-slate-300/30 dark:border-slate-800/50 rounded-lg -z-0"
@@ -369,6 +381,7 @@ export const Navbar = () => {
                 )}
               </li>
 
+              {/* Top Level Link: Practice */}
               <li
                 className="relative py-1.5"
                 onMouseEnter={() => setHoveredTab('practice')}
@@ -376,7 +389,7 @@ export const Navbar = () => {
                 <Link
                   to="/practice"
                   data-tour="practice-nav"
-                  className={`relative text-sm font-medium px-4 py-1.5 rounded-lg transition-all duration-300 z-10 ${
+                  className={`relative text-sm font-medium px-3 py-1.5 rounded-lg transition-all duration-300 z-10 ${
                     pathname === '/practice'
                       ? 'text-indigo-600 dark:text-indigo-300 font-semibold'
                       : 'text-slate-400 hover:text-slate-900 dark:hover:text-slate-100'
@@ -404,7 +417,7 @@ export const Navbar = () => {
                 <Link
                   to="/challenge"
                   data-tour="challenge-nav"
-                  className={`relative text-sm font-medium px-4 py-1.5 rounded-lg transition-all duration-300 z-10 ${
+                  className={`relative text-sm font-medium px-3 py-1.5 rounded-lg transition-all duration-300 z-10 ${
                     pathname === '/challenge'
                       ? 'text-indigo-600 dark:text-indigo-300 font-semibold'
                       : 'text-slate-400 hover:text-slate-900 dark:hover:text-slate-100'
@@ -413,6 +426,34 @@ export const Navbar = () => {
                   Challenge
                 </Link>
                 {hoveredTab === 'challenge' && (
+                  <motion.div
+                    layoutId="nav-hover-pill"
+                    className="absolute inset-0 bg-slate-200/50 dark:bg-slate-900/60 border border-slate-300/30 dark:border-slate-800/50 rounded-lg -z-0"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ type: 'spring', stiffness: 350, damping: 28 }}
+                  />
+                )}
+              </li>
+
+              {/* Top Level Link: Favorites */}
+              <li
+                className="relative py-1.5"
+                onMouseEnter={() => setHoveredTab('favorites')}
+              >
+                <Link
+                  to="/favorites"
+                  data-tour="favorites-nav"
+                  className={`relative text-sm font-medium px-3 py-1.5 rounded-lg transition-all duration-300 z-10 ${
+                    pathname === '/favorites'
+                      ? 'text-indigo-600 dark:text-indigo-300 font-semibold'
+                      : 'text-slate-400 hover:text-slate-900 dark:hover:text-slate-100'
+                  }`}
+                >
+                  Favorites
+                </Link>
+                {hoveredTab === 'favorites' && (
                   <motion.div
                     layoutId="nav-hover-pill"
                     className="absolute inset-0 bg-slate-200/50 dark:bg-slate-900/60 border border-slate-300/30 dark:border-slate-800/50 rounded-lg -z-0"
@@ -432,25 +473,28 @@ export const Navbar = () => {
               data-tour="github-btn"
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center gap-2 border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/40 hover:bg-slate-100 dark:hover:bg-slate-800/80 text-slate-700 dark:text-slate-200 rounded-xl px-4 py-1.5 text-sm font-medium transition-all duration-300 shadow-md active:scale-95"
+              aria-label="GitHub Repository"
+              title="GitHub Repository"
+              className="h-10 w-10 inline-flex items-center justify-center rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/40 hover:bg-slate-100 dark:hover:bg-slate-800/80 text-slate-700 dark:text-slate-200 transition-all duration-300 shadow-md active:scale-95"
             >
               <img
                 src={githubIcon}
-                alt="Github Repository Link"
+                alt="GitHub"
                 className="w-5 h-5 dark:invert-0 invert"
               />
-
-              <span>Github</span>
             </a>
 
             <div
               data-tour="profile-nav"
-              className="flex items-center gap-4 border-l border-slate-200 dark:border-slate-800/80 pl-6"
+              className="flex items-center gap-3 border-l border-slate-200 dark:border-slate-800/80 pl-3 lg:pl-4"
             >
               {HAS_CLERK ? (
                 <>
                   <SignedOut>
-                    <SignInButton mode="modal">
+                    <SignInButton
+                      mode="modal"
+                      appearance={{ baseTheme: isDark ? dark : undefined }}
+                    >
                       <button className="theme-button-primary relative group overflow-hidden rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/40 hover:bg-slate-100 dark:hover:bg-slate-800/80 text-slate-700 dark:text-slate-200 px-6 py-2 text-sm font-bold transition-all duration-300 shadow-md active:scale-95">
                         <span className="relative z-10">Sign In</span>
                         <div className="absolute inset-0 bg-gradient-to-r from-indigo-600/20 to-purple-600/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
@@ -516,120 +560,136 @@ export const Navbar = () => {
         </div>
       </div>
 
-      {/* Mobile Menu Drawer */}
-      <AnimatePresence>
-        {open && (
-          <>
-            {/* Backdrop Blur Overlay */}
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              onClick={() => setOpen(false)}
-              className="fixed inset-0 bg-black/60 backdrop-blur-md z-40 md:hidden"
-            />
-            {/* Slide-out Drawer Panel */}
-            <motion.div
-              key="mobile-drawer"
-              initial={{ x: '100%' }}
-              animate={{ x: 0 }}
-              exit={{ x: '100%' }}
-              transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-              className="fixed top-0 right-0 bottom-0 w-80 max-w-[85vw] bg-white dark:bg-slate-950 border-l border-slate-200 dark:border-slate-800/80 p-6 shadow-2xl backdrop-blur-2xl z-50 md:hidden flex flex-col"
-            >
-              {/* Drawer Header */}
-              <div className="flex items-center justify-between mb-6 pb-4 border-b border-slate-200 dark:border-slate-800/80">
-                <Link
-                  to="/"
+      {/* Mobile Menu Drawer (Portaled to document.body for viewport fixed positioning) */}
+      {typeof document !== 'undefined' &&
+        createPortal(
+          <AnimatePresence>
+            {open && (
+              <>
+                {/* Backdrop Blur Overlay */}
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
                   onClick={() => setOpen(false)}
-                  className="flex items-center gap-2"
+                  className="fixed inset-0 bg-black/70 backdrop-blur-md z-[100] md:hidden"
+                />
+                {/* Slide-out Drawer Panel */}
+                <motion.div
+                  key="mobile-drawer"
+                  initial={{ x: '100%' }}
+                  animate={{ x: 0 }}
+                  exit={{ x: '100%' }}
+                  transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+                  className="fixed top-0 right-0 bottom-0 w-80 max-w-[85vw] bg-white dark:bg-slate-950 border-l border-slate-200 dark:border-slate-800/80 p-6 shadow-2xl backdrop-blur-2xl z-[110] md:hidden flex flex-col"
                 >
-                  <img src={logo} alt="AlgoScope Logo" className="w-8 h-8" />
-                  <span className="text-xl font-bold tracking-tighter text-slate-900 dark:text-white logo-font">
-                    AlgoScope
-                  </span>
-                </Link>
-                <button
-                  type="button"
-                  onClick={() => setOpen(false)}
-                  className="p-1 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-900 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors"
-                >
-                  <X className="w-6 h-6" />
-                </button>
-              </div>
+                  {/* Drawer Header */}
+                  <div className="flex items-center justify-between mb-6 pb-4 border-b border-slate-200 dark:border-slate-800/80">
+                    <Link
+                      to="/"
+                      onClick={() => setOpen(false)}
+                      className="flex items-center gap-2"
+                    >
+                      <img
+                        src={logo}
+                        alt="AlgoScope Logo"
+                        className="w-8 h-8"
+                      />
+                      <span className="text-xl font-bold tracking-tighter text-slate-900 dark:text-white logo-font">
+                        AlgoScope
+                      </span>
+                    </Link>
+                    <button
+                      type="button"
+                      onClick={() => setOpen(false)}
+                      className="p-1 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-900 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors"
+                    >
+                      <X className="w-6 h-6" />
+                    </button>
+                  </div>
 
-              {/* Drawer Body - Scrollable */}
-              <div className="flex-grow overflow-y-auto space-y-6 pr-2">
-                {/* Search */}
-                <div className="w-full">
-                  <SearchBar />
-                </div>
+                  {/* Drawer Body - Scrollable */}
+                  <div className="flex-grow overflow-y-auto space-y-6 pr-2">
+                    {/* Search */}
+                    <div className="w-full">
+                      <SearchBar
+                        onOpen={() => {
+                          closeExploreMenu()
+                          setOpen(false)
+                        }}
+                      />
+                    </div>
 
-                {/* Nav list */}
-                <div>
-                  <h3 className="text-xs font-semibold uppercase tracking-widest text-slate-500 mb-3 px-2">
-                    Explore Algorithms
-                  </h3>
-                  <ul className="space-y-1">
-                    {algorithmLinks.map((link) => (
-                      <li key={link.name}>
-                        <Link
-                          to={link.href}
-                          onClick={() => setOpen(false)}
-                          className={`block rounded-lg px-4 py-2.5 text-sm transition-all duration-200 border-l-2 ${
-                            pathname === link.href
-                              ? 'bg-indigo-50/80 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-300 border-indigo-600 dark:border-indigo-500 font-semibold'
-                              : 'text-slate-600 dark:text-slate-400 border-transparent hover:bg-slate-100 dark:hover:bg-slate-900 hover:text-slate-900 dark:hover:text-slate-200 hover:border-slate-300 dark:hover:border-slate-700'
-                          }`}
+                    {/* Nav list */}
+                    <div>
+                      <h3 className="text-xs font-semibold uppercase tracking-widest text-slate-500 mb-3 px-2">
+                        Explore Algorithms
+                      </h3>
+                      <ul className="space-y-1">
+                        {algorithmLinks.map((link) => (
+                          <li key={link.name}>
+                            <Link
+                              to={link.href}
+                              onClick={() => setOpen(false)}
+                              className={`block rounded-lg px-4 py-2.5 text-sm transition-all duration-200 border-l-2 ${
+                                pathname === link.href
+                                  ? 'bg-indigo-50/80 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-300 border-indigo-600 dark:border-indigo-500 font-semibold'
+                                  : 'text-slate-600 dark:text-slate-400 border-transparent hover:bg-slate-100 dark:hover:bg-slate-900 hover:text-slate-900 dark:hover:text-slate-200 hover:border-slate-300 dark:hover:border-slate-700'
+                              }`}
+                            >
+                              {link.name}
+                            </Link>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  </div>
+
+                  {/* Drawer Footer */}
+                  <div className="mt-6 pt-4 border-t border-slate-200 dark:border-slate-800/80 space-y-3">
+                    {HAS_CLERK ? (
+                      <SignedOut>
+                        <SignInButton
+                          mode="modal"
+                          appearance={{ baseTheme: isDark ? dark : undefined }}
                         >
-                          {link.name}
-                        </Link>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              </div>
-
-              {/* Drawer Footer */}
-              <div className="mt-6 pt-4 border-t border-slate-200 dark:border-slate-800/80 space-y-3">
-                {HAS_CLERK ? (
-                  <SignedOut>
-                    <SignInButton mode="modal">
-                      <button className="w-full relative group overflow-hidden rounded-xl bg-indigo-600 px-4 py-2.5 text-sm font-semibold text-white transition-all duration-300 active:scale-[0.98]">
-                        <span className="relative z-10">Sign In</span>
-                        <div className="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                          <button className="w-full relative group overflow-hidden rounded-xl bg-indigo-600 px-4 py-2.5 text-sm font-semibold text-white transition-all duration-300 active:scale-[0.98]">
+                            <span className="relative z-10">Sign In</span>
+                            <div className="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                          </button>
+                        </SignInButton>
+                      </SignedOut>
+                    ) : (
+                      <button
+                        title="Auth not configured"
+                        disabled
+                        className="w-full rounded-xl bg-slate-100 dark:bg-slate-900 px-4 py-2.5 text-sm font-semibold text-slate-500 border border-slate-200 dark:border-slate-800 transition-all duration-300 opacity-50 cursor-not-allowed"
+                      >
+                        Sign In
                       </button>
-                    </SignInButton>
-                  </SignedOut>
-                ) : (
-                  <button
-                    title="Auth not configured"
-                    disabled
-                    className="w-full rounded-xl bg-slate-100 dark:bg-slate-900 px-4 py-2.5 text-sm font-semibold text-slate-500 border border-slate-200 dark:border-slate-800 transition-all duration-300 opacity-50 cursor-not-allowed"
-                  >
-                    Sign In
-                  </button>
-                )}
+                    )}
 
-                <a
-                  href="https://github.com/algoscope-hq/AlgoScope"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  onClick={() => setOpen(false)}
-                  className="flex items-center justify-center gap-2 w-full rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 px-4 py-2.5 text-sm font-semibold text-slate-700 dark:text-slate-200 transition-all duration-300 shadow-md active:scale-95"
-                >
-                  <img
-                    src={githubIcon}
-                    alt="Github Repository Link"
-                    className="w-5 h-5 dark:invert-0 invert"
-                  />
-                  <span>Github</span>
-                </a>
-              </div>
-            </motion.div>
-          </>
+                    <a
+                      href="https://github.com/algoscope-hq/AlgoScope"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      onClick={() => setOpen(false)}
+                      className="flex items-center justify-center gap-2 w-full rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 px-4 py-2.5 text-sm font-semibold text-slate-700 dark:text-slate-200 transition-all duration-300 shadow-md active:scale-95"
+                    >
+                      <img
+                        src={githubIcon}
+                        alt="Github Repository Link"
+                        className="w-5 h-5 dark:invert-0 invert"
+                      />
+                      <span>Github</span>
+                    </a>
+                  </div>
+                </motion.div>
+              </>
+            )}
+          </AnimatePresence>,
+          document.body
         )}
-      </AnimatePresence>
     </header>
   )
 }

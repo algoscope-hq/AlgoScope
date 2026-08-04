@@ -378,3 +378,5 @@ export const ShortestPathPage = () => {
     </motion.div>
   )
 }
+
+export default ShortestPathPage

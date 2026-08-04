@@ -637,3 +637,5 @@ export const MathSoloVisualizer = () => {
     </div>
   )
 }
+
+export default MathSoloVisualizer

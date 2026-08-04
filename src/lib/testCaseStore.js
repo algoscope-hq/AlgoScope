@@ -202,9 +202,19 @@ export async function importTestCases(file) {
         const store = tx.objectStore(STORE_NAME)
 
         let successfulImports = 0
+        let skippedImports = 0
 
         data.forEach((tc) => {
-          if (!tc || typeof tc !== 'object') return
+          if (
+            !tc ||
+            typeof tc !== 'object' ||
+            !tc.name?.trim() ||
+            !tc.algorithm?.trim() ||
+            !tc.input?.trim()
+          ) {
+            skippedImports += 1
+            return
+          }
 
           const entry = buildTestCaseEntry({
             id: tc.id,
@@ -221,7 +231,11 @@ export async function importTestCases(file) {
           successfulImports += 1
         })
 
-        tx.oncomplete = () => resolve(successfulImports)
+        tx.oncomplete = () =>
+          resolve({
+            success: successfulImports,
+            skipped: skippedImports,
+          })
         tx.onerror = (err) => reject(err.target.error)
       } catch (err) {
         reject(err)

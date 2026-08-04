@@ -2,70 +2,62 @@ import React, { lazy, Suspense } from 'react'
 import { createBrowserRouter, RouterProvider, Navigate } from 'react-router-dom'
 import { SignedIn, SignedOut, RedirectToSignIn } from '@clerk/clerk-react'
 
+const ConceptsOverview = lazy(
+  () => import('./components/concepts/ConceptsOverview')
+)
+
 // import DPVisualizer from "./components/dynamicProgramming/DPVisualizer";
 
 const HAS_CLERK = Boolean(import.meta.env.VITE_CLERK_PUBLISHABLE_KEY)
 import AppLayout from './components/AppLayout'
 
 // Lazy load pages for better performance
-const Home = lazy(() =>
-  import('./components/Home').then((module) => ({ default: module.Home }))
-)
+const Home = lazy(() => import('./components/Home'))
 const SortingVisualizerPage = lazy(
   () => import('./components/sortingAlgo/VisualizerPage')
 )
-const VisualizerPage = lazy(() =>
-  import('./components/searchAlgo/VisualizerPage').then((module) => ({
-    default: module.VisualizerPage,
-  }))
+const VisualizerPage = lazy(
+  () => import('./components/searchAlgo/VisualizerPage')
 )
-
-const MathTheory = lazy(() =>
-  import('./components/MathTheory/MathSoloVisualizer').then((module) => ({
-    default: module.MathSoloVisualizer,
-  }))
+const MathTheory = lazy(
+  () => import('./components/MathTheory/MathSoloVisualizer')
 )
-const ShortestPathPage = lazy(() =>
-  import('./components/shortestPathAlgo/ShortestPathPage').then((module) => ({
-    default: module.ShortestPathPage,
-  }))
+const ShortestPathPage = lazy(
+  () => import('./components/shortestPathAlgo/ShortestPathPage')
 )
-const DSLayout = lazy(() =>
-  import('./components/dataStructures/DSLayout').then((module) => ({
-    default: module.DSLayout,
-  }))
-)
+const DSLayout = lazy(() => import('./components/dataStructures/DSLayout'))
 const ArrayVisualizerPage = lazy(
   () => import('./components/arraySearch/VisualizerPage')
 )
-
 const KadaneVisualizerPage = lazy(
   () => import('./components/kadaneAlgo/VisualizerPage')
 )
-
 const MooreVotingVisualizerPage = lazy(
   () => import('./components/mooreVotingAlgo/VisualizerPage')
 )
-
 const BacktrackingVisualizerPage = lazy(
   () => import('./components/backtrackingAlgo/VisualizerPage')
 )
 const StringAlgoVisualizerPage = lazy(
   () => import('./components/stringAlgo/VisualizerPage')
 )
-
 const DPVisualizerPage = lazy(
   () => import('./components/dynamicProgramming/DPVisualizer')
 )
 const DPOptimizationJourneyPage = lazy(
-  () => import('./components/dynamicProgramming/DPOptimizationJourney') // Path to your main component
+  () => import('./components/dynamicProgramming/DPOptimizationJourney')
 )
-
 const SlidingWindowVisualizerPage = lazy(
   () => import('./components/slidingwindow/SlidingWindowVisualizer')
 )
 const TwoPointerVisualizerPage = lazy(
   () => import('./components/twoPointer/TwoPointerVisualizer')
+)
+const GreedyVisualizerPage = lazy(
+  () => import('./components/greedyAlgo/VisualizerPage')
+)
+const StackVisualizerPage = lazy(
+  () => import('./components/monotonicStack/StackVisualizerPage')
 )
 const PracticePage = lazy(() => import('./components/PracticePage'))
 const AboutAlgoScope = lazy(() => import('./components/about/About'))
@@ -126,6 +118,10 @@ const router = createBrowserRouter([
     ),
   },
   {
+    path: '/shortest-path',
+    element: <Navigate to="/spath" replace />,
+  },
+  {
     path: '/practice',
     element: (
       <AppLayout>
@@ -155,6 +151,14 @@ const router = createBrowserRouter([
     ),
   },
   {
+    path: '/concepts',
+    element: (
+      <AppLayout>
+        <ConceptsOverview />
+      </AppLayout>
+    ),
+  },
+  {
     path: '/favorites',
     element: (
       <AppLayout>
@@ -179,12 +183,20 @@ const router = createBrowserRouter([
     ),
   },
   {
+    path: '/array-search',
+    element: <Navigate to="/ldssearch" replace />,
+  },
+  {
     path: '/adt',
     element: (
-      <AppLayout>
+      <AppLayout notesKey="algo-notes-adt">
         <DSLayout />
       </AppLayout>
     ),
+  },
+  {
+    path: '/data-structures',
+    element: <Navigate to="/adt" replace />,
   },
   {
     path: '/kadane',
@@ -229,27 +241,31 @@ const router = createBrowserRouter([
   {
     path: '/sliding-window',
     element: (
-      <Suspense fallback={<PageLoader />}>
-        <AppLayout>
-          <SlidingWindowVisualizerPage />
-        </AppLayout>
-      </Suspense>
+      <AppLayout notesKey="algo-notes-sliding-window">
+        <SlidingWindowVisualizerPage />
+      </AppLayout>
     ),
   },
   {
     path: '/two-pointer',
     element: (
-      <Suspense fallback={<PageLoader />}>
-        <AppLayout>
-          <TwoPointerVisualizerPage />
-        </AppLayout>
-      </Suspense>
+      <AppLayout notesKey="algo-notes-two-pointer">
+        <TwoPointerVisualizerPage />
+      </AppLayout>
+    ),
+  },
+  {
+    path: '/greedy',
+    element: (
+      <AppLayout notesKey="algo-notes-greedy">
+        <GreedyVisualizerPage />
+      </AppLayout>
     ),
   },
   {
     path: '/challenge',
     element: (
-      <AppLayout>
+      <AppLayout notesKey="algo-notes-challenge">
         <ChallengePage />
       </AppLayout>
     ),
@@ -263,9 +279,17 @@ const router = createBrowserRouter([
     ),
   },
   {
+    path: '/monotonic-stack',
+    element: (
+      <AppLayout notesKey="algo-notes-stack">
+        <StackVisualizerPage />
+      </AppLayout>
+    ),
+  },
+  {
     path: '/operating-systems',
     element: (
-      <AppLayout>
+      <AppLayout notesKey="algo-notes-operating-systems">
         <OperatingSystemsPage />
       </AppLayout>
     ),
@@ -273,31 +297,25 @@ const router = createBrowserRouter([
   {
     path: '/operating-systems/cpu-scheduling',
     element: (
-      <Suspense fallback={<PageLoader />}>
-        <AppLayout notesKey="algo-notes-cpu-scheduling">
-          <CPUSchedulingPage />
-        </AppLayout>
-      </Suspense>
+      <AppLayout notesKey="algo-notes-cpu-scheduling">
+        <CPUSchedulingPage />
+      </AppLayout>
     ),
   },
   {
     path: '/operating-systems/page-replacement',
     element: (
-      <Suspense fallback={<PageLoader />}>
-        <AppLayout notesKey="algo-notes-page-replacement">
-          <PageReplacementPage />
-        </AppLayout>
-      </Suspense>
+      <AppLayout notesKey="algo-notes-page-replacement">
+        <PageReplacementPage />
+      </AppLayout>
     ),
   },
   {
     path: '/operating-systems/disk-scheduling',
     element: (
-      <Suspense fallback={<PageLoader />}>
-        <AppLayout notesKey="algo-notes-disk-scheduling">
-          <DiskSchedulingPage />
-        </AppLayout>
-      </Suspense>
+      <AppLayout notesKey="algo-notes-disk-scheduling">
+        <DiskSchedulingPage />
+      </AppLayout>
     ),
   },
   {

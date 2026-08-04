@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
+import { useSearchParams } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
   generateLCSSteps,
@@ -677,10 +678,33 @@ function InputPanel({ algo, inputs, setInputs, onRun, inputError }) {
   )
 }
 
+const ALGO_MAP = {
+  lcs: 'LCS',
+  knapsack: 'Knapsack',
+  'coin-change': 'Coin Change',
+  coinchange: 'Coin Change',
+  lis: 'LIS',
+}
+
+const ALGO_TO_PARAM = {
+  LCS: 'lcs',
+  Knapsack: 'knapsack',
+  'Coin Change': 'coin-change',
+  LIS: 'lis',
+}
+
 // ─── Main Component ───────────────────────────────────────────────────────────
 export default function DPVisualizer() {
-  const [algo, setAlgo] = useState('LCS')
-  const [inputs, setInputs] = useState(DEFAULT_INPUTS['LCS'])
+  const [searchParams, setSearchParams] = useSearchParams()
+  const rawParam = (
+    searchParams.get('problem') ||
+    searchParams.get('algo') ||
+    ''
+  ).toLowerCase()
+  const initialAlgo = ALGO_MAP[rawParam] || 'LCS'
+
+  const [algo, setAlgo] = useState(initialAlgo)
+  const [inputs, setInputs] = useState(DEFAULT_INPUTS[initialAlgo])
   const [steps, setSteps] = useState([])
   const [meta, setMeta] = useState(null)
   const [stepIdx, setStepIdx] = useState(0)
@@ -690,6 +714,27 @@ export default function DPVisualizer() {
   const [copied, setCopied] = useState(false)
   const [inputError, setInputError] = useState('')
   const intervalRef = useRef(null)
+
+  const paramFromUrl = (
+    searchParams.get('problem') ||
+    searchParams.get('algo') ||
+    ''
+  ).toLowerCase()
+  const [prevParamFromUrl, setPrevParamFromUrl] = useState(paramFromUrl)
+
+  if (paramFromUrl !== prevParamFromUrl) {
+    setPrevParamFromUrl(paramFromUrl)
+    const targetAlgo = ALGO_MAP[paramFromUrl]
+    if (targetAlgo && targetAlgo !== algo) {
+      setAlgo(targetAlgo)
+      setInputs(DEFAULT_INPUTS[targetAlgo])
+      setSteps([])
+      setMeta(null)
+      setStepIdx(0)
+      setPlaying(false)
+      setInputError('')
+    }
+  }
 
   const updateInputs = useCallback((updater) => {
     setInputError('')
@@ -705,6 +750,10 @@ export default function DPVisualizer() {
     setStepIdx(0)
     setPlaying(false)
     setInputError('')
+
+    const newParams = new URLSearchParams(searchParams)
+    newParams.set('problem', ALGO_TO_PARAM[newAlgo] || 'lcs')
+    setSearchParams(newParams)
   }
 
   const buildSteps = useCallback(() => {

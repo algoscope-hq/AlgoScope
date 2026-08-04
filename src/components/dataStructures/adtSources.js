@@ -1442,4 +1442,1051 @@ func (dsu *DisjointSetUnion) Union(x, y int) bool {
 }`,
     },
   },
+  trie: {
+    'prefix tree': {
+      javascript: `class TrieNode {
+  constructor() {
+    this.children = {};
+    this.isEnd = false;
+  }
+}
+
+class Trie {
+  constructor() {
+    this.root = new TrieNode();
+  }
+
+  insert(word) {
+    let node = this.root;
+    for (const char of word) {
+      if (!node.children[char])
+        node.children[char] = new TrieNode();
+      node = node.children[char];
+    }
+    node.isEnd = true;
+  }
+
+  search(word) {
+    let node = this.root;
+    for (const char of word) {
+      if (!node.children[char]) return false;
+      node = node.children[char];
+    }
+    return node.isEnd;
+  }
+
+  startsWith(prefix) {
+    let node = this.root;
+    for (const char of prefix) {
+      if (!node.children[char]) return false;
+      node = node.children[char];
+    }
+    return true;
+  }
+}`,
+      python: `class TrieNode:
+    def __init__(self):
+        self.children = {}
+        self.is_end = False
+
+class Trie:
+    def __init__(self):
+        self.root = TrieNode()
+
+    def insert(self, word):
+        node = self.root
+        for char in word:
+            if char not in node.children:
+                node.children[char] = TrieNode()
+            node = node.children[char]
+        node.is_end = True
+
+    def search(self, word):
+        node = self.root
+        for char in word:
+            if char not in node.children:
+                return False
+            node = node.children[char]
+        return node.is_end
+
+    def starts_with(self, prefix):
+        node = self.root
+        for char in prefix:
+            if char not in node.children:
+                return False
+            node = node.children[char]
+        return True`,
+      cpp: `#include <unordered_map>
+#include <string>
+
+struct TrieNode {
+    std::unordered_map<char, TrieNode*> children;
+    bool isEnd = false;
+};
+
+class Trie {
+    TrieNode* root;
+public:
+    Trie() { root = new TrieNode(); }
+
+    void insert(std::string word) {
+        TrieNode* node = root;
+        for (char c : word) {
+            if (!node->children.count(c))
+                node->children[c] = new TrieNode();
+            node = node->children[c];
+        }
+        node->isEnd = true;
+    }
+
+    bool search(std::string word) {
+        TrieNode* node = root;
+        for (char c : word) {
+            if (!node->children.count(c)) return false;
+            node = node->children[c];
+        }
+        return node->isEnd;
+    }
+
+    bool startsWith(std::string prefix) {
+        TrieNode* node = root;
+        for (char c : prefix) {
+            if (!node->children.count(c)) return false;
+            node = node->children[c];
+        }
+        return true;
+    }
+};`,
+      java: `import java.util.HashMap;
+
+class TrieNode {
+    HashMap<Character, TrieNode> children = new HashMap<>();
+    boolean isEnd = false;
+}
+
+class Trie {
+    TrieNode root = new TrieNode();
+
+    public void insert(String word) {
+        TrieNode node = root;
+        for (char c : word.toCharArray()) {
+            node.children.putIfAbsent(c, new TrieNode());
+            node = node.children.get(c);
+        }
+        node.isEnd = true;
+    }
+
+    public boolean search(String word) {
+        TrieNode node = root;
+        for (char c : word.toCharArray()) {
+            if (!node.children.containsKey(c)) return false;
+            node = node.children.get(c);
+        }
+        return node.isEnd;
+    }
+
+    public boolean startsWith(String prefix) {
+        TrieNode node = root;
+        for (char c : prefix.toCharArray()) {
+            if (!node.children.containsKey(c)) return false;
+            node = node.children.get(c);
+        }
+        return true;
+    }
+}`,
+      c: `#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define ALPHA 26
+
+typedef struct TrieNode {
+    struct TrieNode* children[ALPHA];
+    int isEnd;
+} TrieNode;
+
+TrieNode* newNode() {
+    TrieNode* node = calloc(1, sizeof(TrieNode));
+    node->isEnd = 0;
+    return node;
+}
+
+static int charIndex(char c) {
+    int idx = c - 'a';
+    return (idx >= 0 && idx < ALPHA) ? idx : -1;
+}
+
+void insert(TrieNode* root, char* word) {
+    TrieNode* node = root;
+    for (int i = 0; word[i]; i++) {
+        int idx = charIndex(word[i]);
+        if (idx < 0) return;
+        if (!node->children[idx])
+            node->children[idx] = newNode();
+        node = node->children[idx];
+    }
+    node->isEnd = 1;
+}
+
+int search(TrieNode* root, char* word) {
+    TrieNode* node = root;
+    for (int i = 0; word[i]; i++) {
+        int idx = charIndex(word[i]);
+        if (idx < 0 || !node->children[idx]) return 0;
+        node = node->children[idx];
+    }
+    return node->isEnd;
+}
+
+int startsWith(TrieNode* root, char* prefix) {
+    TrieNode* node = root;
+    for (int i = 0; prefix[i]; i++) {
+        int idx = charIndex(prefix[i]);
+        if (idx < 0 || !node->children[idx]) return 0;
+        node = node->children[idx];
+    }
+    return 1;
+}`,
+      rust: `use std::collections::HashMap;
+
+#[derive(Default)]
+struct TrieNode {
+    children: HashMap<char, TrieNode>,
+    is_end: bool,
+}
+
+struct Trie {
+    root: TrieNode,
+}
+
+impl Trie {
+    fn new() -> Self { Trie { root: TrieNode::default() } }
+
+    fn insert(&mut self, word: &str) {
+        let mut node = &mut self.root;
+        for c in word.chars() {
+            node = node.children.entry(c).or_default();
+        }
+        node.is_end = true;
+    }
+
+    fn search(&self, word: &str) -> bool {
+        let mut node = &self.root;
+        for c in word.chars() {
+            match node.children.get(&c) {
+                None => return false,
+                Some(n) => node = n,
+            }
+        }
+        node.is_end
+    }
+
+    fn starts_with(&self, prefix: &str) -> bool {
+        let mut node = &self.root;
+        for c in prefix.chars() {
+            match node.children.get(&c) {
+                None => return false,
+                Some(n) => node = n,
+            }
+        }
+        true
+    }
+}`,
+      go: `package main
+
+type TrieNode struct {
+    children map[rune]*TrieNode
+    isEnd    bool
+}
+
+func newTrieNode() *TrieNode {
+    return &TrieNode{children: make(map[rune]*TrieNode)}
+}
+
+type Trie struct{ root *TrieNode }
+
+func NewTrie() *Trie { return &Trie{root: newTrieNode()} }
+
+func (t *Trie) Insert(word string) {
+    node := t.root
+    for _, c := range word {
+        if _, ok := node.children[c]; !ok {
+            node.children[c] = newTrieNode()
+        }
+        node = node.children[c]
+    }
+    node.isEnd = true
+}
+
+func (t *Trie) Search(word string) bool {
+    node := t.root
+    for _, c := range word {
+        if _, ok := node.children[c]; !ok {
+            return false
+        }
+        node = node.children[c]
+    }
+    return node.isEnd
+}
+
+func (t *Trie) StartsWith(prefix string) bool {
+    node := t.root
+    for _, c := range prefix {
+        if _, ok := node.children[c]; !ok {
+            return false
+        }
+        node = node.children[c]
+    }
+ return true
+}`,
+    },
+  },
+  hashTable: {
+    'hash map': {
+      javascript: `class HashNode {
+  constructor(key, value) {
+    this.key = key;
+    this.value = value;
+    this.next = null;
+  }
+}
+
+class HashTable {
+  constructor(size = 11) {
+    this.size = size;
+    this.buckets = Array(size).fill(null);
+    this.count = 0;
+  }
+
+  hash(key) {
+    let hash = 0;
+    for (let i = 0; i < key.length; i++) {
+      hash = (hash + key.charCodeAt(i)) % this.size;
+    }
+    return hash;
+  }
+
+  insert(key, value) {
+    const index = this.hash(key);
+    let node = this.buckets[index];
+    while (node) {
+      if (node.key === key) { node.value = value; return; }
+      node = node.next;
+    }
+    const newNode = new HashNode(key, value);
+    newNode.next = this.buckets[index];
+    this.buckets[index] = newNode;
+    this.count++;
+  }
+
+  search(key) {
+    const index = this.hash(key);
+    let node = this.buckets[index];
+    while (node) {
+      if (node.key === key) return node.value;
+      node = node.next;
+    }
+    return null;
+  }
+
+  delete(key) {
+    const index = this.hash(key);
+    let node = this.buckets[index], prev = null;
+    while (node) {
+      if (node.key === key) {
+        if (prev) prev.next = node.next;
+        else this.buckets[index] = node.next;
+        this.count--;
+        return true;
+      }
+      prev = node;
+      node = node.next;
+    }
+    return false;
+  }
+}`,
+      python: `class HashNode:
+    def __init__(self, key, value):
+        self.key = key
+        self.value = value
+        self.next = None
+
+class HashTable:
+    def __init__(self, size=11):
+        self.size = size
+        self.buckets = [None] * size
+        self.count = 0
+
+    def _hash(self, key):
+        return sum(ord(c) for c in key) % self.size
+
+    def insert(self, key, value):
+        index = self._hash(key)
+        node = self.buckets[index]
+        while node:
+            if node.key == key:
+                node.value = value
+                return
+            node = node.next
+        new_node = HashNode(key, value)
+        new_node.next = self.buckets[index]
+        self.buckets[index] = new_node
+        self.count += 1
+
+    def search(self, key):
+        index = self._hash(key)
+        node = self.buckets[index]
+        while node:
+            if node.key == key:
+                return node.value
+            node = node.next
+        return None
+
+    def delete(self, key):
+        index = self._hash(key)
+        node = self.buckets[index]
+        prev = None
+        while node:
+            if node.key == key:
+                if prev:
+                    prev.next = node.next
+                else:
+                    self.buckets[index] = node.next
+                self.count -= 1
+                return True
+            prev = node
+            node = node.next
+        return False`,
+      cpp: `#include <string>
+using namespace std;
+
+struct HashNode {
+    string key, value;
+    HashNode* next;
+    HashNode(string k, string v) : key(k), value(v), next(nullptr) {}
+};
+
+class HashTable {
+    int size;
+    HashNode** buckets;
+    int count;
+
+    int hash(const string& key) {
+        int h = 0;
+        for (char c : key) h = (h + c) % size;
+        return h;
+    }
+
+public:
+    HashTable(int size = 11) : size(size), count(0) {
+        buckets = new HashNode*[size]();
+    }
+
+    void insert(const string& key, const string& value) {
+        int idx = hash(key);
+        HashNode* node = buckets[idx];
+        while (node) {
+            if (node->key == key) { node->value = value; return; }
+            node = node->next;
+        }
+        HashNode* newNode = new HashNode(key, value);
+        newNode->next = buckets[idx];
+        buckets[idx] = newNode;
+        count++;
+    }
+
+    string search(const string& key) {
+        int idx = hash(key);
+        HashNode* node = buckets[idx];
+        while (node) {
+            if (node->key == key) return node->value;
+            node = node->next;
+        }
+        return "";
+    }
+
+    bool deleteKey(const string& key) {
+        int idx = hash(key);
+        HashNode* node = buckets[idx];
+        HashNode* prev = nullptr;
+        while (node) {
+            if (node->key == key) {
+                if (prev) prev->next = node->next;
+                else buckets[idx] = node->next;
+                delete node;
+                count--;
+                return true;
+            }
+            prev = node;
+            node = node->next;
+        }
+        return false;
+    }
+};`,
+      java: `import java.util.LinkedList;
+
+class HashTable<K, V> {
+    private static class Entry<K, V> {
+        K key; V value;
+        Entry(K k, V v) { key = k; value = v; }
+    }
+
+    private final int size;
+    private final LinkedList<Entry<K, V>>[] buckets;
+    private int count;
+
+    @SuppressWarnings("unchecked")
+    public HashTable(int size) {
+        this.size = size;
+        buckets = new LinkedList[size];
+        for (int i = 0; i < size; i++)
+            buckets[i] = new LinkedList<>();
+    }
+
+    private int hash(K key) {
+        int h = 0;
+        for (char c : key.toString().toCharArray())
+            h = (h + c) % size;
+        return h;
+    }
+
+    public void insert(K key, V value) {
+        int idx = hash(key);
+        for (Entry<K, V> e : buckets[idx]) {
+            if (e.key.equals(key)) { e.value = value; return; }
+        }
+        buckets[idx].addFirst(new Entry<>(key, value));
+        count++;
+    }
+
+    public V search(K key) {
+        for (Entry<K, V> e : buckets[hash(key)])
+            if (e.key.equals(key)) return e.value;
+        return null;
+    }
+
+    public boolean delete(K key) {
+        int idx = hash(key);
+        for (Entry<K, V> e : buckets[idx]) {
+            if (e.key.equals(key)) {
+                buckets[idx].remove(e);
+                count--;
+                return true;
+            }
+        }
+        return false;
+    }
+}`,
+      c: `#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define SIZE 11
+
+typedef struct HashNode {
+    char key[64];
+    char value[64];
+    struct HashNode* next;
+} HashNode;
+
+typedef struct {
+    HashNode* buckets[SIZE];
+    int count;
+} HashTable;
+
+static int hash(const char* key) {
+    int h = 0;
+    for (int i = 0; key[i]; i++)
+        h = (h + (unsigned char)key[i]) % SIZE;
+    return h;
+}
+
+void insert(HashTable* ht, const char* key, const char* value) {
+    int idx = hash(key);
+    HashNode* node = ht->buckets[idx];
+    while (node) {
+        if (strcmp(node->key, key) == 0) {
+            strncpy(node->value, value, 63);
+            return;
+        }
+        node = node->next;
+    }
+    HashNode* newNode = calloc(1, sizeof(HashNode));
+    strncpy(newNode->key, key, 63);
+    strncpy(newNode->value, value, 63);
+    newNode->next = ht->buckets[idx];
+    ht->buckets[idx] = newNode;
+    ht->count++;
+}
+
+const char* search(HashTable* ht, const char* key) {
+    int idx = hash(key);
+    HashNode* node = ht->buckets[idx];
+    while (node) {
+        if (strcmp(node->key, key) == 0) return node->value;
+        node = node->next;
+    }
+    return NULL;
+}
+
+int deleteKey(HashTable* ht, const char* key) {
+    int idx = hash(key);
+    HashNode* node = ht->buckets[idx];
+    HashNode* prev = NULL;
+    while (node) {
+        if (strcmp(node->key, key) == 0) {
+            if (prev) prev->next = node->next;
+            else ht->buckets[idx] = node->next;
+            free(node);
+            ht->count--;
+            return 1;
+        }
+        prev = node;
+        node = node->next;
+    }
+    return 0;
+}`,
+      rust: `use std::collections::LinkedList;
+
+struct Entry {
+    key: String,
+    value: String,
+}
+
+struct HashTable {
+    size: usize,
+    buckets: Vec<LinkedList<Entry>>,
+    count: usize,
+}
+
+impl HashTable {
+    fn new(size: usize) -> Self {
+        let mut buckets = Vec::with_capacity(size);
+        for _ in 0..size { buckets.push(LinkedList::new()); }
+        HashTable { size, buckets, count: 0 }
+    }
+
+    fn hash(&self, key: &str) -> usize {
+        key.chars().fold(0usize, |acc, c| (acc + c as usize) % self.size)
+    }
+
+    fn insert(&mut self, key: String, value: String) {
+        let idx = self.hash(&key);
+        for entry in &mut self.buckets[idx] {
+            if entry.key == key { entry.value = value; return; }
+        }
+        self.buckets[idx].push_front(Entry { key, value });
+        self.count += 1;
+    }
+
+    fn search(&self, key: &str) -> Option<&str> {
+        let idx = self.hash(key);
+        for entry in &self.buckets[idx] {
+            if entry.key == key { return Some(&entry.value); }
+        }
+        None
+    }
+
+    fn delete(&mut self, key: &str) -> bool {
+        let idx = self.hash(key);
+        let before = self.buckets[idx].len();
+        self.buckets[idx].retain(|e| e.key != key);
+        let deleted = self.buckets[idx].len() < before;
+        if deleted { self.count -= 1; }
+        deleted
+    }
+}`,
+      go: `package main
+
+type Entry struct {
+    key, value string
+    next       *Entry
+}
+
+type HashTable struct {
+    size    int
+    buckets []*Entry
+    count   int
+}
+
+func NewHashTable(size int) *HashTable {
+    return &HashTable{size: size, buckets: make([]*Entry, size)}
+}
+
+func (ht *HashTable) hash(key string) int {
+    h := 0
+    for _, c := range key {
+        h = (h + int(c)) % ht.size
+    }
+    return h
+}
+
+func (ht *HashTable) Insert(key, value string) {
+    idx := ht.hash(key)
+    for node := ht.buckets[idx]; node != nil; node = node.next {
+        if node.key == key { node.value = value; return }
+    }
+    ht.buckets[idx] = &Entry{key, value, ht.buckets[idx]}
+    ht.count++
+}
+
+func (ht *HashTable) Search(key string) (string, bool) {
+    for node := ht.buckets[ht.hash(key)]; node != nil; node = node.next {
+        if node.key == key { return node.value, true }
+    }
+    return "", false
+}
+
+func (ht *HashTable) Delete(key string) bool {
+    idx := ht.hash(key)
+    var prev *Entry
+    for node := ht.buckets[idx]; node != nil; node = node.next {
+        if node.key == key {
+            if prev != nil { prev.next = node.next } else { ht.buckets[idx] = node.next }
+            ht.count--
+            return true
+        }
+        prev = node
+    }
+    return false
+}`,
+    },
+  },
+  segmentTree: {
+    'range query': {
+      javascript: `class SegmentTree {
+  constructor(arr, type = 'sum') {
+    this.n = arr.length;
+    this.arr = [...arr];
+    this.type = type;
+    this.tree = Array(4 * this.n).fill(0);
+    this.build(0, 0, this.n - 1);
+  }
+
+  op(a, b) {
+    if (this.type === 'sum') return a + b;
+    if (this.type === 'min') return Math.min(a, b);
+    return Math.max(a, b);
+  }
+
+  build(node, start, end) {
+    if (start === end) { this.tree[node] = this.arr[start]; return; }
+    const mid = Math.floor((start + end) / 2);
+    this.build(2*node+1, start, mid);
+    this.build(2*node+2, mid+1, end);
+    this.tree[node] = this.op(this.tree[2*node+1], this.tree[2*node+2]);
+  }
+
+  query(node, start, end, l, r) {
+    if (r < start || end < l) return this.type === 'min' ? Infinity : this.type === 'max' ? -Infinity : 0;
+    if (l <= start && end <= r) return this.tree[node];
+    const mid = Math.floor((start + end) / 2);
+    return this.op(
+      this.query(2*node+1, start, mid, l, r),
+      this.query(2*node+2, mid+1, end, l, r)
+    );
+  }
+
+  update(node, start, end, idx, val) {
+    if (start === end) { this.arr[idx] = val; this.tree[node] = val; return; }
+    const mid = Math.floor((start + end) / 2);
+    if (idx <= mid) this.update(2*node+1, start, mid, idx, val);
+    else this.update(2*node+2, mid+1, end, idx, val);
+    this.tree[node] = this.op(this.tree[2*node+1], this.tree[2*node+2]);
+  }
+}`,
+      python: `class SegmentTree:
+    def __init__(self, arr, query_type='sum'):
+        self.n = len(arr)
+        self.arr = arr[:]
+        self.type = query_type
+        self.tree = [0] * (4 * self.n)
+        self._build(0, 0, self.n - 1)
+
+    def _op(self, a, b):
+        if self.type == 'sum': return a + b
+        if self.type == 'min': return min(a, b)
+        return max(a, b)
+
+    def _build(self, node, start, end):
+        if start == end:
+            self.tree[node] = self.arr[start]
+            return
+        mid = (start + end) // 2
+        self._build(2*node+1, start, mid)
+        self._build(2*node+2, mid+1, end)
+        self.tree[node] = self._op(self.tree[2*node+1], self.tree[2*node+2])
+
+    def query(self, l, r, node=0, start=None, end=None):
+        if start is None: start = 0
+        if end is None: end = self.n - 1
+        if r < start or end < l:
+            return float('inf') if self.type == 'min' else float('-inf') if self.type == 'max' else 0
+        if l <= start and end <= r:
+            return self.tree[node]
+        mid = (start + end) // 2
+        return self._op(
+            self.query(l, r, 2*node+1, start, mid),
+            self.query(l, r, 2*node+2, mid+1, end)
+        )
+
+    def update(self, idx, val, node=0, start=None, end=None):
+        if start is None: start = 0
+        if end is None: end = self.n - 1
+        if start == end:
+            self.arr[idx] = val
+            self.tree[node] = val
+            return
+        mid = (start + end) // 2
+        if idx <= mid: self.update(idx, val, 2*node+1, start, mid)
+        else: self.update(idx, val, 2*node+2, mid+1, end)
+        self.tree[node] = self._op(self.tree[2*node+1], self.tree[2*node+2])`,
+      cpp: `#include <vector>
+#include <algorithm>
+#include <climits>
+using namespace std;
+
+class SegmentTree {
+    int n;
+    vector<int> tree, arr;
+    string type;
+
+    int op(int a, int b) {
+        if (type == "sum") return a + b;
+        if (type == "min") return min(a, b);
+        return max(a, b);
+    }
+
+    void build(int node, int start, int end) {
+        if (start == end) { tree[node] = arr[start]; return; }
+        int mid = (start + end) / 2;
+        build(2*node+1, start, mid);
+        build(2*node+2, mid+1, end);
+        tree[node] = op(tree[2*node+1], tree[2*node+2]);
+    }
+
+public:
+    SegmentTree(vector<int>& a, string t = "sum") : n(a.size()), arr(a), type(t), tree(4*a.size()) {
+        build(0, 0, n-1);
+    }
+
+    int query(int node, int start, int end, int l, int r) {
+        if (r < start || end < l)
+            return type == "min" ? INT_MAX : type == "max" ? INT_MIN : 0;
+        if (l <= start && end <= r) return tree[node];
+        int mid = (start + end) / 2;
+        return op(query(2*node+1, start, mid, l, r),
+                  query(2*node+2, mid+1, end, l, r));
+    }
+
+    void update(int node, int start, int end, int idx, int val) {
+        if (start == end) { arr[idx] = val; tree[node] = val; return; }
+        int mid = (start + end) / 2;
+        if (idx <= mid) update(2*node+1, start, mid, idx, val);
+        else update(2*node+2, mid+1, end, idx, val);
+        tree[node] = op(tree[2*node+1], tree[2*node+2]);
+    }
+};`,
+      java: `class SegmentTree {
+    private int[] tree, arr;
+    private int n;
+    private String type;
+
+    public SegmentTree(int[] arr, String type) {
+        this.n = arr.length;
+        this.arr = arr.clone();
+        this.type = type;
+        this.tree = new int[4 * n];
+        build(0, 0, n - 1);
+    }
+
+    private int op(int a, int b) {
+        return switch (type) {
+            case "min" -> Math.min(a, b);
+            case "max" -> Math.max(a, b);
+            default -> a + b;
+        };
+    }
+
+    private void build(int node, int start, int end) {
+        if (start == end) { tree[node] = arr[start]; return; }
+        int mid = (start + end) / 2;
+        build(2*node+1, start, mid);
+        build(2*node+2, mid+1, end);
+        tree[node] = op(tree[2*node+1], tree[2*node+2]);
+    }
+
+    public int query(int node, int start, int end, int l, int r) {
+        if (r < start || end < l)
+            return type.equals("min") ? Integer.MAX_VALUE : type.equals("max") ? Integer.MIN_VALUE : 0;
+        if (l <= start && end <= r) return tree[node];
+        int mid = (start + end) / 2;
+        return op(query(2*node+1, start, mid, l, r),
+                  query(2*node+2, mid+1, end, l, r));
+    }
+
+    public void update(int node, int start, int end, int idx, int val) {
+        if (start == end) { arr[idx] = val; tree[node] = val; return; }
+        int mid = (start + end) / 2;
+        if (idx <= mid) update(2*node+1, start, mid, idx, val);
+        else update(2*node+2, mid+1, end, idx, val);
+        tree[node] = op(tree[2*node+1], tree[2*node+2]);
+    }
+}`,
+      c: `#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+#include <string.h>
+
+#define MAXN 1005
+
+int tree[4*MAXN], arr[MAXN], n;
+char type[4];
+
+int op(int a, int b) {
+    if (strcmp(type, "sum") == 0) return a + b;
+    if (strcmp(type, "min") == 0) return a < b ? a : b;
+    return a > b ? a : b;
+}
+
+void build(int node, int start, int end) {
+    if (start == end) { tree[node] = arr[start]; return; }
+    int mid = (start + end) / 2;
+    build(2*node+1, start, mid);
+    build(2*node+2, mid+1, end);
+    tree[node] = op(tree[2*node+1], tree[2*node+2]);
+}
+
+int query(int node, int start, int end, int l, int r) {
+    if (r < start || end < l)
+        return strcmp(type,"min")==0 ? INT_MAX : strcmp(type,"max")==0 ? INT_MIN : 0;
+    if (l <= start && end <= r) return tree[node];
+    int mid = (start + end) / 2;
+    return op(query(2*node+1, start, mid, l, r),
+              query(2*node+2, mid+1, end, l, r));
+}
+
+void update(int node, int start, int end, int idx, int val) {
+    if (start == end) { arr[idx] = val; tree[node] = val; return; }
+    int mid = (start + end) / 2;
+    if (idx <= mid) update(2*node+1, start, mid, idx, val);
+    else update(2*node+2, mid+1, end, idx, val);
+    tree[node] = op(tree[2*node+1], tree[2*node+2]);
+}`,
+      rust: `struct SegmentTree {
+    tree: Vec<i64>,
+    arr: Vec<i64>,
+    n: usize,
+    kind: String,
+}
+
+impl SegmentTree {
+    fn new(arr: Vec<i64>, kind: &str) -> Self {
+        let n = arr.len();
+        let mut st = SegmentTree {
+            tree: vec![0; 4 * n],
+            arr: arr.clone(),
+            n,
+            kind: kind.to_string(),
+        };
+        if n > 0 { st.build(0, 0, n - 1); }
+        st
+    }
+
+    fn op(&self, a: i64, b: i64) -> i64 {
+        match self.kind.as_str() {
+            "min" => a.min(b),
+            "max" => a.max(b),
+            _ => a + b,
+        }
+    }
+
+    fn build(&mut self, node: usize, start: usize, end: usize) {
+        if start == end { self.tree[node] = self.arr[start]; return; }
+        let mid = (start + end) / 2;
+        self.build(2*node+1, start, mid);
+        self.build(2*node+2, mid+1, end);
+        self.tree[node] = self.op(self.tree[2*node+1], self.tree[2*node+2]);
+    }
+
+    fn query(&self, node: usize, start: usize, end: usize, l: usize, r: usize) -> i64 {
+        if r < start || end < l {
+            return match self.kind.as_str() { "min" => i64::MAX, "max" => i64::MIN, _ => 0 };
+        }
+        if l <= start && end <= r { return self.tree[node]; }
+        let mid = (start + end) / 2;
+        self.op(self.query(2*node+1, start, mid, l, r),
+                self.query(2*node+2, mid+1, end, l, r))
+    }
+
+    fn update(&mut self, node: usize, start: usize, end: usize, idx: usize, val: i64) {
+        if start == end { self.arr[idx] = val; self.tree[node] = val; return; }
+        let mid = (start + end) / 2;
+        if idx <= mid { self.update(2*node+1, start, mid, idx, val); }
+        else { self.update(2*node+2, mid+1, end, idx, val); }
+        self.tree[node] = self.op(self.tree[2*node+1], self.tree[2*node+2]);
+    }
+}`,
+      go: `package main
+
+import "math"
+
+type SegmentTree struct {
+    tree []int
+    arr  []int
+    n    int
+    kind string
+}
+
+func NewSegmentTree(arr []int, kind string) *SegmentTree {
+    n := len(arr)
+    st := &SegmentTree{
+        tree: make([]int, 4*n),
+        arr:  append([]int{}, arr...),
+        n:    n,
+        kind: kind,
+    }
+    st.build(0, 0, n-1)
+    return st
+}
+
+func (st *SegmentTree) op(a, b int) int {
+    switch st.kind {
+    case "min":
+        if a < b { return a }; return b
+    case "max":
+        if a > b { return a }; return b
+    default:
+        return a + b
+    }
+}
+
+func (st *SegmentTree) build(node, start, end int) {
+    if start == end { st.tree[node] = st.arr[start]; return }
+    mid := (start + end) / 2
+    st.build(2*node+1, start, mid)
+    st.build(2*node+2, mid+1, end)
+    st.tree[node] = st.op(st.tree[2*node+1], st.tree[2*node+2])
+}
+
+func (st *SegmentTree) Query(node, start, end, l, r int) int {
+    if r < start || end < l {
+        if st.kind == "min" { return math.MaxInt32 }
+        if st.kind == "max" { return math.MinInt32 }
+        return 0
+    }
+    if l <= start && end <= r { return st.tree[node] }
+    mid := (start + end) / 2
+    return st.op(st.Query(2*node+1, start, mid, l, r),
+                 st.Query(2*node+2, mid+1, end, l, r))
+}
+
+func (st *SegmentTree) Update(node, start, end, idx, val int) {
+    if start == end { st.arr[idx] = val; st.tree[node] = val; return }
+    mid := (start + end) / 2
+    if idx <= mid { st.Update(2*node+1, start, mid, idx, val) } else { st.Update(2*node+2, mid+1, end, idx, val) }
+    st.tree[node] = st.op(st.tree[2*node+1], st.tree[2*node+2])
+}`,
+    },
+  },
 }

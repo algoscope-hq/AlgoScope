@@ -367,8 +367,9 @@ describe('testCaseStore', () => {
         shouldError: false,
       }
 
-      const count = await importTestCases(file)
-      expect(count).toBe(2)
+      const result = await importTestCases(file)
+      expect(result.success).toBe(2)
+      expect(result.skipped).toBe(0)
 
       const all = await getAllTestCases()
       expect(all).toHaveLength(2)
@@ -385,6 +386,27 @@ describe('testCaseStore', () => {
       await expect(importTestCases(file)).rejects.toThrow(
         'Import file must contain an array of test cases'
       )
+    })
+
+    it('skips invalid entries with missing required fields', async () => {
+      const importData = [
+        { name: 'Valid', algorithm: 'alg1', input: 'in1' },
+        {},
+        { name: '', algorithm: '', input: '' },
+        { name: 'Valid 2', algorithm: 'alg2', input: 'in2' },
+      ]
+
+      const file = {
+        content: JSON.stringify(importData),
+        shouldError: false,
+      }
+
+      const result = await importTestCases(file)
+      expect(result.success).toBe(2)
+      expect(result.skipped).toBe(2)
+
+      const all = await getAllTestCases()
+      expect(all).toHaveLength(2)
     })
 
     it('rejects if FileReader encounters an error', async () => {

@@ -375,3 +375,5 @@ export const VisualizerPage = () => {
     </motion.div>
   )
 }
+
+export default VisualizerPage
