@@ -8,8 +8,8 @@ const ConceptsOverview = lazy(
 
 // import DPVisualizer from "./components/dynamicProgramming/DPVisualizer";
 
-const HAS_CLERK = Boolean(import.meta.env.VITE_CLERK_PUBLISHABLE_KEY)
 import AppLayout from './components/AppLayout'
+const HAS_CLERK = Boolean(import.meta.env.VITE_CLERK_PUBLISHABLE_KEY)
 
 // Lazy load pages for better performance
 const Home = lazy(() => import('./components/Home'))
