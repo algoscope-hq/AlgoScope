@@ -1097,31 +1097,37 @@ const SearchBar = ({ onOpen }) => {
       <button
         ref={triggerRef}
         onClick={openModal}
-        className="flex items-center gap-2 px-3 py-1.5 bg-slate-900/40 border border-white/10 hover:border-cyan-500/50 rounded-xl text-slate-400 hover:text-cyan-400 transition-all group w-full lg:w-48"
+        className="group flex w-full items-center gap-2 rounded-2xl border border-slate-200/80 bg-white/80 px-3 py-2.5 text-slate-500 shadow-[0_10px_30px_rgba(15,23,42,0.06)] transition-all duration-300 hover:-translate-y-0.5 hover:border-indigo-400/50 hover:shadow-[0_12px_30px_rgba(79,70,229,0.16)] focus:outline-none focus:ring-2 focus:ring-indigo-500/20 dark:border-slate-800/80 dark:bg-slate-900/70 dark:text-slate-400 dark:hover:border-indigo-400/50 lg:w-[18rem]"
         aria-haspopup="dialog"
         aria-expanded={isModalOpen}
         aria-label="Search algorithms"
       >
-        <svg
-          className="w-4 h-4 text-slate-400 transition-colors duration-300"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-          aria-hidden="true"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-          />
-        </svg>
-        <span className="text-xs hidden lg:inline font-medium text-slate-500 group-hover:text-cyan-400/70">
+        <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-indigo-50 text-indigo-600 transition-colors duration-300 group-hover:bg-indigo-100 dark:bg-indigo-500/10 dark:text-indigo-300 dark:group-hover:bg-indigo-500/20">
+          <svg
+            className="h-4 w-4"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            aria-hidden="true"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+            />
+          </svg>
+        </div>
+        <span className="hidden text-sm font-medium text-slate-600 transition-colors duration-300 group-hover:text-slate-900 dark:text-slate-300 dark:group-hover:text-white lg:inline">
           Search...
         </span>
-        <div className="ml-auto hidden lg:flex items-center gap-1 opacity-40 group-hover:opacity-100 transition-opacity">
-          <kbd className="text-[10px] font-sans">{isMac ? '⌘' : 'Ctrl'}</kbd>
-          <kbd className="text-[10px] font-sans">K</kbd>
+        <div className="ml-auto hidden items-center gap-1 opacity-60 transition-opacity duration-300 group-hover:opacity-100 lg:flex">
+          <kbd className="rounded-md border border-slate-200 bg-white/80 px-1.5 py-0.5 text-[10px] font-sans text-slate-600 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300">
+            {isMac ? '⌘' : 'Ctrl'}
+          </kbd>
+          <kbd className="rounded-md border border-slate-200 bg-white/80 px-1.5 py-0.5 text-[10px] font-sans text-slate-600 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300">
+            K
+          </kbd>
         </div>
       </button>
 
@@ -1149,15 +1155,15 @@ const SearchBar = ({ onOpen }) => {
                   initial={{ opacity: 0, scale: 0.95, y: -20 }}
                   animate={{ opacity: 1, scale: 1, y: 0 }}
                   exit={{ opacity: 0, scale: 0.95, y: -20 }}
-                  className="relative w-full max-w-2xl bg-slate-900 border border-slate-700 rounded-2xl shadow-2xl overflow-hidden z-10"
+                  className="relative z-10 w-full max-w-2xl overflow-hidden rounded-[24px] border border-slate-200/80 bg-white/95 shadow-[0_24px_80px_rgba(15,23,42,0.16)] backdrop-blur-2xl dark:border-slate-800/80 dark:bg-slate-950/95"
                 >
-                  <div className="relative group p-4 border-b border-slate-800">
+                  <div className="group relative border-b border-slate-200/80 p-4 dark:border-slate-800/80">
                     <h2 id="search-dialog-title" className="sr-only">
                       Search algorithms
                     </h2>
                     <div className="absolute inset-y-0 left-7 flex items-center pointer-events-none">
                       <svg
-                        className="w-5 h-5 text-slate-400 group-focus-within:text-cyan-400 transition-colors duration-300"
+                        className="h-5 w-5 text-slate-400 transition-colors duration-300 group-focus-within:text-indigo-500"
                         fill="none"
                         viewBox="0 0 24 24"
                         stroke="currentColor"
@@ -1176,7 +1182,7 @@ const SearchBar = ({ onOpen }) => {
                       type="text"
                       value={query}
                       onChange={handleSearch}
-                      className="w-full bg-transparent text-slate-200 text-lg block pl-12 pr-24 py-2 outline-none"
+                      className="block w-full bg-transparent py-2 pl-12 pr-24 text-lg text-slate-700 outline-none placeholder:text-slate-400 dark:text-slate-200 dark:placeholder:text-slate-500"
                       placeholder="Search algorithms..."
                     />
                     <div className="absolute right-4 top-1/2 -translate-y-1/2 flex items-center gap-3">
@@ -1201,7 +1207,7 @@ const SearchBar = ({ onOpen }) => {
                             )
                             setResults(sortedResults)
                           }}
-                          className="bg-slate-800 border border-slate-600 text-slate-300 text-xs px-2 py-1 rounded-lg cursor-pointer outline-none"
+                          className="cursor-pointer rounded-lg border border-slate-200 bg-slate-50 px-2 py-1 text-xs text-slate-600 outline-none transition-colors dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300"
                           aria-label="Sort results"
                         >
                           <option value="relevance">Relevance</option>
@@ -1213,7 +1219,7 @@ const SearchBar = ({ onOpen }) => {
                       {/* Close Button */}
                       <button
                         onClick={handleCloseModal}
-                        className="p-1.5 rounded-lg text-slate-500 hover:text-white hover:bg-white/10 transition-all duration-200"
+                        className="rounded-lg p-1.5 text-slate-500 transition-all duration-200 hover:bg-slate-100 hover:text-slate-900 dark:hover:bg-slate-800 dark:hover:text-white"
                         aria-label="Close search"
                       >
                         <svg
@@ -1244,8 +1250,8 @@ const SearchBar = ({ onOpen }) => {
                             onMouseEnter={() => setSelectedIndex(index)}
                             className={`flex items-center justify-between px-4 py-3 cursor-pointer rounded-xl transition-all ${
                               index === selectedIndex
-                                ? 'bg-indigo-500/20 text-indigo-300 ring-1 ring-indigo-500/30'
-                                : 'text-slate-400 hover:bg-slate-800/50'
+                                ? 'bg-indigo-500/10 text-indigo-700 ring-1 ring-indigo-500/20 dark:bg-indigo-500/20 dark:text-indigo-300 dark:ring-indigo-500/30'
+                                : 'text-slate-500 hover:bg-slate-100 dark:text-slate-400 dark:hover:bg-slate-800/50'
                             }`}
                           >
                             <div className="flex flex-col">
@@ -1295,7 +1301,7 @@ const SearchBar = ({ onOpen }) => {
                   </div>
 
                   {/* Footer */}
-                  <div className="p-4 border-t border-slate-800 flex items-center justify-between text-[10px] text-slate-500 uppercase tracking-widest bg-slate-950/20">
+                  <div className="flex items-center justify-between border-t border-slate-200/80 bg-slate-50/80 p-4 text-[10px] uppercase tracking-widest text-slate-500 dark:border-slate-800/80 dark:bg-slate-950/20 dark:text-slate-400">
                     <div className="flex gap-4">
                       <span className="flex items-center gap-1">
                         <kbd className="px-1.5 py-0.5 border border-slate-700 rounded bg-slate-800">
