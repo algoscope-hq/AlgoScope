@@ -1,3 +1,4 @@
+import React from 'react'
 import { complexityMap } from '../data/complexityMap'
 
 const METRICS = [
@@ -7,10 +8,21 @@ const METRICS = [
   ['Space', 'space'],
 ]
 
-const ComplexityCard = ({ algorithm, compact = false }) => {
-  if (!algorithm || !complexityMap[algorithm]) return null
+interface ComplexityCardProps {
+  algorithm?: string
+  compact?: boolean
+}
 
-  const current = complexityMap[algorithm]
+type ComplexityMapType = Record<string, Record<string, string>>
+
+const ComplexityCard: React.FC<ComplexityCardProps> = ({
+  algorithm,
+  compact = false,
+}) => {
+  if (!algorithm || !(complexityMap as ComplexityMapType)[algorithm])
+    return null
+
+  const current = (complexityMap as ComplexityMapType)[algorithm]
 
   return (
     <div

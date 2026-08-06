@@ -13,11 +13,17 @@ const Background = () => (
   </div>
 )
 
+interface AppLayoutProps {
+  children?: React.ReactNode
+  showBackground?: boolean
+  notesKey?: string
+}
+
 export default function AppLayout({
   children,
   showBackground = true,
   notesKey,
-}) {
+}: AppLayoutProps) {
   return (
     <motion.div
       className="theme-app min-h-screen flex flex-col relative overflow-x-hidden"

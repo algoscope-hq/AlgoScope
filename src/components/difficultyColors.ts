@@ -1,4 +1,10 @@
-export const difficultyColors = {
+export interface DifficultyColorStyle {
+  text: string
+  bg: string
+  border: string
+}
+
+export const difficultyColors: Record<string, DifficultyColorStyle> = {
   Beginner: {
     text: 'text-emerald-400',
     bg: 'bg-emerald-500/10',
