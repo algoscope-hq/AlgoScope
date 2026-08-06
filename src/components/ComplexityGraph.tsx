@@ -9,7 +9,7 @@ import {
   CartesianGrid,
 } from 'recharts'
 
-const generateData = (algorithm) => {
+const generateData = (algorithm: string) => {
   const sizes = [10, 20, 40, 80, 120]
 
   return sizes.map((n) => {
@@ -40,7 +40,11 @@ const algorithmColors = {
   shell: '#ec4899',
 }
 
-export default function ComplexityGraph({ algorithm }) {
+interface ComplexityGraphProps {
+  algorithm: string
+}
+
+export default function ComplexityGraph({ algorithm }: ComplexityGraphProps) {
   const data = useMemo(() => generateData(algorithm), [algorithm])
 
   if (!algorithm) return null
@@ -72,7 +76,7 @@ export default function ComplexityGraph({ algorithm }) {
             <Line
               type="monotone"
               dataKey="performance"
-              stroke={algorithmColors[algorithm]}
+              stroke={(algorithmColors as Record<string, string>)[algorithm]}
               strokeWidth={3}
               dot={false}
             />

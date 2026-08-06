@@ -9,17 +9,31 @@ audio.volume = 0.2
 // Define the gradient
 const sliderGradient = 'linear-gradient(to right, #22d3ee, #3b82f6)' // cyan-400 to blue-500
 
+interface SpeedSliderProps {
+  value: number
+  onChange: (
+    event: React.SyntheticEvent | null,
+    newValue: number | number[]
+  ) => void
+  min?: number
+  max?: number
+  step?: number
+}
+
 const SpeedSlider = memo(function SpeedSlider({
   value,
   onChange,
   min = 0.5,
   max = 3,
   step = 0.1,
-}) {
-  const handleChange = (event, newValue) => {
+}: SpeedSliderProps) {
+  const handleChange = (
+    event: React.SyntheticEvent | Event,
+    newValue: number | number[]
+  ) => {
     audio.currentTime = 0
     audio.play().catch(() => {})
-    onChange(event, newValue)
+    onChange(event as React.SyntheticEvent, newValue)
   }
 
   const handleDecrease = () => {

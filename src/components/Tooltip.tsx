@@ -7,7 +7,19 @@ import { AnimatePresence, motion } from 'framer-motion'
    className {string}  – extra classes applied to the wrapper <div>
 */
 
-const Tooltip = ({ content, children, position = 'top', className = '' }) => {
+interface TooltipProps {
+  content: React.ReactNode
+  children: React.ReactNode
+  position?: 'top' | 'bottom' | 'left' | 'right'
+  className?: string
+}
+
+const Tooltip: React.FC<TooltipProps> = ({
+  content,
+  children,
+  position = 'top',
+  className = '',
+}) => {
   const [visible, setVisible] = useState(false)
 
   // Positioning classes for the tooltip bubble

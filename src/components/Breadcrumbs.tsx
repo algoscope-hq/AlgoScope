@@ -72,7 +72,7 @@ export default function Breadcrumbs() {
           const isLast = index === pathnames.length - 1
 
           const label =
-            routeLabels[segment] ||
+            (routeLabels as Record<string, string>)[segment] ||
             segment
               .replace(/-/g, ' ')
               .replace(/\b\w/g, (char) => char.toUpperCase())
