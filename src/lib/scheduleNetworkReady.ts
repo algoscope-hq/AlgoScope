@@ -3,7 +3,15 @@
  * Uses stabilization event when available, with a setTimeout fallback because
  * stabilizationIterationsDone often does not fire when physics is disabled.
  */
-export function scheduleNetworkReady(network, onReady) {
+export interface VisNetwork {
+  once(event: string, callback: () => void): void
+  off(event: string, callback: () => void): void
+}
+
+export function scheduleNetworkReady(
+  network: VisNetwork,
+  onReady: () => void
+): () => void {
   let called = false
 
   const call = () => {
