@@ -21,7 +21,11 @@ const getInitialTheme = () => {
     : 'dark'
 }
 
-export const ThemeProvider = ({ children }) => {
+interface ThemeProviderProps {
+  children: React.ReactNode
+}
+
+export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
   const [theme, setTheme] = useState(getInitialTheme)
 
   useEffect(() => {

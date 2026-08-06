@@ -1,6 +1,10 @@
 import React, { useState, useEffect } from 'react'
 
-const StatusDisplay = ({ message }) => {
+interface StatusDisplayProps {
+  message?: React.ReactNode
+}
+
+const StatusDisplay: React.FC<StatusDisplayProps> = ({ message }) => {
   const [isVisible, setIsVisible] = useState(false)
 
   useEffect(() => {
