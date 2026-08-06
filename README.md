@@ -190,6 +190,49 @@ Access the app at `http://localhost:8080`.
 
 ---
 
+## 🟦 TypeScript & Incremental Migration
+
+AlgoScope supports mixed JavaScript and TypeScript development. New components and features can be written directly in `.ts` or `.tsx`.
+
+### Incremental Migration Strategy
+
+- **Existing JS/JSX files** continue to function, build, and lint without requiring immediate conversion.
+- **New code** should be created using `.ts` (for utilities, models, logic) or `.tsx` (for React components).
+- **Existing JS/JSX files** can be converted one by one by renaming `.js` &rarr; `.ts` or `.jsx` &rarr; `.tsx` and adding necessary type annotations.
+
+### Creating New TypeScript Components
+
+Create your component in `src/` using the `.tsx` extension:
+
+```tsx
+import React from 'react'
+
+interface Props {
+  title: string
+}
+
+export const Example: React.FC<Props> = ({ title }) => {
+  return <div>{title}</div>
+}
+```
+
+### Type Checking & Linting
+
+Run the following scripts locally to verify types and code style:
+
+```bash
+# Type check all files
+npm run type-check
+
+# Lint TypeScript files
+npm run lint:ts
+
+# Lint JavaScript files
+npm run lint:js
+```
+
+---
+
 ## 🏗️ Architecture
 
 ### Project Structure
