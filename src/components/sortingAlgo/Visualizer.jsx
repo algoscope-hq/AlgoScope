@@ -697,22 +697,22 @@ export default function Visualizer() {
                       <p className="text-xs font-semibold uppercase tracking-[0.2em] text-cyan-400/80">
                         Playback
                       </p>
-                      <p className="text-sm text-slate-300">
-                        Step {currentStepIndex + 1} of {steps.length}
+                      <p className="text-lg font-bold text-cyan-300">
+                        Step {currentStepIndex + 1} / {steps.length}
                       </p>
                     </div>
-                    <div className="rounded-full border border-slate-700 bg-slate-950/60 px-3 py-1 text-xs font-medium text-slate-200">
+                    <div className="rounded-full border border-cyan-500/20 bg-cyan-500/10 px-3 py-1 text-xs font-medium text-cyan-200">
                       {isPlaying
-                        ? 'Playing'
+                        ? '▶ Playing'
                         : isComplete
-                          ? 'Complete'
-                          : 'Paused'}
+                          ? '✓ Complete'
+                          : '⏸ Paused'}
                     </div>
                   </div>
 
                   <div className="grid grid-cols-4 gap-2">
                     <Tooltip
-                      content={isPlaying ? 'Pause' : 'Start Visualization'}
+                      content={isPlaying ? 'Pause (Space)' : 'Play (Space)'}
                       position="top"
                     >
                       <button
@@ -721,27 +721,27 @@ export default function Visualizer() {
                         disabled={isComplete && !isPlaying}
                         className="w-full rounded-xl border border-slate-700 bg-slate-800 px-1 py-2 text-xs sm:text-sm font-medium text-slate-100 transition hover:border-cyan-500 hover:text-cyan-200 disabled:cursor-not-allowed disabled:opacity-50"
                       >
-                        {isPlaying ? 'Pause' : 'Play'}
+                        {isPlaying ? '⏸ Pause' : '▶ Play'}
                       </button>
                     </Tooltip>
-                    <Tooltip content="Go back one step" position="top">
+                    <Tooltip content="Previous step (←)" position="top">
                       <button
                         type="button"
                         onClick={stepBackward}
                         disabled={isPlaying || currentStepIndex <= 0}
                         className="w-full rounded-xl border border-slate-700 bg-slate-800 px-1 py-2 text-xs sm:text-sm font-medium text-slate-100 transition hover:border-cyan-500 hover:text-cyan-200 disabled:cursor-not-allowed disabled:opacity-50"
                       >
-                        Back
+                        ← Prev Step
                       </button>
                     </Tooltip>
-                    <Tooltip content="Advance one step forward" position="top">
+                    <Tooltip content="Next step (→)" position="top">
                       <button
                         type="button"
                         onClick={stepForward}
                         disabled={isPlaying || isComplete}
                         className="w-full rounded-xl border border-slate-700 bg-slate-800 px-1 py-2 text-xs sm:text-sm font-medium text-slate-100 transition hover:border-cyan-500 hover:text-cyan-200 disabled:cursor-not-allowed disabled:opacity-50"
                       >
-                        Step
+                        Next Step →
                       </button>
                     </Tooltip>
                     <Tooltip content="Replay from the beginning" position="top">
@@ -750,9 +750,24 @@ export default function Visualizer() {
                         onClick={replayPlayback}
                         className="w-full rounded-xl border border-slate-700 bg-slate-800 px-1 py-2 text-xs sm:text-sm font-medium text-slate-100 transition hover:border-cyan-500 hover:text-cyan-200"
                       >
-                        Replay
+                        ↺ Replay
                       </button>
                     </Tooltip>
+                  </div>
+
+                  <div className="mt-4">
+                    <div className="flex items-center justify-between text-xs text-slate-400 mb-2">
+                      <span>Slow</span>
+                      <span className="text-cyan-400 font-semibold">Speed</span>
+                      <span>Fast</span>
+                    </div>
+                    <SpeedSlider
+                      value={speed}
+                      onChange={(e, v) => setSpeed(v)}
+                      min={0.25}
+                      max={3}
+                      step={0.05}
+                    />
                   </div>
                 </div>
               )}

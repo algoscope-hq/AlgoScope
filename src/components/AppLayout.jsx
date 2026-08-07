@@ -38,7 +38,7 @@ export default function AppLayout({
           <AlgorithmNotes key={notesKey} storageKey={notesKey} />
         ) : null}
 
-        <div className="flex-1">{children}</div>
+        <div className="flex-1 animate-fade-in">{children}</div>
 
         <Footer />
         <ScrollToTopButton />

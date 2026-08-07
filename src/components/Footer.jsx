@@ -194,7 +194,7 @@ const Footer = () => {
                 key={i}
                 to={algo.path}
                 onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-                className={`group relative theme-media-surface border theme-border ${borderHoverClass} rounded-xl p-5 flex flex-col justify-between transition-all duration-300 transform hover:-translate-y-0.5`}
+                className={`group relative before:absolute before:inset-0 before:rounded-xl before:pointer-events-none before:opacity-0 before:transition-opacity before:duration-500 hover:before:opacity-100 before:bg-[radial-gradient(ellipse_at_center,rgba(6,182,212,0.12)_0%,transparent_70%)] theme-media-surface border theme-border ${borderHoverClass} rounded-xl p-5 flex flex-col justify-between transition-all duration-300 transform hover:-translate-y-0.5`}
               >
                 <div className="space-y-2">
                   <div className="flex justify-between items-start gap-2">
