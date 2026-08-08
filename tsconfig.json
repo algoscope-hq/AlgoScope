@@ -1,19 +1,37 @@
 {
   "compilerOptions": {
     "target": "ESNext",
+    "useDefineForClassFields": true,
     "module": "ESNext",
+    "lib": ["DOM", "DOM.Iterable", "ESNext"],
+    "skipLibCheck": true,
+
+    /* Bundler mode */
     "moduleResolution": "Bundler",
+    "allowImportingTsExtensions": true,
+    "isolatedModules": true,
+    "moduleDetection": "force",
+    "noEmit": true,
+    "jsx": "react-jsx",
+
+    /* Gradual Migration Settings */
     "allowJs": true,
     "checkJs": false,
-    "noEmit": true,
+    "incremental": true,
+
+    /* Strictness */
     "strict": true,
-    "skipLibCheck": true,
-    "esModuleInterop": true,
-    "resolveJsonModule": true,
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
+    "noFallthroughCasesInSwitch": true,
+
+    /* Path Aliases */
+    "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"]
     },
-    "lib": ["DOM", "DOM.Iterable", "ESNext"]
+    "esModuleInterop": true,
+    "resolveJsonModule": true
   },
-  "include": ["index.d.ts"]
+  "include": ["src/**/*", "api/**/*", "index.d.ts", "vite-env.d.ts"]
 }

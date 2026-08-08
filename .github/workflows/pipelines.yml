@@ -27,11 +27,13 @@ jobs:
 
       - name: Check Code Formatting (Prettier)
         # Fails the PR if the contributor didn't format their code
-        run: npx prettier --check "src/**/*.{js,jsx,css}"
+        run: npm run format:check
 
-      - name: Run Linter (ESLint)
-        # Fails the PR if there are syntax errors or bad practices
-        run: npm run lint
+      - name: Run JavaScript Linter
+        run: npm run lint:js
+
+      - name: Run TypeScript Linter
+        run: npm run lint:ts
 
       - name: Run Type Checker (TypeScript)
         # Fails the PR if typings do not match the implementation

@@ -1,6 +1,11 @@
 export const FAVORITES_KEY = 'algo-favorites'
 
-export function getFavorites() {
+export interface FavoriteItem {
+  id: string
+  [key: string]: unknown
+}
+
+export function getFavorites(): FavoriteItem[] {
   try {
     const raw = localStorage.getItem(FAVORITES_KEY)
     return raw ? JSON.parse(raw) : []
@@ -10,7 +15,7 @@ export function getFavorites() {
   }
 }
 
-export function saveFavorites(list) {
+export function saveFavorites(list: FavoriteItem[]): void {
   try {
     localStorage.setItem(FAVORITES_KEY, JSON.stringify(list))
     window.dispatchEvent(new Event('favorites-changed'))
@@ -19,23 +24,23 @@ export function saveFavorites(list) {
   }
 }
 
-export function isFavoriteId(id) {
+export function isFavoriteId(id: string): boolean {
   return getFavorites().some((favorite) => favorite.id === id)
 }
 
-export function addFavorite(item) {
+export function addFavorite(item: FavoriteItem): void {
   const favorites = getFavorites()
   if (!favorites.some((favorite) => favorite.id === item.id)) {
     saveFavorites([item, ...favorites])
   }
 }
 
-export function removeFavorite(id) {
+export function removeFavorite(id: string): void {
   const favorites = getFavorites()
   saveFavorites(favorites.filter((favorite) => favorite.id !== id))
 }
 
-export function toggleFavorite(item) {
+export function toggleFavorite(item: FavoriteItem): void {
   if (isFavoriteId(item.id)) {
     removeFavorite(item.id)
   } else {
@@ -43,9 +48,9 @@ export function toggleFavorite(item) {
   }
 }
 
-export function subscribeFavoritesChange(callback) {
+export function subscribeFavoritesChange(callback: () => void): () => void {
   window.addEventListener('favorites-changed', callback)
-  const handleStorage = (event) => {
+  const handleStorage = (event: StorageEvent) => {
     if (event.key === FAVORITES_KEY) callback()
   }
   window.addEventListener('storage', handleStorage)
