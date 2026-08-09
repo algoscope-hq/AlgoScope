@@ -3,31 +3,17 @@ import { useLocation } from 'react-router-dom'
 import { ROUTE_DIFFICULTIES } from '../data/difficultyMap'
 import { difficultyColors } from './difficultyColors'
 
-export interface DifficultyBadgeProps {
-  difficulty?: string
-  size?: 'xs' | 'sm'
-  className?: string
-}
-
 export default function DifficultyBadge({
   difficulty,
   size = 'sm',
   className = '',
-}: DifficultyBadgeProps) {
+}) {
   const location = useLocation()
 
-  const activeDifficulty =
-    difficulty ||
-    (ROUTE_DIFFICULTIES as Record<string, string>)[location.pathname]
+  const activeDifficulty = difficulty || ROUTE_DIFFICULTIES[location.pathname]
   if (!activeDifficulty) return null
 
-  const styles =
-    (
-      difficultyColors as Record<
-        string,
-        { text: string; bg: string; border: string }
-      >
-    )[activeDifficulty] || difficultyColors.Beginner
+  const styles = difficultyColors[activeDifficulty] || difficultyColors.Beginner
 
   const sizeClasses =
     size === 'xs'
