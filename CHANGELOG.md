@@ -5,6 +5,31 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.15.0](https://github.com/algoscope-hq/AlgoScope/compare/v1.14.0...v1.15.0) (2026-08-09)
+
+
+### Features
+
+* add Hash Table (HashMap) visualizer to Abstract Data Types ([dc33962](https://github.com/algoscope-hq/AlgoScope/commit/dc339623831ab4834bfa3ecd4fcb7270d5671e3e))
+* add Segment Tree visualizer to Abstract Data Types ([a2d7ef0](https://github.com/algoscope-hq/AlgoScope/commit/a2d7ef00662e9c3b4f5fce0ef132a2bc72e9621f))
+* **challenge:** expand question bank and upgrade Challenge Mode with smart adaptive AI, timer, analytics, and visualizer practice links ([0fde3b7](https://github.com/algoscope-hq/AlgoScope/commit/0fde3b7494441f972d6997b31fc509e87539b2c4))
+* **concepts:** update concepts overview with search filter, category tabs, and comprehensive descriptions ([49df045](https://github.com/algoscope-hq/AlgoScope/commit/49df04527493e3be45c8c25ea1169e50ae454e53))
+* mjor issue fix ([d1bba02](https://github.com/algoscope-hq/AlgoScope/commit/d1bba02008bc226c6228d4303bf45aed9ecab321))
+* **search:** update search bar to pinpoint every page, algorithm, data structure, and deep link ([fa792fa](https://github.com/algoscope-hq/AlgoScope/commit/fa792faeca8efc8dd6a02cf1597032a743495233))
+* **seo:** enhance deep-linking and dynamic SEO metadata across all visualizer routes ([7bb474b](https://github.com/algoscope-hq/AlgoScope/commit/7bb474bf50304ea08e97a7a5adf1e69d875b39e1))
+
+
+### Bug Fixes
+
+* address coderabbitai review comments in SegmentTreeIV ([9410e97](https://github.com/algoscope-hq/AlgoScope/commit/9410e97b978d1c8ab2ab229a138d52164e50f01e))
+* clear stale result message when switching query type ([31a6b9b](https://github.com/algoscope-hq/AlgoScope/commit/31a6b9bb70e02f5b181fff83ff865ac4acf34835))
+* **inconsistency:** resolve routing, lazy-loading, notesKey drawer, breadcrumbs, and theme support inconsistencies ([5e7d588](https://github.com/algoscope-hq/AlgoScope/commit/5e7d5889cf123969d53bfd8dc5fe9438aa354851))
+* **layout:** move AlgorithmNotes below main content ([484e3d6](https://github.com/algoscope-hq/AlgoScope/commit/484e3d6c791840d9856663b01f1f15c66adb47e7))
+* list & format ([a0d1591](https://github.com/algoscope-hq/AlgoScope/commit/a0d1591b461ee02a5d6d56be12208db2f511f16f))
+* **mobile-menu:** render mobile hamburger drawer via React Portal to prevent CSS fixed positioning trapping ([caa2043](https://github.com/algoscope-hq/AlgoScope/commit/caa20432af30f4797ce518916067ca2a5d1cc0f1))
+* **responsive:** make homepage difficulty filter bar mobile scrollable and responsive ([3ac3557](https://github.com/algoscope-hq/AlgoScope/commit/3ac35571d95be3b8f70a221407de542f01cff483))
+* **search:** enable search modal from mobile hamburger drawer using portal and proper navigation callbacks ([5cfbd98](https://github.com/algoscope-hq/AlgoScope/commit/5cfbd98b6772aecae6576f1bff832cd9eb82fa3f))
+
 ## [1.14.0] - 2026-07-26
 
 ### Added
