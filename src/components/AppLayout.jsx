@@ -34,11 +34,11 @@ export default function AppLayout({
 
         <Breadcrumbs />
 
+        <div className="flex-1">{children}</div>
+
         {notesKey ? (
           <AlgorithmNotes key={notesKey} storageKey={notesKey} />
         ) : null}
-
-        <div className="flex-1">{children}</div>
 
         <Footer />
         <ScrollToTopButton />
