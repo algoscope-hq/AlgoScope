@@ -6,16 +6,36 @@ export function useKeyboardShortcuts({
   onStepBackward,
   onReset,
   onSpeedUp,
+  onSpeedDown,
   onSlowDown,
   onHelp,
   disabled = false,
 }) {
   useEffect(() => {
+    const speedDownHandler = onSpeedDown ?? onSlowDown
+
     const handler = (e) => {
-      const tag = document.activeElement.tagName
-      if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') return
+      const activeEl = document.activeElement
+      const tag = activeEl?.tagName
+      const isEditable = activeEl?.isContentEditable
+
+      // 1. Ignore keystrokes when typing inside form inputs or editable areas
+      if (
+        tag === 'INPUT' ||
+        tag === 'TEXTAREA' ||
+        tag === 'SELECT' ||
+        isEditable
+      ) {
+        return
+      }
+
       if (disabled) return
-      if (e.key === ' ' && (tag === 'BUTTON' || tag === 'A')) return
+
+      // 2. Prevent Space bar from triggering focused buttons/links twice
+      if (e.key === ' ' && (tag === 'BUTTON' || tag === 'A')) {
+        e.preventDefault()
+      }
+
       switch (e.key) {
         case ' ':
           e.preventDefault()
@@ -29,15 +49,21 @@ export function useKeyboardShortcuts({
           e.preventDefault()
           onStepBackward?.()
           break
+        case 'Escape':
         case 'r':
         case 'R':
+          e.preventDefault()
           onReset?.()
           break
         case '+':
+        case '=':
+          e.preventDefault()
           onSpeedUp?.()
           break
         case '-':
-          onSlowDown?.()
+        case '_':
+          e.preventDefault()
+          speedDownHandler?.()
           break
         case '?':
           onHelp?.()
@@ -55,6 +81,7 @@ export function useKeyboardShortcuts({
     onStepBackward,
     onReset,
     onSpeedUp,
+    onSpeedDown,
     onSlowDown,
     onHelp,
     disabled,

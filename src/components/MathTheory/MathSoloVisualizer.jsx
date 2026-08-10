@@ -5,6 +5,7 @@ import ComplexityCard from '../ComplexityCard'
 import CodePanel from '../visualizer/CodePanel'
 import Tooltip from '../Tooltip'
 import { useStepPlayback } from '../visualizer/useStepPlayback'
+import { useKeyboardShortcuts } from '../visualizer/useKeyboardShortcuts'
 import { CanvasGCD } from './CanvasGCD'
 import { CanvasFastExpo } from './CanvasFastExpo.jsx'
 import { CanvasBitManip } from './CanvasBitManip.jsx'
@@ -111,6 +112,62 @@ export const MathSoloVisualizer = () => {
   }
 
   const handleAlgoChange = (nextAlgo) => {
+    setAlgo(nextAlgo)
+    clear()
+
+    const nextParams = new URLSearchParams(searchParams)
+    nextParams.set('algo', nextAlgo)
+    setSearchParams(nextParams)
+  }
+
+  const handleVisualize = () => {
+    clear()
+    if (algo === 'gcd') {
+      loadSteps(generateEuclideanGCDSteps(Number(gcdA), Number(gcdB)), {
+        autoPlay: !isStepMode,
+      })
+    } else if (algo === 'expo') {
+      loadSteps(generateFastExpoSteps(Number(expoBase), Number(expoExp)), {
+        autoPlay: !isStepMode,
+      })
+    } else if (algo === 'sieve') {
+      loadSteps(generateSieveSteps(Math.floor(Number(sieveLimit))), {
+        autoPlay: !isStepMode,
+      })
+    } else if (algo === 'fibonacci') {
+      loadSteps(generateFibonacciSteps(Number(fibLimit)), {
+        autoPlay: !isStepMode,
+      })
+    } else if (algo === 'fft') {
+      const signal = generateSignal(fftN, fftType)
+      loadSteps(generateFFTSteps(signal), { autoPlay: !isStepMode })
+    } else {
+      loadSteps(generateBitOpSteps(Number(bitA), Number(bitB), bitOp), {
+        autoPlay: !isStepMode,
+      })
+    }
+  }
+
+  const handleReset = () => {
+    clear()
+  }
+
+  useKeyboardShortcuts({
+    onPlayPause: handleVisualize,
+    onStepForward: () => {
+      if (!isPlaying && !isComplete && hasSteps) stepForward()
+    },
+    onStepBackward: () => {
+      if (!isPlaying && currentStepIndex > 0) stepBackward()
+    },
+    onReset: () => {
+      clear()
+    },
+    onSpeedUp: () => setSpeed((s) => Math.min(3, +(s + 0.25).toFixed(2))),
+    onSlowDown: () => setSpeed((s) => Math.max(0.25, +(s - 0.25).toFixed(2))),
+  })
+
+  const currentSource = useMemo(() => {
     setAlgo(nextAlgo)
     clear()
 
