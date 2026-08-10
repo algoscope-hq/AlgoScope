@@ -1,7 +1,7 @@
 // scripts/append-file-tree.js
 const fs = require('fs')
 const path = require('path')
-const { execSync } = require('child_process')
+const { execSync, execFileSync } = require('child_process')
 const semver = require('semver') // install this: npm install semver
 
 // ----------------------- helpers -----------------------
@@ -27,7 +27,7 @@ function getChangedFilesTree(fromTag, toTag) {
   let changedFiles = []
   try {
     if (fromTag) {
-      const diff = execSync(`git diff --name-status ${fromTag} ${toTag}`, {
+      const diff = execFileSync('git', ['diff', '--name-status', fromTag, toTag], {
         encoding: 'utf8',
       })
       changedFiles = diff
@@ -38,7 +38,7 @@ function getChangedFilesTree(fromTag, toTag) {
           return { status, file: rest.join('\t') }
         })
     } else {
-      const all = execSync(`git ls-tree -r ${toTag} --name-only`, {
+      const all = execFileSync('git', ['ls-tree', '-r', toTag, '--name-only'], {
         encoding: 'utf8',
       })
         .split('\n')
@@ -126,7 +126,7 @@ function generateAutoSection(tag, previousTag) {
   let gitLog = ''
   try {
     const range = previousTag ? `${previousTag}..${tag}` : tag
-    gitLog = execSync(`git log --pretty=format:"%s" ${range}`, {
+    gitLog = execFileSync('git', ['log', '--pretty=format:%s', range], {
       encoding: 'utf8',
     }).trim()
   } catch {
@@ -195,7 +195,7 @@ for (let i = 0; i < allTags.length; i++) {
   // get commit date for this tag
   let date
   try {
-    date = execSync(`git log -1 --format=%as ${tag}`, {
+    date = execFileSync('git', ['log', '-1', '--format=%as', tag], {
       encoding: 'utf8',
     }).trim()
   } catch {
