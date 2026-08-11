@@ -42,6 +42,13 @@ const Footer = () => {
       color: 'hover:border-emerald-500/30 text-emerald-400 bg-emerald-500/5',
     },
     {
+      name: 'Cheat Sheet',
+      path: '/cheatsheet',
+      desc: 'Consolidated reference & complexities',
+      complexity: 'Quick Ref',
+      color: 'hover:border-indigo-500/30 text-indigo-400 bg-indigo-500/5',
+    },
+    {
       name: 'Challenges',
       path: '/challenge',
       desc: 'Guess the running algorithm game',
