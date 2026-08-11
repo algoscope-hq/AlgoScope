@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect, useCallback } from 'react'
 import CodeEditor from './CodeEditor'
 import ProfilerGraph from './ProfilerGraph'
 import { motion } from 'framer-motion'
+import AIAssistantPanel from './AIAssistantPanel'
 
 const Terminal = React.forwardRef(function Terminal({ logs, onClear }, ref) {
   const scrollRef = useRef(null)
@@ -101,7 +102,6 @@ const runCodeInWorker = (userCode, inputVal, refSlot) => {
         const originalError = self.console.error;
         const originalPostMessage = self.postMessage;
         
-        // 1. Completely remove communication APIs from prototype chain
         let currentProto = self;
         while (currentProto) {
           ['postMessage', 'close', 'importScripts'].forEach(method => {
@@ -112,7 +112,6 @@ const runCodeInWorker = (userCode, inputVal, refSlot) => {
           currentProto = Object.getPrototypeOf(currentProto);
         }
 
-        // 2. Shadow dangerous globals on the instance
         self.postMessage = undefined;
         self.close = undefined;
         self.importScripts = undefined;
@@ -142,7 +141,6 @@ const runCodeInWorker = (userCode, inputVal, refSlot) => {
         
         const startTime = self.performance.now();
         try {
-          // 3. Wrap execution in an IIFE that shadows common aliases in local scope
           const wrappedCode = "\\n(function(self, globalThis, postMessage, close, importScripts, onmessage) {\\n" + code + "\\n})();\\n";
           const runner = new Function('input', wrappedCode);
           runner(input);
@@ -333,7 +331,6 @@ const PracticePage = () => {
   const [isExecutingA, setIsExecutingA] = useState(false)
   const [isExecutingB, setIsExecutingB] = useState(false)
 
-  // Tri-state execution mode: 'single' | 'compare' | 'profiler'
   const [executionMode, setExecutionMode] = useState('single')
   const isCompareMode = executionMode === 'compare'
   const isProfilerMode = executionMode === 'profiler'
@@ -346,7 +343,6 @@ const PracticePage = () => {
   const [isComparing, setIsComparing] = useState(false)
   const [benchmarkResults, setBenchmarkResults] = useState(null)
 
-  // Profiler state
   const [profilerCode, setProfilerCode] = useState(profilerDefaultCode)
   const [profilerInputSizes, setProfilerInputSizes] = useState(
     '100, 500, 1000, 2500, 5000'
@@ -398,8 +394,14 @@ const PracticePage = () => {
     { label: 'High Contrast', value: 'hc-black' },
   ]
 
+  // Derive the active code to pass to the AI panel
+  const activeCode = isProfilerMode
+    ? profilerCode
+    : isCompareMode
+      ? codeA
+      : code
+
   const handleModeChange = (mode) => {
-    // Terminate all active workers across all modes
     terminateWorker(activeWorkerRef)
     terminateWorker(activeWorkerRefA)
     terminateWorker(activeWorkerRefB)
@@ -450,8 +452,6 @@ const PracticePage = () => {
   }
 
   const scrollConsoleIntoView = () => {
-    // Defer until after this tick so layout / React commit can settle (helps with
-    // tall editor + sticky navbar + scrollIntoView).
     requestAnimationFrame(() => {
       requestAnimationFrame(() => {
         if (consoleRef.current) {
@@ -683,7 +683,6 @@ const PracticePage = () => {
         return
       }
 
-      // Parse input sizes
       const sizes = profilerInputSizes
         .split(',')
         .map((s) => parseInt(s.trim(), 10))
@@ -717,7 +716,6 @@ const PracticePage = () => {
         datasetGenerators[profilerDatasetType] || datasetGenerators.random
       const collectedData = []
 
-      // Sequential execution — one size at a time for benchmark fairness
       for (let i = 0; i < sizes.length; i++) {
         if (profilerCancelledRef.current || !isMountedRef.current) {
           setProfilerLogs((prev) => [
@@ -763,7 +761,6 @@ const PracticePage = () => {
               content: `  N=${size}: Timeout (3s) — skipping larger sizes.`,
             },
           ])
-          // Stop profiling — larger sizes will also timeout
           break
         } else {
           setProfilerLogs((prev) => [
@@ -850,18 +847,8 @@ const PracticePage = () => {
                   ))}
                 </select>
                 <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-slate-500">
-                  <svg
-                    className="w-4 h-4"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M19 9l-7 7-7-7"
-                    />
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                   </svg>
                 </div>
               </div>
@@ -884,18 +871,8 @@ const PracticePage = () => {
                   ))}
                 </select>
                 <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-slate-500">
-                  <svg
-                    className="w-4 h-4"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M19 9l-7 7-7-7"
-                    />
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                   </svg>
                 </div>
               </div>
@@ -988,42 +965,16 @@ const PracticePage = () => {
                 >
                   {isComparing ? (
                     <>
-                      <svg
-                        className="animate-spin h-4 w-4 text-white"
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                      >
-                        <circle
-                          className="opacity-25"
-                          cx="12"
-                          cy="12"
-                          r="10"
-                          stroke="currentColor"
-                          strokeWidth="4"
-                        ></circle>
-                        <path
-                          className="opacity-75"
-                          fill="currentColor"
-                          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                        ></path>
+                      <svg className="animate-spin h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                       </svg>
                       <span>Comparing...</span>
                     </>
                   ) : (
                     <>
-                      <svg
-                        className="w-4 h-4"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M13 10V3L4 14h7v7l9-11h-7z"
-                        />
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
                       </svg>
                       <span>Run Benchmark Compare</span>
                     </>
@@ -1068,18 +1019,8 @@ const PracticePage = () => {
                       <option value="reversed">Reverse Sorted Array</option>
                     </select>
                     <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-slate-500">
-                      <svg
-                        className="w-4 h-4"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M19 9l-7 7-7-7"
-                        />
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                       </svg>
                     </div>
                   </div>
@@ -1090,18 +1031,8 @@ const PracticePage = () => {
             {/* Guide Card */}
             <div className="bg-slate-900/40 backdrop-blur-xl border border-white/10 p-8 rounded-[2rem] shadow-xl">
               <h3 className="text-sm font-bold uppercase tracking-widest text-cyan-400/80 mb-6 flex items-center gap-2">
-                <svg
-                  className="w-4 h-4"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                  />
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
                 Guide
               </h3>
@@ -1110,48 +1041,30 @@ const PracticePage = () => {
                   <>
                     <li className="flex gap-3">
                       <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 mt-1.5 shrink-0 shadow-[0_0_8px_rgba(16,185,129,0.6)]"></div>
-                      <span>
-                        Write an algorithm that processes the <code>input</code>{' '}
-                        array.
-                      </span>
+                      <span>Write an algorithm that processes the <code>input</code> array.</span>
                     </li>
                     <li className="flex gap-3">
                       <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 mt-1.5 shrink-0 shadow-[0_0_8px_rgba(16,185,129,0.6)]"></div>
-                      <span>
-                        Configure input sizes and dataset type in the panel
-                        above.
-                      </span>
+                      <span>Configure input sizes and dataset type in the panel above.</span>
                     </li>
                     <li className="flex gap-3">
                       <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 mt-1.5 shrink-0 shadow-[0_0_8px_rgba(16,185,129,0.6)]"></div>
-                      <span>
-                        Click &quot;Run Code&quot; to benchmark across all sizes
-                        and see the runtime graph with O(N), O(N log N), and
-                        O(N²) overlays.
-                      </span>
+                      <span>Click &quot;Run Code&quot; to benchmark across all sizes and see the runtime graph with O(N), O(N log N), and O(N²) overlays.</span>
                     </li>
                   </>
                 ) : isCompareMode ? (
                   <>
                     <li className="flex gap-3">
                       <div className="w-1.5 h-1.5 rounded-full bg-cyan-500 mt-1.5 shrink-0 shadow-[0_0_8px_rgba(6,182,212,0.6)]"></div>
-                      <span>
-                        Write two competing algorithms in Editor A and B.
-                      </span>
+                      <span>Write two competing algorithms in Editor A and B.</span>
                     </li>
                     <li className="flex gap-3">
                       <div className="w-1.5 h-1.5 rounded-full bg-cyan-500 mt-1.5 shrink-0 shadow-[0_0_8px_rgba(6,182,212,0.6)]"></div>
-                      <span>
-                        Input parameters in the Shared Input field. They will be
-                        passed as a global variable <code>input</code>.
-                      </span>
+                      <span>Input parameters in the Shared Input field. They will be passed as a global variable <code>input</code>.</span>
                     </li>
                     <li className="flex gap-3">
                       <div className="w-1.5 h-1.5 rounded-full bg-cyan-500 mt-1.5 shrink-0 shadow-[0_0_8px_rgba(6,182,212,0.6)]"></div>
-                      <span>
-                        Click &quot;Run Benchmark Compare&quot; to execute both
-                        and get relative performance timing.
-                      </span>
+                      <span>Click &quot;Run Benchmark Compare&quot; to execute both and get relative performance timing.</span>
                     </li>
                   </>
                 ) : (
@@ -1162,25 +1075,25 @@ const PracticePage = () => {
                     </li>
                     <li className="flex gap-3">
                       <div className="w-1.5 h-1.5 rounded-full bg-cyan-500 mt-1.5 shrink-0 shadow-[0_0_8px_rgba(6,182,212,0.6)]"></div>
-                      <span>
-                        Professional editor with syntax highlighting,
-                        IntelliSense, and ligatures.
-                      </span>
+                      <span>Professional editor with syntax highlighting, IntelliSense, and ligatures.</span>
                     </li>
                     <li className="flex gap-3">
                       <div className="w-1.5 h-1.5 rounded-full bg-cyan-500 mt-1.5 shrink-0 shadow-[0_0_8px_rgba(6,182,212,0.6)]"></div>
-                      <span>
-                        Execute JavaScript directly and see results in the
-                        real-time console below.
-                      </span>
+                      <span>Execute JavaScript directly and see results in the real-time console below.</span>
                     </li>
                   </>
                 )}
+                {/* AI Assistant hint */}
+                <li className="flex gap-3">
+                  <div className="w-1.5 h-1.5 rounded-full bg-purple-500 mt-1.5 shrink-0 shadow-[0_0_8px_rgba(168,85,247,0.6)]"></div>
+                  <span>
+                    Stuck? Press <kbd className="px-1.5 py-0.5 rounded bg-slate-800 border border-slate-700 text-xs font-mono text-cyan-400">Ctrl+H</kbd> or click the{' '}
+                    <span className="text-cyan-400 font-medium">AI Assistant</span> button for hints and explanations.
+                  </span>
+                </li>
                 <li className="flex gap-3">
                   <div className="w-1.5 h-1.5 rounded-full bg-slate-600 mt-1.5 shrink-0"></div>
-                  <span className="text-slate-500 italic">
-                    (Coming Soon) Native execution for Python, Java, and C++.
-                  </span>
+                  <span className="text-slate-500 italic">(Coming Soon) Native execution for Python, Java, and C++.</span>
                 </li>
               </ul>
             </div>
@@ -1237,9 +1150,7 @@ const PracticePage = () => {
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
                         <span className="w-2 h-2 rounded-full bg-cyan-500"></span>
-                        <h4 className="text-sm font-bold uppercase tracking-wider text-cyan-400">
-                          Algorithm A
-                        </h4>
+                        <h4 className="text-sm font-bold uppercase tracking-wider text-cyan-400">Algorithm A</h4>
                       </div>
                     </div>
                     <CodeEditor
@@ -1265,9 +1176,7 @@ const PracticePage = () => {
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
                         <span className="w-2 h-2 rounded-full bg-purple-500"></span>
-                        <h4 className="text-sm font-bold uppercase tracking-wider text-purple-400">
-                          Algorithm B
-                        </h4>
+                        <h4 className="text-sm font-bold uppercase tracking-wider text-purple-400">Algorithm B</h4>
                       </div>
                     </div>
                     <CodeEditor
@@ -1297,139 +1206,86 @@ const PracticePage = () => {
                     animate={{ opacity: 1, y: 0 }}
                   >
                     <h3 className="text-sm font-bold uppercase tracking-widest text-cyan-400 mb-6 flex items-center gap-2">
-                      <svg
-                        className="w-4 h-4 text-cyan-400"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 002 2h2a2 2 0 002-2"
-                        />
+                      <svg className="w-4 h-4 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 002 2h2a2 2 0 002-2" />
                       </svg>
                       Benchmark Results
                     </h3>
 
-                    {/* Comparison metrics */}
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-                      {/* Algorithm A Result */}
                       <div className="p-5 bg-slate-950/60 border border-slate-800 rounded-2xl flex flex-col justify-between">
                         <div>
-                          <span className="text-[10px] font-bold uppercase tracking-wider text-cyan-400">
-                            Algorithm A
-                          </span>
+                          <span className="text-[10px] font-bold uppercase tracking-wider text-cyan-400">Algorithm A</span>
                           <div className="text-3xl font-black text-white mt-1">
-                            {benchmarkResults.statusA === 'timeout'
-                              ? 'Timeout (3s)'
-                              : benchmarkResults.statusA === 'error'
-                                ? 'Error'
-                                : `${benchmarkResults.durationA.toFixed(3)} ms`}
+                            {benchmarkResults.statusA === 'timeout' ? 'Timeout (3s)'
+                              : benchmarkResults.statusA === 'error' ? 'Error'
+                              : `${benchmarkResults.durationA.toFixed(3)} ms`}
                           </div>
                         </div>
                         {benchmarkResults.statusA === 'success' && (
-                          <div className="text-xs text-slate-500 mt-2 font-mono">
-                            Completed successfully
-                          </div>
+                          <div className="text-xs text-slate-500 mt-2 font-mono">Completed successfully</div>
                         )}
                       </div>
 
-                      {/* Algorithm B Result */}
                       <div className="p-5 bg-slate-950/60 border border-slate-800 rounded-2xl flex flex-col justify-between">
                         <div>
-                          <span className="text-[10px] font-bold uppercase tracking-wider text-purple-400">
-                            Algorithm B
-                          </span>
+                          <span className="text-[10px] font-bold uppercase tracking-wider text-purple-400">Algorithm B</span>
                           <div className="text-3xl font-black text-white mt-1">
-                            {benchmarkResults.statusB === 'timeout'
-                              ? 'Timeout (3s)'
-                              : benchmarkResults.statusB === 'error'
-                                ? 'Error'
-                                : `${benchmarkResults.durationB.toFixed(3)} ms`}
+                            {benchmarkResults.statusB === 'timeout' ? 'Timeout (3s)'
+                              : benchmarkResults.statusB === 'error' ? 'Error'
+                              : `${benchmarkResults.durationB.toFixed(3)} ms`}
                           </div>
                         </div>
                         {benchmarkResults.statusB === 'success' && (
-                          <div className="text-xs text-slate-500 mt-2 font-mono">
-                            Completed successfully
-                          </div>
+                          <div className="text-xs text-slate-500 mt-2 font-mono">Completed successfully</div>
                         )}
                       </div>
                     </div>
 
-                    {/* Visual Comparison Bars */}
-                    {benchmarkResults.statusA === 'success' &&
-                      benchmarkResults.statusB === 'success' && (
-                        <div className="space-y-4">
-                          <div className="relative pt-1">
-                            <div className="flex mb-4 items-center justify-between text-xs">
-                              <span className="text-slate-400 font-medium">
-                                Relative Speed Ratio
-                              </span>
-                              <span className="font-bold text-cyan-400">
-                                {benchmarkResults.durationA <
-                                benchmarkResults.durationB
-                                  ? `Algorithm A is ${(benchmarkResults.durationB / Math.max(0.001, benchmarkResults.durationA)).toFixed(1)}x faster`
-                                  : benchmarkResults.durationB <
-                                      benchmarkResults.durationA
-                                    ? `Algorithm B is ${(benchmarkResults.durationA / Math.max(0.001, benchmarkResults.durationB)).toFixed(1)}x faster`
-                                    : 'Both algorithms are equally fast'}
-                              </span>
-                            </div>
+                    {benchmarkResults.statusA === 'success' && benchmarkResults.statusB === 'success' && (
+                      <div className="space-y-4">
+                        <div className="relative pt-1">
+                          <div className="flex mb-4 items-center justify-between text-xs">
+                            <span className="text-slate-400 font-medium">Relative Speed Ratio</span>
+                            <span className="font-bold text-cyan-400">
+                              {benchmarkResults.durationA < benchmarkResults.durationB
+                                ? `Algorithm A is ${(benchmarkResults.durationB / Math.max(0.001, benchmarkResults.durationA)).toFixed(1)}x faster`
+                                : benchmarkResults.durationB < benchmarkResults.durationA
+                                  ? `Algorithm B is ${(benchmarkResults.durationA / Math.max(0.001, benchmarkResults.durationB)).toFixed(1)}x faster`
+                                  : 'Both algorithms are equally fast'}
+                            </span>
+                          </div>
 
-                            {(() => {
-                              const maxDuration = Math.max(
-                                benchmarkResults.durationA,
-                                benchmarkResults.durationB,
-                                0.001
-                              )
-                              const widthA =
-                                (benchmarkResults.durationA / maxDuration) * 100
-                              const widthB =
-                                (benchmarkResults.durationB / maxDuration) * 100
-                              return (
-                                <div className="space-y-3 font-mono text-xs">
-                                  <div>
-                                    <div className="flex justify-between mb-1">
-                                      <span className="text-cyan-400">
-                                        Algorithm A
-                                      </span>
-                                      <span className="text-slate-400">
-                                        {benchmarkResults.durationA.toFixed(3)}{' '}
-                                        ms
-                                      </span>
-                                    </div>
-                                    <div className="w-full bg-slate-950 rounded-full h-2.5 border border-slate-800/80 overflow-hidden">
-                                      <div
-                                        className="bg-cyan-500 h-2.5 rounded-full shadow-[0_0_8px_rgba(6,182,212,0.6)]"
-                                        style={{ width: `${widthA}%` }}
-                                      />
-                                    </div>
+                          {(() => {
+                            const maxDuration = Math.max(benchmarkResults.durationA, benchmarkResults.durationB, 0.001)
+                            const widthA = (benchmarkResults.durationA / maxDuration) * 100
+                            const widthB = (benchmarkResults.durationB / maxDuration) * 100
+                            return (
+                              <div className="space-y-3 font-mono text-xs">
+                                <div>
+                                  <div className="flex justify-between mb-1">
+                                    <span className="text-cyan-400">Algorithm A</span>
+                                    <span className="text-slate-400">{benchmarkResults.durationA.toFixed(3)} ms</span>
                                   </div>
-                                  <div>
-                                    <div className="flex justify-between mb-1">
-                                      <span className="text-purple-400">
-                                        Algorithm B
-                                      </span>
-                                      <span className="text-slate-400">
-                                        {benchmarkResults.durationB.toFixed(3)}{' '}
-                                        ms
-                                      </span>
-                                    </div>
-                                    <div className="w-full bg-slate-950 rounded-full h-2.5 border border-slate-800/80 overflow-hidden">
-                                      <div
-                                        className="bg-purple-500 h-2.5 rounded-full shadow-[0_0_8px_rgba(168,85,247,0.6)]"
-                                        style={{ width: `${widthB}%` }}
-                                      />
-                                    </div>
+                                  <div className="w-full bg-slate-950 rounded-full h-2.5 border border-slate-800/80 overflow-hidden">
+                                    <div className="bg-cyan-500 h-2.5 rounded-full shadow-[0_0_8px_rgba(6,182,212,0.6)]" style={{ width: `${widthA}%` }} />
                                   </div>
                                 </div>
-                              )
-                            })()}
-                          </div>
+                                <div>
+                                  <div className="flex justify-between mb-1">
+                                    <span className="text-purple-400">Algorithm B</span>
+                                    <span className="text-slate-400">{benchmarkResults.durationB.toFixed(3)} ms</span>
+                                  </div>
+                                  <div className="w-full bg-slate-950 rounded-full h-2.5 border border-slate-800/80 overflow-hidden">
+                                    <div className="bg-purple-500 h-2.5 rounded-full shadow-[0_0_8px_rgba(168,85,247,0.6)]" style={{ width: `${widthB}%` }} />
+                                  </div>
+                                </div>
+                              </div>
+                            )
+                          })()}
                         </div>
-                      )}
+                      </div>
+                    )}
                   </motion.div>
                 )}
               </div>
@@ -1437,6 +1293,13 @@ const PracticePage = () => {
           </div>
         </div>
       </div>
+
+      {/* ── AI Assistant Panel — floats over the page, never blocks the editor ── */}
+      <AIAssistantPanel
+        code={activeCode}
+        executionMode={executionMode}
+        language={language}
+      />
     </motion.div>
   )
 }
