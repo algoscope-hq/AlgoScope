@@ -1,7 +1,9 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react'
+import { useNavigate } from 'react-router-dom'
 import CodeEditor from './CodeEditor'
 import ProfilerGraph from './ProfilerGraph'
 import { motion } from 'framer-motion'
+import { ALGORITHMS, OPERATING_SYSTEMS } from '../data/visualizerData'
 
 const Terminal = React.forwardRef(function Terminal({ logs, onClear }, ref) {
   const scrollRef = useRef(null)
@@ -318,6 +320,7 @@ const datasetGenerators = {
 }
 
 const PracticePage = () => {
+  const navigate = useNavigate()
   const consoleRef = useRef(null)
   const consoleRefA = useRef(null)
   const consoleRefB = useRef(null)
@@ -828,6 +831,58 @@ const PracticePage = () => {
             Hone your algorithm skills by writing code in your favorite language
             with our integrated high-performance editor.
           </p>
+        </div>
+
+        {/* Dropdown Navigation for Algorithm Modules */}
+        <div className="mb-8">
+          <div className="bg-slate-900/40 backdrop-blur-xl border border-white/10 p-4 rounded-2xl shadow-xl">
+            <label className="block text-xs font-bold uppercase tracking-widest text-cyan-400/80 mb-3">
+              Jump to Algorithm Module
+            </label>
+            <div className="relative">
+              <select
+                onChange={(e) => {
+                  const val = e.target.value
+                  if (val) navigate(val)
+                }}
+                defaultValue=""
+                className="w-full bg-slate-950/80 border border-slate-700 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:ring-2 focus:ring-cyan-500/50 transition-all appearance-none cursor-pointer"
+              >
+                <option value="" disabled>
+                  Select a module...
+                </option>
+                <optgroup label="— Algorithms —">
+                  {ALGORITHMS.map((algo) => (
+                    <option key={algo.id} value={algo.link}>
+                      {algo.title}
+                    </option>
+                  ))}
+                </optgroup>
+                <optgroup label="— Operating Systems —">
+                  {OPERATING_SYSTEMS.map((os) => (
+                    <option key={os.id} value={os.link}>
+                      {os.title}
+                    </option>
+                  ))}
+                </optgroup>
+              </select>
+              <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-slate-500">
+                <svg
+                  className="w-4 h-4"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M19 9l-7 7-7-7"
+                  />
+                </svg>
+              </div>
+            </div>
+          </div>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-[300px_1fr] gap-10">
