@@ -19,6 +19,7 @@ import * as counting from '../../algorithms/sorting/countingSortSteps'
 import * as radix from '../../algorithms/sorting/radixSortSteps'
 import * as shell from '../../algorithms/sorting/shellSortSteps'
 import ComplexityGraph from '../ComplexityGraph'
+import BookmarkPanel from '../BookmarkPanel'
 
 const algoMap = {
   bubble,
@@ -185,6 +186,7 @@ export default function Visualizer() {
     replay: replayPlayback,
     stepForward,
     stepBackward,
+    jumpToStep,
   } = useStepPlayback({ speed })
 
   const algorithmOptions = {
@@ -755,6 +757,13 @@ export default function Visualizer() {
                     </Tooltip>
                   </div>
                 </div>
+              )}
+              {hasSteps && (
+                <BookmarkPanel
+                  algorithmName={selectedAlgorithm}
+                  currentStepIndex={currentStepIndex}
+                  onJumpToStep={jumpToStep}
+                />
               )}
               {selectedAlgorithm === 'merge' && (
                 <RecursiveTree

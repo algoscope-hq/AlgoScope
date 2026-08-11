@@ -126,6 +126,16 @@ export function useStepPlayback({ speed = 1 }) {
     })
   }
 
+  const jumpToStep = (targetIndex) => {
+    if (!hasSteps || targetIndex < 0 || targetIndex >= steps.length) {
+      return
+    }
+
+    window.clearTimeout(timeoutRef.current)
+    setIsPlaying(false)
+    setCurrentStepIndex(targetIndex)
+  }
+
   return {
     steps,
     currentStep,
@@ -141,5 +151,6 @@ export function useStepPlayback({ speed = 1 }) {
     replay,
     stepForward,
     stepBackward,
+    jumpToStep,
   }
 }
