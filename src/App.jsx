@@ -1,6 +1,10 @@
 import React, { lazy, Suspense } from 'react'
-import { createBrowserRouter, RouterProvider, Navigate } from 'react-router-dom'
-import { SignedIn, SignedOut, RedirectToSignIn } from '@clerk/clerk-react'
+import {
+  createBrowserRouter,
+  RouterProvider,
+  Navigate,
+} from 'react-router-dom'
+import { useAuth, RedirectToSignIn } from '@clerk/clerk-react'
 
 const ConceptsOverview = lazy(
   () => import('./components/concepts/ConceptsOverview')
@@ -84,6 +88,20 @@ const PageLoader = () => (
   </div>
 )
 
+function ProtectedPracticePage() {
+  const { isLoaded, isSignedIn } = useAuth()
+
+  if (!isLoaded) {
+    return <PageLoader />
+  }
+
+  if (!isSignedIn) {
+    return <RedirectToSignIn />
+  }
+
+  return <PracticePage />
+}
+
 const router = createBrowserRouter([
   {
     path: '/',
@@ -126,14 +144,7 @@ const router = createBrowserRouter([
     element: (
       <AppLayout>
         {HAS_CLERK ? (
-          <>
-            <SignedIn>
-              <PracticePage />
-            </SignedIn>
-            <SignedOut>
-              <RedirectToSignIn />
-            </SignedOut>
-          </>
+          <ProtectedPracticePage />
         ) : import.meta.env.DEV ? (
           <PracticePage />
         ) : (

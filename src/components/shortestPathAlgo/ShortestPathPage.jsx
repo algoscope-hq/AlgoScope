@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react'
+import React, { useEffect, useMemo } from 'react'
 import { CanvasShortestPath } from './CanvasShortestPath'
 import GridVisualizer from './GridVisualizer'
 import GridComparisonMode from './GridComparisonMode'
@@ -14,6 +14,17 @@ import ComparisonMode from './ComparisonMode'
 import { useKeyboardShortcuts } from '../visualizer/useKeyboardShortcuts'
 
 export const ShortestPathPage = () => {
+  const readPersistedSpeed = () => {
+    try {
+      const stored = localStorage.getItem('algoscope_visualization_speed')
+      const parsed = Number.parseFloat(stored)
+      if (!Number.isFinite(parsed)) return 1.0
+      return Math.min(3, Math.max(0.5, parsed))
+    } catch {
+      return 1.0
+    }
+  }
+
   const [searchParams, setSearchParams] = useSearchParams()
 
   const mode = searchParams.get('mode') === 'compare' ? 'compare' : 'solo'
@@ -38,7 +49,7 @@ export const ShortestPathPage = () => {
   const [algorithm, setAlgorithm] = React.useState(null)
   const [source, setSource] = React.useState(null)
   const [target, setTarget] = React.useState(null)
-  const [speed, setSpeed] = React.useState(1.0)
+  const [speed, setSpeed] = React.useState(() => readPersistedSpeed())
   const [language, setLanguage] = React.useState('javascript')
   const [runKey, setRunKey] = React.useState(null)
   const [nodeIds, setNodeIds] = React.useState(
@@ -57,6 +68,14 @@ export const ShortestPathPage = () => {
   const handleSpeedChange = (_, newValue) => {
     setSpeed(newValue)
   }
+
+  useEffect(() => {
+    try {
+      localStorage.setItem('algoscope_visualization_speed', String(speed))
+    } catch {
+      // Ignore storage failures in blocked environments.
+    }
+  }, [speed])
 
   const handleRun = () => {
     if (!algorithm) return
@@ -130,7 +149,7 @@ export const ShortestPathPage = () => {
 
   return (
     <motion.div
-      className="w-full flex flex-col lg:flex-row p-4 sm:p-6 gap-4 sm:gap-6 bg-slate-950/50 min-h-screen rounded-2xl shadow-2xl border border-white/10 backdrop-blur-xl"
+      className="w-full bg-slate-950/50 min-h-screen rounded-2xl shadow-2xl border border-white/10 backdrop-blur-xl"
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{
@@ -138,60 +157,29 @@ export const ShortestPathPage = () => {
         ease: 'easeInOut',
       }}
     >
-      <div className="w-full lg:w-1/4 p-4 flex flex-col gap-6 bg-slate-900/80 shadow-xl rounded-xl border border-white/5 backdrop-blur-sm overflow-y-auto">
-        <div className="border-b border-white/10 pb-4">
-          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-cyan-400/80 text-center mb-1">
-            Shortest Path Visualizer
-          </p>
-
-          <h2 className="text-xl font-bold text-center text-white tracking-tight">
-            Controls
-          </h2>
-        </div>
-
+      {/* Header */}
+      <div className="px-4 sm:px-6 pt-4 sm:pt-6 pb-2 flex items-center justify-between">
+        <p className="text-xs font-semibold uppercase tracking-[0.2em] text-cyan-400/80">
+          Shortest Path Visualizer
+        </p>
         <div className="flex gap-2">
           <button
-            onClick={() => setViewMode('network')}
-            className={`w-1/2 py-2 rounded-lg text-xs font-bold transition-all ${
-              viewMode === 'network'
-                ? 'bg-cyan-600 text-white'
-                : 'bg-slate-800 text-slate-400'
-            }`}
-          >
-            Network View
-          </button>
-
-          <button
-            onClick={() => setViewMode('grid')}
+            onClick={() => setMode('solo')}
             disabled={algorithm === 'prim' || algorithm === 'kruskal'}
-            className={`w-1/2 py-2 rounded-lg text-xs font-bold transition-all ${
-              viewMode === 'grid'
+            className={`px-3 py-1 rounded-lg text-xs font-bold transition-all ${
+              mode === 'solo'
                 ? 'bg-cyan-600 text-white'
                 : algorithm === 'prim' || algorithm === 'kruskal'
                   ? 'bg-slate-800/40 text-slate-600 cursor-not-allowed border border-white/5'
                   : 'bg-slate-800 text-slate-400'
             }`}
           >
-            Grid View
-          </button>
-        </div>
-
-        <div className="flex gap-2">
-          <button
-            onClick={() => setMode('solo')}
-            className={`w-1/2 py-2 rounded-lg text-xs font-bold transition-all ${
-              mode === 'solo'
-                ? 'bg-cyan-600 text-white'
-                : 'bg-slate-800 text-slate-400'
-            }`}
-          >
             Solo
           </button>
-
           <button
             onClick={() => setMode('compare')}
             disabled={algorithm === 'prim' || algorithm === 'kruskal'}
-            className={`w-1/2 py-2 rounded-lg text-xs font-bold transition-all ${
+            className={`px-3 py-1 rounded-lg text-xs font-bold transition-all ${
               mode === 'compare'
                 ? 'bg-cyan-600 text-white'
                 : algorithm === 'prim' || algorithm === 'kruskal'
@@ -202,178 +190,218 @@ export const ShortestPathPage = () => {
             Compare
           </button>
         </div>
-
-        <div className="bg-slate-950/60 rounded-xl border border-white/5 p-3 space-y-2">
-          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500 mb-2">
-            How to use
-          </p>
-
-          {[
-            ...(viewMode === 'network'
-              ? [{ step: '1', label: 'Build your graph (toolbar on canvas)' }]
-              : []),
-            {
-              step: viewMode === 'network' ? '2' : '1',
-              label: 'Pick an algorithm',
-            },
-            {
-              step: viewMode === 'network' ? '3' : '2',
-              label:
-                viewMode === 'grid'
-                  ? 'Build your grid'
-                  : 'Choose source & target',
-            },
-            {
-              step: viewMode === 'network' ? '4' : '3',
-              label: 'Press Run',
-            },
-          ].map(({ step, label }) => {
-            const done =
-              (viewMode === 'network' && step === '1' && nodeIds.length > 0) ||
-              ((viewMode === 'network' ? step === '2' : step === '1') &&
-                algorithm) ||
-              ((viewMode === 'network' ? step === '3' : step === '2') &&
-                (viewMode === 'grid' ? true : source && target)) ||
-              ((viewMode === 'network' ? step === '4' : step === '3') &&
-                runKey !== null)
-
-            return (
-              <div key={step} className="flex items-center gap-3">
-                <span
-                  className={`flex-shrink-0 w-5 h-5 rounded-full flex items-center justify-center text-xs font-bold transition-colors duration-300 ${
-                    done
-                      ? 'bg-cyan-500 text-white'
-                      : 'bg-slate-700 text-slate-400'
-                  }`}
-                >
-                  {done ? '✓' : step}
-                </span>
-
-                <span
-                  className={`text-sm transition-colors duration-300 ${
-                    done ? 'text-slate-200' : 'text-slate-500'
-                  }`}
-                >
-                  {label}
-                </span>
-              </div>
-            )
-          })}
-        </div>
-
-        <div className="flex flex-col gap-2">
-          <button
-            onClick={handleRun}
-            disabled={!canRun || mode === 'compare'}
-            className={`w-full py-3 px-4 rounded-xl text-sm font-bold transition-all duration-300 ${
-              canRun && mode !== 'compare'
-                ? 'bg-cyan-600 hover:bg-cyan-500 text-white shadow-lg shadow-cyan-500/30 hover:scale-[1.02]'
-                : 'bg-slate-800 text-slate-600 cursor-not-allowed border border-slate-700'
-            }`}
-          >
-            ▶ Run
-          </button>
-
-          <button
-            onClick={handleReset}
-            className="w-full py-3 px-4 rounded-xl text-sm font-bold bg-slate-800 text-slate-300 border border-slate-700 hover:bg-slate-700 hover:text-white transition-all duration-300"
-          >
-            ↺ Reset
-          </button>
-        </div>
-
-        <MenuSetAlgoShortestPath
-          algorithm={algorithm}
-          setAlgorithm={setAlgorithm}
-        />
-
-        {viewMode === 'network' && (
-          <MenuSelectNodesShortestPath
-            source={source}
-            target={target}
-            setSource={setSource}
-            setTarget={setTarget}
-            algorithm={algorithm}
-            nodeIds={nodeIds}
-          />
-        )}
-
-        <SpeedSlider value={speed} onChange={handleSpeedChange} />
       </div>
 
-      <div className="w-full lg:w-3/4 flex flex-col gap-6">
-        {viewMode === 'network' ? (
-          <>
-            {mode === 'solo' ? (
-              <>
-                <div className="rounded-xl border border-white/10 shadow-lg">
-                  <CanvasShortestPath
-                    algorithm={algorithm}
-                    source={source}
-                    target={target}
-                    speed={speed}
-                    runKey={runKey}
-                    onGraphChange={handleGraphChange}
-                  />
-                </div>
+      {/* Content */}
+      <div className="flex flex-col lg:flex-row p-4 sm:p-6 gap-4 sm:gap-6">
+        {mode === 'solo' && (
+          <div className="w-full lg:w-1/4 p-4 flex flex-col gap-6 bg-slate-900/80 shadow-xl rounded-xl border border-white/5 backdrop-blur-sm overflow-y-auto">
+            <div className="border-b border-white/10 pb-4">
+              <h2 className="text-xl font-bold text-center text-white tracking-tight">
+                Controls
+              </h2>
+            </div>
 
-                <ComplexityCard algorithm={algorithm} />
+            <div className="flex gap-2">
+              <button
+                onClick={() => setViewMode('network')}
+                className={`w-1/2 py-2 rounded-lg text-xs font-bold transition-all ${
+                  viewMode === 'network'
+                    ? 'bg-cyan-600 text-white'
+                    : 'bg-slate-800 text-slate-400'
+                }`}
+              >
+                Network View
+              </button>
 
-                <div className="w-full">
-                  <CodePanel
-                    title={
-                      algorithm
-                        ? `${getAlgorithmName(algorithm)} Implementation`
-                        : 'Code Viewer'
-                    }
-                    code={
-                      currentSource ||
-                      '// Select an algorithm and nodes to see implementation'
-                    }
-                    language={language}
-                    onLanguageChange={setLanguage}
-                  />
-                </div>
-              </>
-            ) : (
-              <ComparisonMode />
+              <button
+                onClick={() => setViewMode('grid')}
+                disabled={algorithm === 'prim' || algorithm === 'kruskal'}
+                className={`w-1/2 py-2 rounded-lg text-xs font-bold transition-all ${
+                  viewMode === 'grid'
+                    ? 'bg-cyan-600 text-white'
+                    : algorithm === 'prim' || algorithm === 'kruskal'
+                      ? 'bg-slate-800/40 text-slate-600 cursor-not-allowed border border-white/5'
+                      : 'bg-slate-800 text-slate-400'
+                }`}
+              >
+                Grid View
+              </button>
+            </div>
+
+            <div className="bg-slate-950/60 rounded-xl border border-white/5 p-3 space-y-2">
+              <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500 mb-2">
+                How to use
+              </p>
+
+              {[
+                ...(viewMode === 'network'
+                  ? [{ step: '1', label: 'Build your graph (toolbar on canvas)' }]
+                  : []),
+                {
+                  step: viewMode === 'network' ? '2' : '1',
+                  label: 'Pick an algorithm',
+                },
+                {
+                  step: viewMode === 'network' ? '3' : '2',
+                  label:
+                    viewMode === 'grid'
+                      ? 'Build your grid'
+                      : 'Choose source & target',
+                },
+                {
+                  step: viewMode === 'network' ? '4' : '3',
+                  label: 'Press Run',
+                },
+              ].map(({ step, label }) => {
+                const done =
+                  (viewMode === 'network' && step === '1' && nodeIds.length > 0) ||
+                  ((viewMode === 'network' ? step === '2' : step === '1') &&
+                    algorithm) ||
+                  ((viewMode === 'network' ? step === '3' : step === '2') &&
+                    (viewMode === 'grid' ? true : source && target)) ||
+                  ((viewMode === 'network' ? step === '4' : step === '3') &&
+                    runKey !== null)
+
+                return (
+                  <div key={step} className="flex items-center gap-3">
+                    <span
+                      className={`flex-shrink-0 w-5 h-5 rounded-full flex items-center justify-center text-xs font-bold transition-colors duration-300 ${
+                        done
+                          ? 'bg-cyan-500 text-white'
+                          : 'bg-slate-700 text-slate-400'
+                      }`}
+                    >
+                      {done ? '✓' : step}
+                    </span>
+
+                    <span
+                      className={`text-sm transition-colors duration-300 ${
+                        done ? 'text-slate-200' : 'text-slate-500'
+                      }`}
+                    >
+                      {label}
+                    </span>
+                  </div>
+                )
+              })}
+            </div>
+
+            <div className="flex flex-col gap-2">
+              <button
+                onClick={handleRun}
+                disabled={!canRun}
+                className={`w-full py-3 px-4 rounded-xl text-sm font-bold transition-all duration-300 ${
+                  canRun
+                    ? 'bg-cyan-600 hover:bg-cyan-500 text-white shadow-lg shadow-cyan-500/30 hover:scale-[1.02]'
+                    : 'bg-slate-800 text-slate-600 cursor-not-allowed border border-slate-700'
+                }`}
+              >
+                ▶ Run
+              </button>
+
+              <button
+                onClick={handleReset}
+                className="w-full py-3 px-4 rounded-xl text-sm font-bold bg-slate-800 text-slate-300 border border-slate-700 hover:bg-slate-700 hover:text-white transition-all duration-300"
+              >
+                ↺ Reset
+              </button>
+            </div>
+
+            <MenuSetAlgoShortestPath
+              algorithm={algorithm}
+              setAlgorithm={setAlgorithm}
+            />
+
+            {viewMode === 'network' && (
+              <MenuSelectNodesShortestPath
+                source={source}
+                target={target}
+                setSource={setSource}
+                setTarget={setTarget}
+                algorithm={algorithm}
+                nodeIds={nodeIds}
+              />
             )}
-          </>
-        ) : (
-          <>
-            {mode === 'solo' ? (
-              <>
-                <div className="rounded-xl overflow-hidden border border-white/10 shadow-lg">
-                  <GridVisualizer
-                    algorithm={algorithm}
-                    speed={speed}
-                    runKey={runKey}
-                  />
-                </div>
 
-                <ComplexityCard algorithm={algorithm} />
-
-                <div className="w-full">
-                  <CodePanel
-                    title={
-                      algorithm
-                        ? `${getAlgorithmName(algorithm)} Grid Implementation`
-                        : 'Code Viewer'
-                    }
-                    code={
-                      currentSource ||
-                      '// Select an algorithm to see implementation'
-                    }
-                    language={language}
-                    onLanguageChange={setLanguage}
-                  />
-                </div>
-              </>
-            ) : (
-              <GridComparisonMode />
-            )}
-          </>
+            <SpeedSlider value={speed} onChange={handleSpeedChange} />
+          </div>
         )}
+
+        <div className={`flex flex-col gap-6 ${mode === 'solo' ? 'w-full lg:w-3/4' : 'w-full'}`}>
+          {viewMode === 'network' ? (
+            <>
+              {mode === 'solo' ? (
+                <>
+                  <div className="rounded-xl border border-white/10 shadow-lg">
+                    <CanvasShortestPath
+                      algorithm={algorithm}
+                      source={source}
+                      target={target}
+                      speed={speed}
+                      runKey={runKey}
+                      onGraphChange={handleGraphChange}
+                    />
+                  </div>
+
+                  <ComplexityCard algorithm={algorithm} />
+
+                  <div className="w-full">
+                    <CodePanel
+                      title={
+                        algorithm
+                          ? `${getAlgorithmName(algorithm)} Implementation`
+                          : 'Code Viewer'
+                      }
+                      code={
+                        currentSource ||
+                        '// Select an algorithm and nodes to see implementation'
+                      }
+                      language={language}
+                      onLanguageChange={setLanguage}
+                    />
+                  </div>
+                </>
+              ) : (
+                <ComparisonMode />
+              )}
+            </>
+          ) : (
+            <>
+              {mode === 'solo' ? (
+                <>
+                  <div className="rounded-xl overflow-hidden border border-white/10 shadow-lg">
+                    <GridVisualizer
+                      algorithm={algorithm}
+                      speed={speed}
+                      runKey={runKey}
+                    />
+                  </div>
+
+                  <ComplexityCard algorithm={algorithm} />
+
+                  <div className="w-full">
+                    <CodePanel
+                      title={
+                        algorithm
+                          ? `${getAlgorithmName(algorithm)} Grid Implementation`
+                          : 'Code Viewer'
+                      }
+                      code={
+                        currentSource ||
+                        '// Select an algorithm to see implementation'
+                      }
+                      language={language}
+                      onLanguageChange={setLanguage}
+                    />
+                  </div>
+                </>
+              ) : (
+                <GridComparisonMode />
+              )}
+            </>
+          )}
+        </div>
       </div>
     </motion.div>
   )

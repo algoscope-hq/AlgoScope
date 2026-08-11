@@ -328,6 +328,7 @@ const PracticePage = () => {
   const activeProfilerWorkerRef = useRef(null)
   const isMountedRef = useRef(true)
   const profilerCancelledRef = useRef(false)
+  const executionLockRef = useRef(false)
 
   const [isExecuting, setIsExecuting] = useState(false)
   const [isExecutingA, setIsExecutingA] = useState(false)
@@ -340,6 +341,7 @@ const PracticePage = () => {
 
   const [codeA, setCodeA] = useState('')
   const [codeB, setCodeB] = useState('')
+  const savedCodeRef = useRef({ single: '', compareA: '', compareB: '' })
   const [logsA, setLogsA] = useState([])
   const [logsB, setLogsB] = useState([])
   const [sharedInput, setSharedInput] = useState('35')
@@ -399,7 +401,6 @@ const PracticePage = () => {
   ]
 
   const handleModeChange = (mode) => {
-    // Terminate all active workers across all modes
     terminateWorker(activeWorkerRef)
     terminateWorker(activeWorkerRefA)
     terminateWorker(activeWorkerRefB)
@@ -410,11 +411,22 @@ const PracticePage = () => {
     setIsExecutingB(false)
     setIsComparing(false)
     setIsProfilerRunning(false)
+    executionLockRef.current = false
+
+    savedCodeRef.current.single = code
+
+    if (executionMode === 'compare') {
+      savedCodeRef.current.compareA = codeA
+      savedCodeRef.current.compareB = codeB
+    }
 
     setExecutionMode(mode)
-    if (mode === 'compare') {
-      setCodeA(defaultTemplates[language]?.a || '')
-      setCodeB(defaultTemplates[language]?.b || '')
+
+    if (mode === 'single' && savedCodeRef.current.single) {
+      setCode(savedCodeRef.current.single)
+    } else if (mode === 'compare') {
+      setCodeA(savedCodeRef.current.compareA || defaultTemplates[language]?.a || '')
+      setCodeB(savedCodeRef.current.compareB || defaultTemplates[language]?.b || '')
     }
   }
 
@@ -479,6 +491,7 @@ const PracticePage = () => {
   }
 
   const handleRunCode = async (userCode) => {
+    if (executionLockRef.current) return
     if (language !== 'javascript') {
       setLogs((prev) => [
         ...prev,
@@ -493,31 +506,39 @@ const PracticePage = () => {
     if (isExecuting || isExecutingA || isExecutingB || isComparing) {
       return
     }
+    executionLockRef.current = true
     setIsExecuting(true)
     setLogs((prev) => [
       ...prev,
       { type: 'info', content: 'Executing user code...' },
     ])
-    const result = await runCodeInWorker(userCode, undefined, activeWorkerRef)
+    try {
+      const result = await runCodeInWorker(userCode, undefined, activeWorkerRef)
 
-    if (!isMountedRef.current) return
+      if (!isMountedRef.current) {
+        return
+      }
 
-    if (result.status === 'cancelled') {
-      return
+      if (result.status === 'cancelled') {
+        return
+      }
+
+      setLogs((prev) => [...prev, ...result.logs])
+      if (result.status === 'error') {
+        setLogs((prev) => [
+          ...prev,
+          { type: 'error', content: `Runtime Error: ${result.error}` },
+        ])
+      }
+      scrollConsoleIntoView()
+    } finally {
+      setIsExecuting(false)
+      executionLockRef.current = false
     }
-
-    setLogs((prev) => [...prev, ...result.logs])
-    if (result.status === 'error') {
-      setLogs((prev) => [
-        ...prev,
-        { type: 'error', content: `Runtime Error: ${result.error}` },
-      ])
-    }
-    setIsExecuting(false)
-    scrollConsoleIntoView()
   }
 
   const handleRunCodeA = async (userCode) => {
+    if (executionLockRef.current) return
     if (language !== 'javascript') {
       setLogsA((prev) => [
         ...prev,
@@ -532,6 +553,7 @@ const PracticePage = () => {
     if (isExecuting || isExecutingA || isExecutingB || isComparing) {
       return
     }
+    executionLockRef.current = true
     setIsExecutingA(true)
     setLogsA((prev) => [
       ...prev,
@@ -540,9 +562,13 @@ const PracticePage = () => {
     const inputVal = parseSharedInput()
     const result = await runCodeInWorker(userCode, inputVal, activeWorkerRefA)
 
-    if (!isMountedRef.current) return
+    if (!isMountedRef.current) {
+      executionLockRef.current = false
+      return
+    }
 
     if (result.status === 'cancelled') {
+      executionLockRef.current = false
       return
     }
 
@@ -554,9 +580,11 @@ const PracticePage = () => {
       ])
     }
     setIsExecutingA(false)
+    executionLockRef.current = false
   }
 
   const handleRunCodeB = async (userCode) => {
+    if (executionLockRef.current) return
     if (language !== 'javascript') {
       setLogsB((prev) => [
         ...prev,
@@ -571,6 +599,7 @@ const PracticePage = () => {
     if (isExecuting || isExecutingA || isExecutingB || isComparing) {
       return
     }
+    executionLockRef.current = true
     setIsExecutingB(true)
     setLogsB((prev) => [
       ...prev,
@@ -579,9 +608,13 @@ const PracticePage = () => {
     const inputVal = parseSharedInput()
     const result = await runCodeInWorker(userCode, inputVal, activeWorkerRefB)
 
-    if (!isMountedRef.current) return
+    if (!isMountedRef.current) {
+      executionLockRef.current = false
+      return
+    }
 
     if (result.status === 'cancelled') {
+      executionLockRef.current = false
       return
     }
 
@@ -593,9 +626,11 @@ const PracticePage = () => {
       ])
     }
     setIsExecutingB(false)
+    executionLockRef.current = false
   }
 
   const handleCompareBenchmark = async () => {
+    if (executionLockRef.current) return
     if (language !== 'javascript') {
       setLogsA((prev) => [
         ...prev,
@@ -618,6 +653,7 @@ const PracticePage = () => {
     if (isExecuting || isExecutingA || isExecutingB || isComparing) {
       return
     }
+    executionLockRef.current = true
     setIsComparing(true)
     setBenchmarkResults(null)
     setLogsA((prev) => [
@@ -636,10 +672,14 @@ const PracticePage = () => {
       runCodeInWorker(codeB, inputVal, activeWorkerRefB),
     ])
 
-    if (!isMountedRef.current) return
+    if (!isMountedRef.current) {
+      executionLockRef.current = false
+      return
+    }
 
     if (resA.status === 'cancelled' || resB.status === 'cancelled') {
       setIsComparing(false)
+      executionLockRef.current = false
       return
     }
 
@@ -669,10 +709,12 @@ const PracticePage = () => {
     })
 
     setIsComparing(false)
+    executionLockRef.current = false
   }
 
   const handleRunProfiler = useCallback(
     async (userCode) => {
+      if (executionLockRef.current) return
       if (
         isExecuting ||
         isExecutingA ||
@@ -682,6 +724,7 @@ const PracticePage = () => {
       ) {
         return
       }
+      executionLockRef.current = true
 
       // Parse input sizes
       const sizes = profilerInputSizes
@@ -691,6 +734,7 @@ const PracticePage = () => {
         .sort((a, b) => a - b)
 
       if (sizes.length === 0) {
+        executionLockRef.current = false
         setProfilerLogs((prev) => [
           ...prev,
           {
@@ -776,6 +820,7 @@ const PracticePage = () => {
 
       if (isMountedRef.current) {
         setIsProfilerRunning(false)
+        executionLockRef.current = false
         setProfilerProgress('')
         if (collectedData.length > 0) {
           setProfilerLogs((prev) => [
