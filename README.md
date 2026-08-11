@@ -101,7 +101,8 @@ Learning Data Structures and Algorithms (DSA) is often a daunting task for stude
 | --------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **Real-time Visualization** | Watch algorithms come alive with smooth, step-by-step animations using Framer Motion and Anime.js.                                                                                                                                                   |
 | **Adjustable Speed**        | Full control over animation speed with +/- precision buttons and input data to learn at your own pace.                                                                                                                                               |
-| **Algorithm Coverage**      | Support for Sorting (Quick, Merge, Shell), Searching (Linear, Binary), Graph (BFS, DFS, Dijkstra), Abstract Data Types (Stacks, Queues, Binary Trees, Binary Heaps, Linked Lists, and Priority Queues), and Dynamic Programming (Kadane's, Moore's). |
+| **Algorithm Coverage**      | Support for Sorting (Quick, Merge, Shell), Searching (Linear, Binary), Graph (BFS, DFS, Dijkstra), Abstract Data Types (Stacks, Queues, Binary Trees, Binary Heaps, Linked Lists (Singly, Doubly, Circular, Circular Doubly), and Priority Queues), and Dynamic Programming (Kadane's, Moore's). |
+
 
 | **Comparison Mode** | Side-by-side visualization of multiple algorithms to compare their efficiency and execution patterns in real-time. |
 | **Code Insights** | See implementations in C++, Java, Python, and JS with a multi-language viewer and one-click copy functionality. |
@@ -245,6 +246,18 @@ AlgoScope/
 2. **Animation Engine:** Framer Motion and Anime.js handle the transitions based on state changes.
 3. **Pseudo-code Sync:** The `CodeDisplay` component highlights lines of code in real-time as the algorithm executes.
 
+### 🔗 Linked List Types
+
+AlgoScope supports four types of Linked List visualizations, each with interactive insert, delete, search, and clear operations:
+
+| Type | Description |
+|------|-------------|
+| **Singly Linked List** | Each node has a `value` and a `next` pointer. Traversal is one-directional from HEAD to null. |
+| **Doubly Linked List** | Each node has both a `prev` and `next` pointer, enabling traversal in both directions. |
+| **Circular Linked List** | Similar to singly, but the tail's `next` pointer points back to the HEAD — no null end. |
+| **Circular Doubly Linked List** | Combines doubly and circular — `prev` & `next` pointers with the tail connected back to HEAD and HEAD's `prev` pointing to tail. |
+
+---
 ### System Data Flow
 
 ```mermaid
