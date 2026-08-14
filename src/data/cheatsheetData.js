@@ -10,7 +10,8 @@ export const CHEATSHEET_ALGORITHMS = [
     difficulty: 'Beginner',
     link: '/sort',
     complexityKey: 'bubble',
-    description: 'Repeatedly swaps adjacent elements if they are in the wrong order.',
+    description:
+      'Repeatedly swaps adjacent elements if they are in the wrong order.',
     pseudocode: `function bubbleSort(arr):
     n = arr.length
     for i from 0 to n - 1:
@@ -25,7 +26,8 @@ export const CHEATSHEET_ALGORITHMS = [
     difficulty: 'Beginner',
     link: '/sort',
     complexityKey: 'selection',
-    description: 'Finds the minimum element from the unsorted region and places it at the start.',
+    description:
+      'Finds the minimum element from the unsorted region and places it at the start.',
     pseudocode: `function selectionSort(arr):
     n = arr.length
     for i from 0 to n - 1:
@@ -59,7 +61,8 @@ export const CHEATSHEET_ALGORITHMS = [
     difficulty: 'Intermediate',
     link: '/sort',
     complexityKey: 'quick',
-    description: 'Divide-and-conquer algorithm partitioning around a pivot element.',
+    description:
+      'Divide-and-conquer algorithm partitioning around a pivot element.',
     pseudocode: `function quickSort(arr, low, high):
     if low < high:
         pi = partition(arr, low, high)
@@ -83,7 +86,8 @@ function partition(arr, low, high):
     difficulty: 'Intermediate',
     link: '/sort',
     complexityKey: 'merge',
-    description: 'Divides array in halves, recursively sorts them, and merges sorted halves.',
+    description:
+      'Divides array in halves, recursively sorts them, and merges sorted halves.',
     pseudocode: `function mergeSort(arr):
     if arr.length <= 1: return arr
     mid = floor(arr.length / 2)
@@ -98,7 +102,8 @@ function partition(arr, low, high):
     difficulty: 'Intermediate',
     link: '/sort',
     complexityKey: 'heap',
-    description: 'Converts array into a Max Heap and repeatedly extracts maximum element.',
+    description:
+      'Converts array into a Max Heap and repeatedly extracts maximum element.',
     pseudocode: `function heapSort(arr):
     buildMaxHeap(arr)
     for i from arr.length - 1 down to 1:
@@ -112,7 +117,8 @@ function partition(arr, low, high):
     difficulty: 'Intermediate',
     link: '/sort',
     complexityKey: 'counting',
-    description: 'Non-comparison sort counting occurrences of each unique element.',
+    description:
+      'Non-comparison sort counting occurrences of each unique element.',
     pseudocode: `function countingSort(arr, k):
     count = array of zeros of size k + 1
     for x in arr: count[x]++
@@ -144,7 +150,8 @@ function partition(arr, low, high):
     difficulty: 'Intermediate',
     link: '/sort',
     complexityKey: 'shell',
-    description: 'Generalization of insertion sort allowing exchange of far-apart elements.',
+    description:
+      'Generalization of insertion sort allowing exchange of far-apart elements.',
     pseudocode: `function shellSort(arr):
     gap = floor(arr.length / 2)
     while gap > 0:
@@ -166,7 +173,8 @@ function partition(arr, low, high):
     difficulty: 'Beginner',
     link: '/ldssearch',
     complexityKey: 'linear',
-    description: 'Sequentially checks each element of the array until target is found.',
+    description:
+      'Sequentially checks each element of the array until target is found.',
     pseudocode: `function linearSearch(arr, target):
     for i from 0 to arr.length - 1:
         if arr[i] == target:
@@ -180,7 +188,8 @@ function partition(arr, low, high):
     difficulty: 'Beginner',
     link: '/ldssearch',
     complexityKey: 'binary',
-    description: 'Divides sorted array search interval in half recursively or iteratively.',
+    description:
+      'Divides sorted array search interval in half recursively or iteratively.',
     pseudocode: `function binarySearch(arr, target):
     low = 0, high = arr.length - 1
     while low <= high:
@@ -199,7 +208,8 @@ function partition(arr, low, high):
     difficulty: 'Beginner',
     link: '/search',
     complexityKey: 'bfs',
-    description: 'Explores graph level-by-level starting from source node using a Queue.',
+    description:
+      'Explores graph level-by-level starting from source node using a Queue.',
     pseudocode: `function bfs(graph, start):
     visited = Set()
     queue = Queue([start])
@@ -218,7 +228,8 @@ function partition(arr, low, high):
     difficulty: 'Beginner',
     link: '/search',
     complexityKey: 'dfs',
-    description: 'Explores graph by going as deep as possible along each branch before backtracking.',
+    description:
+      'Explores graph by going as deep as possible along each branch before backtracking.',
     pseudocode: `function dfs(graph, node, visited = Set()):
     if node in visited: return
     visited.add(node)
@@ -233,7 +244,8 @@ function partition(arr, low, high):
     difficulty: 'Intermediate',
     link: '/spath',
     complexityKey: 'dijkstra',
-    description: 'Finds single-source shortest path in weighted graph with non-negative edge weights.',
+    description:
+      'Finds single-source shortest path in weighted graph with non-negative edge weights.',
     pseudocode: `function dijkstra(graph, source):
     dist = array filled with infinity, dist[source] = 0
     pq = MinPriorityQueue([(0, source)])
@@ -252,7 +264,8 @@ function partition(arr, low, high):
     difficulty: 'Intermediate',
     link: '/spath',
     complexityKey: 'bellmanford',
-    description: 'Computes shortest paths from single source and detects negative cycles.',
+    description:
+      'Computes shortest paths from single source and detects negative cycles.',
     pseudocode: `function bellmanFord(edges, V, source):
     dist = array filled with infinity, dist[source] = 0
     for i from 1 to V - 1:
@@ -282,7 +295,8 @@ function partition(arr, low, high):
     difficulty: 'Intermediate',
     link: '/spath',
     complexityKey: 'prim',
-    description: 'Greedy algorithm that builds Minimum Spanning Tree connected component by component.',
+    description:
+      'Greedy algorithm that builds Minimum Spanning Tree connected component by component.',
     pseudocode: `function primMST(graph, V):
     inMST = array of false
     pq = MinPriorityQueue([(0, startNode)])
@@ -300,7 +314,8 @@ function partition(arr, low, high):
     difficulty: 'Intermediate',
     link: '/spath',
     complexityKey: 'kruskal',
-    description: 'Finds MST by sorting all graph edges and adding them using Disjoint Set Union (DSU).',
+    description:
+      'Finds MST by sorting all graph edges and adding them using Disjoint Set Union (DSU).',
     pseudocode: `function kruskalMST(edges, V):
     sort edges by weight ascending
     dsu = DSU(V)
@@ -320,7 +335,8 @@ function partition(arr, low, high):
     link: '/dynamic-programming',
     time: { best: 'O(m * n)', average: 'O(m * n)', worst: 'O(m * n)' },
     space: 'O(m * n)',
-    description: 'Finds longest subsequence present in both strings in same relative order.',
+    description:
+      'Finds longest subsequence present in both strings in same relative order.',
     pseudocode: `function lcs(A, B):
     m = A.length, n = B.length
     dp = 2D array of size (m+1) x (n+1) filled with 0
@@ -337,7 +353,8 @@ function partition(arr, low, high):
     difficulty: 'Intermediate',
     link: '/dynamic-programming',
     complexityKey: 'knapsack',
-    description: 'Maximizes item value in knapsack of capacity W without splitting items.',
+    description:
+      'Maximizes item value in knapsack of capacity W without splitting items.',
     pseudocode: `function knapsack(weights, values, W, N):
     dp = 2D array of size (N+1) x (W+1) filled with 0
     for i from 1 to N:
@@ -354,9 +371,14 @@ function partition(arr, low, high):
     category: 'Dynamic Programming',
     difficulty: 'Intermediate',
     link: '/dynamic-programming',
-    time: { best: 'O(n * amount)', average: 'O(n * amount)', worst: 'O(n * amount)' },
+    time: {
+      best: 'O(n * amount)',
+      average: 'O(n * amount)',
+      worst: 'O(n * amount)',
+    },
     space: 'O(amount)',
-    description: 'Calculates fewest coins needed to make up a target total amount.',
+    description:
+      'Calculates fewest coins needed to make up a target total amount.',
     pseudocode: `function coinChange(coins, amount):
     dp = array of size (amount + 1) filled with infinity, dp[0] = 0
     for a from 1 to amount:
@@ -373,7 +395,8 @@ function partition(arr, low, high):
     link: '/dynamic-programming',
     time: { best: 'O(n²)', average: 'O(n²)', worst: 'O(n²)' },
     space: 'O(n)',
-    description: 'Finds length of longest strictly increasing subsequence in an array.',
+    description:
+      'Finds length of longest strictly increasing subsequence in an array.',
     pseudocode: `function lis(arr):
     n = arr.length
     dp = array of size n filled with 1
@@ -426,7 +449,8 @@ function partition(arr, low, high):
     difficulty: 'Advanced',
     link: '/backtracking',
     complexityKey: 'sudoku',
-    description: 'Fills a 9x9 grid with digits so each column, row, and 3x3 subgrid contains 1-9.',
+    description:
+      'Fills a 9x9 grid with digits so each column, row, and 3x3 subgrid contains 1-9.',
     pseudocode: `function solveSudoku(board):
     (row, col) = findUnassignedCell(board)
     if no unassigned cell left: return true
@@ -444,7 +468,8 @@ function partition(arr, low, high):
     difficulty: 'Advanced',
     link: '/backtracking',
     complexityKey: 'hanoi',
-    description: 'Puzzle moving disks between three pegs following size constraints.',
+    description:
+      'Puzzle moving disks between three pegs following size constraints.',
     pseudocode: `function hanoi(n, source, auxiliary, target):
     if n == 1:
         moveDisk(source, target)
@@ -460,7 +485,8 @@ function partition(arr, low, high):
     difficulty: 'Advanced',
     link: '/backtracking',
     complexityKey: 'graphcoloring',
-    description: 'Assigns colors to vertices such that no two adjacent vertices share a color.',
+    description:
+      'Assigns colors to vertices such that no two adjacent vertices share a color.',
     pseudocode: `function graphColoring(graph, k, color, v):
     if v == V: return true
     for c from 1 to k:
@@ -479,7 +505,8 @@ function partition(arr, low, high):
     difficulty: 'Advanced',
     link: '/string-algorithms',
     complexityKey: 'kmp',
-    description: 'Pattern matching using partial match table (LPS prefix function) to skip checks.',
+    description:
+      'Pattern matching using partial match table (LPS prefix function) to skip checks.',
     pseudocode: `function kmpSearch(text, pattern):
     lps = computeLPSArray(pattern)
     i = 0, j = 0
@@ -516,7 +543,8 @@ function partition(arr, low, high):
     difficulty: 'Advanced',
     link: '/string-algorithms',
     complexityKey: 'zalgorithm',
-    description: 'Computes Z-array where Z[i] is length of longest substring starting at i matching prefix.',
+    description:
+      'Computes Z-array where Z[i] is length of longest substring starting at i matching prefix.',
     pseudocode: `function zAlgorithm(S):
     n = S.length, Z = array of size n filled with 0
     L = 0, R = 0
@@ -543,7 +571,8 @@ function partition(arr, low, high):
     difficulty: 'Intermediate',
     link: '/math-theory',
     complexityKey: 'gcd',
-    description: 'Computes Greatest Common Divisor of two integers using remainder division.',
+    description:
+      'Computes Greatest Common Divisor of two integers using remainder division.',
     pseudocode: `function gcd(a, b):
     while b != 0:
         temp = b
@@ -558,7 +587,8 @@ function partition(arr, low, high):
     difficulty: 'Intermediate',
     link: '/math-theory',
     complexityKey: 'fastexpo',
-    description: 'Computes (base^exp) % mod in O(log exp) time using binary exponentiation.',
+    description:
+      'Computes (base^exp) % mod in O(log exp) time using binary exponentiation.',
     pseudocode: `function power(base, exp):
     res = 1
     while exp > 0:
@@ -574,7 +604,8 @@ function partition(arr, low, high):
     difficulty: 'Intermediate',
     link: '/math-theory',
     complexityKey: 'bitmanip',
-    description: 'Manipulates binary bit representations directly using AND, OR, XOR, SHIFT.',
+    description:
+      'Manipulates binary bit representations directly using AND, OR, XOR, SHIFT.',
     pseudocode: `getBit(num, i)   = (num & (1 << i)) != 0
 setBit(num, i)   = num | (1 << i)
 clearBit(num, i) = num & ~(1 << i)
@@ -587,7 +618,8 @@ toggleBit(num, i)= num ^ (1 << i)`,
     difficulty: 'Intermediate',
     link: '/math-theory',
     complexityKey: 'sieve',
-    description: 'Finds all prime numbers up to N by marking multiples of each prime.',
+    description:
+      'Finds all prime numbers up to N by marking multiples of each prime.',
     pseudocode: `function sieve(N):
     isPrime = array of size N + 1 filled with true
     isPrime[0] = isPrime[1] = false
@@ -604,7 +636,8 @@ toggleBit(num, i)= num ^ (1 << i)`,
     difficulty: 'Beginner',
     link: '/math-theory',
     complexityKey: 'fibonacci',
-    description: 'Computes Nth Fibonacci number iteratively or using DP memoization.',
+    description:
+      'Computes Nth Fibonacci number iteratively or using DP memoization.',
     pseudocode: `function fibonacci(n):
     if n <= 1: return n
     prev = 0, curr = 1
@@ -623,7 +656,8 @@ toggleBit(num, i)= num ^ (1 << i)`,
     difficulty: 'Intermediate',
     link: '/greedy',
     complexityKey: 'huffman',
-    description: 'Lossless data compression algorithm generating optimal prefix codes.',
+    description:
+      'Lossless data compression algorithm generating optimal prefix codes.',
     pseudocode: `function huffmanCoding(frequencies):
     pq = MinPriorityQueue(leaves generated from frequencies)
     while pq.size() > 1:
@@ -640,7 +674,8 @@ toggleBit(num, i)= num ^ (1 << i)`,
     difficulty: 'Intermediate',
     link: '/greedy',
     complexityKey: 'fractionalknapsack',
-    description: 'Greedy algorithm picking items by highest value/weight ratio.',
+    description:
+      'Greedy algorithm picking items by highest value/weight ratio.',
     pseudocode: `function fractionalKnapsack(items, capacity):
     sort items by (value / weight) descending
     totalValue = 0.0
@@ -660,7 +695,8 @@ toggleBit(num, i)= num ^ (1 << i)`,
     difficulty: 'Intermediate',
     link: '/greedy',
     complexityKey: 'jobsequencing',
-    description: 'Schedules jobs to maximize profit given deadlines and unit-time execution.',
+    description:
+      'Schedules jobs to maximize profit given deadlines and unit-time execution.',
     pseudocode: `function jobSequencing(jobs):
     sort jobs by profit descending
     maxDeadline = max(jobs.deadline)
@@ -680,7 +716,8 @@ toggleBit(num, i)= num ^ (1 << i)`,
     difficulty: 'Advanced',
     link: '/monotonic-stack',
     complexityKey: 'histogram',
-    description: 'Finds largest rectangular area in histogram using a monotonic increasing stack.',
+    description:
+      'Finds largest rectangular area in histogram using a monotonic increasing stack.',
     pseudocode: `function largestRectangleArea(heights):
     stack = []
     maxArea = 0
@@ -700,7 +737,8 @@ toggleBit(num, i)= num ^ (1 << i)`,
     difficulty: 'Advanced',
     link: '/monotonic-stack',
     complexityKey: 'matrix',
-    description: 'Finds largest 1s rectangle in binary matrix using histogram stack row-by-row.',
+    description:
+      'Finds largest 1s rectangle in binary matrix using histogram stack row-by-row.',
     pseudocode: `function maximalRectangle(matrix):
     if matrix is empty: return 0
     heights = array of zeros of size matrix[0].length
@@ -719,7 +757,8 @@ toggleBit(num, i)= num ^ (1 << i)`,
     link: '/moore-voting',
     time: { best: 'O(n)', average: 'O(n)', worst: 'O(n)' },
     space: 'O(1)',
-    description: 'Finds majority element in array that appears more than n/2 times.',
+    description:
+      'Finds majority element in array that appears more than n/2 times.',
     pseudocode: `function majorityElement(nums):
     candidate = null, count = 0
     for num in nums:
@@ -738,7 +777,8 @@ toggleBit(num, i)= num ^ (1 << i)`,
     link: '/adt',
     time: { best: 'O(1)', average: 'O(α(N))', worst: 'O(α(N))' },
     space: 'O(N)',
-    description: 'Tracks partitioned elements into disjoint sets with path compression and rank union.',
+    description:
+      'Tracks partitioned elements into disjoint sets with path compression and rank union.',
     pseudocode: `function find(i):
     if parent[i] == i: return i
     parent[i] = find(parent[i]) // path compression
@@ -759,7 +799,8 @@ function union(i, j):
     link: '/adt',
     time: { best: 'O(1)', average: 'O(log N)', worst: 'O(log N)' },
     space: 'O(N)',
-    description: 'Complete binary tree maintaining heap property for efficient min/max access.',
+    description:
+      'Complete binary tree maintaining heap property for efficient min/max access.',
     pseudocode: `function push(val):
     heap.append(val)
     siftUp(heap.length - 1)
@@ -780,7 +821,8 @@ function pop():
     link: '/operating-systems/cpu-scheduling',
     time: { best: 'O(N log N)', average: 'O(N log N)', worst: 'O(N²)' },
     space: 'O(N)',
-    description: 'FCFS, SJF, SRTF, Priority, and Round Robin CPU process scheduling strategies.',
+    description:
+      'FCFS, SJF, SRTF, Priority, and Round Robin CPU process scheduling strategies.',
     pseudocode: `// Round Robin CPU Scheduling
 function roundRobin(processes, quantum):
     queue = Queue(processes)
@@ -818,7 +860,8 @@ function lruPageReplacement(pages, frameCount):
     link: '/operating-systems/disk-scheduling',
     time: { best: 'O(N log N)', average: 'O(N log N)', worst: 'O(N log N)' },
     space: 'O(N)',
-    description: 'FCFS, SSTF, SCAN (Elevator), C-SCAN, and LOOK disk track head movement policies.',
+    description:
+      'FCFS, SSTF, SCAN (Elevator), C-SCAN, and LOOK disk track head movement policies.',
     pseudocode: `// SCAN (Elevator) Disk Scheduling
 function scanDisk(requests, head, direction):
     sort requests ascending
@@ -845,7 +888,8 @@ export function normalizeAlgorithm(item) {
     ...item,
     time: { best, average, worst },
     space,
-    pseudocode: item.pseudocode || '// Pseudocode available in interactive visualizer',
+    pseudocode:
+      item.pseudocode || '// Pseudocode available in interactive visualizer',
   }
 }
 
@@ -867,7 +911,11 @@ export function getCategories() {
 /**
  * Filters algorithms based on active category and search query.
  */
-export function filterAlgorithms(algorithms, category = 'All', searchQuery = '') {
+export function filterAlgorithms(
+  algorithms,
+  category = 'All',
+  searchQuery = ''
+) {
   const query = searchQuery.trim().toLowerCase()
   return algorithms.filter((algo) => {
     const matchesCategory = category === 'All' || algo.category === category

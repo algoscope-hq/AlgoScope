@@ -37,8 +37,19 @@ function useDarkMode() {
   return isDark
 }
 
-const AlgorithmReferenceCard = memo(function AlgorithmReferenceCard({ algorithm }) {
-  const { name, category, difficulty, time, space, pseudocode, link, description } = algorithm
+const AlgorithmReferenceCard = memo(function AlgorithmReferenceCard({
+  algorithm,
+}) {
+  const {
+    name,
+    category,
+    difficulty,
+    time,
+    space,
+    pseudocode,
+    link,
+    description,
+  } = algorithm
   const isDark = useDarkMode()
 
   const handleNavClick = () => {
@@ -66,7 +77,9 @@ const AlgorithmReferenceCard = memo(function AlgorithmReferenceCard({ algorithm 
             >
               {category}
             </span>
-            {difficulty && <DifficultyBadge difficulty={difficulty} size="sm" />}
+            {difficulty && (
+              <DifficultyBadge difficulty={difficulty} size="sm" />
+            )}
           </div>
 
           {link && (

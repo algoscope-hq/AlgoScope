@@ -69,16 +69,24 @@ describe('cheatsheetData', () => {
     const searchResult = filterAlgorithms(algorithms, 'All', 'quick')
     expect(searchResult.some((a) => a.name === 'Quick Sort')).toBe(true)
 
-    const emptyResult = filterAlgorithms(algorithms, 'Sorting', 'nonexistenttermxyz')
+    const emptyResult = filterAlgorithms(
+      algorithms,
+      'Sorting',
+      'nonexistenttermxyz'
+    )
     expect(emptyResult.length).toBe(0)
   })
 
   it('resolves fractional-knapsack to dedicated complexity metadata', () => {
-    const rawItem = CHEATSHEET_ALGORITHMS.find((a) => a.id === 'fractional-knapsack')
+    const rawItem = CHEATSHEET_ALGORITHMS.find(
+      (a) => a.id === 'fractional-knapsack'
+    )
     expect(rawItem).toBeDefined()
     expect(rawItem.complexityKey).toBe('fractionalknapsack')
 
-    const normalized = getNormalizedAlgorithms().find((a) => a.id === 'fractional-knapsack')
+    const normalized = getNormalizedAlgorithms().find(
+      (a) => a.id === 'fractional-knapsack'
+    )
     expect(normalized).toBeDefined()
     expect(normalized.time.best).toBe('O(N log N)')
     expect(normalized.time.average).toBe('O(N log N)')

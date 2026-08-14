@@ -52,15 +52,19 @@ export default function CheatSheetPage() {
             Algorithm Study Reference
           </h1>
           <p className="max-w-2xl mx-auto text-base sm:text-lg font-sans theme-text-subtle font-normal">
-            Quick-scan time complexities, space complexities, and concise pseudocodes across all data structures and algorithms in AlgoScope.
+            Quick-scan time complexities, space complexities, and concise
+            pseudocodes across all data structures and algorithms in AlgoScope.
           </p>
         </div>
 
         {/* Printable Header (Visible only when printing) */}
         <div className="hidden print:block mb-6 text-center border-b border-slate-300 pb-4">
-          <h1 className="text-2xl font-bold font-sans text-black">AlgoScope — Algorithm Cheat Sheet</h1>
+          <h1 className="text-2xl font-bold font-sans text-black">
+            AlgoScope — Algorithm Cheat Sheet
+          </h1>
           <p className="text-xs font-sans text-slate-600 mt-1">
-            Consolidated Reference Guide for Computer Science Algorithms & Data Structures
+            Consolidated Reference Guide for Computer Science Algorithms & Data
+            Structures
           </p>
         </div>
 
@@ -113,7 +117,8 @@ export default function CheatSheetPage() {
                 No algorithms found matching your search
               </p>
               <p className="text-xs font-sans text-slate-500 mb-6 max-w-md mx-auto">
-                Try adjusting your search term or selecting a different algorithm category filter.
+                Try adjusting your search term or selecting a different
+                algorithm category filter.
               </p>
               <button
                 type="button"
