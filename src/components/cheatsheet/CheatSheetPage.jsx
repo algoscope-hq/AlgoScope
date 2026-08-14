@@ -85,7 +85,7 @@ export default function CheatSheetPage() {
               layout
               className="grid grid-cols-1 gap-6 max-w-4xl mx-auto"
             >
-              <AnimatePresence>
+              <AnimatePresence propagate>
                 {filteredAlgorithms.map((algo) => (
                   <motion.div
                     key={algo.id}
