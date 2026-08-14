@@ -1,4 +1,5 @@
-import React from 'react'
+import React, { useEffect } from 'react'
+import { useLocation } from 'react-router-dom'
 import { Navbar } from './Navbar'
 import Footer from './Footer'
 import { motion } from 'framer-motion'
@@ -18,6 +19,13 @@ export default function AppLayout({
   showBackground = true,
   notesKey,
 }) {
+  const { pathname } = useLocation()
+
+  // Always scroll to top when navigating to any new page
+  useEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: 'instant' })
+  }, [pathname])
+
   return (
     <motion.div
       className="theme-app min-h-screen flex flex-col relative overflow-x-hidden"

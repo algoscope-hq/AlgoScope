@@ -130,6 +130,11 @@ const pageMetadata = {
     description:
       'Overview of essential computer science algorithms, data structures, complexity classes, and algorithmic problem-solving patterns.',
   },
+  '/cheatsheet': {
+    title: 'Algorithm Cheat Sheet & Reference | AlgoScope',
+    description:
+      'Comprehensive consolidated algorithm study reference cheat sheet. Quick-scan time complexities, space complexities, and pseudocodes across all DSA categories.',
+  },
   '/favorites': {
     title: 'Your Bookmarked Algorithm Visualizations | AlgoScope',
     description:

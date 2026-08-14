@@ -146,6 +146,7 @@ const algorithmLinks = [
     href: '/monotonic-stack',
     difficulty: 'Advanced',
   },
+  { name: 'Cheat Sheet', href: '/cheatsheet', difficulty: 'Beginner' },
   { name: 'Practice Sandbox', href: '/practice', difficulty: 'Intermediate' },
   {
     name: 'Guess the Algorithm',
@@ -167,6 +168,7 @@ export const Navbar = () => {
     (link) =>
       link.href !== '/practice' &&
       link.href !== '/challenge' &&
+      link.href !== '/cheatsheet' &&
       pathname.startsWith(link.href)
   )
 
@@ -352,6 +354,34 @@ export const Navbar = () => {
                     })
                   )}
                 </div>
+              </li>
+
+              {/* Top Level Link: Cheat Sheet */}
+              <li
+                className="relative py-1.5"
+                onMouseEnter={() => setHoveredTab('cheatsheet')}
+              >
+                <Link
+                  to="/cheatsheet"
+                  data-tour="cheatsheet-nav"
+                  className={`relative text-sm font-medium px-3 py-1.5 rounded-lg transition-all duration-300 z-10 whitespace-nowrap ${
+                    pathname === '/cheatsheet'
+                      ? 'text-indigo-600 dark:text-indigo-300 font-semibold'
+                      : 'text-slate-400 hover:text-slate-900 dark:hover:text-slate-100'
+                  }`}
+                >
+                  Cheat Sheet
+                </Link>
+                {hoveredTab === 'cheatsheet' && (
+                  <motion.div
+                    layoutId="nav-hover-pill"
+                    className="absolute inset-0 bg-slate-200/50 dark:bg-slate-900/60 border border-slate-300/30 dark:border-slate-800/50 rounded-lg -z-0"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ type: 'spring', stiffness: 350, damping: 28 }}
+                  />
+                )}
               </li>
 
               {/* Top Level Link: Concepts */}

@@ -223,6 +223,12 @@ export const complexityMap = {
     worst: 'O(N log N)',
     space: 'O(N)',
   },
+  fractionalknapsack: {
+    best: 'O(N log N)',
+    average: 'O(N log N)',
+    worst: 'O(N log N)',
+    space: 'O(N)',
+  },
   jobsequencing: {
     best: 'O(N log N)',
     average: 'O(N²)',

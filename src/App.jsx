@@ -77,6 +77,10 @@ const DiskSchedulingPage = lazy(
   () => import('./components/operatingSystems/DiskSchedulingPage')
 )
 
+const CheatSheetPage = lazy(
+  () => import('./components/cheatsheet/CheatSheetPage')
+)
+
 // Simple fallback for Suspense
 const PageLoader = () => (
   <div className="flex h-screen w-full items-center justify-center bg-[#020617]">
@@ -92,6 +96,18 @@ const router = createBrowserRouter([
         <Home />
       </AppLayout>
     ),
+  },
+  {
+    path: '/cheatsheet',
+    element: (
+      <AppLayout notesKey="algo-notes-cheatsheet">
+        <CheatSheetPage />
+      </AppLayout>
+    ),
+  },
+  {
+    path: '/cheat-sheet',
+    element: <Navigate to="/cheatsheet" replace />,
   },
   {
     path: '/search',

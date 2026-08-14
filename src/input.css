@@ -384,3 +384,67 @@
 .cl-profileSection__connectedAccounts .cl-menuButton:hover {
   color: #a78bfa !important; /* Lighter purple on hover */
 }
+
+/* Print Styles for Cheat Sheet and PDF export */
+@media print {
+  body {
+    background: #ffffff !important;
+    color: #0f172a !important;
+  }
+
+  header,
+  footer,
+  nav,
+  .no-print,
+  .theme-toggle,
+  .scroll-to-top,
+  button:not(.print-keep) {
+    display: none !important;
+  }
+
+  * {
+    scrollbar-width: none !important;
+  }
+
+  *::-webkit-scrollbar {
+    display: none !important;
+  }
+
+  .print-page {
+    max-width: 100% !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  .print-card {
+    break-inside: avoid !important;
+    page-break-inside: avoid !important;
+    border: 1px solid #cbd5e1 !important;
+    background: #ffffff !important;
+    color: #0f172a !important;
+    box-shadow: none !important;
+    margin-bottom: 1rem !important;
+  }
+
+  .print-card * {
+    color: #0f172a !important;
+    text-shadow: none !important;
+  }
+
+  .print-code {
+    background: #f8fafc !important;
+    border: 1px solid #e2e8f0 !important;
+    color: #0f172a !important;
+    max-height: none !important;
+    overflow: visible !important;
+  }
+
+  .print-code pre,
+  .print-code code,
+  .print-code span {
+    background: transparent !important;
+    color: #0f172a !important;
+    white-space: pre-wrap !important;
+    font-size: 0.75rem !important;
+  }
+}
