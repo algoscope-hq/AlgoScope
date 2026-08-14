@@ -133,7 +133,7 @@ function partition(arr, low, high):
     pseudocode: `function radixSort(arr):
     maxVal = max(arr)
     exp = 1
-    while maxVal / exp > 0:
+    while floor(maxVal / exp) > 0:
         countingSortByDigit(arr, exp)
         exp *= 10`,
   },
@@ -639,7 +639,7 @@ toggleBit(num, i)= num ^ (1 << i)`,
     category: 'Greedy',
     difficulty: 'Intermediate',
     link: '/greedy',
-    complexityKey: 'knapsack',
+    complexityKey: 'fractionalknapsack',
     description: 'Greedy algorithm picking items by highest value/weight ratio.',
     pseudocode: `function fractionalKnapsack(items, capacity):
     sort items by (value / weight) descending

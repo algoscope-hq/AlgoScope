@@ -27,12 +27,16 @@ export default function CheatSheetPage() {
     setSearchQuery('')
   }, [])
 
+  const handleClearSearch = useCallback(() => {
+    setSearchQuery('')
+  }, [])
+
   const handlePrint = useCallback(() => {
     window.print()
   }, [])
 
   return (
-    <div className="theme-home relative min-h-screen w-full px-4 pb-20 pt-6">
+    <div className="theme-home print-page relative min-h-screen w-full px-4 pb-20 pt-6">
       <SeoHead
         title="Algorithm Cheat Sheet | AlgoScope"
         description="Comprehensive consolidated algorithm study reference cheat sheet. Quick-scan time complexities, space complexities, and pseudocodes across all DSA categories."
@@ -67,51 +71,61 @@ export default function CheatSheetPage() {
           onSelectCategory={setActiveCategory}
           searchQuery={searchQuery}
           onSearchChange={setSearchQuery}
-          onClearSearch={handleClearFilters}
+          onClearSearch={handleClearSearch}
           totalCount={allAlgorithms.length}
           visibleCount={filteredAlgorithms.length}
           onPrint={handlePrint}
         />
 
         {/* Algorithm Cards List - 1 per row */}
-        {filteredAlgorithms.length > 0 ? (
-          <motion.div
-            layout
-            className="grid grid-cols-1 gap-6 max-w-4xl mx-auto"
-          >
-            <AnimatePresence>
-              {filteredAlgorithms.map((algo) => (
-                <motion.div
-                  key={algo.id}
-                  layout
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, scale: 0.98 }}
-                  transition={{ duration: 0.2 }}
-                >
-                  <AlgorithmReferenceCard algorithm={algo} />
-                </motion.div>
-              ))}
-            </AnimatePresence>
-          </motion.div>
-        ) : (
-          <div className="no-print rounded-2xl border border-dashed border-slate-800 bg-slate-900/40 p-12 text-center my-6 max-w-4xl mx-auto">
-            <p className="text-base font-sans font-semibold text-slate-300 mb-2">
-              No algorithms found matching your search
-            </p>
-            <p className="text-xs font-sans text-slate-500 mb-6 max-w-md mx-auto">
-              Try adjusting your search term or selecting a different algorithm category filter.
-            </p>
-            <button
-              type="button"
-              onClick={handleClearFilters}
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-sans font-semibold text-xs transition-all shadow-md active:scale-95 cursor-pointer"
+        <AnimatePresence mode="popLayout">
+          {filteredAlgorithms.length > 0 ? (
+            <motion.div
+              key="algorithm-grid"
+              layout
+              className="grid grid-cols-1 gap-6 max-w-4xl mx-auto"
             >
-              <RefreshCw className="w-3.5 h-3.5" />
-              Reset All Filters
-            </button>
-          </div>
-        )}
+              <AnimatePresence>
+                {filteredAlgorithms.map((algo) => (
+                  <motion.div
+                    key={algo.id}
+                    layout
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, scale: 0.98 }}
+                    transition={{ duration: 0.2 }}
+                  >
+                    <AlgorithmReferenceCard algorithm={algo} />
+                  </motion.div>
+                ))}
+              </AnimatePresence>
+            </motion.div>
+          ) : (
+            <motion.div
+              key="empty-state"
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.2 }}
+              className="no-print rounded-2xl border border-dashed border-slate-800 bg-slate-900/40 p-12 text-center my-6 max-w-4xl mx-auto"
+            >
+              <p className="text-base font-sans font-semibold text-slate-300 mb-2">
+                No algorithms found matching your search
+              </p>
+              <p className="text-xs font-sans text-slate-500 mb-6 max-w-md mx-auto">
+                Try adjusting your search term or selecting a different algorithm category filter.
+              </p>
+              <button
+                type="button"
+                onClick={handleClearFilters}
+                className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-sans font-semibold text-xs transition-all shadow-md active:scale-95 cursor-pointer"
+              >
+                <RefreshCw className="w-3.5 h-3.5" />
+                Reset All Filters
+              </button>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
     </div>
   )

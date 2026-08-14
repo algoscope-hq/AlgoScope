@@ -72,4 +72,23 @@ describe('cheatsheetData', () => {
     const emptyResult = filterAlgorithms(algorithms, 'Sorting', 'nonexistenttermxyz')
     expect(emptyResult.length).toBe(0)
   })
+
+  it('resolves fractional-knapsack to dedicated complexity metadata', () => {
+    const rawItem = CHEATSHEET_ALGORITHMS.find((a) => a.id === 'fractional-knapsack')
+    expect(rawItem).toBeDefined()
+    expect(rawItem.complexityKey).toBe('fractionalknapsack')
+
+    const normalized = getNormalizedAlgorithms().find((a) => a.id === 'fractional-knapsack')
+    expect(normalized).toBeDefined()
+    expect(normalized.time.best).toBe('O(N log N)')
+    expect(normalized.time.average).toBe('O(N log N)')
+    expect(normalized.time.worst).toBe('O(N log N)')
+    expect(normalized.space).toBe('O(N)')
+  })
+
+  it('uses terminating floor condition in radix-sort pseudocode', () => {
+    const radixSort = CHEATSHEET_ALGORITHMS.find((a) => a.id === 'radix-sort')
+    expect(radixSort).toBeDefined()
+    expect(radixSort.pseudocode).toContain('while floor(maxVal / exp) > 0:')
+  })
 })
